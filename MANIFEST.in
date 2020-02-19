@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include contentready_oip *.css
+recursive-include contentready_oip *.csv
+recursive-include contentready_oip *.html
+recursive-include contentready_oip *.ico
+recursive-include contentready_oip *.js
+recursive-include contentready_oip *.json
+recursive-include contentready_oip *.md
+recursive-include contentready_oip *.png
+recursive-include contentready_oip *.py
+recursive-include contentready_oip *.svg
+recursive-include contentready_oip *.txt
+recursive-exclude contentready_oip *.pyc

@@ -1,0 +1,120 @@
+{
+ "autoname": "Problem.###",
+ "creation": "2019-12-04 19:37:02.229461",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "featured_image",
+  "org",
+  "org_title",
+  "resources_needed",
+  "impact",
+  "beneficiaries",
+  "images",
+  "column_break_8",
+  "themes",
+  "description"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "featured_image",
+   "fieldtype": "Attach Image",
+   "in_preview": 1,
+   "label": "Featured Image"
+  },
+  {
+   "fieldname": "org",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Organisation",
+   "options": "Organisation"
+  },
+  {
+   "fieldname": "resources_needed",
+   "fieldtype": "Table MultiSelect",
+   "in_preview": 1,
+   "label": "Resources Needed",
+   "options": "Resource Table"
+  },
+  {
+   "fieldname": "impact",
+   "fieldtype": "Table MultiSelect",
+   "label": "Impact",
+   "options": "Impact Table"
+  },
+  {
+   "fieldname": "beneficiaries",
+   "fieldtype": "Table MultiSelect",
+   "label": "Beneficiaries",
+   "options": "Beneficiary Table"
+  },
+  {
+   "fieldname": "images",
+   "fieldtype": "Table",
+   "label": "Images",
+   "options": "Image With Description"
+  },
+  {
+   "fieldname": "column_break_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "in_list_view": 1,
+   "label": "Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "themes",
+   "fieldtype": "Table MultiSelect",
+   "in_preview": 1,
+   "label": "Themes",
+   "options": "Theme Table"
+  },
+  {
+   "fetch_from": "org.title",
+   "fieldname": "org_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Organisation Name",
+   "read_only": 1
+  }
+ ],
+ "modified": "2019-12-04 20:23:10.972809",
+ "modified_by": "Administrator",
+ "module": "Problem",
+ "name": "Problem",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "title",
+ "show_preview_popup": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
