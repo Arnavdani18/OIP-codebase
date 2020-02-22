@@ -1,4 +1,5 @@
 {
+ "allow_guest_to_view": 1,
  "autoname": "Problem.###",
  "creation": "2019-12-04 19:37:02.229461",
  "doctype": "DocType",
@@ -14,8 +15,10 @@
   "beneficiaries",
   "images",
   "column_break_8",
+  "is_published",
   "themes",
-  "description"
+  "description",
+  "route"
  ],
  "fields": [
   {
@@ -91,9 +94,22 @@
    "in_preview": 1,
    "label": "Organisation Name",
    "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_published",
+   "fieldtype": "Check",
+   "label": "Published?"
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "label": "Route"
   }
  ],
- "modified": "2019-12-04 20:23:10.972809",
+ "has_web_view": 1,
+ "is_published_field": "is_published",
+ "modified": "2020-02-22 16:02:30.610674",
  "modified_by": "Administrator",
  "module": "Problem",
  "name": "Problem",
@@ -112,6 +128,7 @@
    "write": 1
   }
  ],
+ "route": "list_problems",
  "search_fields": "title",
  "show_preview_popup": 1,
  "sort_field": "modified",

@@ -1,0 +1,34 @@
+<!-- jinja -->
+<!-- no-breadcrumbs -->
+<div class="row" id="filter-section">
+    <div class="col-md-2 offset-md-8">
+        <input type="text" name="" id="autocomplete" placeholder="Search for location..." />
+    </div>
+    <div class="col-md-2">
+        <select class="custom-select">
+            <option selected value="all">All Sectors</option>
+        </select>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="col-sm-12 problem-listed-container">
+            <div class="d-flex align-items-center">
+                <img
+                    src="/files/problem_icon.svg"
+                    alt=""
+                    height="24"
+                    width="20"
+                />
+                <h3>Problems Listed ({{ problems | length }})</h3>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    {% for problem in problems %}
+        <div class="col-md-6">
+            {% include "templates/includes/problems/problem_card.html" %}
+        </div>
+    {% endfor %}
+</div>

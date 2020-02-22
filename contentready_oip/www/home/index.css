@@ -1,0 +1,27 @@
+.poster {
+    background-image: url('/files/home-cover.jpg');
+    background-size: cover;
+}
+
+.jumbo {
+    height: 100vh;
+}
+
+.banner-text {
+    height: 23.1rem;
+    max-width: 50.6rem;
+}
+.banner-text > h1 {
+    font-size: 4.6rem;
+    font-weight: bold;
+    letter-spacing: -0.01rem;
+    color: #d98b26;
+}
+.banner-text > p {
+    color: #2d2d2d;
+    font-size: 1.8rem;
+    font-weight: 500;
+    letter-spacing: -0.01rem;
+    line-height: 2.6rem;
+    position: relative;
+}
