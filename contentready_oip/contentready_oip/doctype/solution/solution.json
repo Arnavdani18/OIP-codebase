@@ -1,0 +1,106 @@
+{
+ "autoname": "Solution.###",
+ "creation": "2019-12-04 19:46:43.122149",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "featured_image",
+  "org",
+  "org_title",
+  "funds_needed",
+  "images",
+  "column_break_8",
+  "description",
+  "section_break_9",
+  "problems_addressed"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "featured_image",
+   "fieldtype": "Attach Image",
+   "in_preview": 1,
+   "label": "Featured Image"
+  },
+  {
+   "fieldname": "org",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Organisation",
+   "options": "Organisation"
+  },
+  {
+   "fetch_from": "org.title",
+   "fieldname": "org_title",
+   "fieldtype": "Data",
+   "label": "Organisation Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "funds_needed",
+   "fieldtype": "Currency",
+   "in_preview": 1,
+   "label": "Funds Needed"
+  },
+  {
+   "fieldname": "images",
+   "fieldtype": "Table",
+   "label": "Images",
+   "options": "Image With Description"
+  },
+  {
+   "fieldname": "column_break_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "in_list_view": 1,
+   "label": "Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "problems_addressed",
+   "fieldtype": "Table",
+   "label": "Problems Addressed",
+   "options": "Problem Table"
+  }
+ ],
+ "modified": "2020-02-22 18:46:18.949583",
+ "modified_by": "Administrator",
+ "module": "ContentReady OIP",
+ "name": "Solution",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "show_preview_popup": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
