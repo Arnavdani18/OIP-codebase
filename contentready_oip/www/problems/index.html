@@ -1,15 +1,6 @@
 <!-- jinja -->
 <!-- no-breadcrumbs -->
-<div class="row" id="filter-section">
-    <div class="col-md-2 offset-md-8">
-        <input type="text" name="" id="autocomplete" placeholder="Search for location..." />
-    </div>
-    <div class="col-md-2">
-        <select class="custom-select">
-            <option selected value="all">All Sectors</option>
-        </select>
-    </div>
-</div>
+{% include "templates/includes/common/filter.html" %}
 <div class="row">
     <div class="col">
         <div class="col-sm-12 problem-listed-container">

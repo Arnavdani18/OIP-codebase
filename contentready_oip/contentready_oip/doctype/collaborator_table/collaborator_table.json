@@ -1,31 +1,33 @@
 {
- "creation": "2019-12-04 19:35:12.752516",
+ "creation": "2020-02-22 19:21:56.854389",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "image",
-  "description"
+  "user",
+  "comment"
  ],
  "fields": [
   {
-   "fieldname": "image",
-   "fieldtype": "Attach",
+   "fieldname": "user",
+   "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Image",
+   "label": "User",
+   "options": "User",
    "reqd": 1
   },
   {
-   "fieldname": "description",
+   "fieldname": "comment",
    "fieldtype": "Data",
-   "label": "Description"
+   "in_list_view": 1,
+   "label": "Comment"
   }
  ],
  "istable": 1,
- "modified": "2020-02-22 18:46:19.115405",
+ "modified": "2020-02-22 19:26:47.259856",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
- "name": "Image With Description",
+ "name": "Collaborator Table",
  "owner": "Administrator",
  "permissions": [],
  "quick_entry": 1,

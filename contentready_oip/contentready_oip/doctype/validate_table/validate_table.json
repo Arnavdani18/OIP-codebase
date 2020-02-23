@@ -20,16 +20,18 @@
   {
    "fieldname": "comment",
    "fieldtype": "Text",
+   "in_list_view": 1,
    "label": "Comment"
   },
   {
    "fieldname": "attachment",
    "fieldtype": "Attach",
+   "in_list_view": 1,
    "label": "Attachment"
   }
  ],
  "istable": 1,
- "modified": "2020-02-22 18:46:20.339849",
+ "modified": "2020-02-22 18:51:43.477784",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Validate Table",

@@ -56,7 +56,7 @@
    "fieldname": "images",
    "fieldtype": "Table",
    "label": "Images",
-   "options": "Image With Description"
+   "options": "Image Table"
   },
   {
    "fieldname": "column_break_8",
@@ -80,7 +80,7 @@
    "options": "Problem Table"
   }
  ],
- "modified": "2020-02-22 18:46:18.949583",
+ "modified": "2020-02-22 19:05:01.673490",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Solution",

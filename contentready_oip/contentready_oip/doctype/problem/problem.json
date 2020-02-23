@@ -10,15 +10,35 @@
   "featured_image",
   "org",
   "org_title",
-  "resources_needed",
-  "impact",
-  "beneficiaries",
-  "images",
   "column_break_8",
   "is_published",
-  "themes",
+  "sectors",
+  "route",
+  "location_section",
+  "city",
+  "latitude",
+  "longitude",
+  "column_break_13",
+  "state",
+  "state_code",
+  "column_break_16",
+  "country",
+  "country_code",
+  "section_break_9",
+  "impact",
+  "resources_needed",
+  "beneficiaries",
+  "images",
+  "column_break_14",
   "description",
-  "route"
+  "section_break_14",
+  "enrichments",
+  "validations",
+  "collaborators",
+  "section_break_25",
+  "likes",
+  "column_break_27",
+  "watchers"
  ],
  "fields": [
   {
@@ -75,7 +95,7 @@
    "fieldname": "images",
    "fieldtype": "Table",
    "label": "Images",
-   "options": "Image With Description"
+   "options": "Image Table"
   },
   {
    "fieldname": "column_break_8",
@@ -88,13 +108,6 @@
    "label": "Published?"
   },
   {
-   "fieldname": "themes",
-   "fieldtype": "Table MultiSelect",
-   "in_preview": 1,
-   "label": "Themes",
-   "options": "Theme Table"
-  },
-  {
    "fieldname": "description",
    "fieldtype": "Text Editor",
    "in_list_view": 1,
@@ -104,12 +117,121 @@
   {
    "fieldname": "route",
    "fieldtype": "Data",
-   "label": "Route"
+   "label": "Route",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_14",
+   "fieldtype": "Section Break",
+   "label": "Collaboration"
+  },
+  {
+   "fieldname": "likes",
+   "fieldtype": "Table",
+   "label": "Likes",
+   "options": "Like Table"
+  },
+  {
+   "fieldname": "watchers",
+   "fieldtype": "Table",
+   "label": "Watchers",
+   "options": "Watch Table"
+  },
+  {
+   "fieldname": "validations",
+   "fieldtype": "Table",
+   "label": "Validations",
+   "options": "Validate Table"
+  },
+  {
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break",
+   "label": "More Details"
+  },
+  {
+   "fieldname": "column_break_14",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "location_section",
+   "fieldtype": "Section Break",
+   "label": "Location"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Data",
+   "label": "State"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Data",
+   "label": "Country"
+  },
+  {
+   "fieldname": "column_break_13",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Data",
+   "label": "Latitude"
+  },
+  {
+   "fieldname": "longitude",
+   "fieldtype": "Data",
+   "label": "Longitude"
+  },
+  {
+   "fieldname": "section_break_25",
+   "fieldtype": "Section Break",
+   "label": "Interest"
+  },
+  {
+   "fieldname": "column_break_27",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "enrichments",
+   "fieldtype": "Table",
+   "label": "Enrichments",
+   "options": "Enrichment Table"
+  },
+  {
+   "fieldname": "collaborators",
+   "fieldtype": "Table",
+   "label": "Collaborators",
+   "options": "Collaborator Table"
+  },
+  {
+   "fieldname": "state_code",
+   "fieldtype": "Data",
+   "label": "State Code"
+  },
+  {
+   "fieldname": "column_break_16",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "country_code",
+   "fieldtype": "Data",
+   "label": "Country Code"
+  },
+  {
+   "fieldname": "sectors",
+   "fieldtype": "Table MultiSelect",
+   "in_preview": 1,
+   "label": "Sectors",
+   "options": "Sector Table"
   }
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2020-02-22 18:46:18.725235",
+ "modified": "2020-02-22 19:42:53.165786",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Problem",

@@ -16,7 +16,7 @@
         <div class="created-by mt-3">
             <div class="created-by-left-side">
                 <img
-                    src=""
+                    src="/files/default-avatar.jpg"
                     alt="profile"
                     class="small-profile"
                 />
@@ -26,14 +26,20 @@
                     Created by {{problem.owner}}
                 </p>
                 <p class="text-truncate">
-                    {{frappe.format_date(problem.creation, "medium")}}
+                    <!-- {{frappe.format_date(problem.creation, "medium")}} -->
+                    {{frappe.utils.pretty_date(problem.creation)}}
                     <span class="dot"></span>
-                    Location
+                    {{problem.city}}, {{problem.country_code}}
                 </p>
             </div>
         </div>
 
         <div class="tags mt-3">
+            {% for sector in problem.sectors %}
+            <div class="tag">
+                {{ sector.sector }}
+            </div>
+            {% endfor %}
             
         </div>
 
@@ -41,36 +47,36 @@
             <div class="likes mr-5">
                 <div class="like-icon">
                     <img
-                        src="../../../assets/svg/like_icon.svg"
+                        src="/files/like_icon.svg"
                         alt="Like Icon"
                     />
                 </div>
                 <div class="number-of-likes">
-                    5 Likes
+                    {{problem.likes | length}}
                 </div>
             </div>
 
             <div class="views mr-5">
                 <div class="views-icon">
                     <img
-                        src="../../../assets/svg/watch_list_icon.svg"
+                        src="/files/watch_list_icon.svg"
                         alt="Watchlist icon"
                     />
                 </div>
                 <div class="number-of-views">
-                    5 watchers
+                    {{problem.watchers | length}}
                 </div>
             </div>
 
             <div class="followers">
                 <div class="followers-icon">
                     <img
-                        src="../../../assets/svg/expert_icon.svg"
+                        src="/files/expert_icon.svg"
                         alt="Experts Icon"
                     />
                 </div>
                 <div class="number-of-followers">
-                    5 validations
+                    {{problem.validations | length}}
                 </div>
             </div>
         </div>
@@ -85,7 +91,7 @@
             />
 
             <div class="total-count">
-                +1 Image
+                +{{problem.images | length}}
             </div>
         </div>
         <div class="image-and-count-container d-lg-none">
@@ -96,7 +102,7 @@
             />
 
             <div class="total-count">
-                +1 Image
+                +{{problem.images | length}}
             </div>
         </div>
     </div>
