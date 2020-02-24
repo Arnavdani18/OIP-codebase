@@ -16,7 +16,7 @@
         <div class="created-by mt-3">
             <div class="created-by-left-side">
                 <img
-                    src="/files/default-avatar.jpg"
+                    src="{{problem.user_image|default('/files/default-avatar.jpg', true)}}"
                     alt="profile"
                     class="small-profile"
                 />
@@ -26,10 +26,10 @@
                     Created by {{problem.owner}}
                 </p>
                 <p class="text-truncate">
-                    <!-- {{frappe.format_date(problem.creation, "medium")}} -->
                     {{frappe.utils.pretty_date(problem.creation)}}
                     <span class="dot"></span>
-                    {{problem.city}}, {{problem.country_code}}
+                    {{problem.city|default('', true)}}, {{problem.country_code|default('', true)}}
+                    <!-- {{[problem.city|default('', true),problem.country_code|default('', true)]|join(', ')}} -->
                 </p>
             </div>
         </div>
@@ -85,25 +85,23 @@
     <div class="right-side">
         <div class="image-and-count-container d-none d-lg-block">
             <img
-                src="{{problem.featured_image}}"
+                src="{{problem.featured_image|default('/files/image_placeholder.jpg', true)}}"
                 alt="image"
                 class="image"
             />
-
             <div class="total-count">
                 +{{problem.images | length}}
             </div>
         </div>
-        <div class="image-and-count-container d-lg-none">
+        <!-- <div class="image-and-count-container d-lg-none">
             <img
-                src=""
+                src="{{problem.featured_image}}"
                 alt="image"
                 class="image-ipad"
             />
-
             <div class="total-count">
                 +{{problem.images | length}}
             </div>
-        </div>
+        </div> -->
     </div>
 </div>

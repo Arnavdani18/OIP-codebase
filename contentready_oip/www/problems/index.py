@@ -17,5 +17,7 @@ def get_context(context):
     # TODO: Implement location filtering 
     context.problems = []
     for p in problem_set:
-        context.problems.append(frappe.get_doc('Problem', p))
+        doc = frappe.get_doc('Problem', p)
+        doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
+        context.problems.append(doc)
     context.availableSectors = frappe.get_list('Sector', ['name', 'title'])

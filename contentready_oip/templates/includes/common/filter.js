@@ -9,7 +9,7 @@ frappe.ready(() => {
     }
     // End helpers
 
-    // Start Initialisation - Set values from session if available
+    // Start Initialisation - Values are set from session into context if available
     // We can use Jinja2 templates with context here as the JS is compiled server-side.
     {% if (selectedLocation and selectedLocation.center) %}
         // console.log({{selectedLocation}});
@@ -58,7 +58,7 @@ frappe.ready(() => {
                 }
             }
         }
-        selectedLocation['name'] = place.name;
+        // selectedLocation['name'] = place.name;
         selectedLocation['latitude'] = place.geometry.location.lat();
         selectedLocation['longitude'] = place.geometry.location.lng();
         showDistanceSelect();
@@ -81,6 +81,7 @@ frappe.ready(() => {
             },
             callback: function(r) {
                 // console.log(r.message);
+                // Reload as index.py will use the session variables to filter problems/solutions shown.
                 window.location.reload();
             }
         });
@@ -91,7 +92,7 @@ frappe.ready(() => {
         // TODO: Use domain settings to retrieve country list
     );
     // Specify fields to retrieve from the Google Maps API - cost implications.
-    autocomplete.setFields(['address_component', 'geometry', 'name']);
+    autocomplete.setFields(['address_component', 'geometry']);
     // Specify callback to run everytime location is changed by user.
     autocomplete.addListener('place_changed', setSessionLocationFilter);
     // End Location Filter
@@ -105,6 +106,7 @@ frappe.ready(() => {
             },
             callback: function(r) {
                 // console.log(r.message);
+                // Reload as index.py will use the session variables to filter problems/solutions shown.
                 window.location.reload();
             }
         });
