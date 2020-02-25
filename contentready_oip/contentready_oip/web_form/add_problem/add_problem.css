@@ -5,3 +5,16 @@
 .hide-control{
     display: none;
 }
+
+.form-layout {
+    background-color: white;
+    padding: 2rem;
+}
+
+.ql-container {
+    background-color: white;
+}
+
+/* .web-form-actions{
+    display: none;
+} */

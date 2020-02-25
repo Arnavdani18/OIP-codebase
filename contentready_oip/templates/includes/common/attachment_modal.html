@@ -55,7 +55,7 @@
                             *ngFor="let img of attachments; let i = index"
                         >
                             <a
-                                (click)="indexInFocus = i"
+                                onclick="indexInFocus = i"
                                 [ngClass]="{ active: indexInFocus === i }"
                             >
                                 <img

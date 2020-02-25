@@ -1,0 +1,191 @@
+<div class="col pt-20">
+    <div
+        id="descriptionText"
+        class="description-rules"
+    >
+        <h3 class="heading">
+            Description
+        </h3>
+        <p id="problemDescription">
+            {{ description }}
+        </p>
+    </div>
+</div>
+
+<hr />
+<div class="col pt-3">
+    <div class="row">
+        {% if org_title %}
+        <div class="col-sm-6">
+            <div>
+                <h3 class="heading">
+                    Organization
+                </h3>
+
+                <p class=" description-format">
+                    {{ org_title }}
+                </p>
+            </div>
+        </div>
+        {% endif %}
+        {% if min_population %}
+        <div class="col-sm-6">
+            <h3 class="heading">
+                Population Affected
+            </h3>
+            <p
+                class=" description-format"
+            >
+                Between {{ min_population }} and
+                {{ max_population }}
+            </p>
+            <p
+                class=" description-format"
+            >
+                More than {{ min_population }}
+            </p>
+        </div>
+        {% endif %}
+    </div>
+    <div class="row">
+        {% if beneficiaries %}
+        <div class="col-sm-6">
+            <h3 class="heading">
+                Beneficiary Attributes
+            </h3>
+            <p class=" description-format">
+                {{ beneficiaries }}
+            </p>
+        </div>
+        {% endif %}
+        {% if resources_needed %}
+        <div class="col-sm-6">
+            <h3 class="heading">
+                Resources Needed
+            </h3>
+            <p class=" description-format">
+                {{ resources_needed }}
+            </p>
+        </div>
+        {% endif %}
+    </div>
+    <div class="row">
+        {% if impact %}
+        <div class="col-sm-6">
+            <h3 class="heading">
+                Impact
+            </h3>
+            <p class=" description-format ">
+                {{ impact }}
+            </p>
+        </div>
+        {% endif %}
+        {% if extent %}
+        <div class="col-sm-6">
+            <h3 class="heading">
+                Extent
+            </h3>
+            <p class=" description-format">
+                {{ extent }}
+            </p>
+        </div>
+        {% endif %}
+    </div>
+    <div class="row">
+        <div class="col">
+            <div>
+                <h3 class="heading">
+                    Location(s)
+                </h3>
+
+                <ng-container *ngFor="let location of problemLocations">
+                    <a
+                        href="javascript:void(0);"
+                        class="description-format"
+                        onclick="locationSelected(location)"
+                    >
+                        {{ location.location_name }}
+                    </a>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3 class="heading">
+                Sectors
+            </h3>
+
+            <div class="tags">
+                <ng-container *ngFor="let tag of tags">
+                    <button
+                        class="tag actions text-capitalize"
+                        [disabled]="
+                            filterService.is_domain_filter_mode &&
+                            !tagsService.allTags[tag.name]
+                        "
+                        onclick="sectorSelected(tag)"
+                    >
+                        {{ tag.name.toLowerCase() }}
+                    </button>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<div class="col pb-3">
+    <h3 class="heading" id="solutionCards" *ngIf="solutions.length">
+        This problem has the following solutions
+    </h3>
+
+    <div class="row">
+        <ng-container *ngFor="let solution of solutions; let i = index">
+            <div class="col-md-6 solutions-container mt-2">
+                <div class="solution">
+                    <span class="green-bullet"></span>
+                    <span>Solution</span>
+                </div>
+
+                <div class="solution-heading">
+                    <h2>
+                        {{
+                            solution.title.length > 50
+                                ? solution.title.slice(0, 50) + '...'
+                                : solution.title
+                        }}
+                    </h2>
+                </div>
+
+                <div class="created-by">
+                    <img
+                        src="{{
+                            solution.user.photo_url &&
+                            solution.user.photo_url.fileEndpoint &&
+                            checkUrlIsImg(
+                                filesService.fileAccessUrl +
+                                    solution.user.photo_url.fileEndpoint
+                            )
+                                ? filesService.fileAccessUrl +
+                                  solution.user.photo_url.fileEndpoint
+                                : './assets/img/default-avatar.jpg'
+                        }}"
+                        alt="profile"
+                        style="object-fit: cover;"
+                    />
+                    <span class="created-by-right-side"
+                        >Created by
+                        {{
+                            auth.currentUserValue.id == solution.user_id
+                                ? 'You'
+                                : solution.user.name
+                        }}</span
+                    >
+                </div>
+                <hr />
+            </div>
+        </ng-container>
+    </div>
+</div>

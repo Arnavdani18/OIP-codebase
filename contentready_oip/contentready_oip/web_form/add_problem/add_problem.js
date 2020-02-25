@@ -9,7 +9,8 @@ frappe.ready(async () => {
         $('.section-body > div').each(function() {
             $(this).parent().before(this);
         });
-        $(".web-form-wrapper").prepend('<div class="row"><div class="col-md-6" id="add-problem-form"></div><div class="col-md-6" id="similar-problems"><h3>Similar Problems</h3></div></div>');
+        $(".web-form-wrapper").prepend('<div class="row"><div class="col-md-6" id="add-problem-form"></div><div class="col-md-6"><h3>Similar Problems</h3><span id="similar-problems"></span></div></div>');
+        // $('[role="form"]').append('<div class="row"><div class="col-md-6" id="add-problem-form"></div><div class="col-md-6"><h3>Similar Problems</h3><span id="similar-problems"></span></div></div>');
         $('#add-problem-form').append($('.form-layout'));
         $('#similar-problems').append('<div></div>');
     }
@@ -27,19 +28,6 @@ frappe.ready(async () => {
 
     hideTables = () => {
         $('*[data-fieldtype="Table"]').hide();
-    }
-
-    addDropzone = () => {
-        const el = `<form class="dropzone dz-clickable" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
-        $('*[data-fieldname="images"]*[data-fieldtype="Table"]').parent().after(el);
-        $('#dropzone').dropzone({
-            url: "/file/post",
-            autoProcessQueue: false,
-            init: function() {
-                this.on("addedfile", function(file) { console.log("Added file."); });
-            }
-        });
-        // $('#dropzone').dropzone();
     }
 
     initAutocomplete = () => {
@@ -109,10 +97,87 @@ frappe.ready(async () => {
                 r.message.map(el => {
                     $('#similar-problems').append(el);
                 });
-
             }
         });
+    }
 
+    addFileToDoc = (file) => {
+        const response = JSON.parse(file.xhr.response);
+        const file_url = response.message.file_url;
+        if (!frappe.web_form.doc.featured_image) {
+            frappe.web_form.doc.featured_image = file_url;
+        }
+        if (!frappe.web_form.doc.images) {
+            frappe.web_form.doc.images = [];
+        }
+        frappe.web_form.doc.images.push({
+            image: file_url
+        })
+    }
+
+    addDropzone = () => {
+        Dropzone.autoDiscover = false;
+        // console.log('dropzone loaded');
+        const el = `<form action="/api/method/upload_file" class="dropzone dz-clickable" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
+        $('*[data-fieldname="images"]*[data-fieldtype="Table"]').parent().after(el);
+        $('#dropzone').dropzone({
+            url: "/api/method/upload_file",
+            autoDiscover: false,
+            headers: {
+                'Accept': 'application/json',
+                'X-Frappe-CSRF-Token': frappe.csrf_token
+            },
+            init: function() {
+                // use this event to add to child table
+                // this.on("addedfile", function(file) { console.log("Added file.", file); });
+                this.on("complete", addFileToDoc);
+            }
+        });
+    }
+
+    setFeaturedImage = (url) => {
+        frappe.web_form.featured_image = url;
+    }
+
+    submitProblemForm = () => {
+        frappe.web_form.doc.doctype = 'Problem';
+        frappe.call({
+            method: "frappe.website.doctype.web_form.web_form.accept",
+			args: {
+				data: frappe.web_form.doc,
+				web_form: frappe.web_form.name,
+			},
+            callback: function(r) {
+                console.log(r.message);
+            }
+        });
+    }
+    
+    saveAsDraft = (event) => {
+        console.log('Saving draft');
+        submitProblemForm();
+    }
+
+    publishProblem = (event) => {
+        console.log('Publishing');
+        // frappe.web_form.validate();
+        frappe.web_form.doc.is_published = true;
+        submitProblemForm();
+    }
+
+    addActionButtons = () => {
+        const saveAsDraftBtn = `<button class="btn btn-sm ml-2" onclick="saveAsDraft()">Save as Draft</button>`;
+        const publishBtn = `<button class="btn btn-sm btn-primary ml-2" onclick="publishProblem()">Publish</button>`;
+        $('.page-header-actions-block').append(saveAsDraftBtn).append(publishBtn);
+    }
+
+    addNewRow = () => {
+        for (let i = 0; i < 1; i++) {
+            frappe.web_form.get_field('images').grid.add_new_row();
+            frappe.web_form.get_field('images').grid.grid_rows[i].show_form();
+            frappe.web_form.get_field('images').grid.grid_rows[i].get_field('image').set_value('/files/2_parallel_videos.png');
+            // frappe.web_form.get_field('images').grid.grid_rows[i].hide_form();
+        }
     }
     // End Helpers
 
@@ -120,10 +185,13 @@ frappe.ready(async () => {
     await sleep(500);
 
     // Start UI Fixes
+    // We hide the default form buttons (using css) and add our own
+    addActionButtons();
     moveDivs();
     createOrgOptions();
-    hideTables();
-    $('.ql-container').css('background-color', 'white');
+    // hideTables();
+    // Add white background to the text editor
+    // $('.ql-container').css('background-color', 'white');
     // End UI Fixes
 
     // Start Google Maps Autocomplete
@@ -133,11 +201,8 @@ frappe.ready(async () => {
 
     // Start dropzone.js integration
     // const scriptPath = "public/js/dropzone.js";
-    // const dScriptUrl = 'https://rawgit.com/enyo/dropzone/master/dist/dropzone.js';
-    // $.getScript(dScriptUrl, () => {
-    //  // console.log('dropzone loaded');
-    //  addDropzone();
-    // })
+    const dScriptUrl = 'https://rawgit.com/enyo/dropzone/master/dist/dropzone.js';
+    $.getScript(dScriptUrl, addDropzone);
     // End dropzone.js integration
 
     // Start Events

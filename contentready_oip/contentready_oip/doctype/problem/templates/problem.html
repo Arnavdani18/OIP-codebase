@@ -16,7 +16,7 @@
                     class="align-icon"
                     data-toggle="modal"
                     #showModalBtn
-                    (click)="console.log('modal button clicked');"
+                    onclick="console.log('modal button clicked');"
                 >
                     +1
                 </button>
@@ -37,7 +37,7 @@
                             </a>
                             <button
                                 class="btn btn-circle margin-20"
-                                (click)="console.log('edit button clicked');"
+                                onclick="console.log('edit button clicked');"
                                 aria-label="Edit Problem"
                             >
                             <i class="far fa-pen"></i>
@@ -62,31 +62,31 @@
                                 <a
                                         class="dropdown-item"
                                         href="javscript:void(0);"
-                                        (click)="linkedInShare()"
+                                        onclick="linkedInShare()"
                                         >LinkedIn</a
                                 >
                                 <a
                                         class="dropdown-item"
                                         href="javscript:void(0);"
-                                        (click)="fbShare()"
+                                        onclick="fbShare()"
                                         >Facebook</a
                                 >
                                 <a
                                         class="dropdown-item"
                                         href="javscript:void(0);"
-                                        (click)="twitterShare()"
+                                        onclick="twitterShare()"
                                         >Twitter</a
                                 >
                                 <a
                                         class="dropdown-item"
                                         href="javscript:void(0);"
-                                        (click)="mailShare()"
+                                        onclick="mailShare()"
                                         >Email</a
                                 >
                                 <a
                                         class="dropdown-item"
                                         href="javscript:void(0);"
-                                        (click)="smsShare()"
+                                        onclick="smsShare()"
                                         >SMS</a
                                 >
                             </div>
@@ -132,7 +132,7 @@
                             <div class="col pr-0">
                                 <a
                                     href="javascript:void(0);"
-                                    (click)="toggleVoteProblem()"
+                                    onclick="toggleVoteProblem()"
                                     role="button"
                                     class="btn btn-social"
                                 >
@@ -146,7 +146,7 @@
                             <div class="col px-0 ">
                                 <a
                                     href="javascript:void(0);"
-                                    (click)="toggleWatchProblem()"
+                                    onclick="toggleWatchProblem()"
                                     role="button"
                                     class="btn btn-social"
                                 >
@@ -169,13 +169,13 @@
                             </button>
                             <button
                                 class=" card-btn "
-                                (click)="openValidateModal()"
+                                onclick="openValidateModal()"
                             >
                                 Validate
                             </button>
                             <button
                                 class=" card-btn "
-                                (click)="openCollaborateModal()"
+                                onclick="openCollaborateModal()"
                             >
                                 Collaborate
                             </button>
@@ -207,8 +207,7 @@
                             class="nav-link active"
                             id="overview-tab"
                             data-toggle="tab"
-                            href="javascript:void(0);"
-                            (click)="switchTab(0)"
+                            href="#overview"
                             role="tab"
                             aria-controls="overview"
                             aria-selected="true"
@@ -218,12 +217,11 @@
                     <li class="nav-item">
                         <a
                             class="nav-link"
-                            id="enrich-tab"
+                            id="enrichments-tab"
                             data-toggle="tab"
-                            href="javascript:void(0);"
-                            (click)="switchTab(1)"
+                            href="#enrichments"
                             role="tab"
-                            aria-controls="enrich"
+                            aria-controls="enrichments"
                             aria-selected="false"
                             >Enriched ({{ enrichments | length }})</a
                         >
@@ -231,12 +229,11 @@
                     <li class="nav-item">
                         <a
                             class="nav-link"
-                            id="validate-tab"
+                            id="validations-tab"
                             data-toggle="tab"
-                            href="javascript:void(0);"
-                            (click)="switchTab(2)"
+                            href="#validations"
                             role="tab"
-                            aria-controls="validate"
+                            aria-controls="validations"
                             aria-selected="false"
                             >Validated ({{ enrichments | length }})</a
                         >
@@ -244,19 +241,25 @@
                     <li class="nav-item">
                         <a
                             class="nav-link"
-                            id="collaborate-tab"
+                            id="collaborators-tab"
                             data-toggle="tab"
-                            href="javascript:void(0);"
-                            (click)="switchTab(3)"
+                            href="#collaborators"
                             role="tab"
-                            aria-controls="collaborate"
+                            aria-controls="collaborators"
                             aria-selected="false"
                             >Collaborated ({{ collaborators | length }})</a
                         >
                     </li>
                 </ul>
                 <div id="leftTabGroup" class="pb-2">
+                    <div class="tab-content" id="leftTabContent">
+                      <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
 
+                      </div>
+                      <div class="tab-pane fade" id="enrichments" role="tabpanel" aria-labelledby="enrichments-tab">World</div>
+                      <div class="tab-pane fade" id="validations" role="tabpanel" aria-labelledby="validations-tab">...</div>
+                      <div class="tab-pane fade" id="collaborators" role="tabpanel" aria-labelledby="collaborators-tab">...</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -294,13 +297,13 @@
                         <a
                             class="dropdown-item"
                             href="javascript:void(0);"
-                            (click)="showPopularDiscussions('latest')"
+                            onclick="showPopularDiscussions('latest')"
                             >Latest</a
                         >
                         <a
                             class="dropdown-item"
                             href="javascript:void(0);"
-                            (click)="showPopularDiscussions('popular')"
+                            onclick="showPopularDiscussions('popular')"
                             >Popular</a
                         >
                     </div>
@@ -313,4 +316,5 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
