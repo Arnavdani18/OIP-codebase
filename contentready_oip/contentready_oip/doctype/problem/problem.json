@@ -77,20 +77,20 @@
   },
   {
    "fieldname": "resources_needed",
-   "fieldtype": "Table MultiSelect",
+   "fieldtype": "Small Text",
    "in_preview": 1,
    "label": "Resources Needed",
    "options": "Resource Table"
   },
   {
    "fieldname": "impact",
-   "fieldtype": "Table MultiSelect",
+   "fieldtype": "Small Text",
    "label": "Impact",
    "options": "Impact Table"
   },
   {
    "fieldname": "beneficiaries",
-   "fieldtype": "Table MultiSelect",
+   "fieldtype": "Small Text",
    "label": "Beneficiaries",
    "options": "Beneficiary Table"
   },
@@ -170,7 +170,8 @@
    "in_list_view": 1,
    "in_preview": 1,
    "in_standard_filter": 1,
-   "label": "City"
+   "label": "City",
+   "reqd": 1
   },
   {
    "fieldname": "state",
@@ -180,7 +181,8 @@
   {
    "fieldname": "country",
    "fieldtype": "Data",
-   "label": "Country"
+   "label": "Country",
+   "reqd": 1
   },
   {
    "fieldname": "column_break_13",
@@ -241,7 +243,7 @@
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2020-02-24 12:40:53.682451",
+ "modified": "2020-02-24 13:06:08.861000",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Problem",

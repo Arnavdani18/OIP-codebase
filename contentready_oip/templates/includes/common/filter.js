@@ -12,10 +12,10 @@ frappe.ready(() => {
     // Start Initialisation - Values are set from session into context if available
     // We can use Jinja2 templates with context here as the JS is compiled server-side.
     {% if (selectedLocation and selectedLocation.center) %}
-        // console.log({{selectedLocation}});
+        console.log(`{{selectedLocation}}`);
         showDistanceSelect();
-        $('#autocomplete').val('{{selectedLocation.center.city}}, {{selectedLocation.center.state}}, {{selectedLocation.center.country}}');
-        $('#distance-sel').val('{{selectedLocation.distance}}');
+        $('#autocomplete').val(`{{selectedLocation.center.city}}, {{selectedLocation.center.state}}, {{selectedLocation.center.country}}`);
+        $('#distance-sel').val(`{{selectedLocation.distance}}`);
     {% endif %}
 
     {% if selectedSectors %}
@@ -74,7 +74,7 @@ frappe.ready(() => {
         const distance = Number($('#distance-sel').val()); // Read distance from the select dropdown
         // Send this information to backend to store in session
         frappe.call({
-            method: 'contentready_oip.templates.includes.common.filter.set_location_filter',
+            method: 'contentready_oip.api.set_location_filter',
             args: {
                 selectedLocation: selectedLocation,
                 distance: distance,
@@ -95,12 +95,16 @@ frappe.ready(() => {
     autocomplete.setFields(['address_component', 'geometry']);
     // Specify callback to run everytime location is changed by user.
     autocomplete.addListener('place_changed', setSessionLocationFilter);
+    // Select all text on click so that it's easier to edit.
+    $('#autocomplete').on('click', () => {
+        $('#autocomplete').select();
+    });
     // End Location Filter
 
     // Start Sector filter
     setSessionSectorFilter = (evt) => {
         frappe.call({
-            method: 'contentready_oip.templates.includes.common.filter.set_sector_filter',
+            method: 'contentready_oip.api.set_sector_filter',
             args: {
                 sectors: [evt.target.value], // TODO: Replace with evt.target.value once multiselect sector is implemented.
             },

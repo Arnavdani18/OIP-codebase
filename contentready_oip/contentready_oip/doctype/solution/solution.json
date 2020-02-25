@@ -6,6 +6,7 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
+  "is_published",
   "featured_image",
   "org",
   "org_title",
@@ -78,9 +79,15 @@
    "fieldtype": "Table",
    "label": "Problems Addressed",
    "options": "Problem Table"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_published",
+   "fieldtype": "Check",
+   "label": "Published?"
   }
  ],
- "modified": "2020-02-22 19:05:01.673490",
+ "modified": "2020-02-25 10:31:36.776965",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Solution",

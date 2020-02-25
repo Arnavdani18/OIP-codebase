@@ -1,7 +1,316 @@
 {% extends "templates/web.html" %}
 
 {% block page_content %}
-<h1>{{ title }}</h1>
-{% endblock %}
 
-<!-- this is a sample default web page template -->
+<div class="container mt-20">
+    <div class="row bg-white main-card">
+        <div class=" col-md-4 img-section">
+            <div class="img-wrapper">
+                <img
+                    src="{{featured_image|default('/files/image_placeholder.jpg', true)}}"
+                    class="rounded img-responsive"
+                    style="object-fit: cover;"
+                />
+
+                <button
+                    class="align-icon"
+                    data-toggle="modal"
+                    #showModalBtn
+                    (click)="console.log('modal button clicked');"
+                >
+                    +1
+                </button>
+            </div>
+        </div>
+        <div class="col-md-8 card-detail-section">
+            <div>
+                <div class="row ">
+                    <div class="col d-flex justify-content-between pr-0 problem-on-mobile left-section">
+                        <div class="problem">
+                            <span class="red-bullet"></span>
+                            <span>Problem</span>
+                        </div>
+
+                        <div>
+                            <a href="javascript:void(0);" class="see-solutions">
+                                See Solution(s)
+                            </a>
+                            <button
+                                class="btn btn-circle margin-20"
+                                (click)="console.log('edit button clicked');"
+                                aria-label="Edit Problem"
+                            >
+                            <i class="far fa-pen"></i>
+                            </button>
+
+                            <button
+                                class="btn btn-circle margin-20"
+                                id="shareBtnDropdown"
+                                data-toggle="dropdown"
+                                aria-expanded="false"
+                                aria-label="share"
+                            >
+                                <i
+                                    class="far fa-share-alt share-icon"
+                                    aria-hidden="true"
+                                ></i>
+                            </button>
+                            <div
+                                class="dropdown-menu"
+                                aria-labelledby="shareBtnDropdown"
+                            >
+                                <a
+                                        class="dropdown-item"
+                                        href="javscript:void(0);"
+                                        (click)="linkedInShare()"
+                                        >LinkedIn</a
+                                >
+                                <a
+                                        class="dropdown-item"
+                                        href="javscript:void(0);"
+                                        (click)="fbShare()"
+                                        >Facebook</a
+                                >
+                                <a
+                                        class="dropdown-item"
+                                        href="javscript:void(0);"
+                                        (click)="twitterShare()"
+                                        >Twitter</a
+                                >
+                                <a
+                                        class="dropdown-item"
+                                        href="javscript:void(0);"
+                                        (click)="mailShare()"
+                                        >Email</a
+                                >
+                                <a
+                                        class="dropdown-item"
+                                        href="javscript:void(0);"
+                                        (click)="smsShare()"
+                                        >SMS</a
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row title-container">
+                    <div class="col pr-0 problem-on-mobile">
+                        <h1 class="problem-title">
+                            {{ title }}
+                        </h1>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="row mt-md-5  mt-sm-4">
+                    <div class="col d-flex align-items-center problem-on-mobile">
+                        <div>
+                            <img
+                                src="{{user_image|default('/files/default-avatar.jpg', true)}}"
+                                alt="profile photo"
+                                class="img-profile"
+                                style="object-fit: cover;overflow: hidden !important;"
+                                width="50"
+                                height="50"
+                            />
+                        </div>
+                        <div class="created-by-section text-truncate">
+                            Created by {{owner}}
+                            <br />
+                            {{frappe.utils.pretty_date(creation)}}
+                            <span class="dot" aria-hidden="true"></span>
+                            {{city|default('', true)}}, {{country_code|default('', true)}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row ">
+                    <div class="col-xl-4 align-self-center mt-3">
+                        <div class="row  stats-section">
+                            <div class="col pr-0">
+                                <a
+                                    href="javascript:void(0);"
+                                    (click)="toggleVoteProblem()"
+                                    role="button"
+                                    class="btn btn-social"
+                                >
+                                    <i class="far fa-thumbs-up"></i>
+                                </a>
+                                <span class="social-stats">
+                                    {{likes | length}}
+                                </span>
+                            </div>
+
+                            <div class="col px-0 ">
+                                <a
+                                    href="javascript:void(0);"
+                                    (click)="toggleWatchProblem()"
+                                    role="button"
+                                    class="btn btn-social"
+                                >
+                                    <i class="far fa-eye"></i>
+                                </a>
+                                <span class="social-stats">
+                                    {{likes | length}}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-8 pr-0 action-btn-section mt-3">
+                        <div class="d-flex justify-content-between flex-wrap">
+                            <button
+                                class=" card-btn"
+                                queryParamsHandling="merge"
+                            >
+                                Enrich
+                            </button>
+                            <button
+                                class=" card-btn "
+                                (click)="openValidateModal()"
+                            >
+                                Validate
+                            </button>
+                            <button
+                                class=" card-btn "
+                                (click)="openCollaborateModal()"
+                            >
+                                Collaborate
+                            </button>
+                            <button
+                                class=" card-btn add-solution-btn "
+                                aria-label="add solution"
+                            >
+                                Add Solution
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-20 mb-5">
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="bg-white">
+                <ul
+                    class="nav nav-tabs nav-section nav-mob-section"
+                    id="leftTab"
+                    role="tablist"
+                >
+                    <li class="nav-item">
+                        <a
+                            class="nav-link active"
+                            id="overview-tab"
+                            data-toggle="tab"
+                            href="javascript:void(0);"
+                            (click)="switchTab(0)"
+                            role="tab"
+                            aria-controls="overview"
+                            aria-selected="true"
+                            >Overview</a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a
+                            class="nav-link"
+                            id="enrich-tab"
+                            data-toggle="tab"
+                            href="javascript:void(0);"
+                            (click)="switchTab(1)"
+                            role="tab"
+                            aria-controls="enrich"
+                            aria-selected="false"
+                            >Enriched ({{ enrichments | length }})</a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a
+                            class="nav-link"
+                            id="validate-tab"
+                            data-toggle="tab"
+                            href="javascript:void(0);"
+                            (click)="switchTab(2)"
+                            role="tab"
+                            aria-controls="validate"
+                            aria-selected="false"
+                            >Validated ({{ enrichments | length }})</a
+                        >
+                    </li>
+                    <li class="nav-item">
+                        <a
+                            class="nav-link"
+                            id="collaborate-tab"
+                            data-toggle="tab"
+                            href="javascript:void(0);"
+                            (click)="switchTab(3)"
+                            role="tab"
+                            aria-controls="collaborate"
+                            aria-selected="false"
+                            >Collaborated ({{ collaborators | length }})</a
+                        >
+                    </li>
+                </ul>
+                <div id="leftTabGroup" class="pb-2">
+
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5 margin-top-20">
+            <div class="bg-white">
+                <ul
+                    class="nav nav-tabs nav-section"
+                    id="discussionTab"
+                    role="tablist"
+                >
+                    <li class="nav-item">
+                        <a
+                            class="nav-link active"
+                            id="discussion-tab"
+                            data-toggle="tab"
+                            href="javascript:void(0);"
+                            role="tab"
+                            aria-controls="discussion"
+                            aria-selected="true"
+                            >Discussion</a
+                        >
+                    </li>
+                </ul>
+
+                <div class="btn-group sort-btn">
+                    <button
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="false"
+                        class="close dropdown-toggle text-capitalize"
+                    >
+                        Sort
+                    </button>
+                    <div class="dropdown-menu mt-2 dropdown-menu-right">
+                        <a
+                            class="dropdown-item"
+                            href="javascript:void(0);"
+                            (click)="showPopularDiscussions('latest')"
+                            >Latest</a
+                        >
+                        <a
+                            class="dropdown-item"
+                            href="javascript:void(0);"
+                            (click)="showPopularDiscussions('popular')"
+                            >Popular</a
+                        >
+                    </div>
+                </div>
+
+                <div id="discussionTabGroup" class="pb-2">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

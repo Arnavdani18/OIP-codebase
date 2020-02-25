@@ -6,7 +6,7 @@
         </div>
 
         <div class="heading-container mt-3 text-capitalize ">
-            <a href="javascript:void(0);" class="text-dark">
+            <a href="{{problem.route}}" class="text-dark">
                 <h2 class="heading">
                     {{problem.title}}
                 </h2>
@@ -29,7 +29,6 @@
                     {{frappe.utils.pretty_date(problem.creation)}}
                     <span class="dot"></span>
                     {{problem.city|default('', true)}}, {{problem.country_code|default('', true)}}
-                    <!-- {{[problem.city|default('', true),problem.country_code|default('', true)]|join(', ')}} -->
                 </p>
             </div>
         </div>
@@ -40,7 +39,7 @@
                 {{ sector.sector }}
             </div>
             {% endfor %}
-            
+
         </div>
 
         <div class="interaction-container mt-3">
@@ -93,15 +92,5 @@
                 +{{problem.images | length}}
             </div>
         </div>
-        <!-- <div class="image-and-count-container d-lg-none">
-            <img
-                src="{{problem.featured_image}}"
-                alt="image"
-                class="image-ipad"
-            />
-            <div class="total-count">
-                +{{problem.images | length}}
-            </div>
-        </div> -->
     </div>
 </div>
