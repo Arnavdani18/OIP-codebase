@@ -97,16 +97,11 @@
                 <h3 class="heading">
                     Location(s)
                 </h3>
-
-                <ng-container *ngFor="let location of problemLocations">
-                    <a
+                <a
                         href="javascript:void(0);"
-                        class="description-format"
-                        onclick="locationSelected(location)"
-                    >
-                        {{ location.location_name }}
-                    </a>
-                </ng-container>
+                        class="description-format">
+                        {{city|default('', true)}}, {{country|default('', true)}}
+                </a>
             </div>
         </div>
     </div>
@@ -117,18 +112,11 @@
             </h3>
 
             <div class="tags">
-                <ng-container *ngFor="let tag of tags">
-                    <button
-                        class="tag actions text-capitalize"
-                        [disabled]="
-                            filterService.is_domain_filter_mode &&
-                            !tagsService.allTags[tag.name]
-                        "
-                        onclick="sectorSelected(tag)"
-                    >
-                        {{ tag.name.toLowerCase() }}
-                    </button>
-                </ng-container>
+                {% for sector in sectors %}
+                <button class="tag actions text-capitalize">
+                    {{ sector.sector }}
+                </button>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -142,50 +130,5 @@
     </h3>
 
     <div class="row">
-        <ng-container *ngFor="let solution of solutions; let i = index">
-            <div class="col-md-6 solutions-container mt-2">
-                <div class="solution">
-                    <span class="green-bullet"></span>
-                    <span>Solution</span>
-                </div>
-
-                <div class="solution-heading">
-                    <h2>
-                        {{
-                            solution.title.length > 50
-                                ? solution.title.slice(0, 50) + '...'
-                                : solution.title
-                        }}
-                    </h2>
-                </div>
-
-                <div class="created-by">
-                    <img
-                        src="{{
-                            solution.user.photo_url &&
-                            solution.user.photo_url.fileEndpoint &&
-                            checkUrlIsImg(
-                                filesService.fileAccessUrl +
-                                    solution.user.photo_url.fileEndpoint
-                            )
-                                ? filesService.fileAccessUrl +
-                                  solution.user.photo_url.fileEndpoint
-                                : './assets/img/default-avatar.jpg'
-                        }}"
-                        alt="profile"
-                        style="object-fit: cover;"
-                    />
-                    <span class="created-by-right-side"
-                        >Created by
-                        {{
-                            auth.currentUserValue.id == solution.user_id
-                                ? 'You'
-                                : solution.user.name
-                        }}</span
-                    >
-                </div>
-                <hr />
-            </div>
-        </ng-container>
     </div>
 </div>

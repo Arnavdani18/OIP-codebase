@@ -1,0 +1,80 @@
+<div class="comment-section">
+    <div class="">
+        <img
+            src="{{comment.user_image|default('/files/default-avatar.jpg', true)}}"
+            alt="profile photo"
+            class=""
+            style="object-fit: cover;overflow: hidden;"
+            width="40"
+            height="40"
+        />
+    </div>
+    <div class="details-container">
+        <div>
+            <span>
+                {{ comment.owner or 'Anonymous' }}
+            </span>
+            <br />
+            <span class="comment-date">
+                {{frappe.utils.pretty_date(comment.creation)}}
+            </span>
+        </div>
+        <p>{{comment.text}}</p>
+        <button
+            class="attach-btn"
+            data-toggle="modal"
+            #showModalBtn
+            (click)="console.log('discussion attachment')">
+            <img
+                class="mr-1"
+                src="/files/paper_clip.svg"
+                alt=""
+            />
+
+            See {{ comment.attachments | length }} Attachments
+        </button>
+    </div>
+</div>
+
+{{ comment.replies | length }} Replies
+
+{% for reply in comment.replies %}
+<div class="reply-section">
+    <div class="">
+        <img
+            src="{{reply.user_image|default('/files/default-avatar.jpg', true)}}"
+            alt="profile photo"
+            class=""
+            style="object-fit: cover;overflow: hidden;"
+            width="40"
+            height="40"
+        />
+    </div>
+    <div class="reply-text-section">
+        <div class="user-info">
+            <span class="text-capitalize replier-name">
+                {{ reply.owner or 'Anonymous' }}
+            </span>
+            <span class="dot"></span>
+            <span class="reply-date">
+                {{frappe.utils.pretty_date(reply.creation)}}
+            </span>
+        </div>
+        <p>{{reply.text}}</p>
+
+        <button
+            class="attach-btn"
+            data-toggle="modal"
+            #showModalBtn
+            (click)="console.log('discussion attachment')">
+            <img
+                class="mr-1"
+                src="/files/paper_clip.svg"
+                alt=""
+            />
+
+            See {{ reply.attachments | length }} Attachments
+        </button>
+    </div>
+</div>
+{% endfor %}

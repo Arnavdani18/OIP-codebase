@@ -57,7 +57,7 @@
    "fieldname": "images",
    "fieldtype": "Table",
    "label": "Images",
-   "options": "Image Table"
+   "options": "Website Slideshow Item"
   },
   {
    "fieldname": "column_break_8",
@@ -87,7 +87,7 @@
    "label": "Published?"
   }
  ],
- "modified": "2020-02-25 10:31:36.776965",
+ "modified": "2020-02-27 18:23:10.651775",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Solution",

@@ -26,6 +26,7 @@
   "country_code",
   "section_break_9",
   "impact",
+  "extent",
   "resources_needed",
   "beneficiaries",
   "images",
@@ -35,6 +36,7 @@
   "enrichments",
   "validations",
   "collaborators",
+  "discussions",
   "section_break_25",
   "likes",
   "column_break_27",
@@ -98,7 +100,7 @@
    "fieldname": "images",
    "fieldtype": "Table",
    "label": "Images",
-   "options": "Image Table"
+   "options": "Website Slideshow Item"
   },
   {
    "fieldname": "column_break_8",
@@ -239,11 +241,22 @@
    "in_preview": 1,
    "label": "Sectors",
    "options": "Sector Table"
+  },
+  {
+   "fieldname": "extent",
+   "fieldtype": "Small Text",
+   "label": "Extent"
+  },
+  {
+   "fieldname": "discussions",
+   "fieldtype": "Table",
+   "label": "Discussions",
+   "options": "Discussion Table"
   }
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2020-02-24 13:06:08.861000",
+ "modified": "2020-02-27 22:13:26.017048",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Problem",
@@ -260,6 +273,15 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Guest",
+   "share": 1
   }
  ],
  "route": "list_problems",

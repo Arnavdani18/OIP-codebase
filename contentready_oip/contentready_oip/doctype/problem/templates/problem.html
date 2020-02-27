@@ -254,7 +254,7 @@
                 <div id="leftTabGroup" class="pb-2">
                     <div class="tab-content" id="leftTabContent">
                       <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
-
+                        {% include "templates/includes/problem/overview.html" %}
                       </div>
                       <div class="tab-pane fade" id="enrichments" role="tabpanel" aria-labelledby="enrichments-tab">World</div>
                       <div class="tab-pane fade" id="validations" role="tabpanel" aria-labelledby="validations-tab">...</div>
@@ -310,7 +310,9 @@
                 </div>
 
                 <div id="discussionTabGroup" class="pb-2">
-
+                    {% for comment in discussions %}
+                        {% include "templates/includes/common/comment.html" %}
+                    {% endfor %}
                 </div>
             </div>
         </div>

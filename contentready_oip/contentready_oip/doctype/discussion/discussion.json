@@ -1,32 +1,38 @@
 {
- "autoname": "field:title",
- "creation": "2019-12-04 19:13:43.466873",
+ "creation": "2020-02-27 21:52:25.472674",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "title",
-  "description"
+  "text",
+  "attachments",
+  "replies"
  ],
  "fields": [
   {
-   "fieldname": "title",
-   "fieldtype": "Data",
+   "fieldname": "text",
+   "fieldtype": "Text",
    "in_list_view": 1,
-   "label": "Title",
-   "reqd": 1,
-   "unique": 1
+   "label": "Text",
+   "reqd": 1
   },
   {
-   "fieldname": "description",
-   "fieldtype": "Data",
-   "label": "Description"
+   "fieldname": "attachments",
+   "fieldtype": "Table",
+   "label": "Attachments",
+   "options": "Website Slideshow Item"
+  },
+  {
+   "fieldname": "replies",
+   "fieldtype": "Table",
+   "label": "Replies",
+   "options": "Discussion Table"
   }
  ],
- "modified": "2020-02-27 13:27:42.037610",
+ "modified": "2020-02-27 22:09:37.127423",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
- "name": "Sector",
+ "name": "Discussion",
  "owner": "Administrator",
  "permissions": [
   {
@@ -40,15 +46,6 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
-  },
-  {
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Guest",
-   "share": 1
   }
  ],
  "quick_entry": 1,

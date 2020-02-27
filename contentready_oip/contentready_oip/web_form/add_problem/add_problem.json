@@ -18,7 +18,7 @@
  "is_standard": 1,
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2020-02-25 23:13:08.688350",
+ "modified": "2020-02-27 18:23:35.512110",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "add-problem",
@@ -297,7 +297,7 @@
    "label": "Images",
    "max_length": 0,
    "max_value": 0,
-   "options": "Image Table",
+   "options": "Website Slideshow Item",
    "read_only": 0,
    "reqd": 0,
    "show_in_filter": 0

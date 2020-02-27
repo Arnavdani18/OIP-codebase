@@ -10,7 +10,6 @@ frappe.ready(async () => {
             $(this).parent().before(this);
         });
         $(".web-form-wrapper").prepend('<div class="row"><div class="col-md-6" id="add-problem-form"></div><div class="col-md-6"><h3>Similar Problems</h3><span id="similar-problems"></span></div></div>');
-        // $('[role="form"]').append('<div class="row"><div class="col-md-6" id="add-problem-form"></div><div class="col-md-6"><h3>Similar Problems</h3><span id="similar-problems"></span></div></div>');
         $('#add-problem-form').append($('.form-layout'));
         $('#similar-problems').append('<div></div>');
     }
@@ -31,16 +30,17 @@ frappe.ready(async () => {
     }
 
     initAutocomplete = () => {
+        // TODO: Use domain settings to retrieve country list
         $('*[data-fieldname="city"]:text').attr("id", "autocomplete").attr('placeholder', 'Search here');
         // Create the autocomplete object, restricting the search predictions to
         // geographical location types.
         autocomplete = new google.maps.places.Autocomplete(
             document.getElementById('autocomplete'),
             { types: ['(cities)'], componentRestrictions: {country: 'in'} }
-            // TODO: Use domain settings to retrieve country list
         );
         // Avoid paying for data that you don't need by restricting the set of
         // place fields that are returned to just the address components.
+        // See https://developers.google.com/maps/documentation/javascript/places-autocomplete#add_autocomplete
         autocomplete.setFields(['address_component', 'geometry']);
         // When the user selects an address from the drop-down, populate the
         // address fields in the form.
@@ -82,6 +82,7 @@ frappe.ready(async () => {
     }
 
     lookForSimilarProblems = async () => {
+        // Delay as the user is probably still typing
         await sleep(500);
         // Look up title again - user could have typed something since the event was triggered.
         const text = $('*[data-fieldname="title"]:text').val().trim();
@@ -101,11 +102,15 @@ frappe.ready(async () => {
         });
     }
 
+    setFeaturedImage = (file_url) => {
+        frappe.web_form.doc.featured_image = file_url;
+    }
+
     addFileToDoc = (file) => {
         const response = JSON.parse(file.xhr.response);
         const file_url = response.message.file_url;
         if (!frappe.web_form.doc.featured_image) {
-            frappe.web_form.doc.featured_image = file_url;
+            setFeaturedImage(file_url);
         }
         if (!frappe.web_form.doc.images) {
             frappe.web_form.doc.images = [];
@@ -115,22 +120,30 @@ frappe.ready(async () => {
         })
     }
 
+    removeFileFromDoc = (file) => {
+        // console.log('removed', file);
+        frappe.web_form.doc.images = frappe.web_form.doc.images.filter(i => !i.image.endsWith(file.name));
+    } 
+
     addDropzone = () => {
+        // TODO: Allow user to select an image as featured image
+        // disable autoDiscover as we are manually binding the dropzone to a form element
         Dropzone.autoDiscover = false;
-        // console.log('dropzone loaded');
-        const el = `<form action="/api/method/upload_file" class="dropzone dz-clickable" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
+        const el = `<form class="dropzone dz-clickable" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
         $('*[data-fieldname="images"]*[data-fieldtype="Table"]').parent().after(el);
         $('#dropzone').dropzone({
             url: "/api/method/upload_file",
             autoDiscover: false,
+            addRemoveLinks: true,
             headers: {
                 'Accept': 'application/json',
                 'X-Frappe-CSRF-Token': frappe.csrf_token
             },
             init: function() {
                 // use this event to add to child table
-                // this.on("addedfile", function(file) { console.log("Added file.", file); });
                 this.on("complete", addFileToDoc);
+                // use this event to remove from child table
+                this.on('removedfile', removeFileFromDoc);
             }
         });
     }
@@ -169,15 +182,6 @@ frappe.ready(async () => {
         const saveAsDraftBtn = `<button class="btn btn-sm ml-2" onclick="saveAsDraft()">Save as Draft</button>`;
         const publishBtn = `<button class="btn btn-sm btn-primary ml-2" onclick="publishProblem()">Publish</button>`;
         $('.page-header-actions-block').append(saveAsDraftBtn).append(publishBtn);
-    }
-
-    addNewRow = () => {
-        for (let i = 0; i < 1; i++) {
-            frappe.web_form.get_field('images').grid.add_new_row();
-            frappe.web_form.get_field('images').grid.grid_rows[i].show_form();
-            frappe.web_form.get_field('images').grid.grid_rows[i].get_field('image').set_value('/files/2_parallel_videos.png');
-            // frappe.web_form.get_field('images').grid.grid_rows[i].hide_form();
-        }
     }
     // End Helpers
 

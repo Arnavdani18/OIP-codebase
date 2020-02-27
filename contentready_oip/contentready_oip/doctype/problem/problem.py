@@ -20,3 +20,6 @@ class Problem(WebsiteGenerator):
 		# We add a randomised suffix to distinguish problems with the same name.
 		if frappe.db.exists('Problem', self.scrubbed_title()):
 			self.name = self.scrubbed_title()+'-'+frappe.generate_hash("",3)
+
+	def get_context(self):
+		pass
