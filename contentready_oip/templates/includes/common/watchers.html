@@ -1,12 +1,61 @@
 <div class="col px-0 ">
     <button
-        onclick="processAction('watch','{{doctype}}','{{name}}')"
+        onclick="toggle_watcher('{{doctype}}','{{name}}')"
         role="button"
         class="btn btn-social"
     >
-        <i class="far fa-eye"></i>
+        <i data-has-user-watched=0 id="watcher-icon-{{doctype}}-{{name}}" class="far fa-eye"></i>
     </button>
-    <span class="social-stats">
+    <span class="social-stats" data-num-watchers="{{watchers | length}}" id="watcher-count-{{doctype}}-{{name}}">
         {{watchers | length}}
     </span>
 </div>
+
+<script>
+    changeUI = (btnId, countId, hasUserWatched, numWatchers) => {
+        $(btnId).data('has-user-watched', hasUserWatched);
+        hasUserWatched ? $(btnId).addClass('selected'): $(btnId).removeClass('selected');
+        $(countId).text(numWatchers);
+        $(countId).data('num-watchers', numWatchers);
+    }
+
+    toggle_watcher = (doctype, name) => {
+        const btnId = `#watcher-icon-${doctype}-${name}`;
+        const countId = `#watcher-count-${doctype}-${name}`;
+        // initial values
+        let hasUserWatched = $(btnId).data('has-user-watched');
+        let numWatchers = $(countId).data('num-watchers');
+        if (hasUserWatched) {
+            numWatchers -= numWatchers;
+        } else {
+            numWatchers += numWatchers;
+        }
+        hasUserWatched = !hasUserWatched;
+        // change UI first, then send to server
+        // changeUI(btnId, countId, hasUserWatched, numWatchers);
+        frappe.call({
+            method: 'contentready_oip.api.toggle_watcher',
+            args: {doctype: doctype, name: name},
+            callback: (r) => {
+                // console.log(r);
+                // server is the source of truth so we change the UI to reflect that.
+                hasUserWatched = r.message[0];
+                numWatchers = r.message[1].length;
+                changeUI(btnId, countId, hasUserWatched, numWatchers);
+            }
+        });
+    }
+
+    // TODO: Replace this call with a filter on the data-watchers attribute.
+    // However, currently, frappe does not expand child tables within child tables into dicts.
+    frappe.ready(() => {
+        frappe.call({
+            method: 'contentready_oip.api.has_user_watched',
+            args: {doctype: '{{doctype}}', name: '{{name}}'},
+            callback: (r) => {
+                const btnId = `#watcher-icon-{{doctype}}-{{name}}`;
+                changeUI(btnId, null, r.message, null);
+            }
+        });
+    })
+</script>

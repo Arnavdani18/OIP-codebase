@@ -6,6 +6,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "problem",
   "title",
   "featured_image",
   "column_break_8",
@@ -198,10 +199,15 @@
    "fieldname": "short_description",
    "fieldtype": "Text",
    "label": "Short Description"
+  },
+  {
+   "fieldname": "problem",
+   "fieldtype": "Data",
+   "label": "Problem"
   }
  ],
  "is_published_field": "is_published",
- "modified": "2020-02-28 19:07:37.887135",
+ "modified": "2020-02-29 16:46:00.392615",
  "modified_by": "tej@jaaga.in",
  "module": "ContentReady OIP",
  "name": "Enrichment",

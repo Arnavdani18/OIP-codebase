@@ -1,12 +1,61 @@
 <div class="col pr-0">
     <button
-        onclick="processAction('like','{{doctype}}','{{name}}')"
+        onclick="toggle_like('{{doctype}}','{{name}}' )"
         role="button"
         class="btn btn-social"
     >
-        <i class="far fa-thumbs-up"></i>
+        <i data-has-user-liked=0 id="like-icon-{{doctype}}-{{name}}" class="far fa-thumbs-up"></i>
     </button>
-    <span class="social-stats">
+    <span class="social-stats" data-num-likes="{{likes | length}}" id="like-count-{{doctype}}-{{name}}">
         {{likes | length}}
     </span>
 </div>
+
+<script>
+    changeUI = (btnId, countId, hasUserLiked, numLikes) => {
+        $(btnId).data('has-user-liked', hasUserLiked);
+        hasUserLiked ? $(btnId).addClass('selected'): $(btnId).removeClass('selected');
+        $(countId).text(numLikes);
+        $(countId).data('num-likes', numLikes);
+    }
+
+    toggle_like = (doctype, name) => {
+        const btnId = `#like-icon-${doctype}-${name}`;
+        const countId = `#like-count-${doctype}-${name}`;
+        // initial values
+        let hasUserLiked = $(btnId).data('has-user-liked');
+        let numLikes = $(countId).data('num-likes');
+        if (hasUserLiked) {
+            numLikes -= numLikes;
+        } else {
+            numLikes += numLikes;
+        }
+        hasUserLiked = !hasUserLiked;
+        // change UI first, then send to server
+        // changeUI(btnId, countId, hasUserLiked, numLikes);
+        frappe.call({
+            method: 'contentready_oip.api.toggle_like',
+            args: {doctype: doctype, name: name},
+            callback: (r) => {
+                // console.log(r);
+                // server is the source of truth so we change the UI to reflect that.
+                hasUserLiked = r.message[0];
+                numLikes = r.message[1].length;
+                changeUI(btnId, countId, hasUserLiked, numLikes);
+            }
+        });
+    }
+
+    // TODO: Replace this call with a filter on the data-likes attribute.
+    // However, currently, frappe does not expand child tables within child tables into dicts.
+    frappe.ready(() => {
+        frappe.call({
+            method: 'contentready_oip.api.has_user_liked',
+            args: {doctype: '{{doctype}}', name: '{{name}}'},
+            callback: (r) => {
+                const btnId = `#like-icon-{{doctype}}-{{name}}`;
+                changeUI(btnId, null, r.message, null);
+            }
+        });
+    })
+</script>

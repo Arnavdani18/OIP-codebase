@@ -3,14 +3,8 @@
 <div class="comment-section">
     <div class="">
         {% set user_image = frappe.db.get_value('User', comment.owner, 'user_image') %}
-        <img
-            src="{{user_image|default('/files/default-avatar.jpg', true)}}"
-            alt="profile photo"
-            class=""
-            style="object-fit: cover;overflow: hidden;"
-            width="40"
-            height="40"
-        />
+        <img src="{{user_image|default('/files/default-avatar.jpg', true)}}" alt="profile photo" class=""
+            style="object-fit: cover;overflow: hidden;" width="40" height="40" />
     </div>
     <div class="details-container">
         <div>
@@ -23,15 +17,22 @@
             </span>
         </div>
         <p>{{comment.text}}</p>
-        <button
-            class="attach-btn"
-            data-toggle="modal"
-            #showModalBtn
+        <button class="attach-btn" data-toggle="modal" #showModalBtn
             onclick="processAction('view-attachments','{{doctype}}','{{name}}')">
             <i class="fas fa-paperclip"></i>
 
             See {{ comment.attachments | length }} Attachments
         </button>
+        <button class="btn" onclick="replyToComment('{{comment.name}}')">
+            <i class="far fa-share"></i>
+            Reply
+        </button>
+        <div id="reply-{{comment.name}}" class="hidden">
+            {% set doctype = comment.doctype %}
+            {% set name = comment.name %}
+            {% set parent_div = '#reply-' + comment.name %}
+            {% include "templates/includes/common/comment_editor.html" %}
+        </div>
     </div>
 </div>
 
@@ -39,14 +40,8 @@
 <div class="reply-section">
     <div class="">
         {% set user_image = frappe.db.get_value('User', reply.owner, 'user_image') %}
-        <img
-            src="{{user_image|default('/files/default-avatar.jpg', true)}}"
-            alt="profile photo"
-            class=""
-            style="object-fit: cover;overflow: hidden;"
-            width="40"
-            height="40"
-        />
+        <img src="{{user_image|default('/files/default-avatar.jpg', true)}}" alt="profile photo" class=""
+            style="object-fit: cover;overflow: hidden;" width="40" height="40" />
     </div>
     <div class="reply-text-section">
         <div class="user-info">
@@ -60,10 +55,7 @@
         </div>
         <p>{{reply.text}}</p>
 
-        <button
-            class="attach-btn"
-            data-toggle="modal"
-            #showModalBtn
+        <button class="attach-btn" data-toggle="modal" #showModalBtn
             onclick="processAction('view-attachments','{{doctype}}','{{name}}')">
             <i class="fas fa-paperclip"></i>
 
@@ -73,3 +65,19 @@
 </div>
 {% endfor %}
 
+<script>
+    replyToComment = (name) => {
+        // console.log('hello', $(`#reply-${name}`));
+        $(`#reply-${name}`).removeClass('hidden');
+    }
+
+</script>
+
+<style>
+    .orange-text{
+        color: #d98b26 !important;
+    }
+    .hidden{
+        display: none;
+    }
+</style>

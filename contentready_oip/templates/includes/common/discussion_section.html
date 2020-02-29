@@ -13,7 +13,7 @@
                 role="tab"
                 aria-controls="discussion"
                 aria-selected="true"
-                >Discussions ({{ discussion | length }})</a
+                >Discussions ({{ discussions | length }})</a
             >
         </li>
     </ul>
@@ -42,10 +42,15 @@
             >
         </div>
     </div>
-    {% include "templates/includes/common/comment_editor.html" %}
+
+    <div class="my-4 px-4">
+        {% set doctype = doctype %}
+        {% set name = name %}
+        {% include "templates/includes/common/comment_editor.html" %}
+    </div>
 
     <div id="discussionTabGroup" class="pb-2">
-        {% for d in discussions %}
+        {% for d in discussions | reverse %}
             {% set comment = frappe.get_doc('Discussion', d.discussion) %}
             {% include "templates/includes/common/comment.html" %}
         {% endfor %}

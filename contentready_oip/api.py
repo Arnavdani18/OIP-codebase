@@ -39,6 +39,18 @@ def get_filters():
     }
 
 @frappe.whitelist(allow_guest = True)
+def get_doc_by_type_name(doctype, name):
+    return frappe.get_doc(doctype, name)
+
+@frappe.whitelist(allow_guest = True)
+def get_doc_field(doctype, name, field):
+    return frappe.get_value(doctype, name, field)
+
+@frappe.whitelist(allow_guest = True)
+def get_child_table(child_table_doctype, parent_doctype, parent_name):
+    return frappe.get_all(child_table_doctype, filters={'parenttype': parent_doctype, 'parent': parent_name})
+
+@frappe.whitelist(allow_guest = True)
 def get_filtered_problems(selectedLocation, selectedSectors):
     # TODO: Implement location filtering 
     if 'all' in selectedSectors:
@@ -87,3 +99,80 @@ def get_homepage_stats():
         'solutions': frappe.db.count('Solution', filters={'is_published': True}),
         'collaborators': frappe.db.count('User Profile'),
     }
+
+@frappe.whitelist(allow_guest = False)
+def has_user_liked(doctype, name):
+    likes = frappe.get_all('Like Table', filters={'user': frappe.session.user, 'parenttype': doctype, 'parent': name})
+    return len(likes) > 0
+
+@frappe.whitelist(allow_guest = False)
+def toggle_like(doctype, name):
+    likes = frappe.get_all('Like Table', filters={'user': frappe.session.user, 'parenttype': doctype, 'parent': name})
+    if len(likes) > 0:
+        # user has already liked this document
+        for l in likes:
+            frappe.delete_doc('Like Table', l['name'])
+    else:
+        # add like for user
+        doc = frappe.get_doc(doctype, name)
+        like = doc.append('likes', {})
+        like.user = frappe.session.user
+        doc.save()
+        frappe.db.commit()
+    return has_user_liked(doctype, name), get_child_table('Like Table', doctype, name)
+
+@frappe.whitelist(allow_guest = False)
+def has_user_watched(doctype, name):
+    watchers = frappe.get_all('Watch Table', filters={'user': frappe.session.user, 'parenttype': doctype, 'parent': name})
+    return len(watchers) > 0
+
+@frappe.whitelist(allow_guest = False)
+def toggle_watcher(doctype, name):
+    watchers = frappe.get_all('Watch Table', filters={'user': frappe.session.user, 'parenttype': doctype, 'parent': name})
+    if len(watchers) > 0:
+        # user has already watched this document
+        for l in watchers:
+            frappe.delete_doc('Watch Table', l['name'])
+    else:
+        # add watch for user
+        doc = frappe.get_doc(doctype, name)
+        watch = doc.append('watchers', {})
+        watch.user = frappe.session.user
+        doc.save()
+        frappe.db.commit()
+    return has_user_watched(doctype, name), get_child_table('Watch Table', doctype, name)
+
+@frappe.whitelist(allow_guest = False)
+def add_comment(doctype, name, text, html=True):
+    doc = frappe.get_doc({
+        'doctype': 'Discussion',
+        'text': text
+    })
+    doc.save()
+    parent_doc = frappe.get_doc(doctype, name)
+    if doctype == 'Discussion':
+        child = parent_doc.append('replies', {})
+    else:
+        child = parent_doc.append('discussions', {})
+    child.discussion = doc.name
+    parent_doc.save()
+    frappe.db.commit()
+    template = "templates/includes/common/comment.html"
+    context = {
+        'comment': doc
+    }
+    html = frappe.render_template(template, context)
+    return html
+
+@frappe.whitelist(allow_guest = False)
+def get_problem_card(name, html=True):
+    doc = frappe.get_doc('Problem', name)
+    if html:
+        context = {
+            'problem': doc
+        }
+        template = "templates/includes/problem/problem_card.html"
+        html = frappe.render_template(template, context)
+        return html
+    else:
+        return doc
