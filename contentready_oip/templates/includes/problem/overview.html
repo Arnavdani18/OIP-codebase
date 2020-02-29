@@ -6,9 +6,9 @@
         <h3 class="heading">
             Description
         </h3>
-        <p id="problemDescription">
-            {{ description }}
-        </p>
+        {% set long_text = description %}
+        {% set short_text = short_description %}
+        {% include "templates/includes/common/read_more.html" %}
     </div>
 </div>
 
@@ -110,25 +110,13 @@
             <h3 class="heading">
                 Sectors
             </h3>
-
-            <div class="tags">
-                {% for sector in sectors %}
-                <button class="tag actions text-capitalize">
-                    {{ sector.sector }}
-                </button>
-                {% endfor %}
-            </div>
+            {% include "templates/includes/common/sector_labels.html" %}
         </div>
     </div>
 </div>
 
 <hr />
 
-<div class="col pb-3">
-    <h3 class="heading" id="solutionCards" *ngIf="solutions.length">
-        This problem has the following solutions
-    </h3>
-
-    <div class="row">
-    </div>
+<div class="col pb-3" id="solutions-section">
+    {% include "templates/includes/problem/solutions_section.html" %}
 </div>

@@ -32,10 +32,11 @@
   "images",
   "column_break_14",
   "description",
+  "short_description",
   "section_break_14",
   "enrichments",
   "validations",
-  "collaborators",
+  "collaborations",
   "discussions",
   "section_break_25",
   "likes",
@@ -150,7 +151,7 @@
    "fieldname": "validations",
    "fieldtype": "Table",
    "label": "Validations",
-   "options": "Validate Table"
+   "options": "Validation Table"
   },
   {
    "fieldname": "section_break_9",
@@ -216,12 +217,6 @@
    "options": "Enrichment Table"
   },
   {
-   "fieldname": "collaborators",
-   "fieldtype": "Table",
-   "label": "Collaborators",
-   "options": "Collaborator Table"
-  },
-  {
    "fieldname": "state_code",
    "fieldtype": "Data",
    "label": "State Code"
@@ -252,12 +247,24 @@
    "fieldtype": "Table",
    "label": "Discussions",
    "options": "Discussion Table"
+  },
+  {
+   "fieldname": "collaborations",
+   "fieldtype": "Table",
+   "label": "Collaborations",
+   "options": "Collaboration Table"
+  },
+  {
+   "fieldname": "short_description",
+   "fieldtype": "Text",
+   "hidden": 1,
+   "label": "Short Description"
   }
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2020-02-27 22:13:26.017048",
- "modified_by": "Administrator",
+ "modified": "2020-02-28 18:20:03.029409",
+ "modified_by": "tej@jaaga.in",
  "module": "ContentReady OIP",
  "name": "Problem",
  "owner": "Administrator",

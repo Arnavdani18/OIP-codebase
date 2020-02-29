@@ -1,0 +1,238 @@
+{
+ "allow_guest_to_view": 1,
+ "autoname": "Enrichment.###",
+ "creation": "2020-02-28 13:00:33.338376",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "featured_image",
+  "column_break_8",
+  "is_published",
+  "org",
+  "org_title",
+  "location_section",
+  "city",
+  "latitude",
+  "longitude",
+  "column_break_13",
+  "state",
+  "state_code",
+  "column_break_16",
+  "country",
+  "country_code",
+  "section_break_9",
+  "impact",
+  "extent",
+  "resources_needed",
+  "beneficiaries",
+  "images",
+  "column_break_14",
+  "description",
+  "short_description",
+  "section_break_25",
+  "likes"
+ ],
+ "fields": [
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Title",
+   "reqd": 1,
+   "search_index": 1
+  },
+  {
+   "fieldname": "featured_image",
+   "fieldtype": "Attach Image",
+   "in_preview": 1,
+   "label": "Featured Image"
+  },
+  {
+   "fieldname": "column_break_8",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "default": "0",
+   "fieldname": "is_published",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Published?"
+  },
+  {
+   "fieldname": "org",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Organisation",
+   "options": "Organisation"
+  },
+  {
+   "fetch_from": "org.title",
+   "fieldname": "org_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Organisation Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "location_section",
+   "fieldtype": "Section Break",
+   "label": "Location"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "City",
+   "reqd": 1
+  },
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Data",
+   "label": "Latitude"
+  },
+  {
+   "fieldname": "longitude",
+   "fieldtype": "Data",
+   "label": "Longitude"
+  },
+  {
+   "fieldname": "column_break_13",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Data",
+   "label": "State"
+  },
+  {
+   "fieldname": "state_code",
+   "fieldtype": "Data",
+   "label": "State Code"
+  },
+  {
+   "fieldname": "column_break_16",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Data",
+   "label": "Country",
+   "reqd": 1
+  },
+  {
+   "fieldname": "country_code",
+   "fieldtype": "Data",
+   "label": "Country Code"
+  },
+  {
+   "fieldname": "section_break_9",
+   "fieldtype": "Section Break",
+   "label": "More Details"
+  },
+  {
+   "fieldname": "impact",
+   "fieldtype": "Small Text",
+   "label": "Impact",
+   "options": "Impact Table"
+  },
+  {
+   "fieldname": "extent",
+   "fieldtype": "Small Text",
+   "label": "Extent"
+  },
+  {
+   "fieldname": "resources_needed",
+   "fieldtype": "Small Text",
+   "in_preview": 1,
+   "label": "Resources Needed",
+   "options": "Resource Table"
+  },
+  {
+   "fieldname": "beneficiaries",
+   "fieldtype": "Small Text",
+   "label": "Beneficiaries",
+   "options": "Beneficiary Table"
+  },
+  {
+   "fieldname": "images",
+   "fieldtype": "Table",
+   "label": "Images",
+   "options": "Website Slideshow Item"
+  },
+  {
+   "fieldname": "column_break_14",
+   "fieldtype": "Column Break"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "in_global_search": 1,
+   "label": "Description",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_25",
+   "fieldtype": "Section Break",
+   "label": "Interest"
+  },
+  {
+   "fieldname": "likes",
+   "fieldtype": "Table",
+   "label": "Likes",
+   "options": "Like Table"
+  },
+  {
+   "fieldname": "short_description",
+   "fieldtype": "Text",
+   "label": "Short Description"
+  }
+ ],
+ "is_published_field": "is_published",
+ "modified": "2020-02-28 19:07:37.887135",
+ "modified_by": "tej@jaaga.in",
+ "module": "ContentReady OIP",
+ "name": "Enrichment",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Guest",
+   "share": 1
+  }
+ ],
+ "route": "list_problems",
+ "search_fields": "title",
+ "show_preview_popup": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

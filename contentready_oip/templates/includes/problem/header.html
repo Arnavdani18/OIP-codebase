@@ -1,0 +1,86 @@
+<div class="container mt-20">
+    <div class="row bg-white main-card">
+        <div class="col-md-4 img-section">
+            {% set images = [featured_image] + images %}
+            {% include "templates/includes/common/header_featured_image.html" %}
+        </div>
+        <div class="col-md-8 card-detail-section">
+            <div>
+                <div class="row ">
+                    <div class="col d-flex justify-content-between pr-0 problem-on-mobile left-section">
+                        {% include "templates/includes/problem/problem_label.html" %}
+                        <div>
+                            <a href="#solutions-section" class="see-solutions">
+                                See Solution(s)
+                            </a>
+                            {% set doctype = doctype %}
+                            {% set name = name %}
+                            {% include "templates/includes/common/edit_icon.html" %}
+                            {% include "templates/includes/common/share.html" %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row title-container">
+                    <div class="col pr-0 problem-on-mobile">
+                        <h1 class="problem-title">
+                            {{ title }}
+                        </h1>
+                        {% include "templates/includes/common/location_tag.html" %}
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="row mt-md-5 mt-sm-4">
+                    <div class="col d-flex align-items-center problem-on-mobile">
+                        {% set doc_owner = owner %}
+                        {% set date = modified %}
+                        {% include "templates/includes/common/user_thumbnail.html" %}
+                    </div>
+                </div>
+
+                <div class="row ">
+                    <div class="col-xl-4 align-self-center mt-3">
+                        <div class="row  stats-section">
+                            {% set doctype = doctype %}
+                            {% set name = name %}
+                            {% include "templates/includes/common/likes.html" %}
+                            {% include "templates/includes/common/watchers.html" %}
+                        </div>
+                    </div>
+
+                    <div class="col-xl-8 pr-0 action-btn-section mt-3">
+                        <div class="d-flex justify-content-between flex-wrap">
+                            <button
+                                class=" card-btn"
+                                onclick="processAction('enrich','{{doctype}}','{{name}}')"
+                            >
+                                Enrich
+                            </button>
+                            <button
+                                class=" card-btn "
+                                onclick="processAction('validate','{{doctype}}','{{name}}')"
+                            >
+                                Validate
+                            </button>
+                            <button
+                                class=" card-btn "
+                                onclick="processAction('collaborate','{{doctype}}','{{name}}')"
+                            >
+                                Collaborate
+                            </button>
+                            <button
+                                class=" card-btn add-solution-btn "
+                                aria-label="add solution"
+                                onclick="processAction('add-solution','{{doctype}}','{{name}}')"
+                            >
+                                Add Solution
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

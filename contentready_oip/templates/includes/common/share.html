@@ -1,0 +1,47 @@
+<button
+    class="btn btn-circle margin-20"
+    id="shareBtnDropdown"
+    data-toggle="dropdown"
+    aria-expanded="false"
+    aria-label="share"
+>
+    <i
+        class="far fa-share-alt share-icon"
+        aria-hidden="true"
+    ></i>
+</button>
+<div
+    class="dropdown-menu"
+    aria-labelledby="shareBtnDropdown"
+>
+    <a
+            class="dropdown-item"
+            href="javscript:void(0);"
+            onclick="processAction('linkedin','{{doctype}}','{{name}}')"
+            >LinkedIn</a
+    >
+    <a
+            class="dropdown-item"
+            href="javscript:void(0);"
+            onclick="processAction('facebook','{{doctype}}','{{name}}')"
+            >Facebook</a
+    >
+    <a
+            class="dropdown-item"
+            href="javscript:void(0);"
+            onclick="processAction('twitter','{{doctype}}','{{name}}')"
+            >Twitter</a
+    >
+    <a
+            class="dropdown-item"
+            href="javscript:void(0);"
+            onclick="processAction('email','{{doctype}}','{{name}}')"
+            >Email</a
+    >
+    <a
+            class="dropdown-item"
+            href="javscript:void(0);"
+            onclick="processAction('sms','{{doctype}}','{{name}}')"
+            >SMS</a
+    >
+</div>

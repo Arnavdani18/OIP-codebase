@@ -103,6 +103,7 @@ frappe.ready(async () => {
     }
 
     setFeaturedImage = (file_url) => {
+        // console.log(frappe.web_form.doc);
         frappe.web_form.doc.featured_image = file_url;
     }
 
@@ -110,6 +111,7 @@ frappe.ready(async () => {
         const response = JSON.parse(file.xhr.response);
         const file_url = response.message.file_url;
         if (!frappe.web_form.doc.featured_image) {
+            // console.log("Setting featured image", file_url);
             setFeaturedImage(file_url);
         }
         if (!frappe.web_form.doc.images) {

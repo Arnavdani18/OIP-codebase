@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.website.website_generator import WebsiteGenerator
+from frappe.utils.html_utils import clean_html
 
 class Problem(WebsiteGenerator):
 	def make_route(self):
@@ -21,5 +22,13 @@ class Problem(WebsiteGenerator):
 		if frappe.db.exists('Problem', self.scrubbed_title()):
 			self.name = self.scrubbed_title()+'-'+frappe.generate_hash("",3)
 
-	def get_context(self):
-		pass
+	# def get_context(self, context):
+	# 	print(self.as_dict())
+		# context.enrichments = self.enrichments
+		# context.discussions = self.discussions
+		# print(context)
+
+	def before_save(self):
+		self.short_description = clean_html(self.description)[:500]
+		if len(self.description) > 1000:
+			self.short_description += '...'

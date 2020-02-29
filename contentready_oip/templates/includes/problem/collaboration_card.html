@@ -1,0 +1,23 @@
+<div
+    class="col-sm-12 collaborateCard"
+>
+    <div class="float-right">
+        {% set doctype = collaboration.doctype %}
+        {% set name = collaboration.name %}
+        {% include "templates/includes/common/edit_icon.html" %}
+    </div>
+    <div>
+        <strong class="text-capitalize roles">
+            Role: {{collaboration.persona}}
+        </strong>
+    </div>
+    <div class="collaborate-comment">
+        {{ collaboration.intent }}
+    </div>
+
+    <div class="d-flex align-items-center validate-profile">
+        {% set doc_owner = collaboration.owner %}
+        {% set date = collaboration.modified %}
+        {% include "templates/includes/common/user_thumbnail.html" %}
+    </div>
+</div>

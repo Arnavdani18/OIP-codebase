@@ -1,0 +1,33 @@
+<div id="short-section">
+    <p>
+        {{short_text}}
+    </p>
+    {% if long_text and long_text | length > 500 %}
+        <a href="javascript:void(0);" class="orange-text" onclick="expandText()">Read more</a>
+    {% endif %}
+</div>
+
+<div class="hidden" id="full-section">
+    {{long_text}}
+    <a href="javascript:void(0);" class="orange-text" onclick="truncateText()">Read less</a>
+</div>
+
+<style>
+    .orange-text{
+        color: #d98b26 !important;
+    }
+    .hidden{
+        display: none;
+    }
+</style>
+
+<script>
+    expandText = () => {
+        $('#short-section').addClass('hidden');
+        $('#full-section').removeClass('hidden');
+    }
+    truncateText = () => {
+        $('#short-section').removeClass('hidden');
+        $('#full-section').addClass('hidden');
+    }
+</script>

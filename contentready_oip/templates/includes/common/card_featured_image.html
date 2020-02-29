@@ -1,0 +1,28 @@
+<div class="image-and-count-container d-none d-lg-block">
+    <img
+        src="{{images[0]|default('/files/image_placeholder.jpg', true)}}"
+        alt="image"
+        class="image"
+    />
+    <button
+        class="align-icon"
+        data-toggle="modal"
+        onclick="processAction('view-image-card','{{doctype}}','{{name}}')"
+    >
+        +{{(images | length)-1}}
+    </button>
+</div>
+<div class="image-and-count-container d-lg-none">
+    <img
+        src="{{images[0]|default('/files/image_placeholder.jpg', true)}}"
+        alt="image"
+        class="image-ipad"
+    />
+    <button
+        class="align-icon"
+        data-toggle="modal"
+        onclick="processAction('view-image-card','{{doctype}}','{{name}}')"
+    >
+        +{{(images | length)-1}}
+    </button>
+</div>

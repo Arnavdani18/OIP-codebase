@@ -1,7 +1,10 @@
+{% set doctype = comment.doctype %}
+{% set name = comment.name %}
 <div class="comment-section">
     <div class="">
+        {% set user_image = frappe.db.get_value('User', comment.owner, 'user_image') %}
         <img
-            src="{{comment.user_image|default('/files/default-avatar.jpg', true)}}"
+            src="{{user_image|default('/files/default-avatar.jpg', true)}}"
             alt="profile photo"
             class=""
             style="object-fit: cover;overflow: hidden;"
@@ -24,25 +27,20 @@
             class="attach-btn"
             data-toggle="modal"
             #showModalBtn
-            (click)="console.log('discussion attachment')">
-            <img
-                class="mr-1"
-                src="/files/paper_clip.svg"
-                alt=""
-            />
+            onclick="processAction('view-attachments','{{doctype}}','{{name}}')">
+            <i class="fas fa-paperclip"></i>
 
             See {{ comment.attachments | length }} Attachments
         </button>
     </div>
 </div>
 
-{{ comment.replies | length }} Replies
-
 {% for reply in comment.replies %}
 <div class="reply-section">
     <div class="">
+        {% set user_image = frappe.db.get_value('User', reply.owner, 'user_image') %}
         <img
-            src="{{reply.user_image|default('/files/default-avatar.jpg', true)}}"
+            src="{{user_image|default('/files/default-avatar.jpg', true)}}"
             alt="profile photo"
             class=""
             style="object-fit: cover;overflow: hidden;"
@@ -66,15 +64,12 @@
             class="attach-btn"
             data-toggle="modal"
             #showModalBtn
-            (click)="console.log('discussion attachment')">
-            <img
-                class="mr-1"
-                src="/files/paper_clip.svg"
-                alt=""
-            />
+            onclick="processAction('view-attachments','{{doctype}}','{{name}}')">
+            <i class="fas fa-paperclip"></i>
 
             See {{ reply.attachments | length }} Attachments
         </button>
     </div>
 </div>
 {% endfor %}
+

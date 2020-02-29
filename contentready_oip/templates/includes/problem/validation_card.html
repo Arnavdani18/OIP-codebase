@@ -1,0 +1,32 @@
+<div class="col-sm-12 validateCard">
+    <div class="float-right">
+        {% set doctype = validation.doctype %}
+        {% set name = validation.name %}
+        {% include "templates/includes/common/edit_icon.html" %}
+    </div>
+    <div class="agreedDisagreeDiv">
+        {% if validation.agree %}
+            <i
+                class="far fa-check agree"
+                aria-hidden="true"
+            ></i>
+            <strong>Agreed</strong>
+        {% else %}
+            <i
+                class="far fa-times disagree"
+                aria-hidden="true"
+            ></i>
+            <strong>Disagreed</strong>
+        {% endif %}
+    </div>
+
+    <div class="validate-comment">
+        {{ validation.comment }}
+    </div>
+
+    <div class="d-flex align-items-center validate-profile">
+        {% set doc_owner = validation.owner %}
+        {% set date = validation.modified %}
+        {% include "templates/includes/common/user_thumbnail.html" %}
+    </div>
+</div>

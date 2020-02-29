@@ -1,0 +1,36 @@
+{% set doctype = enrichment.doctype %}
+{% set name = enrichment.name %}
+<div class="enrich-card-container">
+    <div class="left-side">
+        <div class="heading-container text-capitalize ">
+            <a href="javascript:void(0);" onclick="processAction('view-enrichment','{{doctype}}','{{name}}')"
+                class="text-dark">
+                <h2 class="enrich-heading">
+                    {{ enrichment.title }}
+                </h2>
+            </a>
+        </div>
+
+        <div class="enrich-description">
+            <div class="">
+                {{enrichment.short_description}}
+            </div>
+        </div>
+
+        <div class="created-by mt-5">
+            {% set doc_owner = enrichment.owner %}
+            {% set date = enrichment.modified %}
+            {% include "templates/includes/common/user_thumbnail.html" %}
+        </div>
+
+        <div class="row stats-section">
+            {% set likes = enrichment.likes %}
+            {% include "templates/includes/common/likes.html" %}
+        </div>
+    </div>
+
+    <div class="right-side">
+        {% set images = [enrichment.featured_image] + enrichment.images %}
+        {% include "templates/includes/common/card_featured_image.html" %}
+    </div>
+</div>

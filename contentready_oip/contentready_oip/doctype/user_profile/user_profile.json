@@ -11,6 +11,7 @@
   "org",
   "org_title",
   "column_break_4",
+  "personas",
   "qualifications",
   "skills"
  ],
@@ -77,10 +78,17 @@
    "in_standard_filter": 1,
    "label": "Skills",
    "options": "Skill Table"
+  },
+  {
+   "fieldname": "personas",
+   "fieldtype": "Table",
+   "label": "Personas",
+   "options": "Persona Table"
   }
  ],
- "modified": "2020-02-22 18:46:17.879567",
- "modified_by": "Administrator",
+ "image_field": "photo",
+ "modified": "2020-02-28 21:37:44.355751",
+ "modified_by": "tej@jaaga.in",
  "module": "ContentReady OIP",
  "name": "User Profile",
  "owner": "Administrator",
@@ -99,8 +107,10 @@
   }
  ],
  "quick_entry": 1,
+ "search_fields": "full_name, org_title",
  "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "title_field": "user",
  "track_changes": 1
 }

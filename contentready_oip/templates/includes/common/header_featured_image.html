@@ -1,0 +1,15 @@
+<div class="img-wrapper">
+    <img
+        src="{{images[0]|default('/files/image_placeholder.jpg', true)}}"
+        class="rounded img-responsive"
+        style="object-fit: cover;"
+    />
+    <button
+        class="align-icon"
+        data-toggle="modal"
+        #showModalBtn
+        onclick="processAction('view-image','{{doctype}}','{{name}}')"
+    >
+        +{{(images | length)-1}}
+    </button>
+</div>

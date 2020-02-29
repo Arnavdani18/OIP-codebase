@@ -4,27 +4,28 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "title",
-  "description"
+  "enrichment",
+  "title"
  ],
  "fields": [
   {
+   "fetch_from": "enrichment.title",
    "fieldname": "title",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Title",
-   "reqd": 1
+   "label": "Title"
   },
   {
-   "fieldname": "description",
-   "fieldtype": "Text Editor",
+   "fieldname": "enrichment",
+   "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Description",
+   "label": "Enrichment",
+   "options": "Enrichment",
    "reqd": 1
   }
  ],
  "istable": 1,
- "modified": "2020-02-22 19:20:50.797314",
+ "modified": "2020-02-28 13:01:56.262406",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Enrichment Table",

@@ -1,0 +1,40 @@
+<div class="shadow editor-container">
+    <div class="commentSection">
+        <div class="created-by mt-5">
+            {% set doc_owner = user %}
+            {% include "templates/includes/common/user_thumbnail.html" %}
+        </div>
+
+        <div
+            class="textareaElement"
+            contenteditable
+            #commentElement
+            placeholder="Add a comment..."
+        ></div>
+        <button aria-label="" onclick="processAction('attach-file','{{doctype}}','{{name}}')">
+            <i class="fas fa-paperclip"></i>
+        </button>
+        <input
+            type="file"
+            name=""
+            #upload
+            style="display: none;"
+            (change)="onFileSelected($event)"
+            multiple
+            accept="*"
+        />
+    </div>
+
+    <button
+        class="btn btn-text text-capitalize mt-3"
+        onclick="processAction('submit-comment','{{doctype}}','{{name}}')"
+    >
+        Submit
+    </button>
+    <button
+        class="btn btn-text text-capitalize mt-3"
+        onclick="processAction('cancel-comment','{{doctype}}','{{name}}')"
+    >
+        Cancel
+    </button>
+</div>

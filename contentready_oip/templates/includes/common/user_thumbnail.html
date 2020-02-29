@@ -1,0 +1,18 @@
+<div>
+    {% set doc = frappe.get_doc('User Profile', doc_owner) %}
+    <img
+        src="{{doc.photo|default('/files/default-avatar.jpg', true)}}"
+        alt="profile photo"
+        class="img-profile"
+        style="object-fit: cover;overflow: hidden !important;"
+        width="50"
+        height="50"
+    />
+</div>
+<div class="created-by-section text-truncate">
+    {{doc.full_name}}
+    {% if date %}
+    <span class="dot" aria-hidden="true"></span>
+    {{frappe.utils.pretty_date(date)}}
+    {% endif %}
+</div>

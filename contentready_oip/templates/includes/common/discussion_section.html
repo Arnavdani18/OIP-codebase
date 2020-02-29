@@ -1,0 +1,53 @@
+<div class="bg-white">
+    <ul
+        class="nav nav-tabs nav-section"
+        id="discussionTab"
+        role="tablist"
+    >
+        <li class="nav-item">
+            <a
+                class="nav-link active"
+                id="discussion-tab"
+                data-toggle="tab"
+                href="javascript:void(0);"
+                role="tab"
+                aria-controls="discussion"
+                aria-selected="true"
+                >Discussions ({{ discussion | length }})</a
+            >
+        </li>
+    </ul>
+
+    <div class="btn-group sort-btn">
+        <button
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+            class="close dropdown-toggle text-capitalize"
+        >
+            Sort
+        </button>
+        <div class="dropdown-menu mt-2 dropdown-menu-right">
+            <a
+                class="dropdown-item"
+                href="javascript:void(0);"
+                onclick="showPopularDiscussions('latest')"
+                >Latest</a
+            >
+            <a
+                class="dropdown-item"
+                href="javascript:void(0);"
+                onclick="showPopularDiscussions('popular')"
+                >Popular</a
+            >
+        </div>
+    </div>
+    {% include "templates/includes/common/comment_editor.html" %}
+
+    <div id="discussionTabGroup" class="pb-2">
+        {% for d in discussions %}
+            {% set comment = frappe.get_doc('Discussion', d.discussion) %}
+            {% include "templates/includes/common/comment.html" %}
+        {% endfor %}
+    </div>
+</div>

@@ -1,0 +1,41 @@
+<div class="problem-container" style="cursor: pointer; background-color: white; margin-top: 1rem; margin-bottom: 1rem;">
+    <div class="left-side ">
+        {% include "templates/includes/problem/problem_label.html" %}
+
+        <div class="heading-container mt-3 text-capitalize ">
+            <a href="{{problem.route}}" class="text-dark">
+                <h2 class="heading">
+                    {{problem.title}}
+                </h2>
+            </a>
+            {% set city = problem.city %}
+            {% set country = problem.country %}
+            {% include "templates/includes/common/location_tag.html" %}
+        </div>
+
+        <div class="created-by mt-3">
+            {% set doc_owner = problem.owner %}
+            {% set date = problem.modified %}
+            {% include "templates/includes/common/user_thumbnail.html" %}
+        </div>
+
+        {% set sectors = problem.sectors %}
+        {% include "templates/includes/common/sector_labels.html" %}
+        
+        <div class="interaction-container mt-3">
+            {% set doctype = problem.doctype %}
+            {% set name = problem.name %}
+            {% set likes = problem.likes %}
+            {% include "templates/includes/common/likes.html" %}
+            {% set watchers = problem.watchers %}
+            {% include "templates/includes/common/watchers.html" %}
+            {% set validations = problem.validations %}
+            {% include "templates/includes/common/validations.html" %}
+        </div>
+    </div>
+
+    <div class="right-side">
+        {% set images = [problem.featured_image] + problem.images %}
+        {% include "templates/includes/common/card_featured_image.html" %}
+    </div>
+</div>

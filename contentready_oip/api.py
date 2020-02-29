@@ -67,7 +67,7 @@ def get_similar_problems(text, limit_page_length=5):
     for p in names:
         doc = frappe.get_doc('Problem', p)
         doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
-        template = "templates/includes/problems/problem_card.html"
+        template = "templates/includes/problem/problem_card.html"
         context = {
             'problem': doc
         }
