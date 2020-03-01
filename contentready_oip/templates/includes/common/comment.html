@@ -17,12 +17,12 @@
             </span>
         </div>
         <p>{{comment.text}}</p>
-        <button class="attach-btn" data-toggle="modal" #showModalBtn
+        <!-- <button class="attach-btn" data-toggle="modal" #showModalBtn
             onclick="processAction('view-attachments','{{doctype}}','{{name}}')">
             <i class="fas fa-paperclip"></i>
 
             See {{ comment.attachments | length }} Attachments
-        </button>
+        </button> -->
         <button class="btn" onclick="replyToComment('{{comment.name}}')">
             <i class="far fa-share"></i>
             Reply
@@ -55,12 +55,12 @@
         </div>
         <p>{{reply.text}}</p>
 
-        <button class="attach-btn" data-toggle="modal" #showModalBtn
+        <!-- <button class="attach-btn" data-toggle="modal" #showModalBtn
             onclick="processAction('view-attachments','{{doctype}}','{{name}}')">
             <i class="fas fa-paperclip"></i>
 
             See {{ reply.attachments | length }} Attachments
-        </button>
+        </button> -->
     </div>
 </div>
 {% endfor %}

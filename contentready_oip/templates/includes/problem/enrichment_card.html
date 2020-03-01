@@ -30,7 +30,7 @@
     </div>
 
     <div class="right-side">
-        {% set images = [enrichment.featured_image] + enrichment.images %}
+        {% set images = enrichment.images %}
         {% include "templates/includes/common/card_featured_image.html" %}
     </div>
 </div>

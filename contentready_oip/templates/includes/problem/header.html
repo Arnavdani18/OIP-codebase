@@ -1,7 +1,6 @@
 <div class="container mt-20">
     <div class="row bg-white main-card">
         <div class="col-md-4 img-section">
-            {% set featured_image = featured_image %}
             {% set images = images %}
             {% include "templates/includes/common/header_featured_image.html" %}
         </div>
@@ -75,8 +74,5 @@
     </div>
 </div>
 
-{% set attachments = images %}
-{% set id = 'header' %}
-{% include "templates/includes/common/attachment_modal.html" %}
 {% include "templates/includes/common/validation_form.html" %}
 {% include "templates/includes/common/collaboration_form.html" %}

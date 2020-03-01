@@ -55,7 +55,7 @@
                                     src="{{
                                         attachment.image
                                     }}"
-                                    class="thumb-img"
+                                    class="thumb-img {{'active-thumbnail' if loop.index==1}}"
                                     alt="{{ attachment.heading }}"
                                     id="{{id}}-{{loop.index}}"
                                 />

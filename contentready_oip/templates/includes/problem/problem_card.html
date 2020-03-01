@@ -35,7 +35,8 @@
     </div>
 
     <div class="right-side">
-        {% set images = [problem.featured_image] + problem.images %}
+        {% set images = problem.images %}
+        {% set id = 'card-'+problem.name %}
         {% include "templates/includes/common/card_featured_image.html" %}
     </div>
 </div>

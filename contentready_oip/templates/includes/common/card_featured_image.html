@@ -1,28 +1,54 @@
 <div class="image-and-count-container d-none d-lg-block">
+    {% if (images|length) > 0 %}
     <img
-        src="{{images[0]|default('/files/image_placeholder.jpg', true)}}"
+        src="{{images[0].image}}"
         alt="image"
         class="image"
     />
+    {% else %}
+    <img
+        src="/files/image_placeholder.jpg"
+        alt="image"
+        class="image"
+    />
+    {% endif %}
+    {% if (images | length) > 0 %}
     <button
         class="align-icon"
         data-toggle="modal"
-        onclick="processAction('view-image-card','{{doctype}}','{{name}}')"
+        data-target="#attachment-modal-{{id}}"
     >
         +{{(images | length)-1}}
     </button>
+    {% endif %}
 </div>
 <div class="image-and-count-container d-lg-none">
+    {% if (images|length) > 0 %}
     <img
-        src="{{images[0]|default('/files/image_placeholder.jpg', true)}}"
+        src="{{images[0].image}}"
         alt="image"
         class="image-ipad"
     />
+    {% else %}
+    <img
+        src="/files/image_placeholder.jpg"
+        alt="image"
+        class="image-ipad"
+    />
+    {% endif %}
+    {% if (images | length) > 0 %}
     <button
         class="align-icon"
         data-toggle="modal"
-        onclick="processAction('view-image-card','{{doctype}}','{{name}}')"
+        data-target="#attachment-modal-{{id}}"
     >
         +{{(images | length)-1}}
     </button>
+    {% endif %}
 </div>
+
+{% if (images | length) > 0%}
+{% set attachments = images %}
+{% set id = id %}
+{% include "templates/includes/common/attachment_modal.html" %}
+{% endif %}

@@ -4,7 +4,7 @@
         class="rounded img-responsive"
         style="object-fit: cover;"
     />
-    {% if (images | length) > 0%}
+    {% if (images | length) > 0 %}
     <button
         class="align-icon"
         data-toggle="modal"
@@ -14,3 +14,7 @@
     </button>
     {% endif %}
 </div>
+
+{% set attachments = images %}
+{% set id = 'header' %}
+{% include "templates/includes/common/attachment_modal.html" %}
