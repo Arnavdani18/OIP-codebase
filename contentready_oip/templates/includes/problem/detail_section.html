@@ -10,11 +10,11 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" id="validations-tab" data-toggle="tab" href="#validations" role="tab"
-                aria-controls="validations" aria-selected="false">Validated <span id="validation-count">({{ validations | length }})</span></a>
+                aria-controls="validations" aria-selected="false">Validated (<span id="validation-count">{{ validations | length }}</span>)</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="collaborators-tab" data-toggle="tab" href="#collaborators" role="tab"
-                aria-controls="collaborators" aria-selected="false">Collaborated ({{ collaborations | length }})</a>
+            <a class="nav-link" id="collaborations-tab" data-toggle="tab" href="#collaborations" role="tab"
+                aria-controls="collaborations" aria-selected="false">Collaborated (<span id="collaboration-count">{{ collaborations | length }}</span>)</a>
         </li>
     </ul>
     <div id="leftTabGroup" class="pb-2">
@@ -24,7 +24,7 @@
             </div>
             <div class="tab-pane fade" id="enrichments" role="tabpanel" aria-labelledby="enrichments-tab">
                 <div class="col pb-4">
-                    {% for e in enrichments %}
+                    {% for e in enrichments | reverse %}
                     {% set enrichment = frappe.get_doc('Enrichment', e.enrichment) %}
                     {% include "templates/includes/problem/enrichment_card.html" %}
                     {% endfor %}
@@ -33,17 +33,17 @@
             <div class="tab-pane fade" id="validations" role="tabpanel" aria-labelledby="validations-tab">
                 <div class="col pb-4">
                     <div class="row px-3 pt-3">
-                        {% for validation in validations %}
-                        {% include "templates/includes/problem/validation_card.html" %}
+                        {% for validation in validations | reverse %}
+                        {% include "templates/includes/common/validation_card.html" %}
                         {% endfor %}
                     </div>
                 </div>
             </div>
-            <div class="tab-pane fade" id="collaborators" role="tabpanel" aria-labelledby="collaborators-tab">
+            <div class="tab-pane fade" id="collaborations" role="tabpanel" aria-labelledby="collaborations-tab">
                 <div class="col pb-4">
                     <div class="row px-3 pt-3">
-                        {% for collaboration in collaborations %}
-                        {% include "templates/includes/problem/collaboration_card.html" %}
+                        {% for collaboration in collaborations | reverse %}
+                        {% include "templates/includes/common/collaboration_card.html" %}
                         {% endfor %}
                     </div>
                 </div>

@@ -9,11 +9,6 @@
             </div>
             <div class="modal-body">
                 <form>
-                    <!-- <div class="form-group form-check">
-                        <input type="checkbox" class="form-check-input" id="validation-agree">
-                        <label class="form-check-label" for="validation-agree">Do you agree with this problem
-                            statement?</label>
-                    </div> -->
                     <div class="form-group">
                         <label for="validation-comment">Please explain your validation.</label>
                         <textarea type="text" class="form-control" id="validation-comment" rows="3"
@@ -22,7 +17,6 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <!-- <button type="button" class="card-btn" data-dismiss="modal">Close</button> -->
                 <button type="button" class="card-btn" onclick="submitValidation('{{doctype}}', '{{name}}', false)">Disagree</button>
                 <button type="button" class="card-btn" onclick="submitValidation('{{doctype}}', '{{name}}', true)">Agree</button>
             </div>
@@ -34,18 +28,18 @@
     submitValidation = (doctype, name, agree) => {
         const validation = {
             user: frappe.session.user,
-            agree: agree, // $('#validation-agree').is(':checked'),
+            agree: agree,
             comment: $('#validation-comment').val()
         }
         frappe.call({
             method: 'contentready_oip.api.add_validation',
             args: {doctype: doctype, name: name, validation: validation},
             callback: (r) => {
-                console.log(r)
+                // console.log(r)
                 if (r.message[1] > 0){
                     $('#validations').prepend(r.message[0]);
                     $('#validation-modal').modal('toggle');
-                    $('#validation-count').text('('+r.message[1]+')');
+                    $('#validation-count').text(r.message[1]);
                 }
             }
         });

@@ -6,7 +6,7 @@
  "field_order": [
   "user",
   "persona",
-  "intent"
+  "comment"
  ],
  "fields": [
   {
@@ -18,10 +18,10 @@
    "reqd": 1
   },
   {
-   "fieldname": "intent",
+   "fieldname": "comment",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Intent"
+   "label": "Comment"
   },
   {
    "fieldname": "persona",
@@ -33,7 +33,7 @@
   }
  ],
  "istable": 1,
- "modified": "2020-02-28 21:38:06.222456",
+ "modified": "2020-03-01 08:15:37.185344",
  "modified_by": "tej@jaaga.in",
  "module": "ContentReady OIP",
  "name": "Collaboration Table",

@@ -52,32 +52,18 @@
 
                     <div class="col-xl-8 pr-0 action-btn-section mt-3">
                         <div class="d-flex justify-content-between flex-wrap">
-                            <button
-                                class=" card-btn"
-                                onclick="window.location.href = '/add-enrichment?new=1&problem={{name}}';"
-                            >
+                            <button class=" card-btn"
+                                onclick="window.location.href = '/add-enrichment?new=1&problem={{name}}';">
                                 Enrich
                             </button>
                             <button type="button" class="card-btn" data-toggle="modal" data-target="#validation-modal">
                                 Validate
-                            </button>                              
-                            <!-- <button
-                                class=" card-btn "
-                                onclick="processAction('validate','{{doctype}}','{{name}}')"
-                            >
-                                Validate
-                            </button> -->
-                            <button
-                                class=" card-btn "
-                                onclick="processAction('collaborate','{{doctype}}','{{name}}')"
-                            >
+                            </button>
+                            <button type="button" class="card-btn" data-toggle="modal" data-target="#collaboration-modal">
                                 Collaborate
                             </button>
-                            <button
-                                class=" card-btn add-solution-btn "
-                                aria-label="add solution"
-                                onclick="processAction('add-solution','{{doctype}}','{{name}}')"
-                            >
+                            <button class=" card-btn add-solution-btn " aria-label="add solution"
+                                onclick="processAction('add-solution','{{doctype}}','{{name}}')">
                                 Add Solution
                             </button>
                         </div>
@@ -88,4 +74,5 @@
     </div>
 </div>
 
-{% include "templates/includes/problem/validation_form.html" %}
+{% include "templates/includes/common/validation_form.html" %}
+{% include "templates/includes/common/collaboration_form.html" %}

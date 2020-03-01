@@ -93,6 +93,11 @@ def get_orgs_list():
     return [{'label': o['title'], 'value': o['name']} for o in all_orgs]
 
 @frappe.whitelist(allow_guest = True)
+def get_persona_list():
+    all_personas = frappe.get_list('Persona', fields=['title', 'name'])
+    return [{'label': o['title'], 'value': o['name']} for o in all_personas]
+
+@frappe.whitelist(allow_guest = True)
 def get_homepage_stats():
     return {
         'problems': frappe.db.count('Problem', filters={'is_published': True}),
@@ -202,8 +207,29 @@ def add_validation(doctype, name, validation, html=True):
         context = {
             'validation': v
         }
-        template = "templates/includes/problem/validation_card.html"
+        template = "templates/includes/common/validation_card.html"
         html = frappe.render_template(template, context)
         return html, frappe.db.count('Validation Table', filters={'parenttype': doctype, 'parent': name})
+    else:
+        return doc
+
+@frappe.whitelist(allow_guest = False)
+def add_collaboration(doctype, name, collaboration, html=True):
+    collaborations_by_user = frappe.get_list('Collaboration Table', filters={'owner': frappe.session.user, 'parenttype': doctype, 'parent': name})
+    if len(collaborations_by_user) > 0:
+        frappe.throw('You have already added your collaboration intent on this {}.'.format(doctype).capitalize())
+    collaboration = json.loads(collaboration)
+    doc = frappe.get_doc(doctype, name)
+    v = doc.append('collaborations', {})
+    v.update(collaboration)
+    doc.save()
+    frappe.db.commit()
+    if html:
+        context = {
+            'collaboration': v
+        }
+        template = "templates/includes/common/collaboration_card.html"
+        html = frappe.render_template(template, context)
+        return html, frappe.db.count('Collaboration Table', filters={'parenttype': doctype, 'parent': name})
     else:
         return doc
