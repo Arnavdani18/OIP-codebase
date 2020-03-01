@@ -15,6 +15,8 @@
             window.location.href = `/add-problem?name=${name}`;
         } else if (doctype === 'Enrichment') {
             window.location.href = `/add-enrichment?name=${name}`;
+        } else if (doctype === 'Solution') {
+            window.location.href = `/add-solution?name=${name}`;
         } else if (doctype === 'Collaboration Table') {
             data = JSON.parse(data.replace(/\'/g, '"'));
             $('#collaboration-modal-'+name).modal('toggle');

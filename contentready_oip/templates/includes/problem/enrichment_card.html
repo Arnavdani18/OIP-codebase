@@ -1,6 +1,6 @@
 {% set doctype = enrichment.doctype %}
 {% set name = enrichment.name %}
-<div class="enrich-card-container">
+<div class="enrich-card-container" id="enrichment-card-{{enrichment.name}}">
     <div class="left-side">
         <div class="heading-container text-capitalize ">
             <a href="#enrichment-modal-{{ name }}" data-toggle="modal" data-target="#enrichment-modal-{{ name }}"

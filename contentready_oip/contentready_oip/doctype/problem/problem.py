@@ -22,12 +22,6 @@ class Problem(WebsiteGenerator):
 		if frappe.db.exists('Problem', self.scrubbed_title()):
 			self.name = self.scrubbed_title()+'-'+frappe.generate_hash("",3)
 
-	# def get_context(self, context):
-	# 	print(self.as_dict())
-		# context.enrichments = self.enrichments
-		# context.discussions = self.discussions
-		# print(context)
-
 	def before_save(self):
 		self.short_description = clean_html(self.description)[:500]
 		if len(self.description) > 1000:

@@ -17,11 +17,15 @@
     <div class="row">
         {% set fields = {
             'Organization': org_title, 
-            'Beneficiaries': beneficiaries, 
-            'Resources Needed': resources_needed,
+            'Budget': budget, 
             'Impact': impact, 
-            'Extent': extent, 
+            'Deployments': deployments, 
+            'Innovation': innovation, 
+            'Resources Needed': resources_needed,
+            'Timeline': timeline,
+            'Pilots': pilots,
             'Location(s)': city + ', ' + country,
+            'Website': website
         } %}
 
         {% for field in fields %}
@@ -43,5 +47,5 @@
 <hr />
 
 <div class="col pb-3" id="solutions-section">
-    {% include "templates/includes/problem/solutions_section.html" %}
+    {% include "templates/includes/solution/problems_section.html" %}
 </div>

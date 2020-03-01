@@ -1,0 +1,26 @@
+<!-- jinja -->
+<!-- no-breadcrumbs -->
+<!-- static -->
+{% include "templates/includes/common/filter.html" %}
+<div class="row">
+    <div class="col">
+        <div class="col-sm-12 solution-listed-container">
+            <div class="d-flex align-items-center">
+                <img
+                    src="/files/problem_icon.svg"
+                    alt=""
+                    height="24"
+                    width="20"
+                />
+                <h3>Solutions Listed ({{ solutions | length }})</h3>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    {% for solution in solutions %}
+        <div class="col-md-6">
+            {% include "templates/includes/solution/solution_card.html" %}
+        </div>
+    {% endfor %}
+</div>

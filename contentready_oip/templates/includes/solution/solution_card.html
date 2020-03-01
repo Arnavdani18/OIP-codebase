@@ -1,0 +1,42 @@
+<div class="problem-container" data-name="{{solution.name}}" style="cursor: pointer; background-color: white; margin-top: 1rem; margin-bottom: 1rem;" id="solution-card-{{solution.name}}">
+    <div class="left-side ">
+        {% include "templates/includes/solution/solution_label.html" %}
+
+        <div class="heading-container mt-3 text-capitalize ">
+            <a href="{{solution.route}}" class="text-dark">
+                <h2 class="heading">
+                    {{solution.title}}
+                </h2>
+            </a>
+            {% set city = solution.city %}
+            {% set country = solution.country %}
+            {% include "templates/includes/common/location_tag.html" %}
+        </div>
+
+        <div class="created-by mt-3">
+            {% set doc_owner = solution.owner %}
+            {% set date = solution.modified %}
+            {% include "templates/includes/common/user_thumbnail.html" %}
+        </div>
+
+        {% set sectors = solution.sectors %}
+        {% include "templates/includes/common/sector_labels.html" %}
+        
+        <div class="interaction-container mt-3">
+            {% set doctype = solution.doctype %}
+            {% set name = solution.name %}
+            {% set likes = solution.likes %}
+            {% include "templates/includes/common/likes.html" %}
+            {% set watchers = solution.watchers %}
+            {% include "templates/includes/common/watchers.html" %}
+            {% set validations = solution.validations %}
+            {% include "templates/includes/common/validations.html" %}
+        </div>
+    </div>
+
+    <div class="right-side">
+        {% set images = solution.images %}
+        {% set id = 'card-'+solution.name %}
+        {% include "templates/includes/common/card_featured_image.html" %}
+    </div>
+</div>

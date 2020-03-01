@@ -1,4 +1,5 @@
 {
+ "allow_guest_to_view": 1,
  "autoname": "Solution.###",
  "creation": "2019-12-04 19:46:43.122149",
  "doctype": "DocType",
@@ -6,16 +7,45 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
-  "is_published",
   "featured_image",
   "org",
   "org_title",
-  "funds_needed",
-  "images",
   "column_break_8",
+  "is_published",
+  "sectors",
+  "route",
+  "location_section",
+  "city",
+  "latitude",
+  "longitude",
+  "column_break_15",
+  "state",
+  "state_code",
+  "column_break_18",
+  "country",
+  "country_code",
+  "section_break_21",
+  "impact",
+  "timeline",
+  "pilots",
+  "deployments",
+  "budget",
+  "resources_needed",
+  "images",
+  "column_break_29",
+  "website",
+  "innovation",
   "description",
+  "short_description",
   "section_break_9",
-  "problems_addressed"
+  "problems_addressed",
+  "validations",
+  "collaborations",
+  "discussions",
+  "interest_section",
+  "likes",
+  "column_break_38",
+  "watchers"
  ],
  "fields": [
   {
@@ -48,12 +78,6 @@
    "read_only": 1
   },
   {
-   "fieldname": "funds_needed",
-   "fieldtype": "Currency",
-   "in_preview": 1,
-   "label": "Funds Needed"
-  },
-  {
    "fieldname": "images",
    "fieldtype": "Table",
    "label": "Images",
@@ -72,7 +96,8 @@
   },
   {
    "fieldname": "section_break_9",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Collaboration"
   },
   {
    "fieldname": "problems_addressed",
@@ -85,10 +110,166 @@
    "fieldname": "is_published",
    "fieldtype": "Check",
    "label": "Published?"
+  },
+  {
+   "fieldname": "sectors",
+   "fieldtype": "Table MultiSelect",
+   "label": "Sectors",
+   "options": "Sector Table"
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "label": "Route"
+  },
+  {
+   "fieldname": "location_section",
+   "fieldtype": "Section Break",
+   "label": "Location"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Data",
+   "label": "Latitude"
+  },
+  {
+   "fieldname": "longitude",
+   "fieldtype": "Data",
+   "label": "Longitude"
+  },
+  {
+   "fieldname": "column_break_15",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Data",
+   "label": "State"
+  },
+  {
+   "fieldname": "state_code",
+   "fieldtype": "Data",
+   "label": "State Code"
+  },
+  {
+   "fieldname": "column_break_18",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Data",
+   "label": "Country"
+  },
+  {
+   "fieldname": "country_code",
+   "fieldtype": "Data",
+   "label": "Country Code"
+  },
+  {
+   "fieldname": "section_break_21",
+   "fieldtype": "Section Break",
+   "label": "More Details"
+  },
+  {
+   "fieldname": "impact",
+   "fieldtype": "Small Text",
+   "label": "Impact"
+  },
+  {
+   "fieldname": "innovation",
+   "fieldtype": "Small Text",
+   "label": "Innovation"
+  },
+  {
+   "fieldname": "timeline",
+   "fieldtype": "Data",
+   "label": "Timeline"
+  },
+  {
+   "fieldname": "pilots",
+   "fieldtype": "Small Text",
+   "label": "Pilots"
+  },
+  {
+   "fieldname": "deployments",
+   "fieldtype": "Int",
+   "label": "Deployments"
+  },
+  {
+   "fieldname": "budget",
+   "fieldtype": "Data",
+   "in_preview": 1,
+   "label": "Budget"
+  },
+  {
+   "fieldname": "resources_needed",
+   "fieldtype": "Small Text",
+   "label": "Resources Needed"
+  },
+  {
+   "fieldname": "website",
+   "fieldtype": "Data",
+   "label": "Website"
+  },
+  {
+   "fieldname": "column_break_29",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "validations",
+   "fieldtype": "Table",
+   "label": "Validations",
+   "options": "Validation Table"
+  },
+  {
+   "fieldname": "collaborations",
+   "fieldtype": "Table",
+   "label": "Collaborations",
+   "options": "Collaboration Table"
+  },
+  {
+   "fieldname": "discussions",
+   "fieldtype": "Table",
+   "label": "Discussions",
+   "options": "Discussion Table"
+  },
+  {
+   "fieldname": "interest_section",
+   "fieldtype": "Section Break",
+   "label": "Interest"
+  },
+  {
+   "fieldname": "likes",
+   "fieldtype": "Table",
+   "label": "Likes",
+   "options": "Like Table"
+  },
+  {
+   "fieldname": "column_break_38",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "watchers",
+   "fieldtype": "Table",
+   "label": "Watchers",
+   "options": "Watch Table"
+  },
+  {
+   "fieldname": "short_description",
+   "fieldtype": "Text",
+   "hidden": 1,
+   "label": "Short Description"
   }
  ],
- "modified": "2020-02-27 18:23:10.651775",
- "modified_by": "Administrator",
+ "has_web_view": 1,
+ "is_published_field": "is_published",
+ "modified": "2020-03-01 16:59:12.690805",
+ "modified_by": "tej@jaaga.in",
  "module": "ContentReady OIP",
  "name": "Solution",
  "owner": "Administrator",
@@ -104,10 +285,22 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Guest",
+   "share": 1
   }
  ],
+ "route": "list_solutions",
+ "search_fields": "title, description",
  "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "title_field": "title",
  "track_changes": 1
 }

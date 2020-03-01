@@ -72,6 +72,27 @@ def get_filtered_problems(selectedLocation, selectedSectors):
     }
 
 @frappe.whitelist(allow_guest = True)
+def get_filtered_solutions(selectedLocation, selectedSectors):
+    # TODO: Implement location filtering 
+    if 'all' in selectedSectors:
+        matching_solutions = frappe.get_list('Solution', filters={'is_published': True})
+        solution_set = {p['name'] for p in matching_solutions}
+    else:
+        matching_solutions = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': 'Solution', 'sector': ['in', selectedSectors]})
+        solution_set = {p['parent'] for p in matching_solutions}
+    solutions = []
+    for p in solution_set:
+        doc = frappe.get_doc('Solution', p)
+        if doc.is_published:
+            doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
+            solutions.append(doc)
+    
+    return {
+        'solutions': solutions,
+    }
+
+
+@frappe.whitelist(allow_guest = True)
 def get_similar_problems(text, limit_page_length=5):
     names = frappe.db.get_list('Problem', or_filters={'title': ['like', '%{}%'.format(text)], 'description': ['like', '%{}%'.format(text)]}, limit_page_length=limit_page_length)
     similar_problems = []
@@ -178,7 +199,7 @@ def get_problem_card(name, html=True):
         }
         template = "templates/includes/problem/problem_card.html"
         html = frappe.render_template(template, context)
-        return html
+        return html, doc.name
     else:
         return doc
 

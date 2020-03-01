@@ -8,10 +8,10 @@
             <div>
                 <div class="row ">
                     <div class="col d-flex justify-content-between pr-0 problem-on-mobile left-section">
-                        {% include "templates/includes/problem/problem_label.html" %}
+                        {% include "templates/includes/solution/solution_label.html" %}
                         <div>
-                            <a href="#solutions-section" class="see-solutions">
-                                See Solution(s)
+                            <a href="#problems-section" class="see-solutions">
+                                See Problem(s)
                             </a>
                             {% set doctype = doctype %}
                             {% set name = name %}
@@ -51,20 +51,12 @@
                     </div>
 
                     <div class="col-xl-8 pr-0 action-btn-section mt-3">
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <button class=" card-btn"
-                                onclick="window.location.href = '/add-enrichment?new=1&problem={{name}}';">
-                                Enrich
-                            </button>
+                        <div class="d-flex justify-content-sm-start justify-content-lg-end flex-wrap">
                             <button type="button" class="card-btn" data-toggle="modal" data-target="#validation-modal-{{name}}">
                                 Validate
                             </button>
                             <button type="button" class="card-btn" data-toggle="modal" data-target="#collaboration-modal-{{name}}">
                                 Collaborate
-                            </button>
-                            <button class=" card-btn add-solution-btn " aria-label="add solution"
-                            onclick="window.location.href = '/add-solution?new=1&problem={{name}}';">
-                                Add Solution
                             </button>
                         </div>
                     </div>

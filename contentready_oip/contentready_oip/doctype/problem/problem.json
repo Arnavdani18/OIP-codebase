@@ -263,7 +263,7 @@
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2020-02-28 18:20:03.029409",
+ "modified": "2020-03-01 16:57:46.549232",
  "modified_by": "tej@jaaga.in",
  "module": "ContentReady OIP",
  "name": "Problem",
@@ -292,9 +292,10 @@
   }
  ],
  "route": "list_problems",
- "search_fields": "title",
+ "search_fields": "title, description",
  "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "title_field": "title",
  "track_changes": 1
 }
