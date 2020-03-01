@@ -33,13 +33,13 @@
                                 src="{{attachments[0].image}}"
                                 class="img-fluid"
                                 alt="{{ attachments[0].heading }}"
-                                id="image-in-focus"
+                                id="image-in-focus-{{id}}"
                             />
                         </div>
                     </div>
 
                     <div class="row justify-content-center mt-3">
-                        <h5><span id="index-in-focus">1</span> of {{ attachments | length }}</h5>
+                        <h5><span id="index-in-focus-{{id}}">1</span> of {{ attachments | length }}</h5>
                     </div>
 
                     <div class="row thumbnail-container" id="available-images" data-images="{{images}}">
@@ -49,7 +49,7 @@
                             class="m-2"
                         >
                             <a
-                                onclick="moveToImage(event, '{{loop.index}}')"
+                                onclick="moveToImage(event, '{{loop.index}}', '{{id}}')"
                             >
                                 <img
                                     src="{{
@@ -70,14 +70,14 @@
 </div>
 
 <script>
-    moveToImage = (event, i) => {
+    moveToImage = (event, i, id) => {
         // let availableImages = $('#available-images').data('images').replace(/\'/g, '\"').replace(/datetime.datetime/g, '').replace(/\(/g, '[').replace(/\)/g, ']').replace(/None/g, '""');
         // availableImages = JSON.parse(availableImages);
         // const selectedImage = availableImages[i];
-        $("#image-in-focus").attr('src', event.target.src);
+        $("#image-in-focus-"+id).attr('src', event.target.src);
         $('.thumb-img').removeClass('active-thumbnail');
         $('#'+event.target.id).addClass('active-thumbnail');
-        $('#index-in-focus').text(i);
+        $('#index-in-focus-'+id).text(i);
     }
 
 </script>

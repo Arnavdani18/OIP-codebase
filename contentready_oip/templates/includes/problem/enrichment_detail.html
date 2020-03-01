@@ -1,0 +1,147 @@
+<div class="modal fade" id="enrichment-modal-{{ name }}" tabindex="-1" role="dialog"
+    aria-labelledby="enrichment-label-{{name}}" aria-hidden="true">
+    <div class="modal-dialog modal-full modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="enrichment-label-{{name}}" hidden>enrichment.title</h5>
+                <ul class="nav nav-tabs nav-section nav-justified " id="leftTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#details" aria-controls="details" role="tab"
+                            data-toggle="tab">Details</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#media" aria-controls="media" role="tab" #media
+                            data-toggle="tab">Media</a>
+                    </li>
+                </ul>
+
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="details">
+                        <div class="row">
+                            <div class="col-md-7">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <h3 class="heading">
+                                            Description
+                                        </h3>
+                                        <p class="description-format">
+                                            {{ enrichment.description }}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h3 class="heading">
+                                            Organisation
+                                        </h3>
+                                        <p class="description-format">
+                                            {{ enrichment.org_title }}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h3 class="heading">
+                                            Extent
+                                        </h3>
+                                        <p class="description-format">
+                                            {{ enrichment.extent }}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h3 class="heading">
+                                            Impact
+                                        </h3>
+                                        <p class="description-format">
+                                            {{ enrichment.impact }}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h3 class="heading">
+                                            Beneficiaries
+                                        </h3>
+                                        <p class="description-format">
+                                            {{ enrichment.beneficiaries }}
+                                        </p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h3 class="heading">
+                                            Resources Needed
+                                        </h3>
+                                        <p class="description-format">
+                                            {{ enrichment.resources_needed }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if (enrichment.images | length) > 0 %}
+                            <div class="col-md-5 img-container">
+                                <img src="{{enrichment.images[0].image}}" class="" alt="{{enrichment.images[0].heading}}" height="235" width="345" />
+                                <button class="align-icon" data-toggle="tab" class="nav-link" href="#media">
+                                    +{{ enrichment.images | length }}
+                                </button>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if (enrichment.images | length) > 0 %}
+                    {% set attachments = enrichment.images %}
+                    {% set id = enrichment.name %}
+                    <div role="tabpanel" class="tab-pane" id="media">
+                        <div class="container-fluid">
+                            <div class="row attachment-container">
+                                <!-- The image in focus -->
+                                <div class="col text-center">
+                                    <img src="{{attachments[0].image}}" class="img-fluid"
+                                        alt="{{ attachments[0].heading }}" id="image-in-focus-{{id}}" />
+                                </div>
+                            </div>
+
+                            <div class="row justify-content-center mt-3">
+                                <h5><span id="index-in-focus-{{id}}">1</span> of {{ attachments | length }}</h5>
+                            </div>
+
+                            <div class="row thumbnail-container" id="available-images" data-images="{{images}}">
+                                <!-- Grid of thumbnails -->
+                                {% for attachment in attachments %}
+                                <div class="m-2">
+                                    <a onclick="moveToImage(event, '{{loop.index}}', '{{id}}')">
+                                        <img src="{{
+                                        attachment.image
+                                    }}" class="thumb-img {{'active-thumbnail' if loop.index==1}}"
+                                            alt="{{ attachment.heading }}" id="{{id}}-{{loop.index}}" />
+                                    </a>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-text" data-dismiss="modal">
+                    Delete
+                </button>
+                <button type="button" class="btn solid-btn">Edit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    moveToImage = (event, i, id) => {
+        $("#image-in-focus-"+id).attr('src', event.target.src);
+        $('.thumb-img').removeClass('active-thumbnail');
+        $('#'+event.target.id).addClass('active-thumbnail');
+        $('#index-in-focus-'+id).text(i);
+    }
+
+</script>
+
+<style>
+    .active-thumbnail {
+        outline: 0.5rem auto rgba(108, 108, 245, 0.918);
+    }
+</style>

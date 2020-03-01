@@ -3,7 +3,7 @@
 <div class="enrich-card-container">
     <div class="left-side">
         <div class="heading-container text-capitalize ">
-            <a href="javascript:void(0);" onclick="processAction('view-enrichment','{{doctype}}','{{name}}')"
+            <a href="#enrichment-modal-{{ name }}" data-toggle="modal" data-target="#enrichment-modal-{{ name }}"
                 class="text-dark">
                 <h2 class="enrich-heading">
                     {{ enrichment.title }}
@@ -31,6 +31,9 @@
 
     <div class="right-side">
         {% set images = enrichment.images %}
+        {% set id = 'card-'+enrichment.name %}
         {% include "templates/includes/common/card_featured_image.html" %}
     </div>
 </div>
+
+{% include "templates/includes/problem/enrichment_detail.html" %}
