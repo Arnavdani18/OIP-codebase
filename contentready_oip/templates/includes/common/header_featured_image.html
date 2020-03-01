@@ -1,9 +1,19 @@
 <div class="img-wrapper">
+    {% if (images|length) > 0 %}
     <img
-        src="{{images[0].image|default('/files/image_placeholder.jpg', true)}}"
+        src="{{images[0].image}}"
+        alt="image"
         class="rounded img-responsive"
         style="object-fit: cover;"
     />
+    {% else %}
+    <img
+        src="/files/image_placeholder.jpg"
+        alt="image"
+        class="rounded img-responsive"
+        style="object-fit: cover;"
+    />
+    {% endif %}
     {% if (images | length) > 0 %}
     <button
         class="align-icon"
@@ -15,6 +25,8 @@
     {% endif %}
 </div>
 
+{% if (images | length) > 0%}
 {% set attachments = images %}
 {% set id = 'header' %}
 {% include "templates/includes/common/attachment_modal.html" %}
+{% endif %}
