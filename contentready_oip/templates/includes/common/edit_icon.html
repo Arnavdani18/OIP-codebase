@@ -10,6 +10,8 @@
     editDocument = (doctype, name) => {
         if (doctype === 'Problem') {
             window.location.href = `/add-problem?name=${name}`;
+        } else if (doctype === 'Enrichment') {
+            window.location.href = `/add-enrichment?name=${name}`;
         }
     }
 </script>

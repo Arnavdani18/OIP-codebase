@@ -146,10 +146,10 @@ frappe.ready(async () => {
     submitEnrichmentForm = () => {
         frappe.web_form.doc.doctype = 'Enrichment';
         frappe.call({
-            method: "frappe.website.doctype.web_form.web_form.accept",
+            // method: "frappe.website.doctype.web_form.web_form.accept",
+            method: "contentready_oip.api.add_enrichment",
 			args: {
-				data: frappe.web_form.doc,
-				web_form: frappe.web_form.name,
+				doc: frappe.web_form.doc,
 			},
             callback: function(r) {
                 console.log(r.message);

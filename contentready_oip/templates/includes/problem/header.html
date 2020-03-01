@@ -58,12 +58,15 @@
                             >
                                 Enrich
                             </button>
-                            <button
+                            <button type="button" class="card-btn" data-toggle="modal" data-target="#validation-modal">
+                                Validate
+                            </button>                              
+                            <!-- <button
                                 class=" card-btn "
                                 onclick="processAction('validate','{{doctype}}','{{name}}')"
                             >
                                 Validate
-                            </button>
+                            </button> -->
                             <button
                                 class=" card-btn "
                                 onclick="processAction('collaborate','{{doctype}}','{{name}}')"
@@ -84,3 +87,5 @@
         </div>
     </div>
 </div>
+
+{% include "templates/includes/problem/validation_form.html" %}

@@ -176,3 +176,34 @@ def get_problem_card(name, html=True):
         return html
     else:
         return doc
+
+@frappe.whitelist(allow_guest = False)
+def add_enrichment(doc):
+    doc = json.loads(doc)
+    if not ('problem' in doc or doc['problem']):
+        return False
+    enrichments_by_user = frappe.get_list('Enrichment', filters={'owner': frappe.session.user, 'problem': doc['problem']})
+    if len(enrichments_by_user) > 0:
+        frappe.throw('You have already enriched this problem.')
+    return True
+
+@frappe.whitelist(allow_guest = False)
+def add_validation(doctype, name, validation, html=True):
+    validations_by_user = frappe.get_list('Validation Table', filters={'owner': frappe.session.user, 'parenttype': doctype, 'parent': name})
+    if len(validations_by_user) > 0:
+        frappe.throw('You have already validated this {}.'.format(doctype).capitalize())
+    validation = json.loads(validation)
+    doc = frappe.get_doc(doctype, name)
+    v = doc.append('validations', {})
+    v.update(validation)
+    doc.save()
+    frappe.db.commit()
+    if html:
+        context = {
+            'validation': v
+        }
+        template = "templates/includes/problem/validation_card.html"
+        html = frappe.render_template(template, context)
+        return html, frappe.db.count('Validation Table', filters={'parenttype': doctype, 'parent': name})
+    else:
+        return doc
