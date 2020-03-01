@@ -31,7 +31,8 @@
             numLikes += numLikes;
         }
         hasUserLiked = !hasUserLiked;
-        // change UI first, then send to server
+        // TODO: Fix incorrect counts issue when making UI change before sending to server.
+        // change UI first, then send to server - 
         // changeUI(btnId, countId, hasUserLiked, numLikes);
         frappe.call({
             method: 'contentready_oip.api.toggle_like',

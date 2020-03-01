@@ -1,4 +1,4 @@
-<div class="modal" tabindex="-1" role="dialog" id="validation-modal">
+<div class="modal" tabindex="-1" role="dialog" id="validation-modal-{{name}}">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -11,7 +11,7 @@
                 <form>
                     <div class="form-group">
                         <label for="validation-comment">Please explain your validation.</label>
-                        <textarea type="text" class="form-control" id="validation-comment" rows="3"
+                        <textarea type="text" class="form-control" id="validation-comment-{{name}}" rows="3"
                             placeholder="Enter comment"></textarea>
                     </div>
                 </form>
@@ -29,17 +29,25 @@
         const validation = {
             user: frappe.session.user,
             agree: agree,
-            comment: $('#validation-comment').val()
+            comment: $('#validation-comment-'+name).val()
         }
         frappe.call({
-            method: 'contentready_oip.api.add_validation',
+            method: 'contentready_oip.api.add_or_edit_validation',
             args: {doctype: doctype, name: name, validation: validation},
             callback: (r) => {
                 // console.log(r)
                 if (r.message[1] > 0){
-                    $('#validations').prepend(r.message[0]);
-                    $('#validation-modal').modal('toggle');
-                    $('#validation-count').text(r.message[1]);
+                    if (doctype == 'Validation Table') {
+                        // edit mode
+                        $('#validation-card-'+name).replaceWith(r.message[0]);
+                        // TODO: Toggles twice for some reason leaving an empty form on the screen.
+                        // TEMP Fix: Reload.
+                        window.location.reload();
+                    } else {
+                        $('#validations').prepend(r.message[0]);
+                        $('#validation-modal').modal('toggle');
+                        $('#validation-count').text(r.message[1]);
+                    }
                 }
             }
         });

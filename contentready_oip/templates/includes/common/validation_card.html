@@ -1,7 +1,8 @@
-<div class="col-sm-12 validateCard">
+<div class="col-sm-12 validateCard" id="validation-card-{{validation.name}}">
     <div class="float-right">
         {% set doctype = validation.doctype %}
         {% set name = validation.name %}
+        {% set data = [validation.comment] %}
         {% include "templates/includes/common/edit_icon.html" %}
     </div>
     <div class="agreedDisagreeDiv">

@@ -1,17 +1,30 @@
 <button
     class="btn btn-circle margin-20"
-    onclick="editDocument('{{doctype}}','{{name}}')"
+    onclick="editDocument('{{doctype}}','{{name}}', `{{data}}`)"
     aria-label="Edit {{doctype}} {{name}}"
 >
 <i class="far fa-pen"></i>
 </button>
 
+{% include "templates/includes/common/validation_form.html" %}
+{% include "templates/includes/common/collaboration_form.html" %}
+
 <script>
-    editDocument = (doctype, name) => {
+    editDocument = (doctype, name, data) => {
         if (doctype === 'Problem') {
             window.location.href = `/add-problem?name=${name}`;
         } else if (doctype === 'Enrichment') {
             window.location.href = `/add-enrichment?name=${name}`;
+        } else if (doctype === 'Collaboration Table') {
+            data = JSON.parse(data.replace(/\'/g, '"'));
+            $('#collaboration-modal-'+name).modal('toggle');
+            $("#persona-select-"+name).val(data[0]);
+            $("#collaboration-comment-"+name).val(data[1]);
+        } else if (doctype === 'Validation Table') {
+            console.log(data);
+            data = JSON.parse(data.replace(/\'/g, '"'));
+            $('#validation-modal-'+name).modal('toggle');
+            $("#validation-comment-"+name).val(data[0]);
         }
     }
 </script>

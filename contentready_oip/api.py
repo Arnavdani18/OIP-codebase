@@ -193,15 +193,23 @@ def add_enrichment(doc):
     return True
 
 @frappe.whitelist(allow_guest = False)
-def add_validation(doctype, name, validation, html=True):
-    validations_by_user = frappe.get_list('Validation Table', filters={'owner': frappe.session.user, 'parenttype': doctype, 'parent': name})
-    if len(validations_by_user) > 0:
-        frappe.throw('You have already validated this {}.'.format(doctype).capitalize())
+def add_or_edit_validation(doctype, name, validation, html=True):
     validation = json.loads(validation)
-    doc = frappe.get_doc(doctype, name)
-    v = doc.append('validations', {})
-    v.update(validation)
-    doc.save()
+    if doctype == 'Validation Table':
+        # in edit mode
+        v = frappe.get_doc('Validation Table', name)
+        v.update(validation)
+        v.save()
+        total_count = frappe.db.count('Validation Table', filters={'parenttype': v.parenttype, 'parent': v.parent})
+    else:
+        validations_by_user = frappe.get_list('Validation Table', filters={'owner': frappe.session.user, 'parenttype': doctype, 'parent': name})
+        if len(validations_by_user) > 0:
+            frappe.throw('You have already validated this {}.'.format(doctype).capitalize())
+        doc = frappe.get_doc(doctype, name)
+        v = doc.append('validations', {})
+        v.update(validation)
+        doc.save()
+        total_count = frappe.db.count('Validation Table', filters={'parenttype': doctype, 'parent': name})
     frappe.db.commit()
     if html:
         context = {
@@ -209,27 +217,38 @@ def add_validation(doctype, name, validation, html=True):
         }
         template = "templates/includes/common/validation_card.html"
         html = frappe.render_template(template, context)
-        return html, frappe.db.count('Validation Table', filters={'parenttype': doctype, 'parent': name})
+        return html, total_count
     else:
         return doc
 
 @frappe.whitelist(allow_guest = False)
-def add_collaboration(doctype, name, collaboration, html=True):
-    collaborations_by_user = frappe.get_list('Collaboration Table', filters={'owner': frappe.session.user, 'parenttype': doctype, 'parent': name})
-    if len(collaborations_by_user) > 0:
-        frappe.throw('You have already added your collaboration intent on this {}.'.format(doctype).capitalize())
+def add_or_edit_collaboration(doctype, name, collaboration, html=True):
     collaboration = json.loads(collaboration)
-    doc = frappe.get_doc(doctype, name)
-    v = doc.append('collaborations', {})
-    v.update(collaboration)
-    doc.save()
+    if doctype == 'Collaboration Table':
+        # in edit mode
+        c = frappe.get_doc('Collaboration Table', name)
+        c.update(collaboration)
+        c.save()
+        total_count = frappe.db.count('Collaboration Table', filters={'parenttype': c.parenttype, 'parent': c.parent})
+    else:
+        collaborations_by_user = frappe.get_list('Collaboration Table', filters={'owner': frappe.session.user, 'parenttype': doctype, 'parent': name})
+        if len(collaborations_by_user) > 0:
+            frappe.throw('You have already added your collaboration intent on this {}.'.format(doctype).capitalize())
+        doc = frappe.get_doc(doctype, name)
+        c = doc.append('collaborations', {})
+        c.update(collaboration)
+        doc.save()
+        total_count = frappe.db.count('Collaboration Table', filters={'parenttype': doctype, 'parent': name})
     frappe.db.commit()
+    print('saved collaboration')
     if html:
         context = {
-            'collaboration': v
+            'collaboration': c,
+            'personas': get_persona_list()
         }
         template = "templates/includes/common/collaboration_card.html"
         html = frappe.render_template(template, context)
-        return html, frappe.db.count('Collaboration Table', filters={'parenttype': doctype, 'parent': name})
+        print('returning html')
+        return html, total_count
     else:
         return doc

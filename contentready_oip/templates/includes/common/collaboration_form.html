@@ -1,4 +1,4 @@
-<div class="modal" tabindex="-1" role="dialog" id="collaboration-modal">
+<div class="modal" tabindex="-1" role="dialog" id="collaboration-modal-{{name}}">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -11,14 +11,17 @@
                 <form class="was-validated">
                     <div class="form-group">
                         <label for="personaSelect">Role</label>
-                        <select class="form-control" id="persona-select" required>
+                        <select class="form-control" id="persona-select-{{name}}" required>
                             <option value="">Please Select a Role</option>
+                            {% for persona in personas %}
+                            <option value="{{persona.value}}">{{persona.label}}</option>
+                            {% endfor %}
                         </select>
                         <div class="invalid-feedback">Please select a valid role.</div>
                     </div>
                     <div class="form-group">
                         <label for="collaboration-comment">How can you help?</label>
-                        <textarea type="text" class="form-control is-invalid" id="collaboration-comment" rows="3"
+                        <textarea type="text" class="form-control is-invalid" id="collaboration-comment-{{name}}" rows="3"
                             placeholder="Enter comment" required></textarea>
                             <div class="invalid-feedback">
                                 Please explain how you can contribute.
@@ -42,7 +45,7 @@
                 args: {},
                 callback: function (r) {
                     r.message.map(op => {
-                        $('#persona-select').append(`<option value="${op.value}"> 
+                        $('#persona-select-{{name}}').append(`<option value="${op.value}"> 
                                        ${op.label} 
                                   </option>`);
                     })
@@ -54,8 +57,8 @@
     submitCollaboration = (doctype, name) => {
         const collaboration = {
             user: frappe.session.user,
-            persona: $('#persona-select').val(),
-            comment: $('#collaboration-comment').val()
+            persona: $('#persona-select-'+name).val(),
+            comment: $('#collaboration-comment-'+name).val()
         }
         if (!collaboration.persona){
             frappe.throw('Please select a role.');
@@ -64,18 +67,26 @@
             frappe.throw('Please explain how you can contribute.');
         }
         frappe.call({
-            method: 'contentready_oip.api.add_collaboration',
+            method: 'contentready_oip.api.add_or_edit_collaboration',
             args: {
                 doctype: doctype,
                 name: name,
                 collaboration: collaboration
             },
             callback: (r) => {
-                // console.log(r)
                 if (r.message[1] > 0) {
-                    $('#collaborations').prepend(r.message[0]);
-                    $('#collaboration-modal').modal('toggle');
-                    $('#collaboration-count').text(r.message[1]);
+                    // console.log(r.message);
+                    if (doctype == 'Collaboration Table') {
+                        // edit mode
+                        $('#collaboration-card-'+name).replaceWith(r.message[0]);
+                        // TODO: Toggles twice for some reason leaving an empty form on the screen.
+                        // TEMP Fix: Reload.
+                        window.location.reload();
+                    } else {
+                        $('#collaborations').prepend(r.message[0]);
+                        $('#collaboration-count').text(r.message[1]);
+                        $('#collaboration-modal-'+name).modal('toggle');
+                    }
                 }
             }
         });
