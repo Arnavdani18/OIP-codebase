@@ -1,28 +1,12 @@
 {
- "creation": "2020-02-22 19:21:56.854389",
+ "creation": "2020-02-28 21:37:15.604923",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "user",
-  "persona",
-  "comment"
+  "persona"
  ],
  "fields": [
-  {
-   "fieldname": "user",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "User",
-   "options": "User",
-   "reqd": 1
-  },
-  {
-   "fieldname": "comment",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Comment"
-  },
   {
    "fieldname": "persona",
    "fieldtype": "Link",
@@ -33,11 +17,11 @@
   }
  ],
  "istable": 1,
- "modified": "2020-03-01 18:11:18.881552",
+ "modified": "2020-03-01 18:11:19.478980",
  "modified_by": "tej@jaaga.in",
  "module": "ContentReady OIP",
- "name": "Collaboration Table",
- "owner": "Administrator",
+ "name": "Persona Table",
+ "owner": "tej@jaaga.in",
  "permissions": [],
  "quick_entry": 1,
  "sort_field": "modified",
