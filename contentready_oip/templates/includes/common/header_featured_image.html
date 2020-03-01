@@ -1,15 +1,16 @@
 <div class="img-wrapper">
     <img
-        src="{{images[0]|default('/files/image_placeholder.jpg', true)}}"
+        src="{{images[0].image|default('/files/image_placeholder.jpg', true)}}"
         class="rounded img-responsive"
         style="object-fit: cover;"
     />
+    {% if (images | length) > 0%}
     <button
         class="align-icon"
         data-toggle="modal"
-        #showModalBtn
-        onclick="processAction('view-image','{{doctype}}','{{name}}')"
+        data-target="#attachment-modal-header"
     >
-        +{{(images | length)-1}}
+        +{{(images | length)}}
     </button>
+    {% endif %}
 </div>
