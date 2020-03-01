@@ -1,7 +1,10 @@
 <h3 class="heading" id="solutionCards">
-    This problem has the following solutions
+    This problem has the following solutions.
 </h3>
 
 <div class="row">
-    Solution Cards
+    {% for s in solutions %}
+    {% set solution = frappe.get_doc('Solution', s.solution) %}
+    {% include "templates/includes/solution/solution_card.html" %}
+    {% endfor %}
 </div>

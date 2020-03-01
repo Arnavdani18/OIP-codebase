@@ -27,3 +27,13 @@ class Solution(WebsiteGenerator):
 		self.short_description = clean_html(self.description)[:500]
 		if len(self.description) > 1000:
 			self.short_description += '...'
+
+	def after_insert(self):
+		# Add reference to this solution in each of the problems_addressed
+		for p in self.problems_addressed:
+			problem = frappe.get_doc('Problem', p.problem)
+			s = problem.append('solutions', {})
+			s.solution = self.name
+			problem.save()
+			frappe.db.commit()
+

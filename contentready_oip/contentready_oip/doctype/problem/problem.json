@@ -38,6 +38,7 @@
   "validations",
   "collaborations",
   "discussions",
+  "solutions",
   "section_break_25",
   "likes",
   "column_break_27",
@@ -259,11 +260,17 @@
    "fieldtype": "Text",
    "hidden": 1,
    "label": "Short Description"
+  },
+  {
+   "fieldname": "solutions",
+   "fieldtype": "Table",
+   "label": "Solutions",
+   "options": "Solution Table"
   }
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2020-03-01 16:57:46.549232",
+ "modified": "2020-03-01 18:04:55.992369",
  "modified_by": "tej@jaaga.in",
  "module": "ContentReady OIP",
  "name": "Problem",
