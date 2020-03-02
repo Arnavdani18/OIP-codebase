@@ -13,10 +13,12 @@
                             <a href="#problems-section" class="see-solutions">
                                 See Problem(s)
                             </a>
-                            {% set doctype = doctype %}
-                            {% set name = name %}
-                            {% include "templates/includes/common/edit_icon.html" %}
-                            {% include "templates/includes/common/share.html" %}
+                            {% if frappe.session.user == owner %}
+                                {% set doctype = doctype %}
+                                {% set name = name %}
+                                {% include "templates/includes/common/edit_icon.html" %}
+                                {% include "templates/includes/common/share.html" %}
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -52,10 +54,10 @@
 
                     <div class="col-xl-8 pr-0 action-btn-section mt-3">
                         <div class="d-flex justify-content-sm-start justify-content-lg-end flex-wrap">
-                            <button type="button" class="card-btn" data-toggle="modal" data-target="#validation-modal-{{name}}">
+                            <button type="button" class="card-btn" onclick="openValidationForm('{{doctype}}', '{{name}}')">
                                 Validate
                             </button>
-                            <button type="button" class="card-btn" data-toggle="modal" data-target="#collaboration-modal-{{name}}">
+                            <button type="button" class="card-btn" onclick="openCollaborationForm('{{doctype}}', '{{name}}')">
                                 Collaborate
                             </button>
                         </div>
@@ -65,3 +67,40 @@
         </div>
     </div>
 </div>
+
+<script>
+    frappe.ready(async () => {
+        openValidationForm = (doctype, name) => {
+            if (frappe.session.user === 'Guest') {
+                frappe.throw('Please login to participate.');
+            }
+            frappe.call({
+                method: 'contentready_oip.api.has_user_validated',
+                args: {doctype: doctype, name: name},
+                callback: (r) => {
+                    if (r.message){
+                        frappe.throw(`You have already validated this ${doctype}`);
+                    } else {
+                        $(`#validation-modal-${name}`).modal('toggle');
+                    }
+                }
+            });
+        }
+        openCollaborationForm = (doctype, name) => {
+            if (frappe.session.user === 'Guest') {
+                frappe.throw('Please login to participate.');
+            }
+            frappe.call({
+                method: 'contentready_oip.api.has_user_collaborated',
+                args: {doctype: doctype, name: name},
+                callback: (r) => {
+                    if (r.message){
+                        frappe.throw(`You have already collaborated on this ${doctype}`);
+                    } else {
+                        $(`#collaboration-modal-${name}`).modal('toggle');
+                    }
+                }
+            });
+        }
+    })
+</script>

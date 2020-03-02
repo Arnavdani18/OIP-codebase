@@ -20,6 +20,9 @@
     }
 
     toggle_like = (doctype, name) => {
+        if (frappe.session.user === 'Guest') {
+            frappe.throw('Please login to participate.');
+        }
         const btnId = `#like-icon-${doctype}-${name}`;
         const countId = `#like-count-${doctype}-${name}`;
         // initial values

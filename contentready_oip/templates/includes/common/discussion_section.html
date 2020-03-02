@@ -43,6 +43,7 @@
         </div>
     </div>
 
+    {% if frappe.session.user != 'Guest' %}
     <div class="my-4 px-4">
         {% set doctype = doctype %}
         {% set name = name %}
@@ -55,4 +56,10 @@
             {% include "templates/includes/common/comment.html" %}
         {% endfor %}
     </div>
+    {% else %}
+    <div id="discussionTabGroup" class="pb-2">
+        <br/>
+        <h4>Please login to participate in the conversation.</h4>
+    </div>
+    {% endif %}
 </div>

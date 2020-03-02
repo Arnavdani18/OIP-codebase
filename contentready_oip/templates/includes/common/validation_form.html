@@ -45,8 +45,8 @@
                         window.location.reload();
                     } else {
                         $('#validations').prepend(r.message[0]);
-                        $('#validation-modal').modal('toggle');
                         $('#validation-count').text(r.message[1]);
+                        $('#validation-modal-'+name).modal('toggle');
                     }
                 }
             }

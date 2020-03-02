@@ -247,7 +247,8 @@
    "fieldname": "discussions",
    "fieldtype": "Table",
    "label": "Discussions",
-   "options": "Discussion Table"
+   "options": "Discussion Table",
+   "permlevel": 1
   },
   {
    "fieldname": "collaborations",
@@ -270,7 +271,7 @@
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2020-03-01 18:11:18.096239",
+ "modified": "2020-03-02 22:22:53.161023",
  "modified_by": "tej@jaaga.in",
  "module": "ContentReady OIP",
  "name": "Problem",
@@ -289,12 +290,59 @@
    "write": 1
   },
   {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Collaborator",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Collaborator",
+   "share": 1,
+   "write": 1
+  },
+  {
    "email": 1,
    "export": 1,
    "print": 1,
    "read": 1,
    "report": 1,
    "role": "Guest",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
    "share": 1
   }
  ],

@@ -1,9 +1,11 @@
 <div class="col-sm-12 validateCard" id="validation-card-{{validation.name}}">
     <div class="float-right">
-        {% set doctype = validation.doctype %}
-        {% set name = validation.name %}
-        {% set data = [validation.comment] %}
-        {% include "templates/includes/common/edit_icon.html" %}
+        {% if frappe.session.user == validation.owner %}
+            {% set doctype = validation.doctype %}
+            {% set name = validation.name %}
+            {% set data = [validation.comment] %}
+            {% include "templates/includes/common/edit_icon.html" %}
+        {% endif %}
     </div>
     <div class="agreedDisagreeDiv">
         {% if validation.agree %}

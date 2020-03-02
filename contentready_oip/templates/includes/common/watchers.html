@@ -20,6 +20,9 @@
     }
 
     toggle_watcher = (doctype, name) => {
+        if (frappe.session.user === 'Guest') {
+            frappe.throw('Please login to participate.');
+        }
         const btnId = `#watcher-icon-${doctype}-${name}`;
         const countId = `#watcher-count-${doctype}-${name}`;
         // initial values

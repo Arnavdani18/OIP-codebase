@@ -29,8 +29,8 @@
    "options": "Discussion Table"
   }
  ],
- "modified": "2020-02-27 22:09:37.127423",
- "modified_by": "Administrator",
+ "modified": "2020-03-02 22:04:54.991571",
+ "modified_by": "tej@jaaga.in",
  "module": "ContentReady OIP",
  "name": "Discussion",
  "owner": "Administrator",
@@ -44,6 +44,19 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Collaborator",
    "share": 1,
    "write": 1
   }

@@ -1,6 +1,10 @@
 import frappe
 import json
 
+def nudge_guests():
+    if not frappe.session.user or frappe.session.user == 'Guest':
+        frappe.throw('Please login to collaborate.')
+
 @frappe.whitelist(allow_guest = True)
 def set_location_filter(selectedLocation=None, distance=25):
     if not 'location_filter' in frappe.session.data or not isinstance(frappe.session.data['location_filter'], dict):
@@ -192,13 +196,14 @@ def get_homepage_stats():
         'collaborators': frappe.db.count('User Profile'),
     }
 
-@frappe.whitelist(allow_guest = False)
+@frappe.whitelist(allow_guest = True)
 def has_user_liked(doctype, name):
     likes = frappe.get_all('Like Table', filters={'user': frappe.session.user, 'parenttype': doctype, 'parent': name})
     return len(likes) > 0
 
 @frappe.whitelist(allow_guest = False)
 def toggle_like(doctype, name):
+    nudge_guests()
     likes = frappe.get_all('Like Table', filters={'user': frappe.session.user, 'parenttype': doctype, 'parent': name})
     if len(likes) > 0:
         # user has already liked this document
@@ -213,13 +218,14 @@ def toggle_like(doctype, name):
         frappe.db.commit()
     return has_user_liked(doctype, name), get_child_table('Like Table', doctype, name)
 
-@frappe.whitelist(allow_guest = False)
+@frappe.whitelist(allow_guest = True)
 def has_user_watched(doctype, name):
     watchers = frappe.get_all('Watch Table', filters={'user': frappe.session.user, 'parenttype': doctype, 'parent': name})
     return len(watchers) > 0
 
 @frappe.whitelist(allow_guest = False)
 def toggle_watcher(doctype, name):
+    nudge_guests()
     watchers = frappe.get_all('Watch Table', filters={'user': frappe.session.user, 'parenttype': doctype, 'parent': name})
     if len(watchers) > 0:
         # user has already watched this document
@@ -270,14 +276,29 @@ def get_problem_card(name, html=True):
         return doc
 
 @frappe.whitelist(allow_guest = False)
+def has_user_enriched(name):
+    enrichments_by_user = frappe.get_list('Enrichment', filters={'owner': frappe.session.user, 'problem': name})
+    return len(enrichments_by_user) > 0
+
+@frappe.whitelist(allow_guest = False)
 def add_enrichment(doc):
     doc = json.loads(doc)
     if not ('problem' in doc or doc['problem']):
         return False
-    enrichments_by_user = frappe.get_list('Enrichment', filters={'owner': frappe.session.user, 'problem': doc['problem']})
-    if len(enrichments_by_user) > 0:
+    if has_user_enriched(doc['problem']):
         frappe.throw('You have already enriched this problem.')
+    enrichment = frappe.get_doc({
+        'doctype': 'Enrichment'
+    })
+    enrichment.update(doc)
+    enrichment.insert()
+    frappe.db.commit()
     return True
+
+@frappe.whitelist(allow_guest = False)
+def has_user_validated(doctype, name):
+    validations_by_user = frappe.get_list('Validation Table', filters={'owner': frappe.session.user, 'parenttype': doctype, 'parent': name})
+    return len(validations_by_user) > 0
 
 @frappe.whitelist(allow_guest = False)
 def add_or_edit_validation(doctype, name, validation, html=True):
@@ -289,8 +310,7 @@ def add_or_edit_validation(doctype, name, validation, html=True):
         v.save()
         total_count = frappe.db.count('Validation Table', filters={'parenttype': v.parenttype, 'parent': v.parent})
     else:
-        validations_by_user = frappe.get_list('Validation Table', filters={'owner': frappe.session.user, 'parenttype': doctype, 'parent': name})
-        if len(validations_by_user) > 0:
+        if has_user_validated(doctype, name):
             frappe.throw('You have already validated this {}.'.format(doctype).capitalize())
         doc = frappe.get_doc(doctype, name)
         v = doc.append('validations', {})
@@ -309,6 +329,11 @@ def add_or_edit_validation(doctype, name, validation, html=True):
         return doc
 
 @frappe.whitelist(allow_guest = False)
+def has_user_collaborated(doctype, name):
+    collaborations_by_user = frappe.get_list('Collaboration Table', filters={'owner': frappe.session.user, 'parenttype': doctype, 'parent': name})
+    return len(collaborations_by_user) > 0
+
+@frappe.whitelist(allow_guest = False)
 def add_or_edit_collaboration(doctype, name, collaboration, html=True):
     collaboration = json.loads(collaboration)
     if doctype == 'Collaboration Table':
@@ -318,8 +343,7 @@ def add_or_edit_collaboration(doctype, name, collaboration, html=True):
         c.save()
         total_count = frappe.db.count('Collaboration Table', filters={'parenttype': c.parenttype, 'parent': c.parent})
     else:
-        collaborations_by_user = frappe.get_list('Collaboration Table', filters={'owner': frappe.session.user, 'parenttype': doctype, 'parent': name})
-        if len(collaborations_by_user) > 0:
+        if has_user_collaborated(doctype, name):
             frappe.throw('You have already added your collaboration intent on this {}.'.format(doctype).capitalize())
         doc = frappe.get_doc(doctype, name)
         c = doc.append('collaborations', {})
