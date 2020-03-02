@@ -1,7 +1,26 @@
 <div class="tags">
     {% for sector in sectors %}
-    <button class="tag actions text-capitalize">
+    <button class="tag actions text-capitalize" onclick="selectSector('{{sector.sector}}', '{{doctype}}')">
         {{ sector.sector }}
     </button>
     {% endfor %}
 </div>
+
+<script>
+    selectSector = (sector, doctype) => {
+        frappe.call({
+            method: 'contentready_oip.api.set_sector_filter',
+            args: {
+                sectors: [sector],
+            },
+            callback: function(r) {
+                // Redirect and reload as index.py will use the session variables to filter problems/solutions shown.
+                if (doctype === 'Problem'){
+                    window.location.href = '/problems';
+                } else if (doctype === 'Solution'){
+                    window.location.href = '/solutions';
+                }
+            }
+        });
+    }
+</script>
