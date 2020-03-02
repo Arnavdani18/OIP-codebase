@@ -1,0 +1,140 @@
+<!-- jinja -->
+<!-- no-breadcrumbs -->
+<!-- static -->
+<div class="row">
+    <!-- <h3>Search</h3> -->
+    <input type="text" id="search-input" autofocus="true" placeholder="Search for problems and solutions"
+        class="input-with-feedback form-control bold"></input>
+</div>
+
+<div class="container card-section hidden" id="search-results-container">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="col p-0">
+                <div class="problem-listed-title text-white">
+                    <div class="d-flex align-items-center header">
+                        <img
+                            src="/files/problem_icon.svg"
+                            alt=""
+                            height="20px"
+                            width="24px"
+                        />
+                        <h2 class="heading">Problems Listed</h2>
+                        <div class="view-all">
+                            <a href="/problems">
+                                View All
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div id="matching-problems"></div>
+                </div>
+            </div>
+            <div class="col-lg-6 margin-sm-md-30">
+                <div class="col p-0">
+                    <div class="problem-listed-title text-white">
+                        <div class="d-flex align-items-center header">
+                            <img
+                                src="/files/problem_icon.svg"
+                                alt=""
+                                height="20px"
+                                width="24px"
+                            />
+                            <h2 class="heading">Solutions Listed</h2>
+                            <div class="view-all">
+                                <a href="/solutions">
+                                    View All
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="matching-solutions"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    
+    
+</div>
+
+<script>
+    frappe.ready(async () => {
+        // Simple sleep(ms) function from https://stackoverflow.com/a/48882182
+        const sleep = m => new Promise(r => setTimeout(r, m));
+
+        lookForMatchingProblems = async (text) => {
+            // Delay as the user is probably still typing
+            await sleep(500);
+            // Look up text again - user could have typed something since the event was triggered.
+            if (!text){
+                text = $('#search-input').val().trim();
+            }
+            frappe.call({
+                method: 'contentready_oip.api.get_similar_problems',
+                args: {
+                    text: text,
+                },
+                callback: function(r) {
+                    // Add matching problems to div
+                    $('#matching-problems').empty();
+                    if (r.message.length > 0) {
+                        r.message.map(el => {
+                            $('#matching-problems').append(el);
+                        });
+                    } else {
+                        $('#matching-problems').append('<br/><h4>No results found.</h4>');
+                    }
+                }
+            });
+        }
+
+        lookForMatchingSolutions = async (text) => {
+            // Delay as the user is probably still typing
+            await sleep(500);
+            // Look up text again - user could have typed something since the event was triggered.
+            if (!text){
+                text = $('#search-input').val().trim();
+            }
+            frappe.call({
+                method: 'contentready_oip.api.get_similar_solutions',
+                args: {
+                    text: text,
+                },
+                callback: function(r) {
+                    // Add matching problems to div
+                    $('#matching-solutions').empty();
+                    if (r.message.length > 0) {
+                        r.message.map(el => {
+                            $('#matching-solutions').append(el);
+                        });
+                    } else {
+                        $('#matching-solutions').append('<br/><h4>No results found.</h4>');
+                    }
+                }
+            });
+        }
+
+        // Delay until page is fully rendered
+        await sleep(200);
+
+        // Look for similar problems and solutions when text is entered
+        $('#search-input').val('');
+        $('#search-input').on('keyup', (e) => {
+            const value = e.target.value.trim();
+            if (value.length && value.length % 3 === 0) {
+                $('#search-results-container').removeClass('hidden');
+                lookForMatchingProblems();
+                lookForMatchingSolutions();
+            }
+        });
+    })
+</script>
+
+<style>
+    .hidden{
+        display: none;
+    }
+</style>

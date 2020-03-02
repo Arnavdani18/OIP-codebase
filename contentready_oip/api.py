@@ -51,15 +51,59 @@ def get_child_table(child_table_doctype, parent_doctype, parent_name):
     return frappe.get_all(child_table_doctype, filters={'parenttype': parent_doctype, 'parent': parent_name})
 
 @frappe.whitelist(allow_guest = True)
+def get_lat_lng_bounds(selectedLocation):
+    from math import cos, radians
+    lat_delta_1km = 0.009
+    distance = selectedLocation['distance']
+    lat_center = selectedLocation['center']['latitude']
+    lng_center = selectedLocation['center']['longitude']
+    lng_delta_1km = 0.009/cos(radians(lat_center))
+    lat_min = lat_center - (distance * lat_delta_1km)
+    lat_max = lat_center + (distance * lat_delta_1km)
+    lng_min = lng_center - (distance * lng_delta_1km)
+    lng_max = lng_center + (distance * lng_delta_1km)
+    return {
+        'lat_center': lat_center,
+        'lat_min': lat_min,
+        'lat_max': lat_max,
+        'lng_center': lng_center,
+        'lng_min': lng_min,
+        'lng_max': lng_max
+    }
+
+@frappe.whitelist(allow_guest = True)
 def get_filtered_problems(selectedLocation, selectedSectors, limit_page_length=20):
-    # TODO: Implement location filtering 
     if 'all' in selectedSectors:
-        # matching_problems = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': 'Problem'})
-        matching_problems = frappe.get_list('Problem', filters={'is_published': True}, limit_page_length=limit_page_length)
-        problem_set = {p['name'] for p in matching_problems}
+        matching_problems_by_sector = frappe.get_list('Problem', filters={'is_published': True}, limit_page_length=limit_page_length)
+        problem_set = {p['name'] for p in matching_problems_by_sector}
     else:
-        matching_problems = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': 'Problem', 'sector': ['in', selectedSectors]}, limit_page_length=limit_page_length)
-        problem_set = {p['parent'] for p in matching_problems}
+        matching_problems_by_sector = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': 'Problem', 'sector': ['in', selectedSectors]}, limit_page_length=limit_page_length)
+        problem_set = {p['parent'] for p in matching_problems_by_sector}
+    # TODO: Implement location filtering using Elasticsearch
+    # This approximation currently fails.
+    try:
+        bounds = get_lat_lng_bounds(selectedLocation)
+        lat_center = bounds['lat_center']
+        lat_min = bounds['lat_min']
+        lat_max = bounds['lat_max']
+        lng_center = bounds['lng_center']
+        lng_min = bounds['lng_min']
+        lng_max = bounds['lng_max']
+        matching_problems_by_location = \
+            frappe.get_list('Problem', 
+                filters={
+                    'is_published': True,
+                    'name': ['in', problem_set],
+                    'latitude': ['>=', lat_min],
+                    'latitude': ['<=', lat_max],
+                    'longitude': ['>=', lng_min],
+                    'longitude': ['<=', lng_max],
+                }, 
+                limit_page_length=limit_page_length
+            )
+        problem_set = {p['name'] for p in matching_problems_by_location}
+    except Exception as e:
+        print(str(e))
     problems = []
     for p in problem_set:
         doc = frappe.get_doc('Problem', p)
@@ -92,7 +136,7 @@ def get_filtered_solutions(selectedLocation, selectedSectors, limit_page_length=
     }
 
 
-@frappe.whitelist(allow_guest = False)
+@frappe.whitelist(allow_guest = True)
 def get_similar_problems(text, limit_page_length=5, html=True):
     names = frappe.db.get_list('Problem', or_filters={'title': ['like', '%{}%'.format(text)], 'description': ['like', '%{}%'.format(text)]}, limit_page_length=limit_page_length)
     similar_problems = []
@@ -110,6 +154,25 @@ def get_similar_problems(text, limit_page_length=5, html=True):
         else:
             similar_problems.append(doc)
     return similar_problems
+
+@frappe.whitelist(allow_guest = True)
+def get_similar_solutions(text, limit_page_length=5, html=True):
+    names = frappe.db.get_list('Solution', or_filters={'title': ['like', '%{}%'.format(text)], 'description': ['like', '%{}%'.format(text)]}, limit_page_length=limit_page_length)
+    similar_solutions = []
+    names = {n['name'] for n in names}
+    for p in names:
+        doc = frappe.get_doc('Solution', p)
+        doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
+        if html:
+            template = "templates/includes/solution/solution_card.html"
+            context = {
+                'solution': doc
+            }
+            html = frappe.render_template(template, context)
+            similar_solutions.append(html)
+        else:
+            similar_solutions.append(doc)
+    return similar_solutions
 
 @frappe.whitelist(allow_guest = True)
 def get_orgs_list():
