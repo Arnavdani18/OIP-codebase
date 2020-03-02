@@ -1,15 +1,19 @@
 <!-- jinja -->
 <!-- no-breadcrumbs -->
 <!-- static -->
-<div class="row">
-    <!-- <h3>Search</h3> -->
-    <input type="text" id="search-input" autofocus="true" placeholder="Search for problems and solutions"
-        class="input-with-feedback form-control bold"></input>
+<div class="container">
+    <div class="input-group">
+        <input type="text" class="form-control form-control-lg" aria-label="Search the Open Innovation Platform" id="search-input">
+        <div class="input-group-append">
+          <button type="button" data-enabled=1 class="btn btn-primary" onclick="toggleProblems()" id="problem-selector">Problems</button>
+          <button type="button" data-enabled=1 class="btn btn-primary" onclick="toggleSolutions()" id="solution-selector">Solutions</button>
+        </div>
+      </div>
 </div>
 
 <div class="container card-section hidden" id="search-results-container">
     <div class="row">
-        <div class="col-lg-6">
+        <div class="col-lg-6" id="problem-results-container">
             <div class="col p-0">
                 <div class="problem-listed-title text-white">
                     <div class="d-flex align-items-center header">
@@ -30,7 +34,7 @@
                 <div id="matching-problems"></div>
                 </div>
             </div>
-            <div class="col-lg-6 margin-sm-md-30">
+            <div class="col-lg-6 margin-sm-md-30" id="solution-results-container">
                 <div class="col p-0">
                     <div class="problem-listed-title text-white">
                         <div class="d-flex align-items-center header">
@@ -55,22 +59,42 @@
     </div>
 </div>
 
-<div class="row">
-    
-    
-</div>
-
 <script>
     frappe.ready(async () => {
         // Simple sleep(ms) function from https://stackoverflow.com/a/48882182
         const sleep = m => new Promise(r => setTimeout(r, m));
 
+        toggleProblems = () => {
+            const problemsEnabled = $('#problem-selector').data('enabled');
+            if (problemsEnabled) {
+                $('#problem-selector').data('enabled', 0);
+                $('#problem-selector').removeClass('btn-primary').addClass('btn-light');
+                // $('#problem-results-container').hide();
+                // $('#solution-results-container').removeClass('col-lg-6').addClass('col-lg-12');
+            } else {
+                $('#problem-selector').data('enabled', 1);
+                $('#problem-selector').removeClass('btn-light').addClass('btn-primary');
+                // $('#problem-results-container').show();
+                // $('#solution-results-container').removeClass('col-lg-12').addClass('col-lg-6');
+                triggerSearch();
+            }
+        }
+
+        toggleSolutions = () => {
+            const solutionsEnabled = $('#solution-selector').data('enabled');
+            if (solutionsEnabled) {
+                $('#solution-selector').data('enabled', 0);
+                $('#solution-selector').removeClass('btn-primary').addClass('btn-light');
+            } else {
+                $('#solution-selector').data('enabled', 1);
+                $('#solution-selector').removeClass('btn-light').addClass('btn-primary');
+                triggerSearch();
+            }
+        }
+
         lookForMatchingProblems = async (text) => {
-            // Delay as the user is probably still typing
-            await sleep(500);
-            // Look up text again - user could have typed something since the event was triggered.
-            if (!text){
-                text = $('#search-input').val().trim();
+            if (!text.length > 0) {
+                return false;
             }
             frappe.call({
                 method: 'contentready_oip.api.get_similar_problems',
@@ -92,11 +116,8 @@
         }
 
         lookForMatchingSolutions = async (text) => {
-            // Delay as the user is probably still typing
-            await sleep(500);
-            // Look up text again - user could have typed something since the event was triggered.
-            if (!text){
-                text = $('#search-input').val().trim();
+            if (!text.length > 0) {
+                return false;
             }
             frappe.call({
                 method: 'contentready_oip.api.get_similar_solutions',
@@ -117,17 +138,43 @@
             });
         }
 
+        triggerSearch = async (clicked) => {
+            // Delay as the user is probably still typing. Only triggered on autosearch.
+            if (!clicked) await sleep(500);
+            // Look up text again - user could have typed something since the event was triggered.
+            const key = $('#search-input').val().trim();
+            const problemsEnabled = $('#problem-selector').data('enabled');
+            const solutionsEnabled = $('#solution-selector').data('enabled');
+            // console.log(problemsEnabled, solutionsEnabled);
+            if (problemsEnabled) {
+                $('#solutions-results-container').show();
+                lookForMatchingProblems(key);
+            } else {
+                $('#problem-results-container').hide();
+            }
+            if (solutionsEnabled) {
+                $('#solutions-results-container').show();
+                lookForMatchingSolutions(key);
+            } else {
+                $('#solutions-results-container').hide()
+            }
+            $('#search-results-container').removeClass('hidden');
+        }
+
         // Delay until page is fully rendered
         await sleep(200);
 
         // Look for similar problems and solutions when text is entered
         $('#search-input').val('');
         $('#search-input').on('keyup', (e) => {
-            const value = e.target.value.trim();
-            if (value.length && value.length % 3 === 0) {
-                $('#search-results-container').removeClass('hidden');
-                lookForMatchingProblems();
-                lookForMatchingSolutions();
+            const key = e.target.value.trim();
+            if (key.length && key.length % 3 === 0) {
+                const problemsEnabled = $('#problem-selector').data('enabled');
+                const solutionsEnabled = $('#solution-selector').data('enabled');
+                if (!problemsEnabled && !solutionsEnabled) {
+                    frappe.throw('Please enable at least one of Problems or Solutions to complete the search.')
+                }
+                triggerSearch();
             }
         });
     })
