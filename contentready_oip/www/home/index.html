@@ -6,40 +6,16 @@
         <div class="banner-text">
             <h1>Mission to create social impact</h1>
             <p class="left-bar">
-                The Open Innovation Exchange is a problem-centric platform to
-                systematically manage the lab to market journey of innovative
-                solutions that solve a set of validated problem statements. This
-                platform will bring all possible stakeholders needed in this
-                process right from the end beneficiary at the grassroot level,
-                innovators, entrepreneurs, academicians & researchers,
-                volunteers, development organizations/NGOs, philanthropic
-                foundations, corporate CSR, incubators and other ecosystem
-                players.
+                {% set about_us = frappe.db.get_single_value('About Us Settings', 'company_introduction') %}
+                {{ about_us | striptags }}
             </p>
         </div>
     </div>
 </div>
-<div class="container">
-    <div class="row">
-        <div class="col">
-            <div class="col pl-0">
-                <div class=" quick-stats ">
-                    <div class="row h-100">
-                        <div class="col-md-4 text-center stats">
-                            <h3>Problems Listed</h3>
-                            <p class="">{{stats.problems}}</p>
-                        </div>
-                        <div class="col-md-4 text-center stats">
-                            <h3>Solution Provided</h3>
-                            <p class="">{{stats.solutions}}</p>
-                        </div>
-                        <div class="col-md-4 text-center stats">
-                            <h3>No. of Collaborators</h3>
-                            <p class="">{{stats.collaborators}}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
+
+{% include "templates/includes/common/homepage_stats.html" %}
+{% include "templates/includes/common/homepage_showcase_content.html" %}
+
+{% include "templates/includes/common/subscribe.html" %}
+{% include "templates/includes/common/partners.html" %}

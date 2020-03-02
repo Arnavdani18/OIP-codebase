@@ -1,3 +1,4 @@
+{% set id = 'header' %}
 <div class="img-wrapper">
     {% if (images|length) > 0 %}
     <img
@@ -18,7 +19,7 @@
     <button
         class="align-icon"
         data-toggle="modal"
-        data-target="#attachment-modal-header"
+        data-target="#attachment-modal-{{id}}"
     >
         +{{(images | length)}}
     </button>
@@ -27,6 +28,5 @@
 
 {% if (images | length) > 0%}
 {% set attachments = images %}
-{% set id = 'header' %}
 {% include "templates/includes/common/attachment_modal.html" %}
 {% endif %}

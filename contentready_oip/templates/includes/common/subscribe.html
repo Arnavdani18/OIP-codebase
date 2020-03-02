@@ -1,0 +1,67 @@
+<div class="container my-4">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="col landing-page-subscribe">
+                <div class="row " style="height: 95px; line-height: 95px;">
+                    <div class="col-md-6 ">
+                        <h2 class="heading">Stay up to date</h2>
+                    </div>
+                    <div class="col-md-6"></div>
+                </div>
+                <div class="row pb-2 pb-lg-0 align-items-center">
+                    <div class="col-md-6 ">
+                        <p class="subscribe-body mb-0">
+                            Not likely to contribute but interested in how this
+                            program fares? Enter your email to receive our
+                            updates.
+                        </p>
+                    </div>
+                    <div class="col-md-6  subscribe-form pl-md-0 ">
+                        <!-- <div class="input-group mb-3"   > -->
+                            <input
+                                type="email"
+                                name="subscriber-email"
+                                id="subscriber-email"
+                                placeholder="Email Address"
+                                class="form"
+                            />
+                            <button
+                                class="subscribe-button mt-2 mt-lg-0 text-white"
+                                onclick="addSubscriber()"
+                            >
+                                Subscribe
+                            </button>
+                        <!-- </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    isEmail = (email) => {
+        const at_pos = email.indexOf("@");
+        const dot_pos = email.lastIndexOf(".");
+        if (email && !(at_pos > 0 && dot_pos > at_pos && email.length - at_pos > 4 && email.length - dot_pos >= 2)){
+            return false;
+        };
+        return true;
+    }
+
+    addSubscriber = () => {
+        const email = $('#subscriber-email').val();
+        console.log(email);
+        if (email && isEmail(email)){
+            frappe.call({
+                method: 'contentready_oip.api.add_subscriber',
+                args: {email: email},
+                callback: (r) => {
+                    frappe.msgprint('Thank you for subscribing!');
+                }
+            });
+        } else {
+            frappe.throw('Please enter a valid email address.');
+        }
+    }
+</script>

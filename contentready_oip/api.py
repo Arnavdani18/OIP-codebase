@@ -51,14 +51,14 @@ def get_child_table(child_table_doctype, parent_doctype, parent_name):
     return frappe.get_all(child_table_doctype, filters={'parenttype': parent_doctype, 'parent': parent_name})
 
 @frappe.whitelist(allow_guest = True)
-def get_filtered_problems(selectedLocation, selectedSectors):
+def get_filtered_problems(selectedLocation, selectedSectors, limit_page_length=20):
     # TODO: Implement location filtering 
     if 'all' in selectedSectors:
         # matching_problems = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': 'Problem'})
-        matching_problems = frappe.get_list('Problem', filters={'is_published': True})
+        matching_problems = frappe.get_list('Problem', filters={'is_published': True}, limit_page_length=limit_page_length)
         problem_set = {p['name'] for p in matching_problems}
     else:
-        matching_problems = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': 'Problem', 'sector': ['in', selectedSectors]})
+        matching_problems = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': 'Problem', 'sector': ['in', selectedSectors]}, limit_page_length=limit_page_length)
         problem_set = {p['parent'] for p in matching_problems}
     problems = []
     for p in problem_set:
@@ -72,13 +72,13 @@ def get_filtered_problems(selectedLocation, selectedSectors):
     }
 
 @frappe.whitelist(allow_guest = True)
-def get_filtered_solutions(selectedLocation, selectedSectors):
+def get_filtered_solutions(selectedLocation, selectedSectors, limit_page_length=20):
     # TODO: Implement location filtering 
     if 'all' in selectedSectors:
-        matching_solutions = frappe.get_list('Solution', filters={'is_published': True})
+        matching_solutions = frappe.get_list('Solution', filters={'is_published': True}, limit_page_length=limit_page_length)
         solution_set = {p['name'] for p in matching_solutions}
     else:
-        matching_solutions = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': 'Solution', 'sector': ['in', selectedSectors]})
+        matching_solutions = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': 'Solution', 'sector': ['in', selectedSectors]}, limit_page_length=limit_page_length)
         solution_set = {p['parent'] for p in matching_solutions}
     solutions = []
     for p in solution_set:
@@ -92,20 +92,23 @@ def get_filtered_solutions(selectedLocation, selectedSectors):
     }
 
 
-@frappe.whitelist(allow_guest = True)
-def get_similar_problems(text, limit_page_length=5):
+@frappe.whitelist(allow_guest = False)
+def get_similar_problems(text, limit_page_length=5, html=True):
     names = frappe.db.get_list('Problem', or_filters={'title': ['like', '%{}%'.format(text)], 'description': ['like', '%{}%'.format(text)]}, limit_page_length=limit_page_length)
     similar_problems = []
     names = {n['name'] for n in names}
     for p in names:
         doc = frappe.get_doc('Problem', p)
         doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
-        template = "templates/includes/problem/problem_card.html"
-        context = {
-            'problem': doc
-        }
-        html = frappe.render_template(template, context)
-        similar_problems.append(html)
+        if html:
+            template = "templates/includes/problem/problem_card.html"
+            context = {
+                'problem': doc
+            }
+            html = frappe.render_template(template, context)
+            similar_problems.append(html)
+        else:
+            similar_problems.append(doc)
     return similar_problems
 
 @frappe.whitelist(allow_guest = True)
@@ -273,3 +276,19 @@ def add_or_edit_collaboration(doctype, name, collaboration, html=True):
         return html, total_count
     else:
         return doc
+
+@frappe.whitelist(allow_guest = True)
+def add_subscriber(email, first_name=None):
+    if not first_name:
+        first_name = email # the contact docytpe needs first_name. If the form doesn't give us this, use email instead. 
+    contact = frappe.get_doc({
+        'doctype': 'Contact',
+        'first_name': email, 
+        'email_ids': [{
+            'email_id': email,
+            'is_primary': True
+        }]
+    })
+    contact.insert()
+    frappe.db.commit()
+    return contact
