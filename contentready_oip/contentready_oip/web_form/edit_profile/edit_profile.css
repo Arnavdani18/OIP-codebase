@@ -19,6 +19,14 @@
     display: none;
 }
 
+.form-group label {
+    font-weight: bolder;
+}
+
+.control-label {
+    font-weight: bolder;
+}
+
 .web-form-footer {
     display: none;
 }

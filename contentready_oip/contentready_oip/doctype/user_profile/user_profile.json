@@ -10,11 +10,21 @@
   "photo",
   "org",
   "org_title",
+  "qualifications",
   "column_break_4",
+  "skills",
   "personas",
   "sectors",
-  "qualifications",
-  "skills"
+  "section_break_11",
+  "city",
+  "latitude",
+  "longitude",
+  "column_break_15",
+  "state",
+  "state_code",
+  "column_break_18",
+  "country",
+  "country_code"
  ],
  "fields": [
   {
@@ -38,6 +48,7 @@
   },
   {
    "fetch_from": "user.user_image",
+   "fetch_if_empty": 1,
    "fieldname": "photo",
    "fieldtype": "Attach Image",
    "in_preview": 1,
@@ -66,7 +77,7 @@
   },
   {
    "fieldname": "qualifications",
-   "fieldtype": "Table MultiSelect",
+   "fieldtype": "Table",
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Qualifications",
@@ -74,7 +85,7 @@
   },
   {
    "fieldname": "skills",
-   "fieldtype": "Table MultiSelect",
+   "fieldtype": "Table",
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Skills",
@@ -88,13 +99,60 @@
   },
   {
    "fieldname": "sectors",
-   "fieldtype": "Table MultiSelect",
+   "fieldtype": "Table",
    "label": "Sectors",
    "options": "Sector Table"
+  },
+  {
+   "fieldname": "section_break_11",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Data",
+   "label": "Latitude"
+  },
+  {
+   "fieldname": "longitude",
+   "fieldtype": "Data",
+   "label": "Longitude"
+  },
+  {
+   "fieldname": "column_break_15",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Data",
+   "label": "State"
+  },
+  {
+   "fieldname": "state_code",
+   "fieldtype": "Data",
+   "label": "State Code"
+  },
+  {
+   "fieldname": "column_break_18",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Data",
+   "label": "Country"
+  },
+  {
+   "fieldname": "country_code",
+   "fieldtype": "Data",
+   "label": "Country Code"
   }
  ],
  "image_field": "photo",
- "modified": "2020-03-03 12:28:10.218145",
+ "modified": "2020-03-03 23:11:17.394815",
  "modified_by": "tej@jaaga.in",
  "module": "ContentReady OIP",
  "name": "User Profile",

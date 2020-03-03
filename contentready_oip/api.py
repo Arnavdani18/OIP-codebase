@@ -147,6 +147,11 @@ def get_persona_list():
     return [{'label': o['title'], 'value': o['name']} for o in all_personas]
 
 @frappe.whitelist(allow_guest = True)
+def get_sector_list():
+    all_sectors = frappe.get_list('Sector', fields=['title', 'name'])
+    return [{'label': o['title'], 'value': o['name']} for o in all_sectors]
+
+@frappe.whitelist(allow_guest = True)
 def get_homepage_stats():
     return {
         'problems': frappe.db.count('Problem', filters={'is_published': True}),

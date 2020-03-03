@@ -18,3 +18,7 @@
 .web-form-actions{
     display: none;
 }
+
+.web-form-footer {
+    display: none;
+}

@@ -23,15 +23,25 @@
 
             See {{ comment.attachments | length }} Attachments
         </button> -->
-        <button class="btn" onclick="replyToComment('{{comment.name}}')">
-            <i class="far fa-share"></i>
-            Reply
-        </button>
         <div id="reply-{{comment.name}}" class="hidden">
             {% set doctype = comment.doctype %}
             {% set name = comment.name %}
             {% set parent_div = '#reply-' + comment.name %}
             {% include "templates/includes/common/comment_editor.html" %}
+        </div>
+        <div class="footer-container">
+            <div class="rely-container">
+                <button class="btn" onclick="replyToComment('{{comment.name}}')">
+                    <i class="far fa-reply"></i>
+                    Reply
+                </button>
+            </div>
+            <div style="display: flex;">
+                {% set doctype = comment.doctype %}
+                {% set name = comment.name %}
+                {% include "templates/includes/common/likes.html" %}
+                {% include "templates/includes/common/share.html" %}
+            </div>
         </div>
     </div>
 </div>
