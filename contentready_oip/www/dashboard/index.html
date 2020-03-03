@@ -1,0 +1,77 @@
+<!-- jinja -->
+<!-- no-breadcrumbs -->
+<!-- static -->
+
+<div class="container mt-20 mb-5">
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="bg-white">
+                <ul class="nav nav-tabs nav-section nav-mob-section" id="leftTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="recommended-content-tab" data-toggle="tab" href="#recommended-content" role="tab"
+                            aria-controls="recommended-content" aria-selected="true">Areas That May Interest You ({{
+                                (problems + solutions) | length
+                            }})</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="users-tab" data-toggle="tab" href="#users" role="tab"
+                            aria-controls="users" aria-selected="false">Users With Common Interests ({{ users | length }})</a>
+                    </li>
+                </ul>
+                <div id="leftTabGroup" class="pb-2">
+                    <div class="tab-content" id="leftTabContent">
+                        <div class="tab-pane fade show active" id="recommended-content" role="tabpanel" aria-labelledby="recommended-content-tab">
+                            {% for problem in problems %}
+                                {% include "templates/includes/problem/problem_card.html" %}
+                            {% endfor %}
+                            {% for solution in solutions %}
+                                {% include "templates/includes/solution/solution_card.html" %}
+                            {% endfor %}
+                        </div>
+                        <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
+                            {% for user in users %}
+                                {% include "templates/includes/common/user_card.html" %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 margin-top-20">
+            <div class="bg-white">
+                <ul class="nav nav-tabs nav-section nav-mob-section" id="leftTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="watched-content-tab" data-toggle="tab" href="#watched-content" role="tab"
+                            aria-controls="watched-content" aria-selected="true">Your Watch List ({{
+                                (watched_problems + watched_solutions) | length
+                            }})</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="contributions-tab" data-toggle="tab" href="#contributions" role="tab"
+                            aria-controls="contributions" aria-selected="false">Your Contributions ({{ (user_problems + user_solutions) | length }})</a>
+                    </li>
+                </ul>
+                <div id="leftTabGroup" class="pb-2">
+                    <div class="tab-content" id="leftTabContent">
+                        <div class="tab-pane fade show active" id="watched-content" role="tabpanel" aria-labelledby="watched-content-tab">
+                            {% for problem in watched_problems %}
+                                {% include "templates/includes/problem/problem_card.html" %}
+                            {% endfor %}
+                            {% for solution in watched_solutions %}
+                                {% include "templates/includes/solution/solution_card.html" %}
+                            {% endfor %}
+                        </div>
+                        <div class="tab-pane fade" id="contributions" role="tabpanel" aria-labelledby="contributions-tab">
+                            {% for problem in user_problems %}
+                                {% include "templates/includes/problem/problem_card.html" %}
+                            {% endfor %}
+                            {% for solution in user_solutions %}
+                                {% include "templates/includes/solution/solution_card.html" %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

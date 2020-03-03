@@ -1,0 +1,32 @@
+<div
+    class="profile-container actions"
+    role="group"
+>
+    <div class="profile-image">
+        <img
+            src="{{ user.photo }}"
+            alt="profile photo"
+            class="image"
+        />
+    </div>
+
+    <div class="profile-name mt-negative-5">
+        <h3 class="name">
+            <a href="javascript:void(0);">
+                {{ user.full_name }}
+            </a>
+        </h3>
+    </div>
+
+    <div class="profile-persona-and-company">
+        <p class="company">
+            {{ user.org_title }}
+        </p>
+        <p>Persona: {% for persona in user.personas %}<span>{{persona.persona}}</span>,&nbsp;{% endfor %}</p>
+    </div>
+
+    <div class="profile-tags">
+        {% set sectors = user.sectors %}
+        {% include "templates/includes/common/sector_labels.html" %}
+    </div>
+</div>

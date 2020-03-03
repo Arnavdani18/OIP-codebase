@@ -114,10 +114,7 @@ def get_filtered_problems(selectedLocation, selectedSectors, limit_page_length=2
         if doc.is_published:
             doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
             problems.append(doc)
-    
-    return {
-        'problems': problems,
-    }
+    return problems
 
 @frappe.whitelist(allow_guest = True)
 def get_filtered_solutions(selectedLocation, selectedSectors, limit_page_length=20):
@@ -134,10 +131,7 @@ def get_filtered_solutions(selectedLocation, selectedSectors, limit_page_length=
         if doc.is_published:
             doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
             solutions.append(doc)
-    
-    return {
-        'solutions': solutions,
-    }
+    return solutions
 
 
 @frappe.whitelist(allow_guest = True)
@@ -351,7 +345,6 @@ def add_or_edit_collaboration(doctype, name, collaboration, html=True):
         doc.save()
         total_count = frappe.db.count('Collaboration Table', filters={'parenttype': doctype, 'parent': name})
     frappe.db.commit()
-    print('saved collaboration')
     if html:
         context = {
             'collaboration': c,
@@ -359,7 +352,6 @@ def add_or_edit_collaboration(doctype, name, collaboration, html=True):
         }
         template = "templates/includes/common/collaboration_card.html"
         html = frappe.render_template(template, context)
-        print('returning html')
         return html, total_count
     else:
         return doc
@@ -379,3 +371,70 @@ def add_subscriber(email, first_name=None):
     contact.insert()
     frappe.db.commit()
     return contact
+
+@frappe.whitelist(allow_guest = False)
+def get_users_by_sectors(sectors, limit_page_length=20):
+    # 'parent': ['!=', frappe.session.user]
+    matching_users = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': 'User Profile', 'sector': ['in', sectors]}, limit_page_length=limit_page_length)
+    user_set = {p['parent'] for p in matching_users}
+    users = []
+    for u in user_set:
+        doc = frappe.get_doc('User Profile', u)
+        users.append(doc)
+    return users
+
+@frappe.whitelist(allow_guest = False)
+def get_problems_by_user(limit_page_length=20):
+    filtered = frappe.get_list('Problem', filters={'owner': frappe.session.user})
+    user_problems = []
+    for p in filtered:
+        doc = frappe.get_doc('Problem', p['name'])
+        user_problems.append(doc)
+    return user_problems
+
+@frappe.whitelist(allow_guest = False)
+def get_solutions_by_user(limit_page_length=20):
+    filtered = frappe.get_list('Solution', filters={'owner': frappe.session.user})
+    user_solutions = []
+    for s in filtered:
+        doc = frappe.get_doc('Solution', s['name'])
+        user_solutions.append(doc)
+    return user_solutions
+
+@frappe.whitelist(allow_guest = False)
+def get_watched_problems_by_user(limit_page_length=20):
+    filtered = frappe.get_list('Watch Table', fields=['parent'], filters={'parenttype': 'Problem', 'owner': frappe.session.user}, limit_page_length=limit_page_length)
+    problem_set = {p['parent'] for p in filtered}
+    watched_problems = []
+    for p in problem_set:
+        doc = frappe.get_doc('Problem', p)
+        watched_problems.append(doc)
+    return watched_problems
+
+@frappe.whitelist(allow_guest = False)
+def get_watched_solutions_by_user(limit_page_length=20):
+    filtered = frappe.get_list('Watch Table', fields=['parent'], filters={'parenttype': 'Solution', 'owner': frappe.session.user}, limit_page_length=limit_page_length)
+    solution_set = {s['parent'] for s in filtered}
+    watched_solutions = []
+    for s in solution_set:
+        doc = frappe.get_doc('Solution', s)
+        watched_solutions.append(doc)
+    return watched_solutions
+
+@frappe.whitelist(allow_guest = False)
+def get_interesting_content():
+    print('getting interesting content for {}'.format(frappe.session.user))
+    try:
+        user = frappe.get_doc('User Profile', frappe.session.user)
+        sectors = [sector.sector for sector in user.sectors]
+        return {
+            'problems': get_filtered_problems(None,sectors),
+            'solutions': get_filtered_solutions(None, sectors),
+            'users': get_users_by_sectors(sectors),
+            'user_problems': get_problems_by_user(),
+            'user_solutions': get_solutions_by_user(),
+            'watched_problems': get_watched_problems_by_user(),
+            'watched_solutions': get_watched_solutions_by_user(),
+        }
+    except:
+        frappe.throw('Please create your user profile to personalise this page')

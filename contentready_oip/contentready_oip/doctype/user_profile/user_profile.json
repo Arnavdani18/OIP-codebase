@@ -12,6 +12,7 @@
   "org_title",
   "column_break_4",
   "personas",
+  "sectors",
   "qualifications",
   "skills"
  ],
@@ -84,10 +85,16 @@
    "fieldtype": "Table",
    "label": "Personas",
    "options": "Persona Table"
+  },
+  {
+   "fieldname": "sectors",
+   "fieldtype": "Table MultiSelect",
+   "label": "Sectors",
+   "options": "Sector Table"
   }
  ],
  "image_field": "photo",
- "modified": "2020-03-02 21:24:16.039844",
+ "modified": "2020-03-03 12:28:10.218145",
  "modified_by": "tej@jaaga.in",
  "module": "ContentReady OIP",
  "name": "User Profile",

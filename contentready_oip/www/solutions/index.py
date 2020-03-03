@@ -6,4 +6,4 @@ def get_context(context):
     context.selectedLocation = r['selectedLocation']
     context.selectedSectors = r['selectedSectors']
     context.availableSectors = r['availableSectors']
-    context.solutions = api.get_filtered_solutions(context.selectedLocation, context.selectedSectors)['solutions']
+    context.solutions = api.get_filtered_solutions(context.selectedLocation, context.selectedSectors)
