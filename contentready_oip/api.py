@@ -347,3 +347,18 @@ def get_interesting_content():
         }
     except:
         frappe.throw('Please create your user profile to personalise this page')
+
+@frappe.whitelist(allow_guest = False)
+def delete_contribution(child_doctype, name):
+    frappe.delete_doc(child_doctype, name)
+
+@frappe.whitelist(allow_guest = False)
+def delete_enrichment(name):
+    try:
+        e = frappe.get_doc('Enrichment Table', {'enrichment': name})
+        # delete from the problem child table
+        frappe.delete_doc('Enrichment Table', e.name)
+        # delete the primary document
+        frappe.delete_doc('Enrichment', name)
+    except:
+        frappe.throw('Enrichment not found.')

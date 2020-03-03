@@ -121,10 +121,10 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-text" data-dismiss="modal">
+                <button type="button" class="btn btn-text" onclick="deleteEnrichment('{{name}}')">
                     Delete
                 </button>
-                <button type="button" class="btn solid-btn">Edit</button>
+                <button type="button" class="btn solid-btn" onclick="window.location.href = `/add-enrichment?name={{name}}`">Edit</button>
             </div>
         </div>
     </div>
@@ -136,6 +136,19 @@
         $('.thumb-img').removeClass('active-thumbnail');
         $('#'+event.target.id).addClass('active-thumbnail');
         $('#index-in-focus-'+id).text(i);
+    }
+
+    deleteEnrichment = (name) => {
+        if (confirm('Are you sure you want to delete this enrichment?')){
+            frappe.call({
+                method: 'contentready_oip.api.delete_enrichment',
+                args: {name: name},
+                callback: (r) => {
+                    // console.log(r);
+                    window.location.reload();
+                }
+            });
+        }
     }
 
 </script>
