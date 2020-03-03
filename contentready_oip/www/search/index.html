@@ -69,12 +69,12 @@
             if (problemsEnabled) {
                 $('#problem-selector').data('enabled', 0);
                 $('#problem-selector').removeClass('btn-primary').addClass('btn-light');
-                // $('#problem-results-container').hide();
+                $('#problem-results-container').hide();
                 // $('#solution-results-container').removeClass('col-lg-6').addClass('col-lg-12');
             } else {
                 $('#problem-selector').data('enabled', 1);
                 $('#problem-selector').removeClass('btn-light').addClass('btn-primary');
-                // $('#problem-results-container').show();
+                $('#problem-results-container').show();
                 // $('#solution-results-container').removeClass('col-lg-12').addClass('col-lg-6');
                 triggerSearch();
             }
@@ -85,9 +85,11 @@
             if (solutionsEnabled) {
                 $('#solution-selector').data('enabled', 0);
                 $('#solution-selector').removeClass('btn-primary').addClass('btn-light');
+                $('#solution-results-container').hide();
             } else {
                 $('#solution-selector').data('enabled', 1);
                 $('#solution-selector').removeClass('btn-light').addClass('btn-primary');
+                $('#solution-results-container').show();
                 triggerSearch();
             }
         }
