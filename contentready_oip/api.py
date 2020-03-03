@@ -154,7 +154,7 @@ def get_homepage_stats():
         'collaborators': frappe.db.count('User Profile'),
     }
 
-@frappe.whitelist(allow_guest = False)
+@frappe.whitelist(allow_guest = True)
 def has_user_contributed(child_doctype, parent_doctype, name):
     contributions_by_user = frappe.db.count(child_doctype, filters={'owner': frappe.session.user, 'parenttype': parent_doctype, 'parent': name})
     return contributions_by_user > 0
