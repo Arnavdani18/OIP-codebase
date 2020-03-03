@@ -17,8 +17,8 @@
                                 {% set doctype = doctype %}
                                 {% set name = name %}
                                 {% include "templates/includes/common/edit_icon.html" %}
-                                {% include "templates/includes/common/share.html" %}
                             {% endif %}
+                            {% include "templates/includes/common/share.html" %}
                         </div>
                     </div>
                 </div>
@@ -63,8 +63,7 @@
                             <button type="button" class="card-btn" onclick="openCollaborationForm('{{doctype}}', '{{name}}')">
                                 Collaborate
                             </button>
-                            <button class=" card-btn add-solution-btn " aria-label="add solution"
-                            onclick="window.location.href = '/add-solution?new=1&problem={{name}}';">
+                            <button type="button" class="card-btn add-solution-btn" onclick="openSolutionForm('{{name}}')">
                                 Add Solution
                             </button>
                         </div>
