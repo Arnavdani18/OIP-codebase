@@ -76,28 +76,28 @@ def get_lat_lng_bounds(selectedLocation):
     }
 
 @frappe.whitelist(allow_guest = True)
-def get_filtered_problems(selectedLocation, selectedSectors, limit_page_length=20):
-    if 'all' in selectedSectors:
-        matching_problems_by_sector = frappe.get_list('Problem', filters={'is_published': True}, limit_page_length=limit_page_length)
-        problem_set = {p['name'] for p in matching_problems_by_sector}
+def get_filtered_content(doctype, location, sectors, limit_page_length=20):
+    if 'all' in sectors:
+        filtered = frappe.get_list(doctype, filters={'is_published': True}, limit_page_length=limit_page_length)
+        content_set = {f['name'] for f in filtered}
     else:
-        matching_problems_by_sector = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': 'Problem', 'sector': ['in', selectedSectors]}, limit_page_length=limit_page_length)
-        problem_set = {p['parent'] for p in matching_problems_by_sector}
+        filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', sectors]}, limit_page_length=limit_page_length)
+        content_set = {f['parent'] for f in filtered}
     # TODO: Implement location filtering using Elasticsearch
     # This approximation currently fails.
     try:
-        bounds = get_lat_lng_bounds(selectedLocation)
+        bounds = get_lat_lng_bounds(location)
         lat_center = bounds['lat_center']
         lat_min = bounds['lat_min']
         lat_max = bounds['lat_max']
         lng_center = bounds['lng_center']
         lng_min = bounds['lng_min']
         lng_max = bounds['lng_max']
-        matching_problems_by_location = \
-            frappe.get_list('Problem', 
+        filtered = \
+            frappe.get_list(doctype, 
                 filters={
                     'is_published': True,
-                    'name': ['in', problem_set],
+                    'name': ['in', content_set],
                     'latitude': ['>=', lat_min],
                     'latitude': ['<=', lat_max],
                     'longitude': ['>=', lng_min],
@@ -105,72 +105,36 @@ def get_filtered_problems(selectedLocation, selectedSectors, limit_page_length=2
                 }, 
                 limit_page_length=limit_page_length
             )
-        problem_set = {p['name'] for p in matching_problems_by_location}
+        content_set = {f['name'] for f in filtered}
     except Exception as e:
         print(str(e))
-    problems = []
-    for p in problem_set:
-        doc = frappe.get_doc('Problem', p)
+    content = []
+    for c in content_set:
+        doc = frappe.get_doc(doctype, c)
         if doc.is_published:
             doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
-            problems.append(doc)
-    return problems
+            content.append(doc)
+    return content
 
 @frappe.whitelist(allow_guest = True)
-def get_filtered_solutions(selectedLocation, selectedSectors, limit_page_length=20):
-    # TODO: Implement location filtering 
-    if 'all' in selectedSectors:
-        matching_solutions = frappe.get_list('Solution', filters={'is_published': True}, limit_page_length=limit_page_length)
-        solution_set = {p['name'] for p in matching_solutions}
-    else:
-        matching_solutions = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': 'Solution', 'sector': ['in', selectedSectors]}, limit_page_length=limit_page_length)
-        solution_set = {p['parent'] for p in matching_solutions}
-    solutions = []
-    for p in solution_set:
-        doc = frappe.get_doc('Solution', p)
-        if doc.is_published:
-            doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
-            solutions.append(doc)
-    return solutions
-
-
-@frappe.whitelist(allow_guest = True)
-def get_similar_problems(text, limit_page_length=5, html=True):
-    names = frappe.db.get_list('Problem', or_filters={'title': ['like', '%{}%'.format(text)], 'description': ['like', '%{}%'.format(text)]}, limit_page_length=limit_page_length)
-    similar_problems = []
+def search_content_by_text(doctype, text, limit_page_length=5, html=True):
+    names = frappe.db.get_list(doctype, or_filters={'title': ['like', '%{}%'.format(text)], 'description': ['like', '%{}%'.format(text)]}, limit_page_length=limit_page_length)
+    content = []
     names = {n['name'] for n in names}
     for p in names:
-        doc = frappe.get_doc('Problem', p)
+        doc = frappe.get_doc(doctype, p)
         doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
         if html:
-            template = "templates/includes/problem/problem_card.html"
+            content_type = doctype.lower()
+            template = "templates/includes/{}/{}_card.html".format(content_type, content_type)
             context = {
-                'problem': doc
+                content_type: doc
             }
             html = frappe.render_template(template, context)
-            similar_problems.append(html)
+            content.append(html)
         else:
-            similar_problems.append(doc)
-    return similar_problems
-
-@frappe.whitelist(allow_guest = True)
-def get_similar_solutions(text, limit_page_length=5, html=True):
-    names = frappe.db.get_list('Solution', or_filters={'title': ['like', '%{}%'.format(text)], 'description': ['like', '%{}%'.format(text)]}, limit_page_length=limit_page_length)
-    similar_solutions = []
-    names = {n['name'] for n in names}
-    for p in names:
-        doc = frappe.get_doc('Solution', p)
-        doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
-        if html:
-            template = "templates/includes/solution/solution_card.html"
-            context = {
-                'solution': doc
-            }
-            html = frappe.render_template(template, context)
-            similar_solutions.append(html)
-        else:
-            similar_solutions.append(doc)
-    return similar_solutions
+            content.append(doc)
+    return content
 
 @frappe.whitelist(allow_guest = True)
 def get_orgs_list():
@@ -190,49 +154,27 @@ def get_homepage_stats():
         'collaborators': frappe.db.count('User Profile'),
     }
 
-@frappe.whitelist(allow_guest = True)
-def has_user_liked(doctype, name):
-    likes = frappe.get_all('Like Table', filters={'user': frappe.session.user, 'parenttype': doctype, 'parent': name})
-    return len(likes) > 0
+@frappe.whitelist(allow_guest = False)
+def has_user_contributed(child_doctype, parent_doctype, name):
+    contributions_by_user = frappe.db.count(child_doctype, filters={'owner': frappe.session.user, 'parenttype': parent_doctype, 'parent': name})
+    return contributions_by_user > 0
 
 @frappe.whitelist(allow_guest = False)
-def toggle_like(doctype, name):
+def toggle_contribution(child_doctype, parent_doctype, parent_name, field_name):
     nudge_guests()
-    likes = frappe.get_all('Like Table', filters={'user': frappe.session.user, 'parenttype': doctype, 'parent': name})
-    if len(likes) > 0:
-        # user has already liked this document
-        for l in likes:
-            frappe.delete_doc('Like Table', l['name'])
+    contributions = frappe.get_all(child_doctype, filters={'user': frappe.session.user, 'parenttype': parent_doctype, 'parent': parent_name})
+    if len(contributions) > 0:
+        # user has already contributed to this document
+        for c in contributions:
+            frappe.delete_doc(child_doctype, c['name'])
     else:
-        # add like for user
-        doc = frappe.get_doc(doctype, name)
-        like = doc.append('likes', {})
+        # add contribution for user
+        doc = frappe.get_doc(parent_doctype, parent_name)
+        like = doc.append(field_name, {})
         like.user = frappe.session.user
         doc.save()
         frappe.db.commit()
-    return has_user_liked(doctype, name), get_child_table('Like Table', doctype, name)
-
-@frappe.whitelist(allow_guest = True)
-def has_user_watched(doctype, name):
-    watchers = frappe.get_all('Watch Table', filters={'user': frappe.session.user, 'parenttype': doctype, 'parent': name})
-    return len(watchers) > 0
-
-@frappe.whitelist(allow_guest = False)
-def toggle_watcher(doctype, name):
-    nudge_guests()
-    watchers = frappe.get_all('Watch Table', filters={'user': frappe.session.user, 'parenttype': doctype, 'parent': name})
-    if len(watchers) > 0:
-        # user has already watched this document
-        for l in watchers:
-            frappe.delete_doc('Watch Table', l['name'])
-    else:
-        # add watch for user
-        doc = frappe.get_doc(doctype, name)
-        watch = doc.append('watchers', {})
-        watch.user = frappe.session.user
-        doc.save()
-        frappe.db.commit()
-    return has_user_watched(doctype, name), get_child_table('Watch Table', doctype, name)
+    return has_user_contributed(child_doctype, parent_doctype, parent_name), get_child_table(child_doctype, parent_doctype, parent_name)
 
 @frappe.whitelist(allow_guest = False)
 def add_comment(doctype, name, text, html=True):
@@ -270,16 +212,11 @@ def get_problem_card(name, html=True):
         return doc
 
 @frappe.whitelist(allow_guest = False)
-def has_user_enriched(name):
-    enrichments_by_user = frappe.get_list('Enrichment', filters={'owner': frappe.session.user, 'problem': name})
-    return len(enrichments_by_user) > 0
-
-@frappe.whitelist(allow_guest = False)
 def add_enrichment(doc):
     doc = json.loads(doc)
     if not ('problem' in doc or doc['problem']):
         return False
-    if has_user_enriched(doc['problem']):
+    if has_user_contributed('Enrichment Table', 'Problem', doc['problem']):
         frappe.throw('You have already enriched this problem.')
     enrichment = frappe.get_doc({
         'doctype': 'Enrichment'
@@ -288,11 +225,6 @@ def add_enrichment(doc):
     enrichment.insert()
     frappe.db.commit()
     return True
-
-@frappe.whitelist(allow_guest = False)
-def has_user_validated(doctype, name):
-    validations_by_user = frappe.get_list('Validation Table', filters={'owner': frappe.session.user, 'parenttype': doctype, 'parent': name})
-    return len(validations_by_user) > 0
 
 @frappe.whitelist(allow_guest = False)
 def add_or_edit_validation(doctype, name, validation, html=True):
@@ -304,7 +236,7 @@ def add_or_edit_validation(doctype, name, validation, html=True):
         v.save()
         total_count = frappe.db.count('Validation Table', filters={'parenttype': v.parenttype, 'parent': v.parent})
     else:
-        if has_user_validated(doctype, name):
+        if has_user_contributed('Validation Table', doctype, name):
             frappe.throw('You have already validated this {}.'.format(doctype).capitalize())
         doc = frappe.get_doc(doctype, name)
         v = doc.append('validations', {})
@@ -323,11 +255,6 @@ def add_or_edit_validation(doctype, name, validation, html=True):
         return doc
 
 @frappe.whitelist(allow_guest = False)
-def has_user_collaborated(doctype, name):
-    collaborations_by_user = frappe.get_list('Collaboration Table', filters={'owner': frappe.session.user, 'parenttype': doctype, 'parent': name})
-    return len(collaborations_by_user) > 0
-
-@frappe.whitelist(allow_guest = False)
 def add_or_edit_collaboration(doctype, name, collaboration, html=True):
     collaboration = json.loads(collaboration)
     if doctype == 'Collaboration Table':
@@ -337,7 +264,7 @@ def add_or_edit_collaboration(doctype, name, collaboration, html=True):
         c.save()
         total_count = frappe.db.count('Collaboration Table', filters={'parenttype': c.parenttype, 'parent': c.parent})
     else:
-        if has_user_collaborated(doctype, name):
+        if has_user_contributed('Collaboration Table', doctype, name):
             frappe.throw('You have already added your collaboration intent on this {}.'.format(doctype).capitalize())
         doc = frappe.get_doc(doctype, name)
         c = doc.append('collaborations', {})
@@ -373,53 +300,35 @@ def add_subscriber(email, first_name=None):
     return contact
 
 @frappe.whitelist(allow_guest = False)
-def get_users_by_sectors(sectors, limit_page_length=20):
-    # 'parent': ['!=', frappe.session.user]
-    matching_users = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': 'User Profile', 'sector': ['in', sectors]}, limit_page_length=limit_page_length)
-    user_set = {p['parent'] for p in matching_users}
-    users = []
-    for u in user_set:
-        doc = frappe.get_doc('User Profile', u)
-        users.append(doc)
-    return users
+def get_content_by_user(doctype, limit_page_length=20):
+    filtered = frappe.get_list(doctype, filters={'owner': frappe.session.user})
+    content = []
+    for f in filtered:
+        doc = frappe.get_doc(doctype, f['name'])
+        content.append(doc)
+    return content
 
 @frappe.whitelist(allow_guest = False)
-def get_problems_by_user(limit_page_length=20):
-    filtered = frappe.get_list('Problem', filters={'owner': frappe.session.user})
-    user_problems = []
-    for p in filtered:
-        doc = frappe.get_doc('Problem', p['name'])
-        user_problems.append(doc)
-    return user_problems
+def get_content_watched_by_user(doctype, limit_page_length=20):
+    filtered = frappe.get_list('Watch Table', fields=['parent'], filters={'parenttype': doctype, 'owner': frappe.session.user}, limit_page_length=limit_page_length)
+    content_set = {f['parent'] for f in filtered}
+    content = []
+    for c in content_set:
+        doc = frappe.get_doc(doctype, c)
+        content.append(doc)
+    return content
 
 @frappe.whitelist(allow_guest = False)
-def get_solutions_by_user(limit_page_length=20):
-    filtered = frappe.get_list('Solution', filters={'owner': frappe.session.user})
-    user_solutions = []
-    for s in filtered:
-        doc = frappe.get_doc('Solution', s['name'])
-        user_solutions.append(doc)
-    return user_solutions
-
-@frappe.whitelist(allow_guest = False)
-def get_watched_problems_by_user(limit_page_length=20):
-    filtered = frappe.get_list('Watch Table', fields=['parent'], filters={'parenttype': 'Problem', 'owner': frappe.session.user}, limit_page_length=limit_page_length)
-    problem_set = {p['parent'] for p in filtered}
-    watched_problems = []
-    for p in problem_set:
-        doc = frappe.get_doc('Problem', p)
-        watched_problems.append(doc)
-    return watched_problems
-
-@frappe.whitelist(allow_guest = False)
-def get_watched_solutions_by_user(limit_page_length=20):
-    filtered = frappe.get_list('Watch Table', fields=['parent'], filters={'parenttype': 'Solution', 'owner': frappe.session.user}, limit_page_length=limit_page_length)
-    solution_set = {s['parent'] for s in filtered}
-    watched_solutions = []
-    for s in solution_set:
-        doc = frappe.get_doc('Solution', s)
-        watched_solutions.append(doc)
-    return watched_solutions
+def get_content_recommended_for_user(doctype, sectors, limit_page_length=20):
+    filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', sectors], 'owner': ['!=', frappe.session.owner]}, limit_page_length=limit_page_length)
+    content_set = {f['parent'] for f in filtered}
+    content = []
+    for c in content_set:
+        doc = frappe.get_doc(doctype, c)
+        if doc.is_published:
+            doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
+            content.append(doc)
+    return content
 
 @frappe.whitelist(allow_guest = False)
 def get_interesting_content():
@@ -428,13 +337,13 @@ def get_interesting_content():
         user = frappe.get_doc('User Profile', frappe.session.user)
         sectors = [sector.sector for sector in user.sectors]
         return {
-            'problems': get_filtered_problems(None,sectors),
-            'solutions': get_filtered_solutions(None, sectors),
-            'users': get_users_by_sectors(sectors),
-            'user_problems': get_problems_by_user(),
-            'user_solutions': get_solutions_by_user(),
-            'watched_problems': get_watched_problems_by_user(),
-            'watched_solutions': get_watched_solutions_by_user(),
+            'problems': get_content_recommended_for_user('Problem', sectors),
+            'solutions': get_content_recommended_for_user('Solution', sectors),
+            'users': get_content_recommended_for_user('User Profile', sectors),
+            'user_problems': get_content_by_user('Problem'),
+            'user_solutions': get_content_by_user('Solution'),
+            'watched_problems': get_content_watched_by_user('Problem'),
+            'watched_solutions': get_content_watched_by_user('Solution'),
         }
     except:
         frappe.throw('Please create your user profile to personalise this page')

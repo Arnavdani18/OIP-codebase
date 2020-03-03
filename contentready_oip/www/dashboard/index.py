@@ -3,7 +3,6 @@ from contentready_oip import api
 
 def get_context(context):
     interesting_content = api.get_interesting_content()
-    print(interesting_content)
     context.problems = interesting_content['problems']
     context.solutions = interesting_content['solutions']
     context.users = interesting_content['users']

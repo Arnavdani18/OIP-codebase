@@ -54,7 +54,7 @@
 
                     <div class="col-xl-8 pr-0 action-btn-section mt-3">
                         <div class="d-flex justify-content-between flex-wrap">
-                            <button type="button" class="card-btn" onclick="openEnrichmentForm('{{name}}')">
+                            <button type="button" class="card-btn" onclick="openEnrichmentForm('{{doctype}}', '{{name}}')">
                                 Enrich
                             </button>
                             <button type="button" class="card-btn" onclick="openValidationForm('{{doctype}}', '{{name}}')">
@@ -75,61 +75,5 @@
 </div>
 
 <script>
-    frappe.ready(async () => {
-        openEnrichmentForm = (name) => {
-            if (frappe.session.user === 'Guest') {
-                frappe.throw('Please login to participate.');
-            }
-            frappe.call({
-                method: 'contentready_oip.api.has_user_enriched',
-                args: {name: name},
-                callback: (r) => {
-                    if (r.message){
-                        frappe.throw(`You have already enriched this problem.`);
-                    } else {
-                        window.location.href = `/add-enrichment?new=1&problem=${name}`;
-                    }
-                }
-            });
-        }
-        openValidationForm = (doctype, name) => {
-            if (frappe.session.user === 'Guest') {
-                frappe.throw('Please login to participate.');
-            }
-            frappe.call({
-                method: 'contentready_oip.api.has_user_validated',
-                args: {doctype: doctype, name: name},
-                callback: (r) => {
-                    if (r.message){
-                        frappe.throw(`You have already validated this ${doctype}`);
-                    } else {
-                        $(`#validation-modal-${name}`).modal('toggle');
-                    }
-                }
-            });
-        }
-        openCollaborationForm = (doctype, name) => {
-            if (frappe.session.user === 'Guest') {
-                frappe.throw('Please login to participate.');
-            }
-            frappe.call({
-                method: 'contentready_oip.api.has_user_collaborated',
-                args: {doctype: doctype, name: name},
-                callback: (r) => {
-                    if (r.message){
-                        frappe.throw(`You have already collaborated on this ${doctype}`);
-                    } else {
-                        $(`#collaboration-modal-${name}`).modal('toggle');
-                    }
-                }
-            });
-        }
-        openSolutionForm = (name) => {
-            if (frappe.session.user === 'Guest') {
-                frappe.throw('Please login to participate.');
-            } else {
-                window.location.href = `/add-solution?new=1&problem=${name}`;
-            }
-        }
-    })
+    {% include "public/js/utils.js" %}
 </script>

@@ -38,8 +38,8 @@
         // change UI first, then send to server - 
         // changeUI(btnId, countId, hasUserLiked, numLikes);
         frappe.call({
-            method: 'contentready_oip.api.toggle_like',
-            args: {doctype: doctype, name: name},
+            method: 'contentready_oip.api.toggle_contribution',
+            args: {child_doctype: 'Like Table', parent_doctype: doctype, parent_name: name, field_name: 'likes'},
             callback: (r) => {
                 // console.log(r);
                 // server is the source of truth so we change the UI to reflect that.
@@ -54,8 +54,8 @@
     // However, currently, frappe does not expand child tables within child tables into dicts.
     frappe.ready(() => {
         frappe.call({
-            method: 'contentready_oip.api.has_user_liked',
-            args: {doctype: '{{doctype}}', name: '{{name}}'},
+            method: 'contentready_oip.api.has_user_contributed',
+            args: {child_doctype: 'Like Table', parent_doctype: '{{doctype}}', name: '{{name}}'},
             callback: (r) => {
                 const btnId = `#like-icon-{{doctype}}-{{name}}`;
                 changeUI(btnId, null, r.message, null);

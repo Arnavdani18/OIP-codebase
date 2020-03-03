@@ -99,8 +99,9 @@
                 return false;
             }
             frappe.call({
-                method: 'contentready_oip.api.get_similar_problems',
+                method: 'contentready_oip.api.search_content_by_text',
                 args: {
+                    doctype: 'Problem',
                     text: text,
                 },
                 callback: function(r) {
@@ -122,8 +123,9 @@
                 return false;
             }
             frappe.call({
-                method: 'contentready_oip.api.get_similar_solutions',
+                method: 'contentready_oip.api.search_content_by_text',
                 args: {
+                    doctype: 'Solution',
                     text: text,
                 },
                 callback: function(r) {

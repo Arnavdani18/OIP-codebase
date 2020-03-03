@@ -1,4 +1,4 @@
-import frappe
+# import frappe
 from contentready_oip import api
 
 def get_context(context):
@@ -6,4 +6,4 @@ def get_context(context):
     context.selectedLocation = r['selectedLocation']
     context.selectedSectors = r['selectedSectors']
     context.availableSectors = r['availableSectors']
-    context.problems = api.get_filtered_problems(context.selectedLocation, context.selectedSectors)
+    context.problems = api.get_filtered_content('Problem', context.selectedLocation, context.selectedSectors)

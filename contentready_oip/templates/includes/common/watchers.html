@@ -37,8 +37,8 @@
         // change UI first, then send to server
         // changeUI(btnId, countId, hasUserWatched, numWatchers);
         frappe.call({
-            method: 'contentready_oip.api.toggle_watcher',
-            args: {doctype: doctype, name: name},
+            method: 'contentready_oip.api.toggle_contribution',
+            args: {child_doctype: 'Watch Table', parent_doctype: doctype, parent_name: name, field_name: 'watchers'},
             callback: (r) => {
                 // console.log(r);
                 // server is the source of truth so we change the UI to reflect that.
@@ -53,8 +53,8 @@
     // However, currently, frappe does not expand child tables within child tables into dicts.
     frappe.ready(() => {
         frappe.call({
-            method: 'contentready_oip.api.has_user_watched',
-            args: {doctype: '{{doctype}}', name: '{{name}}'},
+            method: 'contentready_oip.api.has_user_contributed',
+            args: {child_doctype: 'Watch Table', parent_doctype: '{{doctype}}', name: '{{name}}'},
             callback: (r) => {
                 const btnId = `#watcher-icon-{{doctype}}-{{name}}`;
                 changeUI(btnId, null, r.message, null);

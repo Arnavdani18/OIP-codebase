@@ -87,8 +87,9 @@ frappe.ready(async () => {
         // Look up title again - user could have typed something since the event was triggered.
         const text = $('*[data-fieldname="title"]:text').val().trim();
         frappe.call({
-            method: 'contentready_oip.api.get_similar_problems',
+            method: 'contentready_oip.api.search_content_by_text',
             args: {
+                doctype: 'Problem',
                 text: text,
             },
             callback: function(r) {

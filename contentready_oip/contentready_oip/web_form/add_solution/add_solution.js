@@ -144,8 +144,9 @@ frappe.ready(async () => {
 			text = $('*[data-fieldname="title"]:text').val().trim();
 		}
         frappe.call({
-            method: 'contentready_oip.api.get_similar_problems',
+            method: 'contentready_oip.api.search_content_by_text',
             args: {
+                doctype: 'Problem',
                 text: text,
             },
             callback: function(r) {
