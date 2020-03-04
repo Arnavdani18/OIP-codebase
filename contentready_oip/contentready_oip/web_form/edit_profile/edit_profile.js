@@ -44,6 +44,13 @@ frappe.ready(async function() {
         });
     }
 
+    addPersonaToDoc = (event) => {
+        if(!frappe.web_form.doc.personas){
+            frappe.web_form.doc.personas = [];
+        }
+        frappe.web_form.doc.personas.push({'persona': event.target.value});
+    }
+
     createSectorOptions = () => {
         $('*[data-fieldname="sectors"]').before('<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sector-options"></div>');
         frappe.call({
@@ -57,6 +64,13 @@ frappe.ready(async function() {
                 $("[id^=sector-check]").on('click', addSectorToDoc);
             }
         });
+    }
+
+    addSectorToDoc = (event) => {
+        if(!frappe.web_form.doc.sectors){
+            frappe.web_form.doc.sectors = [];
+        }
+        frappe.web_form.doc.sectors.push({'sector': event.target.value});
     }
     
     addFileToDoc = (file) => {
@@ -147,20 +161,6 @@ frappe.ready(async function() {
         }
         frappe.web_form.set_value('latitude', place.geometry.location.lat());
         frappe.web_form.set_value('longitude', place.geometry.location.lng());
-    }
-
-    addPersonaToDoc = (event) => {
-        if(!frappe.web_form.doc.personas){
-            frappe.web_form.doc.personas = [];
-        }
-        frappe.web_form.doc.personas.push({'persona': event.target.value});
-    }
-
-    addSectorToDoc = (event) => {
-        if(!frappe.web_form.doc.sectors){
-            frappe.web_form.doc.sectors = [];
-        }
-        frappe.web_form.doc.sectors.push({'sector': event.target.value});
     }
 
     publishProfile = () => {

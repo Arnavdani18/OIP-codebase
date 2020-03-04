@@ -24,6 +24,28 @@ frappe.ready(async () => {
         });
     }
 
+    createSectorOptions = () => {
+        $('*[data-fieldname="sectors"]').before('<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sector-options"></div>');
+        frappe.call({
+            method: 'contentready_oip.api.get_sector_list',
+            args: {},
+            callback: function(r) {
+                r.message.map(op => {
+                    const el = `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="sector-check-${op.value}" value="${op.value}"><label class="form-check-label" for="sector-check-${op.value}">${op.label}</label></div>`;
+                    $('#sector-options').append(el);
+                });
+                $("[id^=sector-check]").on('click', addSectorToDoc);
+            }
+        });
+    }
+
+    addSectorToDoc = (event) => {
+        if(!frappe.web_form.doc.sectors){
+            frappe.web_form.doc.sectors = [];
+        }
+        frappe.web_form.doc.sectors.push({'sector': event.target.value});
+    }
+
     hideTables = () => {
         $('*[data-fieldtype="Table"]').hide();
     }
@@ -263,6 +285,7 @@ frappe.ready(async () => {
     addActionButtons();
     moveDivs();
     createOrgOptions();
+    createSectorOptions();
     // End UI Fixes
 
     // Start Google Maps Autocomplete

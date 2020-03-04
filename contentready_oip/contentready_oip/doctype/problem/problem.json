@@ -233,7 +233,7 @@
   },
   {
    "fieldname": "sectors",
-   "fieldtype": "Table MultiSelect",
+   "fieldtype": "Table",
    "in_preview": 1,
    "label": "Sectors",
    "options": "Sector Table"
@@ -271,7 +271,7 @@
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2020-03-02 22:22:53.161023",
+ "modified": "2020-03-04 06:27:44.225138",
  "modified_by": "tej@jaaga.in",
  "module": "ContentReady OIP",
  "name": "Problem",
