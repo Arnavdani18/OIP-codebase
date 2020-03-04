@@ -1,45 +1,19 @@
 <div class="bg-white">
-    <ul
-        class="nav nav-tabs nav-section"
-        id="discussionTab"
-        role="tablist"
-    >
+    <ul class="nav nav-tabs nav-section" id="discussionTab" role="tablist">
         <li class="nav-item">
-            <a
-                class="nav-link active"
-                id="discussion-tab"
-                data-toggle="tab"
-                href="javascript:void(0);"
-                role="tab"
-                aria-controls="discussion"
-                aria-selected="true"
-                >Discussions ({{ discussions | length }})</a
-            >
+            <a class="nav-link active" id="discussion-tab" data-toggle="tab" href="javascript:void(0);" role="tab"
+                aria-controls="discussion" aria-selected="true">Discussions ({{ discussions | length }})</a>
         </li>
     </ul>
 
     <div class="btn-group sort-btn">
-        <button
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="false"
-            class="close dropdown-toggle text-capitalize"
-        >
+        <button data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+            class="close dropdown-toggle text-capitalize">
             Sort
         </button>
         <div class="dropdown-menu mt-2 dropdown-menu-right">
-            <a
-                class="dropdown-item"
-                href="javascript:void(0);"
-                onclick="showPopularDiscussions('latest')"
-                >Latest</a
-            >
-            <a
-                class="dropdown-item"
-                href="javascript:void(0);"
-                onclick="showPopularDiscussions('popular')"
-                >Popular</a
-            >
+            <a class="dropdown-item" href="javascript:void(0);" onclick="showPopularDiscussions('latest')">Latest</a>
+            <a class="dropdown-item" href="javascript:void(0);" onclick="showPopularDiscussions('popular')">Popular</a>
         </div>
     </div>
 
@@ -49,17 +23,35 @@
         {% set name = name %}
         {% include "templates/includes/common/comment_editor.html" %}
     </div>
-
+    {% if (discussions | length) > 0 %}
     <div id="discussionTabGroup" class="pb-2">
-        {% for d in discussions | reverse %}
+        <div class="px-4 my-2">
+            {% for d in discussions | reverse %}
             {% set comment = frappe.get_doc('Discussion', d.discussion) %}
             {% include "templates/includes/common/comment.html" %}
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
     {% else %}
+    <div class=" pre-login m-3 d-flex justify-content-center align-items-center flex-column">
+        <div class="pre-login-icon">
+            <i class="far fa-comment-alt"></i>
+        </div>
+        <div class="pre-login-text">
+            Would you like to start the conversation?
+        </div>
+    </div>
+    {% endif %}
+    {% else %}
     <div id="discussionTabGroup" class="pb-2">
-        <br/>
-        <h5>Please <a href="/login">login</a> to participate in the conversation.</h5>
+        <div class=" pre-login m-3 p-4 d-flex justify-content-center align-items-center flex-column">
+            <div class="pre-login-icon">
+                <i class="far fa-comment-alt"></i>
+            </div>
+            <div class="pre-login-text">
+                <a href="/login">Login</a> to participate in the discussion.
+            </div>
+        </div>
     </div>
     {% endif %}
 </div>
