@@ -76,7 +76,10 @@ def get_lat_lng_bounds(selectedLocation):
     }
 
 @frappe.whitelist(allow_guest = True)
-def get_filtered_content(doctype, location, sectors, limit_page_length=20):
+def get_filtered_content(doctype, location, sectors, limit_page_length=20, html=False, guest=True):
+    if guest:
+        sectors = json.loads(sectors) or []
+        location = json.loads(location) or {}
     if 'all' in sectors:
         filtered = frappe.get_list(doctype, filters={'is_published': True}, limit_page_length=limit_page_length)
         content_set = {f['name'] for f in filtered}
@@ -109,11 +112,22 @@ def get_filtered_content(doctype, location, sectors, limit_page_length=20):
     except Exception as e:
         print(str(e))
     content = []
+    from frappe.website.context import build_context 
     for c in content_set:
         doc = frappe.get_doc(doctype, c)
         if doc.is_published:
             doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
-            content.append(doc)
+            if html:
+                # template = doc.meta.get_web_template()
+                # context = build_context(doc.as_dict())
+                template = "templates/includes/problem/problem_card.html"
+                context = {
+                    'problem': doc
+                }
+                html = frappe.render_template(template, context)
+                content.append(html)
+            else:
+                content.append(doc)
     return content
 
 @frappe.whitelist(allow_guest = True)

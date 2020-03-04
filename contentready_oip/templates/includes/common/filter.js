@@ -12,15 +12,32 @@ frappe.ready(() => {
     // Start Initialisation - Values are set from session into context if available
     // We can use Jinja2 templates with context here as the JS is compiled server-side.
     {% if (selectedLocation and selectedLocation.center) %}
-        console.log(`{{selectedLocation}}`);
+        // console.log(`{{selectedLocation}}`);
         showDistanceSelect();
         $('#autocomplete').val(`{{selectedLocation.center.city}}, {{selectedLocation.center.state}}, {{selectedLocation.center.country}}`);
         $('#distance-sel').val(`{{selectedLocation.distance}}`);
+    {% else %}
+        if (localStorage) {
+            const selectedLocation = JSON.parse(localStorage.getItem('location'));
+            if (selectedLocation && selectedLocation.center) {
+                showDistanceSelect();
+                $('#autocomplete').val(`${selectedLocation.center.city}, ${selectedLocation.center.state}, ${selectedLocation.center.country}`);
+                $('#distance-sel').val(`${selectedLocation.distance}`);
+            }
+        }
     {% endif %}
 
     {% if selectedSectors %}
         // console.log({{selectedSectors}});
         $('#sector-sel').val('{{selectedSectors[0]}}');
+    {% else %}
+        if (localStorage) {
+            let selectedSectors = JSON.parse(localStorage.getItem('sectors'));
+            if (!selectedSectors) {
+                selectedSectors = ['all']
+            }
+            $('#sector-sel').val(`${selectedSectors[0]}`);
+        }
     {% endif %}
     // End Inititialisation
 
@@ -70,21 +87,33 @@ frappe.ready(() => {
             selectedLocation = getLocation(); // Read location from the autocomplete field
         } catch(e) {
             console.trace(e);
+            return false;
         }
         const distance = Number($('#distance-sel').val()); // Read distance from the select dropdown
-        // Send this information to backend to store in session
-        frappe.call({
-            method: 'contentready_oip.api.set_location_filter',
-            args: {
-                selectedLocation: selectedLocation,
-                distance: distance,
-            },
-            callback: function(r) {
-                // console.log(r.message);
-                // Reload as index.py will use the session variables to filter problems/solutions shown.
-                window.location.reload();
+        // console.log(selectedLocation);
+        if (frappe.session.user !== 'Guest') {
+            // Send this information to backend to store in session
+            frappe.call({
+                method: 'contentready_oip.api.set_location_filter',
+                args: {
+                    selectedLocation: selectedLocation,
+                    distance: distance,
+                },
+                callback: function(r) {
+                    // console.log(r.message);
+                    // Reload as index.py will use the session variables to filter problems/solutions shown.
+                    window.location.reload();
+                }
+            });
+        } else if (localStorage) {
+            const location = {
+                'center': selectedLocation,
+                'distance': distance
             }
-        });
+            // console.log(location);
+            localStorage.setItem('location', JSON.stringify(location));
+            window.location.reload();
+        }
     }
     const autocomplete = new google.maps.places.Autocomplete(
         document.getElementById('autocomplete'),
@@ -103,17 +132,22 @@ frappe.ready(() => {
 
     // Start Sector filter
     setSessionSectorFilter = (evt) => {
-        frappe.call({
-            method: 'contentready_oip.api.set_sector_filter',
-            args: {
-                sectors: [evt.target.value], // TODO: Replace with evt.target.value once multiselect sector is implemented.
-            },
-            callback: function(r) {
-                // console.log(r.message);
-                // Reload as index.py will use the session variables to filter problems/solutions shown.
-                window.location.reload();
-            }
-        });
+        if (frappe.session.user !== 'Guest') {
+            frappe.call({
+                method: 'contentready_oip.api.set_sector_filter',
+                args: {
+                    sectors: [evt.target.value], // TODO: Replace with evt.target.value once multiselect sector is implemented.
+                },
+                callback: function(r) {
+                    // console.log(r.message);
+                    // Reload as index.py will use the session variables to filter problems/solutions shown.
+                    window.location.reload();
+                }
+            });
+        } else if (localStorage) {
+            localStorage.setItem('sectors', JSON.stringify([evt.target.value]));
+            window.location.reload();
+        }
     }
     // End Sector Filter
 });

@@ -12,12 +12,12 @@
                     height="24"
                     width="20"
                 />
-                <h3>Solutions Listed ({{ solutions | length }})</h3>
+                <h3>Solutions Listed (<span id="solutions-count">{{ solutions | length }}</span>)</h3>
             </div>
         </div>
     </div>
 </div>
-<div class="row">
+<div class="row" id="solutions-container">
     {% for solution in solutions %}
         <div class="col-md-6">
             {% include "templates/includes/solution/solution_card.html" %}
