@@ -20,7 +20,12 @@
 }
 
 .form-group label {
+    font-size: 1.2rem;
     font-weight: bolder;
+}
+
+.form-control {
+    font-size: 1.2rem;
 }
 
 .control-label {
