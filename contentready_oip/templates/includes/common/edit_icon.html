@@ -24,7 +24,7 @@
             $("#collaboration-comment-"+name).val(data[1]);
         } else if (doctype === 'Validation Table') {
             console.log(data);
-            data = JSON.parse(data.replace(/\'/g, '"'));
+            data = JSON.parse(data.replace(/u\'/g, '"').replace(/\'/g, '"'));
             $('#validation-modal-'+name).modal('toggle');
             $("#validation-comment-"+name).val(data[0]);
         }
