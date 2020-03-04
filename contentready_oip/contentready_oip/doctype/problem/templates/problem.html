@@ -2,6 +2,19 @@
 
 {% block page_content %}
 
+<!-- <script>
+    {% include "public/js/dropzone.js" %}
+</script>
+<script>
+    Dropzone.autoDiscover = false;
+    // Dropzone.url = "/api/method/upload_file";
+    // Dropzone.addRemoveLinks = true;
+    // Dropzone.headers= {
+    //     'Accept': 'application/json',
+    //     'X-Frappe-CSRF-Token': frappe.csrf_token
+    // };
+</script> -->
+
 {% include "templates/includes/problem/header.html" %}
 
 <div class="container mt-20 mb-5">
@@ -14,5 +27,9 @@
         </div>
     </div>
 </div>
+
+<style>
+    {% include "public/css/dropzone.css" %}
+</style>
 
 {% endblock %}

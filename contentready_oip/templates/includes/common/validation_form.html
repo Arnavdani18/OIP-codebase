@@ -15,14 +15,21 @@
                             placeholder="Enter comment"></textarea>
                     </div>
                 </form>
+                <form class="dropzone dz-clickable" data-file-url='' id='validation-dropzone-{{name}}'>
+                    <div class="dz-default dz-message"><button class="dz-button" type="button">Drop file here to
+                            upload</button></div>
+                </form>
             </div>
             <div class="modal-footer">
                 {% if doctype == 'Validation Table' %}
                 <!-- Edit mode -->
-                <button type="button" class="card-btn" onclick="deleteValidation('{{doctype}}', '{{name}}')">Delete</button>
+                <button type="button" class="card-btn"
+                    onclick="deleteValidation('{{doctype}}', '{{name}}')">Delete</button>
                 {% endif %}
-                <button type="button" class="card-btn" onclick="submitValidation('{{doctype}}', '{{name}}', false)">Disagree</button>
-                <button type="button" class="card-btn" onclick="submitValidation('{{doctype}}', '{{name}}', true)">Agree</button>
+                <button type="button" class="card-btn"
+                    onclick="submitValidation('{{doctype}}', '{{name}}', false)">Disagree</button>
+                <button type="button" class="card-btn"
+                    onclick="submitValidation('{{doctype}}', '{{name}}', true)">Agree</button>
             </div>
         </div>
     </div>
@@ -32,9 +39,12 @@
     deleteValidation = (doctype, name) => {
         frappe.call({
             method: 'contentready_oip.api.delete_contribution',
-            args: {child_doctype: doctype, name: name},
+            args: {
+                child_doctype: doctype,
+                name: name
+            },
             callback: (r) => {
-                if (r.message){
+                if (r.message) {
                     window.location.reload();
                 }
             }
@@ -45,27 +55,73 @@
         const validation = {
             user: frappe.session.user,
             agree: agree,
-            comment: $('#validation-comment-'+name).val()
+            comment: $('#validation-comment-' + name).val(),
+            attachment: $('#validation-dropzone-' + name).data('file-url'),
         }
         frappe.call({
             method: 'contentready_oip.api.add_or_edit_validation',
-            args: {doctype: doctype, name: name, validation: validation},
+            args: {
+                doctype: doctype,
+                name: name,
+                validation: validation
+            },
             callback: (r) => {
-                // console.log(r)
-                if (r.message[1] > 0){
+                if (r.message[1] > 0) {
                     if (doctype == 'Validation Table') {
                         // edit mode
-                        $('#validation-card-'+name).replaceWith(r.message[0]);
+                        $('#validation-card-' + name).replaceWith(r.message[0]);
                         // TODO: Toggles twice for some reason, leaving an empty form on the screen.
                         // TEMP Fix: Reload.
                         window.location.reload();
                     } else {
                         $('#validations').prepend(r.message[0]);
                         $('#validation-count').text(r.message[1]);
-                        $('#validation-modal-'+name).modal('toggle');
+                        $('#validation-modal-' + name).modal('toggle');
                     }
                 }
             }
         });
     }
+
+    addDropzone = () => {
+        // TODO: Allow user to select an image as featured image
+        // disable autoDiscover as we are manually binding the dropzone to a form element
+        Dropzone.autoDiscover = false;
+        $('#validation-dropzone-{{name}}').dropzone({
+            url: "/api/method/upload_file",
+            autoDiscover: false,
+            maxFiles: 1,
+            addRemoveLinks: true,
+            headers: {
+                'Accept': 'application/json',
+                'X-Frappe-CSRF-Token': frappe.csrf_token
+            },
+            init: function() {
+                // use this event to add to child table
+                this.on("complete", addFileToDoc);
+                // use this event to remove from child table
+                this.on('removedfile', removeFileFromDoc);
+            }
+        });
+    }
+
+    addFileToDoc = (file) => {
+        // console.log('{{name}}');
+        const response = JSON.parse(file.xhr.response);
+        const file_url = response.message.file_url;
+        $('#validation-dropzone-{{name}}').data('file-url', file_url);
+    }
+
+    removeFileFromDoc = (file) => {
+        // console.log('removed', file);
+        frappe.web_form.doc.images = frappe.web_form.doc.images.filter(i => !i.image.endsWith(file.name));
+    }
+
+    frappe.ready(() => {
+        // Start dropzone.js integration
+        // const scriptPath = "public/js/dropzone.js";
+        const dScriptUrl = 'https://rawgit.com/enyo/dropzone/master/dist/dropzone.js';
+        $.getScript(dScriptUrl, addDropzone);
+        // End dropzone.js integration
+    })
 </script>
