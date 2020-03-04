@@ -18,7 +18,7 @@
         } else if (doctype === 'Solution') {
             window.location.href = `/add-solution?name=${name}`;
         } else if (doctype === 'Collaboration Table') {
-            data = JSON.parse(data.replace(/\'/g, '"'));
+            data = JSON.parse(data.replace(/u\'/g, '"').replace(/\'/g, '"'));
             $('#collaboration-modal-'+name).modal('toggle');
             $("#persona-select-"+name).val(data[0]);
             $("#collaboration-comment-"+name).val(data[1]);
