@@ -28,8 +28,10 @@
     </div>
 
     {% if validation.attachment %}
+    {% set file_name = validation.attachment.split('/')[-1] %}
     <br/>
-    <a href="{{validation.attachment}}" target="_blank">See attachment.</a>
+    <h5>Attachments</h5>
+    <a href="{{validation.attachment}}" target="_blank">{{ file_name }}</a>
     {% endif %}
 
     <div class="d-flex align-items-center validate-profile">
