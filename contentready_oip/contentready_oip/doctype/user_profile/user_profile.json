@@ -1,4 +1,5 @@
 {
+ "allow_guest_to_view": 1,
  "autoname": "field:user",
  "creation": "2019-12-04 19:18:32.487148",
  "doctype": "DocType",
@@ -12,6 +13,8 @@
   "org_title",
   "qualifications",
   "column_break_4",
+  "is_published",
+  "route",
   "skills",
   "personas",
   "sectors",
@@ -149,10 +152,24 @@
    "fieldname": "country_code",
    "fieldtype": "Data",
    "label": "Country Code"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_published",
+   "fieldtype": "Check",
+   "label": "Published",
+   "reqd": 1
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "label": "route"
   }
  ],
+ "has_web_view": 1,
  "image_field": "photo",
- "modified": "2020-03-03 23:11:17.394815",
+ "is_published_field": "is_published",
+ "modified": "2020-03-04 23:08:22.154117",
  "modified_by": "tej@jaaga.in",
  "module": "ContentReady OIP",
  "name": "User Profile",
@@ -202,6 +219,7 @@
   }
  ],
  "quick_entry": 1,
+ "route": "list_profiles",
  "search_fields": "full_name, org_title",
  "show_preview_popup": 1,
  "sort_field": "modified",

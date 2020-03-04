@@ -242,6 +242,7 @@ def add_primary_content(doctype, doc):
     content = frappe.get_doc(doctype, content.name)
     return content.route
 
+
 @frappe.whitelist(allow_guest = False)
 def add_enrichment(doc):
     doc = json.loads(doc)

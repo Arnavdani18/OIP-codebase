@@ -164,16 +164,19 @@ frappe.ready(async function() {
     }
 
     publishProfile = () => {
-        frappe.web_form.doc.doctype = 'User Profile';
         frappe.call({
-            method: "frappe.website.doctype.web_form.web_form.accept",
+            method: "contentready_oip.api.add_primary_content",
 			args: {
-				data: frappe.web_form.doc,
-				web_form: frappe.web_form.name,
+				doctype: 'User Profile',
+				doc: frappe.web_form.doc,
 			},
             callback: function(r) {
-                console.log(r.message);
-                window.location.href = '/';
+                // console.log(r.message);
+                if (r.message){
+                    window.location.href = r.message;    
+                } else {
+                    window.location.href = '/';
+                }
             }
         });
     }
