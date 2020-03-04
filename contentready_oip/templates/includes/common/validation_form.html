@@ -83,45 +83,38 @@
         });
     }
 
-    addDropzone = () => {
-        // TODO: Allow user to select an image as featured image
-        // disable autoDiscover as we are manually binding the dropzone to a form element
-        Dropzone.autoDiscover = false;
-        $('#validation-dropzone-{{name}}').dropzone({
-            url: "/api/method/upload_file",
-            autoDiscover: false,
-            maxFiles: 1,
-            addRemoveLinks: true,
-            headers: {
-                'Accept': 'application/json',
-                'X-Frappe-CSRF-Token': frappe.csrf_token
-            },
-            init: function() {
-                // use this event to add to child table
-                this.on("complete", addFileToDoc);
-                // use this event to remove from child table
-                this.on('removedfile', removeFileFromDoc);
-            }
-        });
-    }
-
-    addFileToDoc = (file) => {
-        // console.log('{{name}}');
-        const response = JSON.parse(file.xhr.response);
-        const file_url = response.message.file_url;
-        $('#validation-dropzone-{{name}}').data('file-url', file_url);
-    }
-
-    removeFileFromDoc = (file) => {
-        // console.log('removed', file);
-        $('#validation-dropzone-{{name}}').data('file-url', '');
-    }
-
     frappe.ready(() => {
         // Start dropzone.js integration
         // const scriptPath = "public/js/dropzone.js";
         const dScriptUrl = '/files/dropzone.js';
-        $.getScript(dScriptUrl, addDropzone);
+        $.getScript(dScriptUrl, () => {
+            // disable autoDiscover as we are manually binding the dropzone to a form element
+            Dropzone.autoDiscover = false;
+            $('#validation-dropzone-{{name}}').dropzone({
+                url: "/api/method/upload_file",
+                autoDiscover: false,
+                maxFiles: 1,
+                addRemoveLinks: true,
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Frappe-CSRF-Token': frappe.csrf_token
+                },
+                init: function() {
+                    // use this event to add to child table
+                    this.on("complete", (file) => {
+                        // console.log('{{name}}');
+                        const response = JSON.parse(file.xhr.response);
+                        const file_url = response.message.file_url;
+                        $('#validation-dropzone-{{name}}').data('file-url', file_url);
+                    });
+                    // use this event to remove from child table
+                    this.on('removedfile', (file) => {
+                        // console.log('removed', file);
+                        $('#validation-dropzone-{{name}}').data('file-url', '');
+                    });
+                }
+            });
+        });
         // End dropzone.js integration
     })
 </script>

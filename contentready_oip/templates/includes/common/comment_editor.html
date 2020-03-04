@@ -35,7 +35,7 @@
     }
 
     cancelComment = (doctype, name, parent_div) => {
-        $(`#comment-dropzone-${doctype}-${name}`).hide();
+        $(`#comment-dropzone-${doctype}-${name}`).addClass('hidden');
         $(`#comment-area-${doctype}-${name}`).val('');
         contractCommentArea(doctype, name);
         if (parent_div) {
@@ -46,19 +46,23 @@
     submitComment = (doctype, name) => {
         const id = `comment-area-${doctype}-${name}`; // for compatibility with cancelComment
         const text = $(`#${id}`).val();
-        const attachments = $('#comment-dropzone-{{doctype}}-{{name}}').data('file-urls');
+        const attachments = $(`#comment-dropzone-${doctype}-${name}`).data('file-urls');
         if (text.length) {
             // console.log(comment);
             frappe.call({
                 method: 'contentready_oip.api.add_comment',
                 args: {doctype: doctype, name: name, text: text, attachments: attachments},
                 callback: (r) => {
-                    console.log(r);
+                    // console.log(r);
                     if (doctype == 'Discussion') {
                         window.location.reload();
                     } else if (r.message){
-                        $('#comments-list').prepend(r.message);
-                        cancelComment(doctype, name);
+                        if ($('#comments-list').length) {
+                            $('#comments-list').prepend(r.message);
+                            cancelComment(doctype, name);
+                        } else {
+                            window.location.reload();
+                        }
                     }
                 }
             });
@@ -67,52 +71,47 @@
         }
     }
 
-    addDropzone = () => {
-        // disable autoDiscover as we are manually binding the dropzone to a form element
-        Dropzone.autoDiscover = false;
-        $('#comment-dropzone-{{doctype}}-{{name}}').dropzone({
-            url: "/api/method/upload_file",
-            autoDiscover: false,
-            // maxFiles: 1,
-            addRemoveLinks: true,
-            headers: {
-                'Accept': 'application/json',
-                'X-Frappe-CSRF-Token': frappe.csrf_token
-            },
-            init: function() {
-                // use this event to add to child table
-                this.on("complete", addFileToDoc);
-                // use this event to remove from child table
-                this.on('removedfile', removeFileFromDoc);
-            }
-        });
-    }
-
-    addFileToDoc = (file) => {
-        // console.log('{{name}}');
-        const response = JSON.parse(file.xhr.response);
-        const file_url = response.message.file_url;
-        const attachments = $('#comment-dropzone-{{doctype}}-{{name}}').data('file-urls');
-        attachments.push(file_url);
-        $('#comment-dropzone-{{doctype}}-{{name}}').data('file-url', JSON.stringify(attachments));
-    }
-
-    removeFileFromDoc = (file) => {
-        // console.log('removed', file);
-        let attachments = $('#comment-dropzone-{{doctype}}-{{name}}').data('file-urls');
-        attachments = attachments.filter(i => !i.endsWith(file.name));
-        $('#comment-dropzone-{{doctype}}-{{name}}').data('file-url', JSON.stringify(attachments));
-    }
-
     showDropzone = (doctype, name) => {
-        // $(`#comment-dropzone-${doctype}-${name}`).show();
+        // set rows=5
+        $(`#comment-dropzone-${doctype}-${name}`).removeClass('hidden');
     }
 
     frappe.ready(() => {
         // Start dropzone.js integration
         // const scriptPath = "public/js/dropzone.js";
         const dScriptUrl = '/files/dropzone.js';
-        // $.getScript(dScriptUrl, addDropzone);
+        $.getScript(dScriptUrl, () => {
+            // disable autoDiscover as we are manually binding the dropzone to a form element
+            Dropzone.autoDiscover = false;
+            $('#comment-dropzone-{{doctype}}-{{name}}').dropzone({
+                url: "/api/method/upload_file",
+                autoDiscover: false,
+                // maxFiles: 1,
+                addRemoveLinks: true,
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Frappe-CSRF-Token': frappe.csrf_token
+                },
+                init: function() {
+                    // use this event to add to child table
+                    this.on("complete", (file) => {
+                        // console.log('{{name}}');
+                        const response = JSON.parse(file.xhr.response);
+                        const file_url = response.message.file_url;
+                        const attachments = $('#comment-dropzone-{{doctype}}-{{name}}').data('file-urls');
+                        attachments.push(file_url);
+                        $('#comment-dropzone-{{doctype}}-{{name}}').data('file-urls', JSON.stringify(attachments));
+                    });
+                    // use this event to remove from child table
+                    this.on('removedfile', (file) => {
+                        // console.log('removed', file);
+                        let attachments = $('#comment-dropzone-{{doctype}}-{{name}}').data('file-urls');
+                        attachments = attachments.filter(i => !i.endsWith(file.name));
+                        $('#comment-dropzone-{{doctype}}-{{name}}').data('file-urls', JSON.stringify(attachments));
+                    });
+                }
+            });
+        });
         // End dropzone.js integration
     })
 </script>

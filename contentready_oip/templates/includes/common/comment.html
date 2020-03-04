@@ -18,12 +18,19 @@
                 </span>
             </div>
             <p>{{comment.text}}</p>
+            {% if (comment.attachments | length) > 0 %}
+            <h6>Attachments</h6>
+            {% for a in comment.attachments %}
+            {% set file_name = a.image.split('/')[-1] %}
+            <a href="{{a.image}}" target="_blank">{{ file_name }}</a>
+            {% endfor %}
             <!-- <button class="attach-btn" data-toggle="modal" #showModalBtn
-                onclick="processAction('view-attachments','{{doctype}}','{{name}}')">
+                onclick="console.log('view-attachments','{{doctype}}','{{name}}')">
                 <i class="fas fa-paperclip"></i>
     
                 See {{ comment.attachments | length }} Attachments
             </button> -->
+            {% endif %}
             <div id="reply-{{comment.name}}" class="hidden">
                 {% set doctype = comment.doctype %}
                 {% set name = comment.name %}
