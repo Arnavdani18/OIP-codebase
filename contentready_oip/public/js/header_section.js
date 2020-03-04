@@ -37,7 +37,7 @@ frappe.ready(async () => {
         }
         frappe.call({
             method: 'contentready_oip.api.has_user_contributed',
-            args: {child_doctype: 'Collaboration Table', doctype: doctype, name: name},
+            args: {child_doctype: 'Collaboration Table', parent_doctype: doctype, name: name},
             callback: (r) => {
                 if (r.message){
                     frappe.throw(`You have already collaborated on this ${doctype}`);

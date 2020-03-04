@@ -78,9 +78,11 @@
                             {% if (enrichment.images | length) > 0 %}
                             <div class="col-md-5 img-container">
                                 <img src="{{enrichment.images[0].image}}" class="" alt="{{enrichment.images[0].heading}}" height="235" width="345" />
+                                {% if (enrichment.images | length) > 1000 %}
                                 <button class="align-icon" data-toggle="tab" class="nav-link" href="#media">
                                     +{{ enrichment.images | length }}
                                 </button>
+                                {% endif %}
                             </div>
                             {% endif %}
                         </div>

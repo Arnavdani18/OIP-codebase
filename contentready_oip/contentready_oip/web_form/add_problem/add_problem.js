@@ -187,6 +187,7 @@ frappe.ready(async () => {
 			},
             callback: function(r) {
                 console.log(r.message);
+                window.location.href = '/problems';
             }
         });
     }
