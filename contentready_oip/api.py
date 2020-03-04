@@ -226,11 +226,18 @@ def get_problem_card(name, html=True):
 @frappe.whitelist(allow_guest = False)
 def add_primary_content(doctype, doc):
     doc = json.loads(doc)
-    content = frappe.get_doc({
-        'doctype': doctype
-    })
-    content.update(doc)
-    content.insert()
+    if doc['name']:
+        # edit
+        content = frappe.get_doc(doctype, doc['name'])
+        content.update(doc)
+        content.save()
+    else:
+        # create
+        content = frappe.get_doc({
+            'doctype': doctype
+        })
+        content.update(doc)
+        content.insert()
     frappe.db.commit()
     content = frappe.get_doc(doctype, content.name)
     return content.route
