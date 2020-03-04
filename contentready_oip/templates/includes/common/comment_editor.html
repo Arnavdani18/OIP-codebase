@@ -5,33 +5,39 @@
             {% include "templates/includes/common/user_thumbnail.html" %}
         </div>
         <div class="input-group">
-            <div class="input-group-prepend">
-                <!-- <button class="btn btn-outline-secondary" type="button"><i class="fas fa-paperclip"></button> -->
-            </div>
             <!-- TODO: onblur="contractCommentArea(event.target.id)" -->
+            <div class="input-group-prepend">
+                <button class="btn btn-outline-danger" type="button" onclick="cancelComment(`{{doctype}}`,`{{name}}`, `{{parent_div|default('', true)}}`)"><i class="far fa-backspace fa-flip-horizontal"></i></button>
+                
+            </div> 
             <textarea class="form-control" id="comment-area-{{doctype}}-{{name}}" placeholder="Add a comment..."
-                rows="1" onfocus="expandCommentArea(event.target.id)"></textarea>
+                rows="1" onfocus="expandCommentArea('{{doctype}}','{{name}}')"></textarea>
+            
             <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" onclick="cancelComment('comment-area-{{doctype}}-{{name}}', '{{parent_div}}')">Cancel</button>
-                <button class="btn btn-outline-secondary" type="button" onclick="submitComment('{{doctype}}', '{{name}}')">Submit</button>
+                <button class="btn btn-outline-secondary" type="button" onclick="showDropzone('{{doctype}}', '{{name}}')"><i class="far fa-paperclip"></i></button>
+                <button class="btn btn-outline-primary" type="button" onclick="submitComment('{{doctype}}', '{{name}}')"><i class="far fa-envelope"></i></button>
             </div>
         </div>
+        <form class="dropzone dz-clickable hidden" data-file-urls='[]' id='comment-dropzone-{{doctype}}-{{name}}'>
+            <div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div>
+        </form>
     </div>
 </div>
 <script>
-    expandCommentArea = (id) => {
+    expandCommentArea = (doctype, name) => {
         // set rows=5
-        $(`#${id}`).attr('rows', '5');
+        $(`#comment-area-${doctype}-${name}`).attr('rows', '3');
     }
 
-    contractCommentArea = (id) => {
+    contractCommentArea = (doctype, name) => {
         // set rows=1
-        $(`#${id}`).attr('rows', '1');
+        $(`#comment-area-${doctype}-${name}`).attr('rows', '1');
     }
 
-    cancelComment = (id, parent_div) => {
-        $(`#${id}`).val('');
-        contractCommentArea(id);
+    cancelComment = (doctype, name, parent_div) => {
+        $(`#comment-dropzone-${doctype}-${name}`).hide();
+        $(`#comment-area-${doctype}-${name}`).val('');
+        contractCommentArea(doctype, name);
         if (parent_div) {
             $(parent_div).addClass('hidden');
         }
@@ -40,18 +46,19 @@
     submitComment = (doctype, name) => {
         const id = `comment-area-${doctype}-${name}`; // for compatibility with cancelComment
         const text = $(`#${id}`).val();
+        const attachments = $('#comment-dropzone-{{doctype}}-{{name}}').data('file-urls');
         if (text.length) {
             // console.log(comment);
             frappe.call({
                 method: 'contentready_oip.api.add_comment',
-                args: {doctype: doctype, name: name, text: text},
+                args: {doctype: doctype, name: name, text: text, attachments: attachments},
                 callback: (r) => {
-                    // console.log(r);
+                    console.log(r);
                     if (doctype == 'Discussion') {
                         window.location.reload();
                     } else if (r.message){
-                        $('#discussionTabGroup').prepend(r.message);
-                        cancelComment(id);
+                        $('#comments-list').prepend(r.message);
+                        cancelComment(doctype, name);
                     }
                 }
             });
@@ -59,4 +66,59 @@
             frappe.throw('Cannot submit an empty comment.');
         }
     }
+
+    addDropzone = () => {
+        // disable autoDiscover as we are manually binding the dropzone to a form element
+        Dropzone.autoDiscover = false;
+        $('#comment-dropzone-{{doctype}}-{{name}}').dropzone({
+            url: "/api/method/upload_file",
+            autoDiscover: false,
+            // maxFiles: 1,
+            addRemoveLinks: true,
+            headers: {
+                'Accept': 'application/json',
+                'X-Frappe-CSRF-Token': frappe.csrf_token
+            },
+            init: function() {
+                // use this event to add to child table
+                this.on("complete", addFileToDoc);
+                // use this event to remove from child table
+                this.on('removedfile', removeFileFromDoc);
+            }
+        });
+    }
+
+    addFileToDoc = (file) => {
+        // console.log('{{name}}');
+        const response = JSON.parse(file.xhr.response);
+        const file_url = response.message.file_url;
+        const attachments = $('#comment-dropzone-{{doctype}}-{{name}}').data('file-urls');
+        attachments.push(file_url);
+        $('#comment-dropzone-{{doctype}}-{{name}}').data('file-url', JSON.stringify(attachments));
+    }
+
+    removeFileFromDoc = (file) => {
+        // console.log('removed', file);
+        let attachments = $('#comment-dropzone-{{doctype}}-{{name}}').data('file-urls');
+        attachments = attachments.filter(i => !i.endsWith(file.name));
+        $('#comment-dropzone-{{doctype}}-{{name}}').data('file-url', JSON.stringify(attachments));
+    }
+
+    showDropzone = (doctype, name) => {
+        // $(`#comment-dropzone-${doctype}-${name}`).show();
+    }
+
+    frappe.ready(() => {
+        // Start dropzone.js integration
+        // const scriptPath = "public/js/dropzone.js";
+        const dScriptUrl = '/files/dropzone.js';
+        // $.getScript(dScriptUrl, addDropzone);
+        // End dropzone.js integration
+    })
 </script>
+
+<style>
+    .hidden{
+        display: none;
+    }
+</style>

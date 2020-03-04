@@ -28,9 +28,9 @@
     </div>
 
     {% if validation.attachment %}
-    {% set file_name = validation.attachment.split('/')[-1] %}
     <br/>
     <h5>Attachments</h5>
+    {% set file_name = validation.attachment.split('/')[-1] %}
     <a href="{{validation.attachment}}" target="_blank">{{ file_name }}</a>
     {% endif %}
 

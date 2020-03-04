@@ -25,7 +25,7 @@
     </div>
     {% if (discussions | length) > 0 %}
     <div id="discussionTabGroup" class="pb-2">
-        <div class="px-4 my-2">
+        <div class="px-4 my-2" id="comments-list">
             {% for d in discussions | reverse %}
             {% set comment = frappe.get_doc('Discussion', d.discussion) %}
             {% include "templates/includes/common/comment.html" %}

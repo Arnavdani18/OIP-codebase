@@ -193,7 +193,7 @@ frappe.ready(async () => {
 
     // Start dropzone.js integration
     // const scriptPath = "public/js/dropzone.js";
-    const dScriptUrl = 'https://rawgit.com/enyo/dropzone/master/dist/dropzone.js';
+    const dScriptUrl = '/files/dropzone.js';
     $.getScript(dScriptUrl, addDropzone);
     // End dropzone.js integration
 

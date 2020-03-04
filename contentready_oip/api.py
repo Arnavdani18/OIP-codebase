@@ -182,11 +182,15 @@ def toggle_contribution(child_doctype, parent_doctype, parent_name, field_name):
     return has_user_contributed(child_doctype, parent_doctype, parent_name), get_child_table(child_doctype, parent_doctype, parent_name)
 
 @frappe.whitelist(allow_guest = False)
-def add_comment(doctype, name, text, html=True):
+def add_comment(doctype, name, text, attachments=None, html=True):
     doc = frappe.get_doc({
         'doctype': 'Discussion',
         'text': text
     })
+    attachments = json.loads(attachments)
+    for f in attachments:
+        a = doc.append('attachments', {})
+        a.image = f
     doc.save()
     parent_doc = frappe.get_doc(doctype, name)
     if doctype == 'Discussion':
@@ -196,12 +200,16 @@ def add_comment(doctype, name, text, html=True):
     child.discussion = doc.name
     parent_doc.save()
     frappe.db.commit()
-    template = "templates/includes/common/comment.html"
-    context = {
-        'comment': doc
-    }
-    html = frappe.render_template(template, context)
-    return html
+    if html:
+
+        template = "templates/includes/common/comment.html"
+        context = {
+            'comment': doc
+        }
+        html = frappe.render_template(template, context)
+        return html
+    else:
+        return doc
 
 @frappe.whitelist(allow_guest = False)
 def get_problem_card(name, html=True):
