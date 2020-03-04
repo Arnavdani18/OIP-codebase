@@ -201,7 +201,6 @@ def add_comment(doctype, name, text, attachments=None, html=True):
     parent_doc.save()
     frappe.db.commit()
     if html:
-
         template = "templates/includes/common/comment.html"
         context = {
             'comment': doc
