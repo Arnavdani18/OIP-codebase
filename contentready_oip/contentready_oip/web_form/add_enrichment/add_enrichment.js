@@ -152,8 +152,7 @@ frappe.ready(async () => {
 				doc: frappe.web_form.doc,
 			},
             callback: function(r) {
-                console.log(r.message);
-                window.location.href = '/problems';
+                window.location.href = r.message;
             }
         });
     }

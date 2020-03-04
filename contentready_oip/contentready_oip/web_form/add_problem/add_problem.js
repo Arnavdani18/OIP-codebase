@@ -178,16 +178,19 @@ frappe.ready(async () => {
     }
 
     submitProblemForm = () => {
-        frappe.web_form.doc.doctype = 'Problem';
         frappe.call({
-            method: "frappe.website.doctype.web_form.web_form.accept",
+            method: "contentready_oip.api.add_primary_content",
 			args: {
-				data: frappe.web_form.doc,
-				web_form: frappe.web_form.name,
+				doctype: 'Problem',
+				doc: frappe.web_form.doc,
 			},
             callback: function(r) {
-                console.log(r.message);
-                window.location.href = '/problems';
+                // console.log(r.message);
+                if (r.message){
+                    window.location.href = r.message;    
+                } else {
+                    window.location.href = '/problems';
+                }
             }
         });
     }

@@ -225,6 +225,18 @@ def get_problem_card(name, html=True):
         return doc
 
 @frappe.whitelist(allow_guest = False)
+def add_primary_content(doctype, doc):
+    doc = json.loads(doc)
+    content = frappe.get_doc({
+        'doctype': doctype
+    })
+    content.update(doc)
+    content.insert()
+    frappe.db.commit()
+    content = frappe.get_doc(doctype, content.name)
+    return content.route
+
+@frappe.whitelist(allow_guest = False)
 def add_enrichment(doc):
     doc = json.loads(doc)
     if not ('problem' in doc or doc['problem']):
@@ -237,7 +249,8 @@ def add_enrichment(doc):
     enrichment.update(doc)
     enrichment.insert()
     frappe.db.commit()
-    return True
+    route = frappe.get_value('Problem', enrichment.problem, 'route')
+    return route
 
 @frappe.whitelist(allow_guest = False)
 def add_or_edit_validation(doctype, name, validation, html=True):
@@ -300,6 +313,7 @@ def add_or_edit_collaboration(doctype, name, collaboration, html=True):
 def add_subscriber(email, first_name=None):
     if not first_name:
         first_name = email # the contact docytpe needs first_name. If the form doesn't give us this, use email instead. 
+    frappe.set_user('Administrator')
     contact = frappe.get_doc({
         'doctype': 'Contact',
         'first_name': email, 
