@@ -30,6 +30,10 @@
                 </form>
             </div>
             <div class="modal-footer">
+                {% if doctype == 'Collaboration Table' %}
+                <!-- Edit mode -->
+                <button type="button" class="card-btn" onclick="deleteCollaboration('{{doctype}}', '{{name}}')">Delete</button>
+                {% endif %}
                 <button type="button" class="card-btn"
                     onclick="submitCollaboration('{{doctype}}', '{{name}}')">Submit</button>
             </div>
@@ -54,6 +58,19 @@
         }
         createPersonaOptions();
     })
+    
+    deleteCollaboration = (doctype, name) => {
+        frappe.call({
+            method: 'contentready_oip.api.delete_contribution',
+            args: {child_doctype: doctype, name: name},
+            callback: (r) => {
+                if (r.message){
+                    window.location.reload();
+                }
+            }
+        });
+    }
+
     submitCollaboration = (doctype, name) => {
         const collaboration = {
             user: frappe.session.user,

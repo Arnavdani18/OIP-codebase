@@ -355,7 +355,11 @@ def get_interesting_content():
 
 @frappe.whitelist(allow_guest = False)
 def delete_contribution(child_doctype, name):
-    frappe.delete_doc(child_doctype, name)
+    try:
+        frappe.delete_doc(child_doctype, name)
+        return True
+    except:
+        frappe.throw('{} not found in {}.'.format(name, child_doctype))
 
 @frappe.whitelist(allow_guest = False)
 def delete_enrichment(name):
@@ -365,5 +369,6 @@ def delete_enrichment(name):
         frappe.delete_doc('Enrichment Table', e.name)
         # delete the primary document
         frappe.delete_doc('Enrichment', name)
+        return True
     except:
         frappe.throw('Enrichment not found.')

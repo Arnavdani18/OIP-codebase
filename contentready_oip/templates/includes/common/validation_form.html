@@ -17,6 +17,10 @@
                 </form>
             </div>
             <div class="modal-footer">
+                {% if doctype == 'Validation Table' %}
+                <!-- Edit mode -->
+                <button type="button" class="card-btn" onclick="deleteValidation('{{doctype}}', '{{name}}')">Delete</button>
+                {% endif %}
                 <button type="button" class="card-btn" onclick="submitValidation('{{doctype}}', '{{name}}', false)">Disagree</button>
                 <button type="button" class="card-btn" onclick="submitValidation('{{doctype}}', '{{name}}', true)">Agree</button>
             </div>
@@ -25,6 +29,18 @@
 </div>
 
 <script>
+    deleteValidation = (doctype, name) => {
+        frappe.call({
+            method: 'contentready_oip.api.delete_contribution',
+            args: {child_doctype: doctype, name: name},
+            callback: (r) => {
+                if (r.message){
+                    window.location.reload();
+                }
+            }
+        });
+    }
+
     submitValidation = (doctype, name, agree) => {
         const validation = {
             user: frappe.session.user,
@@ -40,7 +56,7 @@
                     if (doctype == 'Validation Table') {
                         // edit mode
                         $('#validation-card-'+name).replaceWith(r.message[0]);
-                        // TODO: Toggles twice for some reason leaving an empty form on the screen.
+                        // TODO: Toggles twice for some reason, leaving an empty form on the screen.
                         // TEMP Fix: Reload.
                         window.location.reload();
                     } else {
