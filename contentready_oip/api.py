@@ -77,9 +77,9 @@ def get_lat_lng_bounds(selectedLocation):
 
 @frappe.whitelist(allow_guest = True)
 def get_filtered_content(doctype, location, sectors, limit_page_length=20, html=False, guest=True):
-    if guest:
-        sectors = json.loads(sectors) or []
-        location = json.loads(location) or {}
+    # if guest:
+    #     sectors = json.loads(sectors) or []
+    #     location = json.loads(location) or {}
     if 'all' in sectors:
         filtered = frappe.get_list(doctype, filters={'is_published': True}, limit_page_length=limit_page_length)
         content_set = {f['name'] for f in filtered}
@@ -88,38 +88,47 @@ def get_filtered_content(doctype, location, sectors, limit_page_length=20, html=
         content_set = {f['parent'] for f in filtered}
     # TODO: Implement location filtering using Elasticsearch
     # This approximation currently fails.
-    try:
-        bounds = get_lat_lng_bounds(location)
-        lat_center = bounds['lat_center']
-        lat_min = bounds['lat_min']
-        lat_max = bounds['lat_max']
-        lng_center = bounds['lng_center']
-        lng_min = bounds['lng_min']
-        lng_max = bounds['lng_max']
-        filtered = \
-            frappe.get_list(doctype, 
-                filters={
-                    'is_published': True,
-                    'name': ['in', content_set],
-                    'latitude': ['>=', lat_min],
-                    'latitude': ['<=', lat_max],
-                    'longitude': ['>=', lng_min],
-                    'longitude': ['<=', lng_max],
-                }, 
-                limit_page_length=limit_page_length
-            )
-        content_set = {f['name'] for f in filtered}
-    except Exception as e:
-        print(str(e))
+    # try:
+    #     # bounds = get_lat_lng_bounds(location)
+    #     # lat_center = bounds['lat_center']
+    #     # lat_min = bounds['lat_min']
+    #     # lat_max = bounds['lat_max']
+    #     # lng_center = bounds['lng_center']
+    #     # lng_min = bounds['lng_min']
+    #     # lng_max = bounds['lng_max']
+    #     # filtered = \
+    #     #     frappe.get_list(doctype, 
+    #     #         filters={
+    #     #             'is_published': True,
+    #     #             'name': ['in', content_set],
+    #     #             'latitude': ['>=', lat_min],
+    #     #             'latitude': ['<=', lat_max],
+    #     #             'longitude': ['>=', lng_min],
+    #     #             'longitude': ['<=', lng_max],
+    #     #         }, 
+    #     #         limit_page_length=limit_page_length
+    #     #     )
+    #     # content_set = {f['name'] for f in filtered}
+    # except Exception as e:
+    #     print(str(e))
+    from geopy import distance
+    lat = location['center']['latitude']
+    lng = location['center']['longitude']
+    radius = location['distance']
     content = []
-    from frappe.website.context import build_context 
     for c in content_set:
         doc = frappe.get_doc(doctype, c)
         if doc.is_published:
+            # print('location',doc.name, doc.latitude, doc.longitude)
+            if doc.latitude and doc.longitude:
+                # doc_location = ()
+                distance_km = distance.distance((lat, lng), (float(doc.latitude), float(doc.longitude))).km
+                print (lat, lng, radius)
+                print(doc.name, distance_km, radius)
+                if distance_km > radius:
+                    continue
             doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
             if html:
-                # template = doc.meta.get_web_template()
-                # context = build_context(doc.as_dict())
                 template = "templates/includes/problem/problem_card.html"
                 context = {
                     'problem': doc
