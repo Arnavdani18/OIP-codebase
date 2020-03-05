@@ -29,10 +29,12 @@
   "extent",
   "resources_needed",
   "beneficiaries",
-  "images",
+  "min_population",
+  "max_population",
   "column_break_14",
   "description",
   "short_description",
+  "images",
   "section_break_14",
   "enrichments",
   "validations",
@@ -267,11 +269,21 @@
    "fieldtype": "Table",
    "label": "Solutions",
    "options": "Solution Table"
+  },
+  {
+   "fieldname": "min_population",
+   "fieldtype": "Int",
+   "label": "Min Population Affected"
+  },
+  {
+   "fieldname": "max_population",
+   "fieldtype": "Int",
+   "label": "Max Population Affected"
   }
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2020-03-04 06:27:44.225138",
+ "modified": "2020-03-05 22:49:53.241936",
  "modified_by": "tej@jaaga.in",
  "module": "ContentReady OIP",
  "name": "Problem",

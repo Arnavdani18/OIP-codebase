@@ -1,4 +1,4 @@
-<div class="problem-container" data-name="{{solution.name}}" style="cursor: pointer; background-color: white; margin-top: 1rem; margin-bottom: 1rem;" id="solution-card-{{solution.name}}">
+<div class="problem-container" onclick="window.location.href = '{{solution.route}}'"  data-name="{{solution.name}}" style="cursor: pointer; background-color: white; margin-top: 1rem; margin-bottom: 1rem;" id="solution-card-{{solution.name}}">
     <div class="left-side ">
         {% include "templates/includes/solution/solution_label.html" %}
 

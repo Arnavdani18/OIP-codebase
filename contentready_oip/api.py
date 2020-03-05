@@ -81,9 +81,6 @@ def get_filtered_content(doctype, location, sectors, limit_page_length=20, html=
         sectors = json.loads(sectors) or []
     if isinstance(location, str):
         location = json.loads(location) or {}
-    # if guest:
-    #     sectors =  or []
-    #     location = json.loads(location) or {}
     if 'all' in sectors:
         filtered = frappe.get_list(doctype, filters={'is_published': True}, limit_page_length=limit_page_length)
         content_set = {f['name'] for f in filtered}
@@ -91,30 +88,6 @@ def get_filtered_content(doctype, location, sectors, limit_page_length=20, html=
         filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', sectors]}, limit_page_length=limit_page_length)
         content_set = {f['parent'] for f in filtered}
     # TODO: Implement location filtering using Elasticsearch
-    # This approximation currently fails.
-    # try:
-    #     # bounds = get_lat_lng_bounds(location)
-    #     # lat_center = bounds['lat_center']
-    #     # lat_min = bounds['lat_min']
-    #     # lat_max = bounds['lat_max']
-    #     # lng_center = bounds['lng_center']
-    #     # lng_min = bounds['lng_min']
-    #     # lng_max = bounds['lng_max']
-    #     # filtered = \
-    #     #     frappe.get_list(doctype, 
-    #     #         filters={
-    #     #             'is_published': True,
-    #     #             'name': ['in', content_set],
-    #     #             'latitude': ['>=', lat_min],
-    #     #             'latitude': ['<=', lat_max],
-    #     #             'longitude': ['>=', lng_min],
-    #     #             'longitude': ['<=', lng_max],
-    #     #         }, 
-    #     #         limit_page_length=limit_page_length
-    #     #     )
-    #     # content_set = {f['name'] for f in filtered}
-    # except Exception as e:
-    #     print(str(e))
     from geopy import distance
     try:
         lat = location['center']['latitude']
@@ -128,12 +101,8 @@ def get_filtered_content(doctype, location, sectors, limit_page_length=20, html=
     for c in content_set:
         doc = frappe.get_doc(doctype, c)
         if doc.is_published:
-            # print('location',doc.name, doc.latitude, doc.longitude)
             if (doc.latitude != None) and (doc.longitude != None) and (lat != None) and (lng != None) and (radius != None):
-                # doc_location = ()
                 distance_km = distance.distance((lat, lng), (float(doc.latitude), float(doc.longitude))).km
-                # print (lat, lng, radius)
-                # print(doc.name, distance_km, radius)
                 if distance_km > radius:
                     continue
             doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
@@ -366,8 +335,8 @@ def add_subscriber(email, first_name=None):
     return contact
 
 @frappe.whitelist(allow_guest = False)
-def get_content_by_user(doctype, limit_page_length=20):
-    filtered = frappe.get_list(doctype, filters={'owner': frappe.session.user})
+def get_content_by_user(doctype, limit_page_length=5):
+    filtered = frappe.get_list(doctype, filters={'owner': frappe.session.user}, limit_page_length=limit_page_length)
     content = []
     for f in filtered:
         doc = frappe.get_doc(doctype, f['name'])
@@ -375,7 +344,20 @@ def get_content_by_user(doctype, limit_page_length=20):
     return content
 
 @frappe.whitelist(allow_guest = False)
-def get_content_watched_by_user(doctype, limit_page_length=20):
+def get_contributions_by_user(parent_doctype, child_doctypes, limit_page_length=5):
+    content_set = set()
+    for child_doctype in child_doctypes:
+        filtered = frappe.get_list(child_doctype, fields=['parent'], filters={'owner': frappe.session.user, 'parenttype': parent_doctype}, limit_page_length=limit_page_length)
+        for f in filtered:
+            content_set.add(f['parent'])
+    content = []
+    for c in content_set:
+        doc = frappe.get_doc(parent_doctype, c)
+        content.append(doc)
+    return content
+
+@frappe.whitelist(allow_guest = False)
+def get_content_watched_by_user(doctype, limit_page_length=5):
     filtered = frappe.get_list('Watch Table', fields=['parent'], filters={'parenttype': doctype, 'owner': frappe.session.user}, limit_page_length=limit_page_length)
     content_set = {f['parent'] for f in filtered}
     content = []
@@ -385,34 +367,39 @@ def get_content_watched_by_user(doctype, limit_page_length=20):
     return content
 
 @frappe.whitelist(allow_guest = False)
-def get_content_recommended_for_user(doctype, sectors, limit_page_length=20):
-    filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', sectors], 'owner': ['!=', frappe.session.owner]}, limit_page_length=limit_page_length)
-    content_set = {f['parent'] for f in filtered}
+def get_content_recommended_for_user(doctype, sectors, limit_page_length=5):
     content = []
-    for c in content_set:
-        doc = frappe.get_doc(doctype, c)
-        if doc.is_published:
-            doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
-            content.append(doc)
+    try:
+        filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', sectors], 'owner': ['!=', frappe.session.owner]}, limit_page_length=limit_page_length)
+        content_set = {f['parent'] for f in filtered}
+        for c in content_set:
+            doc = frappe.get_doc(doctype, c)
+            if doc.is_published:
+                doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
+                content.append(doc)
+    except:
+        pass
     return content
 
 @frappe.whitelist(allow_guest = False)
-def get_interesting_content():
-    print('getting interesting content for {}'.format(frappe.session.user))
+def get_dashboard_content(limit_page_length=5):
     try:
         user = frappe.get_doc('User Profile', frappe.session.user)
         sectors = [sector.sector for sector in user.sectors]
-        return {
-            'problems': get_content_recommended_for_user('Problem', sectors),
-            'solutions': get_content_recommended_for_user('Solution', sectors),
-            'users': get_content_recommended_for_user('User Profile', sectors),
-            'user_problems': get_content_by_user('Problem'),
-            'user_solutions': get_content_by_user('Solution'),
-            'watched_problems': get_content_watched_by_user('Problem'),
-            'watched_solutions': get_content_watched_by_user('Solution'),
-        }
     except:
-        frappe.throw('Please create your user profile to personalise this page')
+        sectors = []
+        # frappe.throw('Please create your user profile to personalise this page')
+    return {
+        'problems': get_content_recommended_for_user('Problem', sectors, limit_page_length=limit_page_length),
+        'solutions': get_content_recommended_for_user('Solution', sectors, limit_page_length=limit_page_length),
+        'users': get_content_recommended_for_user('User Profile', sectors, limit_page_length=limit_page_length),
+        'user_problems': get_content_by_user('Problem', limit_page_length=limit_page_length),
+        'user_solutions': get_content_by_user('Solution', limit_page_length=limit_page_length),
+        'watched_problems': get_content_watched_by_user('Problem', limit_page_length=limit_page_length),
+        'watched_solutions': get_content_watched_by_user('Solution', limit_page_length=limit_page_length),
+        'problem_contributions': get_contributions_by_user('Problem', ['Enrichment Table', 'Validation Table', 'Collaboration Table', 'Discussion Table'], limit_page_length=limit_page_length),
+        'solution_contributions': get_contributions_by_user('Solution', ['Validation Table', 'Collaboration Table', 'Discussion Table'], limit_page_length=limit_page_length),
+    }
 
 @frappe.whitelist(allow_guest = False)
 def delete_contribution(child_doctype, name):

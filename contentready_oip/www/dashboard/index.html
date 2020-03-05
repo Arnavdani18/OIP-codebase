@@ -8,29 +8,37 @@
             <div class="bg-white">
                 <ul class="nav nav-tabs nav-section nav-mob-section" id="leftTab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="recommended-content-tab" data-toggle="tab" href="#recommended-content" role="tab"
-                            aria-controls="recommended-content" aria-selected="true">Areas That May Interest You ({{
-                                (problems + solutions) | length
-                            }})</a>
+                        <a class="nav-link active" id="recommended-content-tab" data-toggle="tab" href="#recommended-content" role="tab" aria-controls="recommended-content" aria-selected="true">
+                            Areas That May Interest You ({{ (problems + solutions) | length }})
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="users-tab" data-toggle="tab" href="#users" role="tab"
-                            aria-controls="users" aria-selected="false">Users With Similar Interests ({{ users | length }})</a>
+                        <a class="nav-link" id="user-content-tab" data-toggle="tab" href="#user-content" role="tab" aria-controls="user-content" aria-selected="true">
+                            Areas Added By You ({{ (user_problems + user_solutions) | length }})
+                        </a>
                     </li>
                 </ul>
                 <div id="leftTabGroup" class="pb-2">
                     <div class="tab-content" id="leftTabContent">
                         <div class="tab-pane fade show active" id="recommended-content" role="tabpanel" aria-labelledby="recommended-content-tab">
+                            {% if problems or solutions %}
                             {% for problem in problems %}
                                 {% include "templates/includes/problem/problem_card.html" %}
                             {% endfor %}
                             {% for solution in solutions %}
                                 {% include "templates/includes/solution/solution_card.html" %}
                             {% endfor %}
+                            {% else %}
+                            <br/>
+                            <h6 style="padding-left: 1rem;">Please <a href="/update-profile">update your profile</a> to receive recommendations.</h6>
+                            {% endif %}
                         </div>
-                        <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
-                            {% for user in users %}
-                                {% include "templates/includes/common/user_card.html" %}
+                        <div class="tab-pane fade" id="user-content" role="tabpanel" aria-labelledby="user-content-tab">
+                            {% for problem in user_problems %}
+                                {% include "templates/includes/problem/problem_card.html" %}
+                            {% endfor %}
+                            {% for solution in user_solutions %}
+                                {% include "templates/includes/solution/solution_card.html" %}
                             {% endfor %}
                         </div>
                     </div>
@@ -39,7 +47,7 @@
         </div>
         <div class="col-lg-6 margin-top-20">
             <div class="bg-white">
-                <ul class="nav nav-tabs nav-section nav-mob-section" id="leftTab" role="tablist">
+                <ul class="nav nav-tabs nav-section nav-mob-section" id="rightTab" role="tablist">
                     <li class="nav-item">
                         <a class="nav-link active" id="watched-content-tab" data-toggle="tab" href="#watched-content" role="tab"
                             aria-controls="watched-content" aria-selected="true">Your Watch List ({{
@@ -48,10 +56,10 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="contributions-tab" data-toggle="tab" href="#contributions" role="tab"
-                            aria-controls="contributions" aria-selected="false">Your Contributions ({{ (user_problems + user_solutions) | length }})</a>
+                            aria-controls="contributions" aria-selected="false">Your Contributions ({{ (problem_contributions + solution_contributions) | length }})</a>
                     </li>
                 </ul>
-                <div id="leftTabGroup" class="pb-2">
+                <div id="rightTabGroup" class="pb-2">
                     <div class="tab-content" id="leftTabContent">
                         <div class="tab-pane fade show active" id="watched-content" role="tabpanel" aria-labelledby="watched-content-tab">
                             {% for problem in watched_problems %}
@@ -62,11 +70,30 @@
                             {% endfor %}
                         </div>
                         <div class="tab-pane fade" id="contributions" role="tabpanel" aria-labelledby="contributions-tab">
-                            {% for problem in user_problems %}
+                            {% for problem in problem_contributions %}
                                 {% include "templates/includes/problem/problem_card.html" %}
                             {% endfor %}
-                            {% for solution in user_solutions %}
+                            {% for solution in solution_contributions %}
                                 {% include "templates/includes/solution/solution_card.html" %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br/>
+            <div class="bg-white">
+                <ul class="nav nav-tabs nav-section nav-mob-section" id="rightTab1" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="users-tab" data-toggle="tab" href="#users" role="tab"
+                            aria-controls="users" aria-selected="false">Users With Similar Interests ({{ users | length }})</a>
+                    </li>
+                    
+                </ul>
+                <div id="rightTabGroup1" class="pb-2">
+                    <div class="tab-content" id="rightTabContent1">
+                        <div class="tab-pane fade show active" id="users" role="tabpanel" aria-labelledby="users-tab">
+                            {% for user in users %}
+                                {% include "templates/includes/common/user_card.html" %}
                             {% endfor %}
                         </div>
                     </div>

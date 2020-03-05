@@ -9,32 +9,40 @@ def get_data():
 				{
 					"type": "doctype",
 					"name": "User Profile",
-					"onboard": 1,
 				},
 				{
 					"type": "doctype",
 					"name": "Organisation"
 				},
+				{
+					"type": "doctype",
+					"name": "Persona"
+				},
 			]
 		},
 		{
-			"label": _("Collaboration"),
+			"label": _("Content"),
 			"items": [
 				{
 					"type": "doctype",
 					"name": "Problem",
-					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Enrichment",
 				},
 				{
 					"type": "doctype",
 					"name": "Solution",
-					"onboard": 1,
+				},
+				{
+					"type": "doctype",
+					"name": "Discussion",
 				},
 				{
 					"type": "doctype",
 					"name": "OIP Project",
 					"label": "Project",
-					"onboard": 1,
 				}
 			]
 		},
@@ -43,13 +51,15 @@ def get_data():
 			"items": [
 				{
 					"type": "doctype",
+					"name": "Sector"
+				},
+				{
+					"type": "doctype",
 					"name": "Skill",
-					"onboard": 1,
 				},
 				{
 					"type": "doctype",
 					"name": "Qualification",
-					"onboard": 1,
 				}
 			]
 		},
