@@ -9,11 +9,11 @@ def nudge_guests():
 def set_location_filter(selectedLocation=None, distance=25):
     if not 'location_filter' in frappe.session.data or not isinstance(frappe.session.data['location_filter'], dict):
         frappe.session.data['location_filter'] = {}
-    selectedLocation = json.loads(selectedLocation)
     distance = int(distance)
     if not distance:
         distance = 25
     if selectedLocation:
+        selectedLocation = json.loads(selectedLocation)
         frappe.session.data['location_filter']['center'] = selectedLocation
     # if distance:
     frappe.session.data['location_filter']['distance'] = distance
@@ -77,8 +77,12 @@ def get_lat_lng_bounds(selectedLocation):
 
 @frappe.whitelist(allow_guest = True)
 def get_filtered_content(doctype, location, sectors, limit_page_length=20, html=False, guest=True):
+    if isinstance(sectors, str):
+        sectors = json.loads(sectors) or []
+    if isinstance(location, str):
+        location = json.loads(location) or {}
     # if guest:
-    #     sectors = json.loads(sectors) or []
+    #     sectors =  or []
     #     location = json.loads(location) or {}
     if 'all' in sectors:
         filtered = frappe.get_list(doctype, filters={'is_published': True}, limit_page_length=limit_page_length)
@@ -112,19 +116,24 @@ def get_filtered_content(doctype, location, sectors, limit_page_length=20, html=
     # except Exception as e:
     #     print(str(e))
     from geopy import distance
-    lat = location['center']['latitude']
-    lng = location['center']['longitude']
-    radius = location['distance']
+    try:
+        lat = location['center']['latitude']
+        lng = location['center']['longitude']
+        radius = location['distance']
+    except:
+        lat = None
+        lng = None
+        radius = None
     content = []
     for c in content_set:
         doc = frappe.get_doc(doctype, c)
         if doc.is_published:
             # print('location',doc.name, doc.latitude, doc.longitude)
-            if doc.latitude and doc.longitude:
+            if (doc.latitude != None) and (doc.longitude != None) and (lat != None) and (lng != None) and (radius != None):
                 # doc_location = ()
                 distance_km = distance.distance((lat, lng), (float(doc.latitude), float(doc.longitude))).km
-                print (lat, lng, radius)
-                print(doc.name, distance_km, radius)
+                # print (lat, lng, radius)
+                # print(doc.name, distance_km, radius)
                 if distance_km > radius:
                     continue
             doc.user_image = frappe.get_value('User', doc.owner, 'user_image')

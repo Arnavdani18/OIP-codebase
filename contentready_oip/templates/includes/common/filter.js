@@ -82,12 +82,12 @@ frappe.ready(() => {
         return selectedLocation;
     }
     setSessionLocationFilter = () => {
-        let selectedLocation = {};
+        let selectedLocation = null;
         try {
             selectedLocation = getLocation(); // Read location from the autocomplete field
         } catch(e) {
             console.trace(e);
-            return false;
+            // return false;
         }
         const distance = Number($('#distance-sel').val()); // Read distance from the select dropdown
         // console.log(selectedLocation);
@@ -106,8 +106,12 @@ frappe.ready(() => {
                 }
             });
         } else if (localStorage) {
+            let stored_location = localStorage.getItem('location');
+            if (stored_location) {
+                stored_location = JSON.parse(stored_location);
+            }
             const location = {
-                'center': selectedLocation,
+                'center': selectedLocation || stored_location.center,
                 'distance': distance
             }
             // console.log(location);
@@ -117,7 +121,8 @@ frappe.ready(() => {
     }
     const autocomplete = new google.maps.places.Autocomplete(
         document.getElementById('autocomplete'),
-        { types: ['(cities)'], componentRestrictions: {country: 'in'} }
+        // { types: ['(cities)'], componentRestrictions: {country: 'in'} }
+        { types: ['(cities)'] }
         // TODO: Use domain settings to retrieve country list
     );
     // Specify fields to retrieve from the Google Maps API - cost implications.
