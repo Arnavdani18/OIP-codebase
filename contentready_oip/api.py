@@ -258,7 +258,7 @@ def get_problem_card(name, html=True):
 @frappe.whitelist(allow_guest = False)
 def add_primary_content(doctype, doc):
     doc = json.loads(doc)
-    if doc['name']:
+    if 'name' in doc and doc['name']:
         # edit
         content = frappe.get_doc(doctype, doc['name'])
         content.update(doc)
