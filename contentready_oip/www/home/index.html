@@ -14,8 +14,15 @@
 </div>
 
 
+
 {% include "templates/includes/common/homepage_stats.html" %}
 {% include "templates/includes/common/homepage_showcase_content.html" %}
 
 {% include "templates/includes/common/subscribe.html" %}
 {% include "templates/includes/common/partners.html" %}
+
+<script>
+    frappe.ready(() => {
+        $('main').removeClass('container my-5');
+    })
+</script>
