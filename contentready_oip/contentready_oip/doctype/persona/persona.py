@@ -7,4 +7,5 @@ from __future__ import unicode_literals
 from frappe.model.document import Document
 
 class Persona(Document):
-	pass
+	def autoname(self):
+		self.name = self.title.replace('/','-').replace(' ', '_')

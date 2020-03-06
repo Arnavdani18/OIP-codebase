@@ -1,21 +1,41 @@
 {
- "autoname": "field:title",
+ "allow_rename": 1,
  "creation": "2020-02-28 14:42:15.077417",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "title"
+  "title",
+  "description",
+  "column_break_3",
+  "image"
  ],
  "fields": [
   {
    "fieldname": "title",
    "fieldtype": "Data",
+   "in_list_view": 1,
    "label": "Title",
+   "reqd": 1,
    "unique": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "image",
+   "fieldtype": "Attach Image",
+   "label": "Image"
   }
  ],
- "modified": "2020-03-06 08:31:43.252711",
+ "image_field": "image",
+ "modified": "2020-03-06 22:35:01.356848",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Persona",
@@ -55,5 +75,6 @@
  "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "title_field": "title",
  "track_changes": 1
 }
