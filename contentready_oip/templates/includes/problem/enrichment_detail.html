@@ -25,54 +25,23 @@
                         <div class="row">
                             <div class="col-md-7">
                                 <div class="row">
-                                    <div class="col-md-12">
-                                        <h3 class="heading">
-                                            Description
-                                        </h3>
-                                        <p class="description-format">
-                                            {{ enrichment.description }}
-                                        </p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h3 class="heading">
-                                            Organisation
-                                        </h3>
-                                        <p class="description-format">
-                                            {{ enrichment.org_title }}
-                                        </p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h3 class="heading">
-                                            Extent
-                                        </h3>
-                                        <p class="description-format">
-                                            {{ enrichment.extent }}
-                                        </p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h3 class="heading">
-                                            Impact
-                                        </h3>
-                                        <p class="description-format">
-                                            {{ enrichment.impact }}
-                                        </p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h3 class="heading">
-                                            Beneficiaries
-                                        </h3>
-                                        <p class="description-format">
-                                            {{ enrichment.beneficiaries }}
-                                        </p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h3 class="heading">
-                                            Resources Needed
-                                        </h3>
-                                        <p class="description-format">
-                                            {{ enrichment.resources_needed }}
-                                        </p>
-                                    </div>
+                                    {% set fields = {
+                                        'Description': description,
+                                        'Organization': org_title, 
+                                        'Beneficiaries': beneficiaries, 
+                                        'Resources Needed': resources_needed,
+                                        'Impact': impact,
+                                        'Extent': extent,
+                                        'Min Population': min_population,
+                                        'Max Population': max_population,
+                                        'Location(s)': city + ', ' + country,
+                                    } %}
+                            
+                                    {% for field in fields %}
+                                    {% set label =  field %}
+                                    {% set value = fields[field] %}
+                                    {% include "templates/includes/common/overview_field.html" %}
+                                    {% endfor %}
                                 </div>
                             </div>
                             {% if (enrichment.images | length) > 0 %}
