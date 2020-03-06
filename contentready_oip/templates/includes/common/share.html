@@ -1,47 +1,76 @@
-<button
-    class="btn btn-circle margin-20"
-    id="shareBtnDropdown"
-    data-toggle="dropdown"
-    aria-expanded="false"
-    aria-label="share"
->
-    <i
-        class="far fa-share-alt share-icon"
-        aria-hidden="true"
-    ></i>
+<button class="btn btn-circle margin-20" id="shareBtnDropdown" data-toggle="dropdown" aria-expanded="false"
+    aria-label="share">
+    <i class="far fa-share-alt share-icon" aria-hidden="true"></i>
 </button>
-<div
-    class="dropdown-menu"
-    aria-labelledby="shareBtnDropdown"
->
-    <a
-            class="dropdown-item"
-            href="javscript:void(0);"
-            onclick="processAction('linkedin','{{doctype}}','{{name}}')"
-            >LinkedIn</a
-    >
-    <a
-            class="dropdown-item"
-            href="javscript:void(0);"
-            onclick="processAction('facebook','{{doctype}}','{{name}}')"
-            >Facebook</a
-    >
-    <a
-            class="dropdown-item"
-            href="javscript:void(0);"
-            onclick="processAction('twitter','{{doctype}}','{{name}}')"
-            >Twitter</a
-    >
-    <a
-            class="dropdown-item"
-            href="javscript:void(0);"
-            onclick="processAction('email','{{doctype}}','{{name}}')"
-            >Email</a
-    >
-    <a
-            class="dropdown-item"
-            href="javscript:void(0);"
-            onclick="processAction('sms','{{doctype}}','{{name}}')"
-            >SMS</a
-    >
+<div class="dropdown-menu" aria-labelledby="shareBtnDropdown">
+    <a class="dropdown-item" href="javascript:void(0);" onclick="linkedInShare()">LinkedIn</a>
+    <a class="dropdown-item" href="javascript:void(0);" onclick="fbShare()">Facebook</a>
+    <a class="dropdown-item" href="javascript:void(0);" onclick="twitterShare()">Twitter</a>
+    <a class="dropdown-item" href="javascript:void(0);" onclick="mailShare()">Email</a>
+    <a class="dropdown-item" href="javascript:void(0);" onclick="smsShare()">SMS</a>
 </div>
+
+<script>
+    frappe.ready(() => {
+        const pageUrl = window.location.href;
+        fbShare = () => {
+            window.open(
+                'https://www.facebook.com/sharer/sharer.php?u=' + pageUrl,
+                'facebook-popup',
+                'height=350,width=600'
+            );
+        }
+
+        twitterShare = () => {
+            window.open(
+                'https://twitter.com/share?url=' + pageUrl,
+                'twitter-popup',
+                'height=350,width=600'
+            );
+        }
+
+        linkedInShare = () => {
+            window.open(
+                'https://www.linkedin.com/shareArticle?mini=true&url=' + pageUrl,
+                'linkedin-popup',
+                'height=350,width=600'
+            );
+        }
+
+        mailShare = () => {
+            // not a great approach as the popup doesn't autoclose. Better to use href on button click.
+            const subject = encodeURI('Can you help solve this problem?');
+            const body = encodeURI(
+                `Hello,\n\nCheck out this link on Social Alpha's Open Innovation platform - ${pageUrl}\n\nRegards,`
+            );
+            const href = `mailto:?subject=${subject}&body=${body}`;
+            this.popup = window.open(href, 'email-popup', 'height=350,width=600');
+        }
+
+        smsShare = () => {
+            const smsEndpoint = 'https://sa-sms-microservice.dev.jaagalabs.com/send';
+            const url = smsEndpoint;
+            const data = {
+                text: `Can you help solve this problem? ${pageUrl}`,
+                numbers: prompt('Enter phone numbers separated by commas.').split(
+                    ','
+                ),
+            };
+            // Default options are marked with *
+            return fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': 'socialalpha',
+                    },
+                    body: JSON.stringify(data), // body data type must match "Content-Type" header
+                })
+                .then(response => {
+                    alert('Your message has been sent');
+                }) // parses JSON response into native Javascript objects
+                .catch(e => {
+                    console.error('SMS error', e);
+                });
+        }
+    })
+</script>
