@@ -35,9 +35,18 @@ frappe.ready(async function() {
             method: 'contentready_oip.api.get_persona_list',
             args: {},
             callback: function(r) {
+                let user_personas;
+                if (frappe.web_form.doc.personas) {
+                    user_personas = frappe.web_form.doc.personas.map(p => p.persona);
+                }
                 r.message.map(op => {
+                    let has_persona;
+                    if (user_personas) {
+                        has_persona = user_personas.indexOf(op.value) !== -1;
+                    }
                     const el = `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="persona-check-${op.value}" value="${op.value}"><label class="form-check-label" for="persona-check-${op.value}">${op.label}</label></div>`;
                     $('#persona-options').append(el);
+                    $(`#persona-check-${op.value}`).attr("checked", has_persona);
                 })
                 $("[id^=persona-check]").on('click', addPersonaToDoc);
             }
@@ -57,9 +66,18 @@ frappe.ready(async function() {
             method: 'contentready_oip.api.get_sector_list',
             args: {},
             callback: function(r) {
+                let user_sectors;
+                if (frappe.web_form.doc.sectors) {
+                    user_sectors = frappe.web_form.doc.sectors.map(s => s.sector);
+                }
                 r.message.map(op => {
+                    let has_sector = false;
+                    if (user_sectors) {
+                        has_sector = user_sectors.indexOf(op.value) !== -1;
+                    }
                     const el = `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="sector-check-${op.value}" value="${op.value}"><label class="form-check-label" for="sector-check-${op.value}">${op.label}</label></div>`;
                     $('#sector-options').append(el);
+                    $(`#sector-check-${op.value}`).attr("checked", has_sector);
                 });
                 $("[id^=sector-check]").on('click', addSectorToDoc);
             }
