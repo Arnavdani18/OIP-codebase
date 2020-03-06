@@ -9,17 +9,11 @@
         height="50"
     />
 </div>
-<div class="created-by-section text-truncate">
-    {{doc.full_name}}
+<div class="created-by-section">
+    <div class="neutralize">{{doc.full_name}}</div>
     {% if date %}
-    <span class="dot" aria-hidden="true"></span>
-    {{frappe.utils.pretty_date(date)}}
+    <div class="neutralize"></div>
+        <div class="neutralize">{{frappe.utils.pretty_date(date)}}</div>
     {% endif %}
-    <!-- <p>
-        {% if doc.personas %}
-            {% for persona in doc.personas %}
-                {{ persona.persona }}
-            {% endfor %}
-        {% endif %}
-    </p> -->
+    
 </div>
