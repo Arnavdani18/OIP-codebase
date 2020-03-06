@@ -42,6 +42,7 @@
   "validations",
   "collaborations",
   "discussions",
+  "solver_team",
   "interest_section",
   "likes",
   "column_break_38",
@@ -264,11 +265,17 @@
    "fieldtype": "Text",
    "hidden": 1,
    "label": "Short Description"
+  },
+  {
+   "fieldname": "solver_team",
+   "fieldtype": "Table",
+   "label": "Solver Team",
+   "options": "User Table"
   }
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2020-03-06 08:31:42.108056",
+ "modified": "2020-03-07 00:06:53.093721",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Solution",
