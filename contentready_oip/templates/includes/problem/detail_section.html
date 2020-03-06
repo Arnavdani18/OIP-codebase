@@ -26,7 +26,9 @@
                 <div class="col pb-4">
                     {% for e in enrichments | reverse %}
                     {% set enrichment = frappe.get_doc('Enrichment', e.enrichment) %}
-                    {% include "templates/includes/problem/enrichment_card.html" %}
+                    {% if enrichment.is_published %}
+                        {% include "templates/includes/problem/enrichment_card.html" %}
+                    {% endif %}
                     {% endfor %}
                 </div>
             </div>

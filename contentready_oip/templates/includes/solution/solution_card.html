@@ -1,13 +1,11 @@
-<div class="problem-container" onclick="window.location.href = '{{solution.route}}'"  data-name="{{solution.name}}" style="cursor: pointer; background-color: white; margin-top: 1rem; margin-bottom: 1rem;" id="solution-card-{{solution.name}}">
+<div class="problem-container" onclick="window.location.href = '/{{solution.route}}'"  data-name="{{solution.name}}" style="cursor: pointer; background-color: white; margin-top: 1rem; margin-bottom: 1rem;" id="solution-card-{{solution.name}}">
     <div class="left-side ">
         {% include "templates/includes/solution/solution_label.html" %}
 
         <div class="heading-container mt-3 text-capitalize ">
-            <a href="{{solution.route}}" class="text-dark">
-                <h2 class="heading">
-                    {{solution.title}}
-                </h2>
-            </a>
+            <h2 class="heading">
+                {{solution.title}}
+            </h2>
             {% set city = solution.city %}
             {% set country = solution.country %}
             {% include "templates/includes/common/location_tag.html" %}
