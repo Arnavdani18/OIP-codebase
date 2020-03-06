@@ -8,4 +8,4 @@ from frappe.model.document import Document
 
 class Sector(Document):
 	def autoname(self):
-		self.name = self.title.replace('/','-').replace(' ', '_')
+		self.name = self.title.replace('/','-').replace(' ', '_').lower()
