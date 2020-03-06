@@ -211,11 +211,12 @@ frappe.ready(async () => {
         // disable autoDiscover as we are manually binding the dropzone to a form element
         Dropzone.autoDiscover = false;
         const el = `<form class="dropzone dz-clickable" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
-        $('*[data-fieldname="media"]*[data-fieldtype="Table"]').parent().after(el);
+        $('*[data-fieldname="images"]*[data-fieldtype="Table"]').parent().after(el);
         $('#dropzone').dropzone({
             url: "/api/method/upload_file",
             autoDiscover: false,
             addRemoveLinks: true,
+            acceptedFiles: 'image/*',
             headers: {
                 'Accept': 'application/json',
                 'X-Frappe-CSRF-Token': frappe.csrf_token

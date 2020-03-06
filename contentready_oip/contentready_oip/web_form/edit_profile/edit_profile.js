@@ -93,6 +93,7 @@ frappe.ready(async function() {
             autoDiscover: false,
             maxFiles: 1,
             addRemoveLinks: true,
+            acceptedFiles: 'image/*',
             headers: {
                 'Accept': 'application/json',
                 'X-Frappe-CSRF-Token': frappe.csrf_token
