@@ -108,20 +108,24 @@ frappe.ready(async () => {
         await sleep(500);
         // Look up title again - user could have typed something since the event was triggered.
         const text = $('*[data-fieldname="title"]:text').val().trim();
-        frappe.call({
-            method: 'contentready_oip.api.search_content_by_text',
-            args: {
-                doctype: 'Problem',
-                text: text,
-            },
-            callback: function(r) {
-                // Add similar problems to div
-                $('#similar-problems').empty();
-                r.message.map(el => {
-                    $('#similar-problems').append(el);
-                });
-            }
-        });
+        if (text.length > 3) {
+            frappe.call({
+                method: 'contentready_oip.api.search_content_by_text',
+                args: {
+                    doctype: 'Problem',
+                    text: text,
+                },
+                callback: function(r) {
+                    // Add similar problems to div
+                    $('#similar-problems').empty();
+                    r.message.map(el => {
+                        $('#similar-problems').append(el);
+                    });
+                }
+            });
+        } else if (text.length === 0) {
+            $('#similar-problems').empty();
+        }
     }
 
     setFeaturedImage = (file_url) => {
@@ -201,24 +205,26 @@ frappe.ready(async () => {
     }
 
     autoSaveDraft = () => {
-        frappe.call({
-            method: "contentready_oip.api.add_primary_content",
-			args: {
-				doctype: 'Problem',
-                doc: frappe.web_form.doc,
-                is_draft: true
-			},
-            callback: function(r) {
-                // update local form technical fields so that they are up to date with server values
-                // Important: do no update fields on the UI as that will interfere with user experience.
-                const keysToCopy = ['creation', 'modified', 'docstatus', 'doctype', 'idx', 'owner', 'modified_by', 'name'];
-                keysToCopy.map(key => {
-                    frappe.web_form.doc[key] = r.message[key];
-                })
-                showAutoSaveAlert();
-                setTimeout(hideAutoSaveAlert, 1000);
-            }
-        });
+        if (frappe.web_form.doc.title) {
+            frappe.call({
+                method: "contentready_oip.api.add_primary_content",
+                args: {
+                    doctype: 'Problem',
+                    doc: frappe.web_form.doc,
+                    is_draft: true
+                },
+                callback: function(r) {
+                    // update local form technical fields so that they are up to date with server values
+                    // Important: do no update fields on the UI as that will interfere with user experience.
+                    const keysToCopy = ['creation', 'modified', 'docstatus', 'doctype', 'idx', 'owner', 'modified_by', 'name'];
+                    keysToCopy.map(key => {
+                        frappe.web_form.doc[key] = r.message[key];
+                    })
+                    showAutoSaveAlert();
+                    setTimeout(hideAutoSaveAlert, 1000);
+                }
+            });
+        }
     }
     
     saveAsDraft = (event) => {
@@ -269,6 +275,8 @@ frappe.ready(async () => {
         const value = e.target.value.trim();
         if (value.length && value.length % 3 === 0) {
             lookForSimilarProblems();
+        } else if (value.length === 0) {
+            $('#similar-problems').empty();
         }
     });
     // Set org link field when org title is selected
