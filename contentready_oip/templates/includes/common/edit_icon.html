@@ -6,9 +6,6 @@
 <i class="far fa-pen"></i>
 </button>
 
-{% include "templates/includes/common/validation_form.html" %}
-{% include "templates/includes/common/collaboration_form.html" %}
-
 <script>
     editDocument = (doctype, name, data) => {
         if (doctype === 'Problem') {
@@ -23,7 +20,6 @@
             $("#persona-select-"+name).val(data[0]);
             $("#collaboration-comment-"+name).val(data[1]);
         } else if (doctype === 'Validation Table') {
-            console.log(data);
             data = JSON.parse(data.replace(/u\'/g, '"').replace(/\'/g, '"'));
             $('#validation-modal-'+name).modal('toggle');
             $("#validation-comment-"+name).val(data[0]);

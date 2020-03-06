@@ -32,6 +32,7 @@ frappe.ready(async () => {
         });
     }
     openCollaborationForm = (doctype, name) => {
+        console.log('collab form');
         if (frappe.session.user === 'Guest') {
             frappe.throw('Please login to participate.');
         }
@@ -39,9 +40,11 @@ frappe.ready(async () => {
             method: 'contentready_oip.api.has_user_contributed',
             args: {child_doctype: 'Collaboration Table', parent_doctype: doctype, name: name},
             callback: (r) => {
+                console.log(r);
                 if (r.message){
                     frappe.throw(`You have already collaborated on this ${doctype}`);
                 } else {
+                    console.log($(`#collaboration-modal-${name}`));
                     $(`#collaboration-modal-${name}`).modal('toggle');
                 }
             }

@@ -17,7 +17,7 @@
  "is_standard": 1,
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2020-03-06 07:41:15.559455",
+ "modified": "2020-03-06 08:16:52.779752",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "add-enrichment",
@@ -42,6 +42,19 @@
    "max_length": 0,
    "max_value": 0,
    "read_only": 1,
+   "reqd": 0,
+   "show_in_filter": 0
+  },
+  {
+   "allow_read_on_all_link_options": 0,
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "hidden": 1,
+   "label": "User",
+   "max_length": 0,
+   "max_value": 0,
+   "options": "User",
+   "read_only": 0,
    "reqd": 0,
    "show_in_filter": 0
   },

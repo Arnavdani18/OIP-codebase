@@ -93,7 +93,6 @@ frappe.ready(async () => {
     }
 
     setFeaturedImage = (file_url) => {
-        // console.log(frappe.web_form.doc);
         frappe.web_form.doc.featured_image = file_url;
     }
 
@@ -101,7 +100,6 @@ frappe.ready(async () => {
         const response = JSON.parse(file.xhr.response);
         const file_url = response.message.file_url;
         if (!frappe.web_form.doc.featured_image) {
-            // console.log("Setting featured image", file_url);
             setFeaturedImage(file_url);
         }
         if (!frappe.web_form.doc.images) {
@@ -113,7 +111,6 @@ frappe.ready(async () => {
     }
 
     removeFileFromDoc = (file) => {
-        // console.log('removed', file);
         frappe.web_form.doc.images = frappe.web_form.doc.images.filter(i => !i.image.endsWith(file.name));
     } 
 
@@ -147,6 +144,7 @@ frappe.ready(async () => {
 
     submitEnrichmentForm = (is_draft) => {
         frappe.web_form.doc.doctype = 'Enrichment';
+        frappe.web_form.doc.user = frappe.session.user;
         frappe.call({
             // method: "frappe.website.doctype.web_form.web_form.accept",
             method: "contentready_oip.api.add_enrichment",
@@ -173,6 +171,7 @@ frappe.ready(async () => {
     }
 
     autoSaveDraft = () => {
+        frappe.web_form.doc.user = frappe.session.user;
         frappe.call({
             method: "contentready_oip.api.add_enrichment",
 			args: {

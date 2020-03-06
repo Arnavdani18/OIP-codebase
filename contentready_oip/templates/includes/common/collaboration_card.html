@@ -2,11 +2,12 @@
     class="col-sm-12 collaborateCard" id="collaboration-card-{{collaboration.name}}"
 >
     <div class="float-right">
-        {% if frappe.session.user == collaboration.owner %}
+        {% if frappe.session.user == collaboration.user %}
             {% set doctype = collaboration.doctype %}
             {% set name = collaboration.name %}
             {% set data = [collaboration.persona, collaboration.comment] %}
             {% include "templates/includes/common/edit_icon.html" %}
+            {% include "templates/includes/common/collaboration_form.html" %}
         {% endif %}
     </div>
     <div>
@@ -19,7 +20,7 @@
     </div>
 
     <div class="d-flex align-items-center validate-profile">
-        {% set doc_owner = collaboration.owner %}
+        {% set doc_owner = collaboration.user %}
         {% set date = collaboration.modified %}
         {% include "templates/includes/common/user_thumbnail.html" %}
     </div>

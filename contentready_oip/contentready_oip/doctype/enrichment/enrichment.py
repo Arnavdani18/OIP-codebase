@@ -19,4 +19,5 @@ class Enrichment(Document):
 		problem_doc = frappe.get_doc('Problem', self.problem)
 		e = problem_doc.append('enrichments', {})
 		e.enrichment = self.name
+		e.user = self.user
 		problem_doc.save()

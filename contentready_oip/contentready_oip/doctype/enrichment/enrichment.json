@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "problem",
+  "user",
   "title",
   "featured_image",
   "column_break_8",
@@ -204,10 +205,17 @@
    "fieldname": "problem",
    "fieldtype": "Data",
    "label": "Problem"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "User",
+   "reqd": 1
   }
  ],
  "is_published_field": "is_published",
- "modified": "2020-03-02 21:25:08.858527",
+ "modified": "2020-03-06 08:23:50.100625",
  "modified_by": "tej@jaaga.in",
  "module": "ContentReady OIP",
  "name": "Enrichment",
