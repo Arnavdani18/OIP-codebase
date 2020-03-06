@@ -1,7 +1,8 @@
 <div class="tags my-3">
     {% for sector in sectors %}
+    {% set doc = frappe.get_doc('Sector', sector.sector) %}
     <button class="tag actions text-capitalize" onclick="selectSector('{{sector.sector}}', '{{doctype}}')">
-        {{ sector.sector }}
+        {{ doc.title }}
     </button>
     {% endfor %}
 </div>
