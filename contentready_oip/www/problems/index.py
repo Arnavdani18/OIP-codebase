@@ -8,4 +8,6 @@ def get_context(context):
         context.selectedLocation = r['selectedLocation']
         context.selectedSectors = r['selectedSectors']
         context.problems = api.get_filtered_content('Problem', context.selectedLocation, context.selectedSectors)
+    # else:
+    #     context.problems = api.get_filtered_content('Problem', None, None)
     

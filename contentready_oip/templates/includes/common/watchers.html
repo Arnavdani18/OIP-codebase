@@ -23,28 +23,40 @@
         if (frappe.session.user === 'Guest') {
             frappe.throw('Please login to participate.');
         }
-        const btnId = `#watcher-icon-${doctype}-${name}`;
-        const countId = `#watcher-count-${doctype}-${name}`;
-        // initial values
-        let hasUserWatched = $(btnId).data('has-user-watched');
-        let numWatchers = $(countId).data('num-watchers');
-        if (hasUserWatched) {
-            numWatchers -= numWatchers;
-        } else {
-            numWatchers += numWatchers;
-        }
-        hasUserWatched = !hasUserWatched;
-        // change UI first, then send to server
-        // changeUI(btnId, countId, hasUserWatched, numWatchers);
         frappe.call({
-            method: 'contentready_oip.api.toggle_contribution',
-            args: {child_doctype: 'Watch Table', parent_doctype: doctype, parent_name: name, field_name: 'watchers'},
+            method: 'contentready_oip.api.can_user_contribute',
+            args: {child_doctype: 'Watch Table', parent_doctype: doctype, parent_name: name},
             callback: (r) => {
-                // console.log(r);
-                // server is the source of truth so we change the UI to reflect that.
-                hasUserWatched = r.message[0];
-                numWatchers = r.message[1].length;
-                changeUI(btnId, countId, hasUserWatched, numWatchers);
+                const has_contributed = r.message[0];
+                const is_owner = r.message[1];
+                if (is_owner){
+                    frappe.throw(`You cannot watch your own ${doctype}`);
+                } else {
+                    const btnId = `#watcher-icon-${doctype}-${name}`;
+                    const countId = `#watcher-count-${doctype}-${name}`;
+                    // initial values
+                    let hasUserWatched = $(btnId).data('has-user-watched');
+                    let numWatchers = $(countId).data('num-watchers');
+                    if (hasUserWatched) {
+                        numWatchers -= numWatchers;
+                    } else {
+                        numWatchers += numWatchers;
+                    }
+                    hasUserWatched = !hasUserWatched;
+                    // change UI first, then send to server
+                    // changeUI(btnId, countId, hasUserWatched, numWatchers);
+                    frappe.call({
+                        method: 'contentready_oip.api.toggle_contribution',
+                        args: {child_doctype: 'Watch Table', parent_doctype: doctype, parent_name: name, field_name: 'watchers'},
+                        callback: (r) => {
+                            // console.log(r);
+                            // server is the source of truth so we change the UI to reflect that.
+                            hasUserWatched = r.message[0];
+                            numWatchers = r.message[1].length;
+                            changeUI(btnId, countId, hasUserWatched, numWatchers);
+                        }
+                    });
+                }
             }
         });
     }
@@ -54,7 +66,7 @@
     frappe.ready(() => {
         frappe.call({
             method: 'contentready_oip.api.has_user_contributed',
-            args: {child_doctype: 'Watch Table', parent_doctype: '{{doctype}}', name: '{{name}}'},
+            args: {child_doctype: 'Watch Table', parent_doctype: '{{doctype}}', parent_name: '{{name}}'},
             callback: (r) => {
                 const btnId = `#watcher-icon-{{doctype}}-{{name}}`;
                 changeUI(btnId, null, r.message, null);

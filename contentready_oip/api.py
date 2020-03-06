@@ -81,6 +81,8 @@ def get_filtered_content(doctype, location, sectors, limit_page_length=20, html=
         sectors = json.loads(sectors) or []
     if isinstance(location, str):
         location = json.loads(location) or {}
+    if not sectors:
+        sectors = ['all']
     if 'all' in sectors:
         filtered = frappe.get_list(doctype, filters={'is_published': True}, limit_page_length=limit_page_length)
         content_set = {f['name'] for f in filtered}
@@ -161,9 +163,15 @@ def get_homepage_stats():
     }
 
 @frappe.whitelist(allow_guest = True)
-def has_user_contributed(child_doctype, parent_doctype, name):
-    contributions_by_user = frappe.db.count(child_doctype, filters={'user': frappe.session.user, 'parenttype': parent_doctype, 'parent': name})
+def has_user_contributed(child_doctype, parent_doctype, parent_name):
+    contributions_by_user = frappe.db.count(child_doctype, filters={'user': frappe.session.user, 'parenttype': parent_doctype, 'parent': parent_name})
     return contributions_by_user > 0
+
+@frappe.whitelist(allow_guest = True)
+def can_user_contribute(child_doctype, parent_doctype, parent_name):
+    doc_owner = frappe.get_value(parent_doctype, parent_name, 'owner')
+    print(doc_owner, frappe.session.user)
+    return has_user_contributed(child_doctype, parent_doctype, parent_name), doc_owner == frappe.session.user
 
 @frappe.whitelist(allow_guest = False)
 def toggle_contribution(child_doctype, parent_doctype, parent_name, field_name):

@@ -4,13 +4,18 @@ frappe.ready(async () => {
             frappe.throw('Please login to participate.');
         }
         frappe.call({
-            method: 'contentready_oip.api.has_user_contributed',
-            args: {child_doctype: 'Enrichment Table', parent_doctype: doctype, name: name},
+            method: 'contentready_oip.api.can_user_contribute',
+            args: {child_doctype: 'Enrichment Table', parent_doctype: doctype, parent_name: name},
             callback: (r) => {
-                if (r.message){
-                    frappe.throw(`You have already enriched this problem.`);
-                } else {
+                const has_contributed = r.message[0];
+                const is_owner = r.message[1];
+                if (!has_contributed && !is_owner) {
                     window.location.href = `/add-enrichment?new=1&problem=${name}`;
+                } else if (has_contributed) {
+                    frappe.throw(`You have already enriched this ${doctype}`);
+                }
+                else if (is_owner){
+                    frappe.throw(`You cannot enrich your own ${doctype}`);
                 }
             }
         });
@@ -20,32 +25,39 @@ frappe.ready(async () => {
             frappe.throw('Please login to participate.');
         }
         frappe.call({
-            method: 'contentready_oip.api.has_user_contributed',
-            args: {child_doctype: 'Validation Table', parent_doctype: doctype, name: name},
+            method: 'contentready_oip.api.can_user_contribute',
+            args: {child_doctype: 'Validation Table', parent_doctype: doctype, parent_name: name},
             callback: (r) => {
-                if (r.message){
-                    frappe.throw(`You have already validated this ${doctype}`);
-                } else {
+                const has_contributed = r.message[0];
+                const is_owner = r.message[1];
+                if (!has_contributed && !is_owner) {
                     $(`#validation-modal-${name}`).modal('toggle');
+                } else if (has_contributed) {
+                    frappe.throw(`You have already validated this ${doctype}`);
+                }
+                else if (is_owner){
+                    frappe.throw(`You cannot validate your own ${doctype}`);
                 }
             }
         });
     }
     openCollaborationForm = (doctype, name) => {
-        console.log('collab form');
         if (frappe.session.user === 'Guest') {
             frappe.throw('Please login to participate.');
         }
         frappe.call({
-            method: 'contentready_oip.api.has_user_contributed',
-            args: {child_doctype: 'Collaboration Table', parent_doctype: doctype, name: name},
+            method: 'contentready_oip.api.can_user_contribute',
+            args: {child_doctype: 'Collaboration Table', parent_doctype: doctype, parent_name: name},
             callback: (r) => {
-                console.log(r);
-                if (r.message){
-                    frappe.throw(`You have already collaborated on this ${doctype}`);
-                } else {
-                    console.log($(`#collaboration-modal-${name}`));
+                const has_contributed = r.message[0];
+                const is_owner = r.message[1];
+                if (!has_contributed && !is_owner) {
                     $(`#collaboration-modal-${name}`).modal('toggle');
+                } else if (has_contributed) {
+                    frappe.throw(`You have already collaborated on this ${doctype}`);
+                }
+                else if (is_owner){
+                    frappe.throw(`You cannot collaborate on your own ${doctype}`);
                 }
             }
         });
