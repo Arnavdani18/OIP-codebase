@@ -19,7 +19,7 @@ frappe.ready(async () => {
             method: 'contentready_oip.api.get_orgs_list',
             args: {},
             callback: function(r) {
-                frappe.web_form.set_df_property('org_title', 'options', r.message);
+                frappe.web_form.set_df_property('org', 'options', r.message);
             }
         });
     }
@@ -203,7 +203,6 @@ frappe.ready(async () => {
     }
 
     removeFileFromDoc = (file) => {
-        // console.log('removed', file);
         frappe.web_form.doc.images = frappe.web_form.doc.images.filter(i => !i.image.endsWith(file.name));
     } 
 
@@ -212,7 +211,7 @@ frappe.ready(async () => {
         // disable autoDiscover as we are manually binding the dropzone to a form element
         Dropzone.autoDiscover = false;
         const el = `<form class="dropzone dz-clickable" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
-        $('*[data-fieldname="images"]*[data-fieldtype="Table"]').parent().after(el);
+        $('*[data-fieldname="media"]*[data-fieldtype="Table"]').parent().after(el);
         $('#dropzone').dropzone({
             url: "/api/method/upload_file",
             autoDiscover: false,
@@ -247,37 +246,69 @@ frappe.ready(async () => {
         frappe.web_form.doc.problems_addressed = frappe.web_form.doc.problems_addressed.filter(i => !i.problem === name);
     }
 
-    submitSolutionForm = () => {
+    submitSolutionForm = (is_draft) => {
         frappe.call({
             method: "contentready_oip.api.add_primary_content",
 			args: {
 				doctype: 'Solution',
-				doc: frappe.web_form.doc,
+                doc: frappe.web_form.doc,
+                is_draft: is_draft
 			},
             callback: function(r) {
-                // console.log(r.message);
-                if (r.message){
-                    window.location.href = r.message;    
+                if (r.message && r.message.is_published && r.message.route){
+                    window.location.href = r.message.route;    
                 } else {
-                    window.location.href = '/solutions';
+                    window.location.href = '/dashboard';
                 }
+            }
+        });
+    }
+
+    showAutoSaveAlert = () => {
+        $('#auto-save-alert').removeClass('hidden');
+    }
+
+    hideAutoSaveAlert = () => {
+        $('#auto-save-alert').addClass('hidden');
+    }
+
+    autoSaveDraft = () => {
+        frappe.call({
+            method: "contentready_oip.api.add_primary_content",
+			args: {
+				doctype: 'Solution',
+                doc: frappe.web_form.doc,
+                is_draft: true
+			},
+            callback: function(r) {
+                // update local form technical fields so that they are up to date with server values
+                // Important: do no update fields on the UI as that will interfere with user experience.
+                const keysToCopy = ['creation', 'modified', 'docstatus', 'doctype', 'idx', 'owner', 'modified_by', 'name'];
+                keysToCopy.map(key => {
+                    frappe.web_form.doc[key] = r.message[key];
+                })
+                showAutoSaveAlert();
+                setTimeout(hideAutoSaveAlert, 1000);
             }
         });
     }
     
     saveAsDraft = (event) => {
-        submitSolutionForm();
+        const is_draft = true;
+        submitProblemForm(is_draft);
     }
 
     publishSolution = (event) => {
-        // frappe.web_form.validate();
         frappe.web_form.doc.is_published = true;
-        submitSolutionForm();
+        const is_draft = false;
+        submitProblemForm(is_draft);
     }
 
     addActionButtons = () => {
         const saveAsDraftBtn = `<button class="btn btn-sm ml-2" onclick="saveAsDraft()">Save as Draft</button>`;
         const publishBtn = `<button class="btn btn-sm btn-primary ml-2" onclick="publishSolution()">Publish</button>`;
+        const alert = `<span class="alert alert-primary fade show hidden" role="alert" id="auto-save-alert">Saved</span>`;
+        $('.page-header-actions-block').append(alert);
         $('.page-header-actions-block').append(saveAsDraftBtn).append(publishBtn);
     }
     // End Helpers
@@ -306,7 +337,7 @@ frappe.ready(async () => {
 
     // Start Events
     addMatchingProblems();
-    // Look for similar problems when title is entered
+    // Look for matching problems when text is entered
     $('#problem-search-input').on('keyup', (e) => {
         const value = e.target.value.trim();
         if (value.length && value.length % 3 === 0) {
@@ -314,9 +345,11 @@ frappe.ready(async () => {
         }
     });
     // Set org link field when org title is selected
-    $('*[data-fieldname="org_title"]').on('change', (e) => {
-        frappe.web_form.set_value('org', e.target.value);
+    $('*[data-fieldname="org"]').on('change', (e) => {
+        frappe.web_form.doc.org = e.target.value;
     });
+
+    setInterval(autoSaveDraft, 10000);
 
     // End Events
 

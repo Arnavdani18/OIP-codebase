@@ -18,7 +18,7 @@ frappe.ready(async () => {
             method: 'contentready_oip.api.get_orgs_list',
             args: {},
             callback: function(r) {
-                frappe.web_form.set_df_property('org_title', 'options', r.message);
+                frappe.web_form.set_df_property('org', 'options', r.message);
             }
         });
 	}
@@ -122,7 +122,7 @@ frappe.ready(async () => {
         // disable autoDiscover as we are manually binding the dropzone to a form element
         Dropzone.autoDiscover = false;
         const el = `<form class="dropzone dz-clickable" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
-        $('*[data-fieldname="images"]*[data-fieldtype="Table"]').parent().after(el);
+        $('*[data-fieldname="media"]*[data-fieldtype="Table"]').parent().after(el);
         $('#dropzone').dropzone({
             url: "/api/method/upload_file",
             autoDiscover: false,
@@ -144,34 +144,69 @@ frappe.ready(async () => {
         frappe.web_form.featured_image = url;
     }
 
-    submitEnrichmentForm = () => {
+    submitEnrichmentForm = (is_draft) => {
         frappe.web_form.doc.doctype = 'Enrichment';
         frappe.call({
             // method: "frappe.website.doctype.web_form.web_form.accept",
             method: "contentready_oip.api.add_enrichment",
 			args: {
-				doc: frappe.web_form.doc,
+                doc: frappe.web_form.doc,
+                is_draft: is_draft
 			},
             callback: function(r) {
-                window.location.href = r.message;
+                if (r.message & r.message[1]){
+                    window.location.href = r.message[1];    
+                } else {
+                    window.location.href = '/dashboard';
+                }
+            }
+        });
+    }
+
+    showAutoSaveAlert = () => {
+        $('#auto-save-alert').removeClass('hidden');
+    }
+
+    hideAutoSaveAlert = () => {
+        $('#auto-save-alert').addClass('hidden');
+    }
+
+    autoSaveDraft = () => {
+        frappe.call({
+            method: "contentready_oip.api.add_enrichment",
+			args: {
+                doc: frappe.web_form.doc,
+                is_draft: true
+			},
+            callback: function(r) {
+                // update local form technical fields so that they are up to date with server values
+                // Important: do no update fields on the UI as that will interfere with user experience.
+                const keysToCopy = ['creation', 'modified', 'docstatus', 'doctype', 'idx', 'owner', 'modified_by', 'name', 'problem'];
+                keysToCopy.map(key => {
+                    frappe.web_form.doc[key] = r.message[0][key];
+                })
+                showAutoSaveAlert();
+                setTimeout(hideAutoSaveAlert, 1000);
             }
         });
     }
     
     saveAsDraft = (event) => {
-        // console.log('Saving draft');
-        submitEnrichmentForm();
+        const is_draft = true;
+        submitEnrichmentForm(is_draft);
     }
 
     publishEnrichment = (event) => {
-        // console.log('Publishing');
+        const is_draft = false;
         frappe.web_form.doc.is_published = true;
-        submitEnrichmentForm();
+        submitEnrichmentForm(is_draft);
     }
 
     addActionButtons = () => {
         const saveAsDraftBtn = `<button class="btn btn-sm ml-2" onclick="saveAsDraft()">Save as Draft</button>`;
         const publishBtn = `<button class="btn btn-sm btn-primary ml-2" onclick="publishEnrichment()">Publish</button>`;
+        const alert = `<span class="alert alert-primary fade show hidden" role="alert" id="auto-save-alert">Saved</span>`;
+        $('.page-header-actions-block').append(alert);
         $('.page-header-actions-block').append(saveAsDraftBtn).append(publishBtn);
     }
     // End Helpers
@@ -200,9 +235,11 @@ frappe.ready(async () => {
 
     // Start Events
     // Set org link field when org title is selected
-    $('*[data-fieldname="org_title"]').on('change', (e) => {
-        frappe.web_form.set_value('org', e.target.value);
+    $('*[data-fieldname="org"]').on('change', (e) => {
+        frappe.web_form.doc.org = e.target.value;
     });
+
+    setInterval(autoSaveDraft, 10000);
 
     // End Events
 

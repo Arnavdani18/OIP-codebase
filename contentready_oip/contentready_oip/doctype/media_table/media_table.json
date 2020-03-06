@@ -1,0 +1,42 @@
+{
+ "creation": "2020-03-05 22:55:14.680975",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "attachment",
+  "description",
+  "is_featured"
+ ],
+ "fields": [
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "label": "Description"
+  },
+  {
+   "fieldname": "attachment",
+   "fieldtype": "Attach",
+   "in_list_view": 1,
+   "label": "attachment",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_featured",
+   "fieldtype": "Check",
+   "label": "Is Featured"
+  }
+ ],
+ "istable": 1,
+ "modified": "2020-03-05 23:01:22.615804",
+ "modified_by": "Administrator",
+ "module": "ContentReady OIP",
+ "name": "Media Table",
+ "owner": "tej@jaaga.in",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

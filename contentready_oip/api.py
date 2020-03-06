@@ -225,12 +225,15 @@ def get_problem_card(name, html=True):
         return doc
 
 @frappe.whitelist(allow_guest = False)
-def add_primary_content(doctype, doc):
+def add_primary_content(doctype, doc, is_draft=False):
     doc = json.loads(doc)
+    if isinstance(is_draft,str):
+        is_draft = json.loads(is_draft)
     if 'name' in doc and doc['name']:
         # edit
         content = frappe.get_doc(doctype, doc['name'])
         content.update(doc)
+        content.flags.ignore_mandatory = is_draft
         content.save()
     else:
         # create
@@ -238,27 +241,39 @@ def add_primary_content(doctype, doc):
             'doctype': doctype
         })
         content.update(doc)
-        content.insert()
+        content.insert(ignore_mandatory=is_draft)
     frappe.db.commit()
     content = frappe.get_doc(doctype, content.name)
-    return content.route
+    return content
 
 
 @frappe.whitelist(allow_guest = False)
-def add_enrichment(doc):
+def add_enrichment(doc,is_draft=False):
     doc = json.loads(doc)
+    if isinstance(is_draft,str):
+        is_draft = json.loads(is_draft)
     if not ('problem' in doc or doc['problem']):
         return False
-    if has_user_contributed('Enrichment Table', 'Problem', doc['problem']):
-        frappe.throw('You have already enriched this problem.')
-    enrichment = frappe.get_doc({
-        'doctype': 'Enrichment'
-    })
-    enrichment.update(doc)
-    enrichment.insert()
+    doctype = 'Enrichment'
+    if 'name' in doc and doc['name']:
+        # edit
+        content = frappe.get_doc(doctype, doc['name'])
+        content.update(doc)
+        content.flags.ignore_mandatory = is_draft
+        content.save()
+    else:
+        # create
+        if has_user_contributed('Enrichment Table', 'Problem', doc['problem']):
+            frappe.throw('You have already enriched this problem.')
+        content = frappe.get_doc({
+            'doctype': doctype
+        })
+        content.update(doc)
+        content.insert(ignore_mandatory=is_draft)
     frappe.db.commit()
-    route = frappe.get_value('Problem', enrichment.problem, 'route')
-    return route
+    content = frappe.get_doc(doctype, content.name)
+    route = frappe.get_value('Problem', content.problem, 'route')
+    return content, route
 
 @frappe.whitelist(allow_guest = False)
 def add_or_edit_validation(doctype, name, validation, html=True):

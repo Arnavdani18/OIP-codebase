@@ -19,8 +19,7 @@ frappe.ready(async () => {
             method: 'contentready_oip.api.get_orgs_list',
             args: {},
             callback: function(r) {
-                // console.log(r.message);
-                frappe.web_form.set_df_property('org_title', 'options', r.message);
+                frappe.web_form.set_df_property('org', 'options', r.message);
             }
         });
     }
@@ -116,7 +115,6 @@ frappe.ready(async () => {
                 text: text,
             },
             callback: function(r) {
-                // console.log(r.message);
                 // Add similar problems to div
                 $('#similar-problems').empty();
                 r.message.map(el => {
@@ -127,7 +125,6 @@ frappe.ready(async () => {
     }
 
     setFeaturedImage = (file_url) => {
-        // console.log(frappe.web_form.doc);
         frappe.web_form.doc.featured_image = file_url;
     }
 
@@ -135,7 +132,6 @@ frappe.ready(async () => {
         const response = JSON.parse(file.xhr.response);
         const file_url = response.message.file_url;
         if (!frappe.web_form.doc.featured_image) {
-            // console.log("Setting featured image", file_url);
             setFeaturedImage(file_url);
         }
         if (!frappe.web_form.doc.images) {
@@ -147,7 +143,6 @@ frappe.ready(async () => {
     }
 
     removeFileFromDoc = (file) => {
-        // console.log('removed', file);
         frappe.web_form.doc.images = frappe.web_form.doc.images.filter(i => !i.image.endsWith(file.name));
     } 
 
@@ -156,7 +151,7 @@ frappe.ready(async () => {
         // disable autoDiscover as we are manually binding the dropzone to a form element
         Dropzone.autoDiscover = false;
         const el = `<form class="dropzone dz-clickable" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
-        $('*[data-fieldname="images"]*[data-fieldtype="Table"]').parent().after(el);
+        $('*[data-fieldname="media"]*[data-fieldtype="Table"]').parent().after(el);
         $('#dropzone').dropzone({
             url: "/api/method/upload_file",
             autoDiscover: false,
@@ -178,39 +173,69 @@ frappe.ready(async () => {
         frappe.web_form.featured_image = url;
     }
 
-    submitProblemForm = () => {
+    submitProblemForm = (is_draft) => {
         frappe.call({
             method: "contentready_oip.api.add_primary_content",
 			args: {
 				doctype: 'Problem',
-				doc: frappe.web_form.doc,
+                doc: frappe.web_form.doc,
+                is_draft: is_draft
 			},
             callback: function(r) {
-                // console.log(r.message);
-                if (r.message){
-                    window.location.href = r.message;    
+                if (r.message && r.message.is_published && r.message.route){
+                    window.location.href = r.message.route;
                 } else {
-                    window.location.href = '/problems';
+                    window.location.href = '/dashboard';
                 }
+            }
+        });
+    }
+
+    showAutoSaveAlert = () => {
+        $('#auto-save-alert').removeClass('hidden');
+    }
+
+    hideAutoSaveAlert = () => {
+        $('#auto-save-alert').addClass('hidden');
+    }
+
+    autoSaveDraft = () => {
+        frappe.call({
+            method: "contentready_oip.api.add_primary_content",
+			args: {
+				doctype: 'Problem',
+                doc: frappe.web_form.doc,
+                is_draft: true
+			},
+            callback: function(r) {
+                // update local form technical fields so that they are up to date with server values
+                // Important: do no update fields on the UI as that will interfere with user experience.
+                const keysToCopy = ['creation', 'modified', 'docstatus', 'doctype', 'idx', 'owner', 'modified_by', 'name'];
+                keysToCopy.map(key => {
+                    frappe.web_form.doc[key] = r.message[key];
+                })
+                showAutoSaveAlert();
+                setTimeout(hideAutoSaveAlert, 1000);
             }
         });
     }
     
     saveAsDraft = (event) => {
-        console.log('Saving draft');
-        submitProblemForm();
+        const is_draft = true;
+        submitProblemForm(is_draft);
     }
 
     publishProblem = (event) => {
-        console.log('Publishing');
-        // frappe.web_form.validate();
         frappe.web_form.doc.is_published = true;
-        submitProblemForm();
+        const is_draft = false;
+        submitProblemForm(is_draft);
     }
 
     addActionButtons = () => {
         const saveAsDraftBtn = `<button class="btn btn-sm ml-2" onclick="saveAsDraft()">Save as Draft</button>`;
         const publishBtn = `<button class="btn btn-sm btn-primary ml-2" onclick="publishProblem()">Publish</button>`;
+        const alert = `<span class="alert alert-primary fade show hidden" role="alert" id="auto-save-alert">Saved</span>`;
+        $('.page-header-actions-block').append(alert);
         $('.page-header-actions-block').append(saveAsDraftBtn).append(publishBtn);
     }
     // End Helpers
@@ -224,9 +249,6 @@ frappe.ready(async () => {
     moveDivs();
     createOrgOptions();
     createSectorOptions();
-    // hideTables();
-    // Add white background to the text editor
-    // $('.ql-container').css('background-color', 'white');
     // End UI Fixes
 
     // Start Google Maps Autocomplete
@@ -249,9 +271,11 @@ frappe.ready(async () => {
         }
     });
     // Set org link field when org title is selected
-    $('*[data-fieldname="org_title"]').on('change', (e) => {
-        frappe.web_form.set_value('org', e.target.value);
+    $('*[data-fieldname="org"]').on('change', (e) => {
+        frappe.web_form.doc.org = e.target.value;
     });
+
+    setInterval(autoSaveDraft, 10000);
 
     // End Events
 

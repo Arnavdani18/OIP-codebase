@@ -173,10 +173,10 @@ frappe.ready(async function() {
 			},
             callback: function(r) {
                 // console.log(r.message);
-                if (r.message){
-                    window.location.href = r.message;    
+                if (r.message && r.message.route){
+                    window.location.href = r.message.route;    
                 } else {
-                    window.location.href = '/';
+                    window.location.href = '/dashboard';
                 }
             }
         });

@@ -31,3 +31,7 @@
 .web-form-footer {
     display: none;
 }
+
+.hidden {
+    display: none;
+}

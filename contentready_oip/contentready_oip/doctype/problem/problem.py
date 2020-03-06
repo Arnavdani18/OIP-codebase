@@ -23,6 +23,13 @@ class Problem(WebsiteGenerator):
 			self.name = self.scrubbed_title()+'-'+frappe.generate_hash("",3)
 
 	def before_save(self):
-		self.short_description = clean_html(self.description)[:500]
-		if len(self.description) > 1000:
-			self.short_description += '...'
+		try:
+			self.short_description = clean_html(self.description)[:500]
+			if len(self.description) > 1000:
+				self.short_description += '...'
+		except:
+			pass
+		try:
+			self.org_title = frappe.get_value('Organisation', self.org, 'title')
+		except:
+			pass
