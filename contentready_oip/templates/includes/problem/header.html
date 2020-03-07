@@ -44,33 +44,40 @@
                     </div>
                 </div>
 
-                <div class="row ">
-                    <div class="col-xl-4 align-self-center mt-3">
-                        <div class="row  stats-section">
-                            {% set doctype = doctype %}
-                            {% set name = name %}
-                            {% include "templates/includes/common/likes.html" %}
-                            {% include "templates/includes/common/watchers.html" %}
-                        </div>
-                    </div>
 
-                    <div class="col-xl-8 pr-0 action-btn-section mt-3">
-                        <div class="d-flex justify-content-between flex-wrap">
-                            <button type="button" class="card-btn" onclick="openEnrichmentForm('{{doctype}}', '{{name}}')">
-                                Enrich
-                            </button>
-                            <button type="button" class="card-btn" onclick="openValidationForm('{{doctype}}', '{{name}}')">
-                                Validate
-                            </button>
-                            <button type="button" class="card-btn" onclick="openCollaborationForm('{{doctype}}', '{{name}}')">
-                                Collaborate
-                            </button>
-                            <button type="button" class="card-btn add-solution-btn" onclick="openSolutionForm('{{name}}')">
-                                Add Solution
-                            </button>
+                <div class="row d-flex justify-content-between">
+                <div class="col-xl-4 mt-3 action-btn-section">
+                    <div class="stats-section pl-0">
+                        {% set doctype = doctype %}
+                        {% set name = name %}
+                        <div class="header-stats-container">
+                            <div class="header-likes">
+                                {% include "templates/includes/common/likes.html" %}
+                            </div>
+                            <div class="watchers-likes">
+                                {% include "templates/includes/common/watchers.html" %}
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="col-xl-8 pr-0 action-btn-section mt-3">
+                    <div class="d-flex justify-content-between flex-wrap">
+                        <button type="button" class="card-btn" onclick="openEnrichmentForm('{{doctype}}', '{{name}}')">
+                            Enrich
+                        </button>
+                        <button type="button" class="card-btn" onclick="openValidationForm('{{doctype}}', '{{name}}')">
+                            Validate
+                        </button>
+                        <button type="button" class="card-btn" onclick="openCollaborationForm('{{doctype}}', '{{name}}')">
+                            Collaborate
+                        </button>
+                        <button type="button" class="card-btn add-solution-btn" onclick="openSolutionForm('{{name}}')">
+                            Add Solution
+                        </button>
+                    </div>
+                </div>
+            </div>
             </div>
         </div>
     </div>
