@@ -135,7 +135,9 @@ frappe.ready(async () => {
             frappe.web_form.doc.media = [];
         }
         frappe.web_form.doc.media.push({
-            attachment: file_url
+            attachment: file_url,
+            size: file.size,
+            type: file.type
         })
     }
 

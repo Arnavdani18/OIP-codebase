@@ -8,7 +8,8 @@
   "is_featured",
   "type",
   "description",
-  "thumbnail"
+  "thumbnail",
+  "size"
  ],
  "fields": [
   {
@@ -32,20 +33,24 @@
   },
   {
    "fieldname": "type",
-   "fieldtype": "Select",
+   "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Type",
-   "options": "Image\nAudio\nVideo File\nVideo Embed\nOther"
+   "label": "Type"
   },
   {
    "default": "/files/image_placeholder.jpg",
    "fieldname": "thumbnail",
    "fieldtype": "Attach",
    "label": "Thumbnail"
+  },
+  {
+   "fieldname": "size",
+   "fieldtype": "Int",
+   "label": "Size"
   }
  ],
  "istable": 1,
- "modified": "2020-03-07 06:41:01.286185",
+ "modified": "2020-03-07 07:37:59.616722",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Media Table",

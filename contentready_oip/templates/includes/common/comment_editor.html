@@ -46,12 +46,12 @@
     submitComment = (doctype, name) => {
         const id = `comment-area-${doctype}-${name}`; // for compatibility with cancelComment
         const text = $(`#${id}`).val();
-        const attachments = $(`#comment-dropzone-${doctype}-${name}`).data('file-urls');
+        const media = $(`#comment-dropzone-${doctype}-${name}`).data('file-urls');
         if (text.length) {
             // console.log(comment);
             frappe.call({
                 method: 'contentready_oip.api.add_comment',
-                args: {doctype: doctype, name: name, text: text, attachments: attachments},
+                args: {doctype: doctype, name: name, text: text, media: media},
                 callback: (r) => {
                     // console.log(r);
                     if (doctype == 'Discussion') {
@@ -99,16 +99,16 @@
                         // console.log('{{name}}');
                         const response = JSON.parse(file.xhr.response);
                         const file_url = response.message.file_url;
-                        const attachments = $('#comment-dropzone-{{doctype}}-{{name}}').data('file-urls');
-                        attachments.push(file_url);
-                        $('#comment-dropzone-{{doctype}}-{{name}}').data('file-urls', JSON.stringify(attachments));
+                        const media = $('#comment-dropzone-{{doctype}}-{{name}}').data('file-urls');
+                        media.push(file_url);
+                        $('#comment-dropzone-{{doctype}}-{{name}}').data('file-urls', JSON.stringify(media));
                     });
                     // use this event to remove from child table
                     this.on('removedfile', (file) => {
                         // console.log('removed', file);
-                        let attachments = $('#comment-dropzone-{{doctype}}-{{name}}').data('file-urls');
-                        attachments = attachments.filter(i => !i.endsWith(file.name));
-                        $('#comment-dropzone-{{doctype}}-{{name}}').data('file-urls', JSON.stringify(attachments));
+                        let media = $('#comment-dropzone-{{doctype}}-{{name}}').data('file-urls');
+                        media = media.filter(i => !i.endsWith(file.name));
+                        $('#comment-dropzone-{{doctype}}-{{name}}').data('file-urls', JSON.stringify(media));
                     });
                 }
             });

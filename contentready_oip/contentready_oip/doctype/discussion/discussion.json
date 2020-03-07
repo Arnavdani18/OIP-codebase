@@ -5,7 +5,7 @@
  "engine": "InnoDB",
  "field_order": [
   "text",
-  "attachments",
+  "media",
   "replies"
  ],
  "fields": [
@@ -17,19 +17,19 @@
    "reqd": 1
   },
   {
-   "fieldname": "attachments",
-   "fieldtype": "Table",
-   "label": "Attachments",
-   "options": "Website Slideshow Item"
-  },
-  {
    "fieldname": "replies",
    "fieldtype": "Table",
    "label": "Replies",
    "options": "Discussion Table"
+  },
+  {
+   "fieldname": "media",
+   "fieldtype": "Table",
+   "label": "Media",
+   "options": "Media Table"
   }
  ],
- "modified": "2020-03-06 08:31:43.113064",
+ "modified": "2020-03-07 07:41:12.446922",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Discussion",

@@ -191,15 +191,15 @@ def toggle_contribution(child_doctype, parent_doctype, parent_name, field_name):
     return has_user_contributed(child_doctype, parent_doctype, parent_name), get_child_table(child_doctype, parent_doctype, parent_name)
 
 @frappe.whitelist(allow_guest = False)
-def add_comment(doctype, name, text, attachments=None, html=True):
+def add_comment(doctype, name, text, media=None, html=True):
     doc = frappe.get_doc({
         'doctype': 'Discussion',
         'text': text
     })
-    attachments = json.loads(attachments)
-    for f in attachments:
-        a = doc.append('attachments', {})
-        a.image = f
+    media = json.loads(media)
+    for f in media:
+        a = doc.append('media', {})
+        a.attachment = f
     doc.save()
     parent_doc = frappe.get_doc(doctype, name)
     if doctype == 'Discussion':
