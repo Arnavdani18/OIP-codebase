@@ -35,7 +35,7 @@ class Solution(WebsiteGenerator):
 		except:
 			pass
 
-	def after_save(self):
+	def on_update(self):
 		# Add reference to this solution in each of the problems_addressed
 		for p in self.problems_addressed:
 			problem = frappe.get_doc('Problem', p.problem)

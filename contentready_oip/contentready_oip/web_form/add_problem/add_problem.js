@@ -219,6 +219,7 @@ frappe.ready(async () => {
     }
     
     saveAsDraft = (event) => {
+        frappe.web_form.doc.is_published = false;
         const is_draft = true;
         submitProblemForm(is_draft);
     }
