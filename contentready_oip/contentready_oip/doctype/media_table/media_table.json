@@ -6,7 +6,8 @@
  "field_order": [
   "attachment",
   "description",
-  "is_featured"
+  "is_featured",
+  "type"
  ],
  "fields": [
   {
@@ -26,10 +27,16 @@
    "fieldname": "is_featured",
    "fieldtype": "Check",
    "label": "Is Featured"
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "label": "Type",
+   "options": "Image\nAudio\nVideo File\nVideo Embed\nOther"
   }
  ],
  "istable": 1,
- "modified": "2020-03-06 08:31:42.436446",
+ "modified": "2020-03-07 06:27:17.066649",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Media Table",
