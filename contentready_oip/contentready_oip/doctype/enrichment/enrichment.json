@@ -9,7 +9,6 @@
   "problem",
   "user",
   "title",
-  "featured_image",
   "column_break_8",
   "is_published",
   "org",
@@ -50,12 +49,6 @@
    "label": "Title",
    "reqd": 1,
    "search_index": 1
-  },
-  {
-   "fieldname": "featured_image",
-   "fieldtype": "Attach Image",
-   "in_preview": 1,
-   "label": "Featured Image"
   },
   {
    "fieldname": "column_break_8",
@@ -227,7 +220,7 @@
   }
  ],
  "is_published_field": "is_published",
- "modified": "2020-03-06 23:52:09.474769",
+ "modified": "2020-03-07 06:48:07.129748",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Enrichment",

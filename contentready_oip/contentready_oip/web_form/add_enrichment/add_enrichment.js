@@ -92,16 +92,9 @@ frappe.ready(async () => {
         frappe.web_form.set_value('longitude', place.geometry.location.lng());
     }
 
-    setFeaturedImage = (file_url) => {
-        frappe.web_form.doc.featured_image = file_url;
-    }
-
     addFileToDoc = (file) => {
         const response = JSON.parse(file.xhr.response);
         const file_url = response.message.file_url;
-        if (!frappe.web_form.doc.featured_image) {
-            setFeaturedImage(file_url);
-        }
         if (!frappe.web_form.doc.images) {
             frappe.web_form.doc.images = [];
         }
@@ -136,10 +129,6 @@ frappe.ready(async () => {
                 this.on('removedfile', removeFileFromDoc);
             }
         });
-    }
-
-    setFeaturedImage = (url) => {
-        frappe.web_form.featured_image = url;
     }
 
     submitEnrichmentForm = (is_draft) => {

@@ -188,16 +188,9 @@ frappe.ready(async () => {
         }
 	}
 
-    setFeaturedImage = (file_url) => {
-        frappe.web_form.doc.featured_image = file_url;
-    }
-
     addFileToDoc = (file) => {
         const response = JSON.parse(file.xhr.response);
         const file_url = response.message.file_url;
-        if (!frappe.web_form.doc.featured_image) {
-            setFeaturedImage(file_url);
-        }
         if (!frappe.web_form.doc.images) {
             frappe.web_form.doc.images = [];
         }
@@ -233,12 +226,8 @@ frappe.ready(async () => {
             }
         });
     }
-
-    setFeaturedImage = (url) => {
-        frappe.web_form.featured_image = url;
-	}
-	
-	addProblemToSolvedSet = (name) => {
+    
+    addProblemToSolvedSet = (name) => {
 		if (!frappe.web_form.doc.problems_addressed) {
             frappe.web_form.doc.problems_addressed = [];
         }

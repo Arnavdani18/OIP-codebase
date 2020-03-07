@@ -7,7 +7,6 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
-  "featured_image",
   "org",
   "org_title",
   "column_break_8",
@@ -34,7 +33,7 @@
   "column_break_14",
   "description",
   "short_description",
-  "images",
+  "media",
   "section_break_14",
   "enrichments",
   "validations",
@@ -58,12 +57,6 @@
    "label": "Title",
    "reqd": 1,
    "search_index": 1
-  },
-  {
-   "fieldname": "featured_image",
-   "fieldtype": "Attach Image",
-   "in_preview": 1,
-   "label": "Featured Image"
   },
   {
    "fieldname": "org",
@@ -99,12 +92,6 @@
    "fieldtype": "Small Text",
    "label": "Beneficiaries",
    "options": "Beneficiary Table"
-  },
-  {
-   "fieldname": "images",
-   "fieldtype": "Table",
-   "label": "Images",
-   "options": "Website Slideshow Item"
   },
   {
    "fieldname": "column_break_8",
@@ -279,11 +266,17 @@
    "fieldname": "max_population",
    "fieldtype": "Int",
    "label": "Max Population Affected"
+  },
+  {
+   "fieldname": "media",
+   "fieldtype": "Table",
+   "label": "Media",
+   "options": "Media Table"
   }
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2020-03-06 08:31:41.295504",
+ "modified": "2020-03-07 06:45:08.681674",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Problem",
