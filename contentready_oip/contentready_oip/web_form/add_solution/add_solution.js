@@ -191,16 +191,16 @@ frappe.ready(async () => {
     addFileToDoc = (file) => {
         const response = JSON.parse(file.xhr.response);
         const file_url = response.message.file_url;
-        if (!frappe.web_form.doc.images) {
-            frappe.web_form.doc.images = [];
+        if (!frappe.web_form.doc.media) {
+            frappe.web_form.doc.media = [];
         }
-        frappe.web_form.doc.images.push({
-            image: file_url
+        frappe.web_form.doc.media.push({
+            attachment: file_url
         })
     }
 
     removeFileFromDoc = (file) => {
-        frappe.web_form.doc.images = frappe.web_form.doc.images.filter(i => !i.image.endsWith(file.name));
+        frappe.web_form.doc.media = frappe.web_form.doc.media.filter(i => !i.attachment.endsWith(file.name));
     } 
 
     addDropzone = () => {
@@ -208,7 +208,7 @@ frappe.ready(async () => {
         // disable autoDiscover as we are manually binding the dropzone to a form element
         Dropzone.autoDiscover = false;
         const el = `<form class="dropzone dz-clickable" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
-        $('*[data-fieldname="images"]*[data-fieldtype="Table"]').parent().after(el);
+        $('*[data-fieldname="media"]*[data-fieldtype="Table"]').parent().after(el);
         $('#dropzone').dropzone({
             url: "/api/method/upload_file",
             autoDiscover: false,
@@ -291,13 +291,13 @@ frappe.ready(async () => {
     
     saveAsDraft = (event) => {
         const is_draft = true;
-        submitProblemForm(is_draft);
+        submitSolutionForm(is_draft);
     }
 
     publishSolution = (event) => {
         frappe.web_form.doc.is_published = true;
         const is_draft = false;
-        submitProblemForm(is_draft);
+        submitSolutionForm(is_draft);
     }
 
     addActionButtons = () => {
