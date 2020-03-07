@@ -42,7 +42,6 @@
    "allow_in_quick_entry": 1,
    "fieldname": "title",
    "fieldtype": "Data",
-   "in_global_search": 1,
    "in_list_view": 1,
    "in_preview": 1,
    "in_standard_filter": 1,
@@ -219,7 +218,7 @@
   }
  ],
  "is_published_field": "is_published",
- "modified": "2020-03-07 19:59:20.602029",
+ "modified": "2020-03-07 22:32:06.812675",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Enrichment",
