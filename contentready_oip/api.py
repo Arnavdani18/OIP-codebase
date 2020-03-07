@@ -370,7 +370,7 @@ def get_content_by_user(doctype, limit_page_length=5):
 def get_contributions_by_user(parent_doctype, child_doctypes, limit_page_length=5):
     content_set = set()
     for child_doctype in child_doctypes:
-        filtered = frappe.get_list(child_doctype, fields=['parent'], filters={'owner': frappe.session.user, 'parenttype': parent_doctype}, limit_page_length=limit_page_length)
+        filtered = frappe.get_list(child_doctype, fields=['parent'], filters={'user': frappe.session.user, 'parenttype': parent_doctype}, limit_page_length=limit_page_length)
         for f in filtered:
             content_set.add(f['parent'])
     content = []
@@ -381,7 +381,7 @@ def get_contributions_by_user(parent_doctype, child_doctypes, limit_page_length=
 
 @frappe.whitelist(allow_guest = False)
 def get_content_watched_by_user(doctype, limit_page_length=5):
-    filtered = frappe.get_list('Watch Table', fields=['parent'], filters={'parenttype': doctype, 'owner': frappe.session.user}, limit_page_length=limit_page_length)
+    filtered = frappe.get_list('Watch Table', fields=['parent'], filters={'parenttype': doctype, 'user': frappe.session.user}, limit_page_length=limit_page_length)
     content_set = {f['parent'] for f in filtered}
     content = []
     for c in content_set:
