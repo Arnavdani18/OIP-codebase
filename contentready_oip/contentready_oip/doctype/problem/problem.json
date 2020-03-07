@@ -111,7 +111,6 @@
    "allow_in_quick_entry": 1,
    "fieldname": "description",
    "fieldtype": "Text Editor",
-   "in_global_search": 1,
    "label": "Description",
    "reqd": 1
   },
@@ -276,7 +275,7 @@
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2020-03-07 06:45:08.681674",
+ "modified": "2020-03-07 19:59:33.015689",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Problem",
