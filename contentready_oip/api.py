@@ -393,7 +393,7 @@ def get_content_watched_by_user(doctype, limit_page_length=5):
 def get_content_recommended_for_user(doctype, sectors, limit_page_length=5):
     content = []
     try:
-        filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', sectors], 'owner': ['!=', frappe.session.owner]}, limit_page_length=limit_page_length)
+        filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', sectors], 'owner': ['!=', frappe.session.user]}, limit_page_length=limit_page_length)
         content_set = {f['parent'] for f in filtered}
         for c in content_set:
             doc = frappe.get_doc(doctype, c)

@@ -1,7 +1,7 @@
 <div class="shadow editor-container">
     <div class="commentSection">
         <div class="created-by mt-5">
-            {% set doc_owner = user %}
+            {% set doc_owner = frappe.session.user %}
             {% include "templates/includes/common/user_thumbnail.html" %}
         </div>
         <div class="input-group">

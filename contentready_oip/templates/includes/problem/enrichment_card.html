@@ -18,7 +18,7 @@
         </div>
 
         <div class="created-by mt-5">
-            {% set doc_owner = enrichment.owner %}
+            {% set doc_owner = enrichment.user %}
             {% set date = enrichment.modified %}
             {% include "templates/includes/common/user_thumbnail.html" %}
         </div>
