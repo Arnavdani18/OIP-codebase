@@ -1,17 +1,17 @@
-<div id="short-section" class="description-format">
+<div id="short-section-{{name}}" class="description-format">
     {% if long_text and (long_text | length) > 500 %}
     <p>
         {{short_text}}
     </p>
-    <a href="javascript:void(0);" class="orange-text" onclick="expandText()">Read more</a>
+    <a href="javascript:void(0);" class="orange-text" onclick="expandText('{{name}}')">Read more</a>
     {% else %}
         {{long_text}}
     {% endif %}
 </div>
 
-<div class="hidden description-format" id="full-section">
+<div class="hidden description-format" id="full-section-{{name}}">
     {{long_text}}
-    <a href="javascript:void(0);" class="orange-text" onclick="truncateText()">Read less</a>
+    <a href="javascript:void(0);" class="orange-text" onclick="truncateText('{{name}}')">Read less</a>
 </div>
 
 <style>
@@ -24,13 +24,13 @@
 </style>
 
 <script>
-    expandText = () => {
-        $('#short-section').addClass('hidden');
-        $('#full-section').removeClass('hidden');
+    expandText = (name) => {
+        $('#short-section-'+name).addClass('hidden');
+        $('#full-section-'+name).removeClass('hidden');
     }
-    truncateText = () => {
-        $('#short-section').removeClass('hidden');
-        $('#full-section').addClass('hidden');
+    truncateText = (name) => {
+        $('#short-section-'+name).removeClass('hidden');
+        $('#full-section-'+name).addClass('hidden');
     }
 </script>
 <style>

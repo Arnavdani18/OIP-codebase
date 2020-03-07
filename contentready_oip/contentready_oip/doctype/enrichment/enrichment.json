@@ -30,7 +30,7 @@
   "beneficiaries",
   "min_population",
   "max_population",
-  "images",
+  "media",
   "column_break_14",
   "description",
   "short_description",
@@ -163,12 +163,6 @@
    "options": "Beneficiary Table"
   },
   {
-   "fieldname": "images",
-   "fieldtype": "Table",
-   "label": "Images",
-   "options": "Website Slideshow Item"
-  },
-  {
    "fieldname": "column_break_14",
    "fieldtype": "Column Break"
   },
@@ -217,10 +211,16 @@
    "fieldname": "max_population",
    "fieldtype": "Int",
    "label": "Max Population Affected"
+  },
+  {
+   "fieldname": "media",
+   "fieldtype": "Table",
+   "label": "Media",
+   "options": "Media Table"
   }
  ],
  "is_published_field": "is_published",
- "modified": "2020-03-07 06:48:07.129748",
+ "modified": "2020-03-07 06:54:26.338530",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Enrichment",

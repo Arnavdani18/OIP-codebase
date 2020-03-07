@@ -22,66 +22,62 @@
             <div class="modal-body">
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="details">
+                        <div class="row" style="padding-bottom: 1rem;">
+                            <div class="col">
+                                <h3 class="heading">
+                                    Description
+                                </h3>
+                                {% set long_text = description %}
+                                {% set short_text = short_description %}
+                                {% set name = name %}
+                                {% include "templates/includes/common/read_more.html" %}
+                            </div>
+                        </div>
                         <div class="row">
-                            <div class="col-md-7">
-                                <div class="row">
-                                    {% set fields = {
-                                        'Description': description,
-                                        'Organization': org_title, 
-                                        'Beneficiaries': beneficiaries, 
-                                        'Resources Needed': resources_needed,
-                                        'Impact': impact,
-                                        'Extent': extent,
-                                        'Min Population': min_population,
-                                        'Max Population': max_population,
-                                        'Location(s)': city + ', ' + country,
-                                    } %}
-                            
-                                    {% for field in fields %}
-                                    {% set label =  field %}
-                                    {% set value = fields[field] %}
-                                    {% include "templates/includes/common/overview_field.html" %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            {% if (enrichment.images | length) > 0 %}
-                            <div class="col-md-5 img-container">
-                                <img src="{{enrichment.images[0].image}}" class="" alt="{{enrichment.images[0].heading}}" height="235" width="345" />
-                                {% if (enrichment.images | length) > 1000 %}
-                                <button class="align-icon" data-toggle="tab" class="nav-link" href="#media">
-                                    +{{ enrichment.images | length }}
-                                </button>
-                                {% endif %}
-                            </div>
-                            {% endif %}
+                            {% set fields = {
+                                'Organization': org_title, 
+                                'Beneficiaries': beneficiaries, 
+                                'Resources Needed': resources_needed,
+                                'Impact': impact,
+                                'Extent': extent,
+                                'Min Population': min_population,
+                                'Max Population': max_population,
+                                'Location(s)': city + ', ' + country,
+                            } %}
+                    
+                            {% for field in fields %}
+                            {% set label =  field %}
+                            {% set value = fields[field] %}
+                            {% include "templates/includes/common/overview_field.html" %}
+                            {% endfor %}
                         </div>
                     </div>
-                    {% if (enrichment.images | length) > 0 %}
-                    {% set attachments = enrichment.images %}
+                    {% if (enrichment.media | length) > 0 %}
+                    {% set media = enrichment.media %}
                     {% set id = enrichment.name %}
                     <div role="tabpanel" class="tab-pane" id="media">
                         <div class="container-fluid">
                             <div class="row attachment-container">
                                 <!-- The image in focus -->
                                 <div class="col text-center">
-                                    <img src="{{attachments[0].image}}" class="img-fluid"
-                                        alt="{{ attachments[0].heading }}" id="image-in-focus-{{id}}" />
+                                    <img src="{{media[0].attachment}}" class="img-fluid"
+                                        alt="{{ media[0].description }}" id="image-in-focus-{{id}}" />
                                 </div>
                             </div>
 
                             <div class="row justify-content-center mt-3">
-                                <h5><span id="index-in-focus-{{id}}">1</span> of {{ attachments | length }}</h5>
+                                <h5><span id="index-in-focus-{{id}}">1</span> of {{ media | length }}</h5>
                             </div>
 
-                            <div class="row thumbnail-container" id="available-images" data-images="{{images}}">
+                            <div class="row thumbnail-container" id="available-images">
                                 <!-- Grid of thumbnails -->
-                                {% for attachment in attachments %}
+                                {% for m in media %}
                                 <div class="m-2">
                                     <a onclick="moveToImage(event, '{{loop.index}}', '{{id}}')">
                                         <img src="{{
-                                        attachment.image
+                                        m.attachment
                                     }}" class="thumb-img {{'active-thumbnail' if loop.index==1}}"
-                                            alt="{{ attachment.heading }}" id="{{id}}-{{loop.index}}" />
+                                            alt="{{ m.description }}" id="{{id}}-{{loop.index}}" />
                                     </a>
                                 </div>
                                 {% endfor %}

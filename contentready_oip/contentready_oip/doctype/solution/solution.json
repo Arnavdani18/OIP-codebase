@@ -30,7 +30,7 @@
   "deployments",
   "budget",
   "resources_needed",
-  "images",
+  "media",
   "column_break_29",
   "website",
   "innovation",
@@ -70,12 +70,6 @@
    "fieldtype": "Data",
    "label": "Organisation Name",
    "read_only": 1
-  },
-  {
-   "fieldname": "images",
-   "fieldtype": "Table",
-   "label": "Images",
-   "options": "Website Slideshow Item"
   },
   {
    "fieldname": "column_break_8",
@@ -264,11 +258,17 @@
    "fieldtype": "Table",
    "label": "Solver Team",
    "options": "User Table"
+  },
+  {
+   "fieldname": "media",
+   "fieldtype": "Table",
+   "label": "Media",
+   "options": "Media Table"
   }
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2020-03-07 06:48:16.965212",
+ "modified": "2020-03-07 06:54:11.094830",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Solution",

@@ -1,8 +1,8 @@
 {% set id = 'header' %}
 <div class="img-wrapper">
-    {% if (images|length) > 0 %}
+    {% if (media|length) > 0 %}
     <img
-        src="{{images[0].image}}"
+        src="{{media[0].attachment}}"
         alt="image"
         class="rounded img-responsive"
         style="object-fit: cover;"
@@ -15,18 +15,18 @@
         style="object-fit: cover;"
     />
     {% endif %}
-    {% if (images | length) > 0 %}
+    {% if (media | length) > 0 %}
     <button
         class="align-icon"
         data-toggle="modal"
         data-target="#attachment-modal-{{id}}"
     >
-        +{{(images | length)}}
+        +{{(media | length) - 1}}
     </button>
     {% endif %}
 </div>
 
-{% if (images | length) > 0%}
-{% set attachments = images %}
+{% if (media | length) > 0%}
+{% set media = media %}
 {% include "templates/includes/common/attachment_modal.html" %}
 {% endif %}

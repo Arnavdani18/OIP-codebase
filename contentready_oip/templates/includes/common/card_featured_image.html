@@ -1,7 +1,7 @@
 <div class="image-and-count-container d-none d-lg-block">
-    {% if (images|length) > 0 %}
+    {% if (media|length) > 0 %}
     <img
-        src="{{images[0].image}}"
+        src="{{media[0].attachment}}"
         alt="image"
         class="image"
     />
@@ -12,20 +12,20 @@
         class="image"
     />
     {% endif %}
-    {% if (images | length) > 0 %}
+    {% if (media | length) > 0 %}
     <button
         class="align-icon"
         data-toggle="modal"
         data-target="#attachment-modal-{{id}}"
     >
-        +{{(images | length)-1}}
+        +{{(media | length)-1}}
     </button>
     {% endif %}
 </div>
 <div class="image-and-count-container d-lg-none">
-    {% if (images|length) > 0 %}
+    {% if (media|length) > 0 %}
     <img
-        src="{{images[0].image}}"
+        src="{{media[0].attachment}}"
         alt="image"
         class="image-ipad"
     />
@@ -36,19 +36,19 @@
         class="image-ipad"
     />
     {% endif %}
-    {% if (images | length) > 0 %}
+    {% if (media | length) > 0 %}
     <button
         class="align-icon"
         data-toggle="modal"
         data-target="#attachment-modal-{{id}}"
     >
-        +{{(images | length)-1}}
+        +{{(media | length)-1}}
     </button>
     {% endif %}
 </div>
 
-{% if (images | length) > 0%}
-{% set attachments = images %}
+{% if (media | length) > 0%}
+{% set media = media %}
 {% set id = id %}
 {% include "templates/includes/common/attachment_modal.html" %}
 {% endif %}

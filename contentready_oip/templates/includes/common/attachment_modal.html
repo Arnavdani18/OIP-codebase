@@ -4,13 +4,13 @@
     id="attachment-modal-{{ id }}"
     tabindex="-1"
     role="dialog"
-    aria-labelledby="viewAttachmentsLabel"
+    aria-labelledby="viewmediaLabel"
     aria-hidden="true"
 >
     <div class="modal-dialog modal-full modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="viewAttachmentsLabel" hidden>
+                <h5 class="modal-title" id="viewmediaLabel" hidden>
                     Modal title
                 </h5>
                 <button
@@ -30,21 +30,21 @@
                         <!-- The image in focus -->
                         <div class="col text-center">
                             <img
-                                src="{{attachments[0].image}}"
+                                src="{{media[0].attachment}}"
                                 class="img-fluid"
-                                alt="{{ attachments[0].heading }}"
+                                alt="{{ media[0].description }}"
                                 id="image-in-focus-{{id}}"
                             />
                         </div>
                     </div>
 
                     <div class="row justify-content-center mt-3">
-                        <h5><span id="index-in-focus-{{id}}">1</span> of {{ attachments | length }}</h5>
+                        <h5><span id="index-in-focus-{{id}}">1</span> of {{ media | length }}</h5>
                     </div>
 
-                    <div class="row thumbnail-container" id="available-images" data-images="{{images}}">
+                    <div class="row thumbnail-container" id="available-images" data-images="{{media}}">
                         <!-- Grid of thumbnails -->
-                        {% for attachment in attachments %}
+                        {% for m in media %}
                         <div
                             class="m-2"
                         >
@@ -53,10 +53,10 @@
                             >
                                 <img
                                     src="{{
-                                        attachment.image
+                                        m.attachment
                                     }}"
                                     class="thumb-img {{'active-thumbnail' if loop.index==1}}"
-                                    alt="{{ attachment.heading }}"
+                                    alt="{{ m.description }}"
                                     id="{{id}}-{{loop.index}}"
                                 />
                             </a>
@@ -71,9 +71,6 @@
 
 <script>
     moveToImage = (event, i, id) => {
-        // let availableImages = $('#available-images').data('images').replace(/\'/g, '\"').replace(/datetime.datetime/g, '').replace(/\(/g, '[').replace(/\)/g, ']').replace(/None/g, '""');
-        // availableImages = JSON.parse(availableImages);
-        // const selectedImage = availableImages[i];
         $("#image-in-focus-"+id).attr('src', event.target.src);
         $('.thumb-img').removeClass('active-thumbnail');
         $('#'+event.target.id).addClass('active-thumbnail');
