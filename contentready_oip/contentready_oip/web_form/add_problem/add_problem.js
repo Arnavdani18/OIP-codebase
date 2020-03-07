@@ -30,9 +30,18 @@ frappe.ready(async () => {
             method: 'contentready_oip.api.get_sector_list',
             args: {},
             callback: function(r) {
+                let problem_sectors;
+                if (frappe.web_form.doc.sectors) {
+                    problem_sectors = frappe.web_form.doc.sectors.map(s => s.sector);
+                }
                 r.message.map(op => {
+                    let has_sector = false;
+                    if (problem_sectors) {
+                        has_sector = problem_sectors.indexOf(op.value) !== -1;
+                    }
                     const el = `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="sector-check-${op.value}" value="${op.value}"><label class="form-check-label" for="sector-check-${op.value}">${op.label}</label></div>`;
                     $('#sector-options').append(el);
+                    $(`#sector-check-${op.value}`).attr("checked", has_sector);
                 });
                 $("[id^=sector-check]").on('click', addSectorToDoc);
             }
