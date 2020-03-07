@@ -3,15 +3,18 @@ frappe.ready(() => {
         // guest user so we don't have filters stored on the server.
         // retrieve from localStorage and get our content
         if (localStorage) {
-            const sectors = JSON.parse(localStorage.getItem('sectors')); // since we stringify while storing
-            const location = JSON.parse(localStorage.getItem('location'));
+            const filter_sectors = JSON.parse(localStorage.getItem('filter_sectors')); // since we stringify while storing
+            const filter_location_lat = Number(localStorage.getItem('filter_location_name'));
+            const filter_location_lng = Number(localStorage.getItem('filter_location_lng'));
+            const filter_location_range = Number(localStorage.getItem('filter_location_range'));
             frappe.call({
                 method: 'contentready_oip.api.get_filtered_content',
                 args: {
-                    doctype: 'Solution', 
-                    location: location,
-                    sectors: sectors,
-                    guest: true,
+                    doctype: 'Solution',
+                    filter_location_lat: filter_location_lat,
+                    filter_location_lng: filter_location_lng,
+                    filter_location_range: filter_location_range,
+                    filter_sectors: filter_sectors,
                     html: true
                 },
                 callback: function(r) {

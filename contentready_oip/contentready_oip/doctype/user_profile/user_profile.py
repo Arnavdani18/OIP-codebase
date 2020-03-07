@@ -31,3 +31,9 @@ class UserProfile(WebsiteGenerator):
 			})
 			org.insert()
 		self.org = org.name
+	
+	def on_update(self):
+		# print(self.photo)
+		if self.photo:
+			frappe.set_value('User', self.user, 'user_image', self.photo)
+			frappe.db.commit()

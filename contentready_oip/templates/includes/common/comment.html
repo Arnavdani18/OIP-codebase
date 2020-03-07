@@ -3,7 +3,7 @@
 <div class="discussion-section">
     <div class="comment-section">
         <div class="">
-            {% set doc = frappe.get_doc('User', comment.owner) %}
+            {% set doc = frappe.get_doc('User', comment.user) %}
             <img src="{{doc.user_image|default('/files/default-avatar.jpg', true)}}" alt="profile photo" class=""
                 style="object-fit: cover;overflow: hidden;" width="40" height="40" />
         </div>

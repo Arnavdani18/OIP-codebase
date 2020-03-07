@@ -6,40 +6,51 @@ def nudge_guests():
         frappe.throw('Please login to collaborate.')
 
 @frappe.whitelist(allow_guest = True)
-def set_location_filter(selectedLocation=None, distance=25):
-    if not 'location_filter' in frappe.session.data or not isinstance(frappe.session.data['location_filter'], dict):
-        frappe.session.data['location_filter'] = {}
-    distance = int(distance)
-    if not distance:
-        distance = 25
-    if selectedLocation:
-        selectedLocation = json.loads(selectedLocation)
-        frappe.session.data['location_filter']['center'] = selectedLocation
-    # if distance:
-    frappe.session.data['location_filter']['distance'] = distance
-    return frappe.session.data['location_filter']
+def set_location_filter(filter_location_name=None, filter_location_lat=None,filter_location_lng=None, filter_location_range=25):
+    if filter_location_name != None:
+        frappe.session.data['filter_location_name'] = filter_location_name
+    if filter_location_lat != None:
+        frappe.session.data['filter_location_lat'] = float(filter_location_lat)
+    if filter_location_lng != None:
+        frappe.session.data['filter_location_lng'] = float(filter_location_lng)
+    if filter_location_range != None:
+        frappe.session.data['filter_location_range'] = float(filter_location_range)
+    return filter_location_lat, filter_location_lng, filter_location_range
 
 @frappe.whitelist(allow_guest = True)
-def set_sector_filter(sectors=[]):
-    if not 'sector_filter' in frappe.session.data or not isinstance(frappe.session.data['sector_filter'], list):
-        frappe.session.data['sector_filter'] = []
-    if sectors:
-        frappe.session.data['sector_filter'] = json.loads(sectors)
-    return frappe.session.data['sector_filter']
+def set_sector_filter(filter_sectors=[]):
+    if not isinstance(filter_sectors, list):
+        filter_sectors = json.loads(filter_sectors)
+    if not filter_sectors:
+        filter_sectors = ['all']
+    frappe.session.data['filter_sectors'] = filter_sectors
+    return frappe.session.data['filter_sectors']
 
 @frappe.whitelist(allow_guest = True)
 def get_filters():
-    selectedLocation = {}
-    selectedSectors = ['all']
-    if 'location_filter' in frappe.session.data:
-        selectedLocation = frappe.session.data.location_filter
-    if 'sector_filter' in frappe.session.data:
-        selectedSectors = frappe.session.data.sector_filter
-    availableSectors = frappe.get_list('Sector', ['name', 'title'])
+    filter_sectors = ['all']
+    filter_location_name = ''
+    filter_location_lat = None
+    filter_location_lng = None
+    filter_location_range = None
+    if 'filter_location_name' in frappe.session.data:
+        filter_location_name = frappe.session.data.filter_location_name
+    if 'filter_location_lat' in frappe.session.data:
+        filter_location_lat = frappe.session.data.filter_location_lat
+    if 'filter_location_lng' in frappe.session.data:
+        filter_location_lng = frappe.session.data.filter_location_lng
+    if 'filter_location_range' in frappe.session.data:
+        filter_location_range = frappe.session.data.filter_location_range
+    if 'filter_sectors' in frappe.session.data:
+        filter_sectors = frappe.session.data.filter_sectors
+    available_sectors = frappe.get_list('Sector', ['name', 'title'])
     return {
-        'selectedLocation': selectedLocation,
-        'selectedSectors': selectedSectors,
-        'availableSectors': availableSectors
+        'filter_location_name': filter_location_name,
+        'filter_location_lat': filter_location_lat,
+        'filter_location_lng': filter_location_lng,
+        'filter_location_range': filter_location_range,
+        'filter_sectors': filter_sectors,
+        'available_sectors': available_sectors
     }
 
 @frappe.whitelist(allow_guest = True)
@@ -55,57 +66,45 @@ def get_child_table(child_table_doctype, parent_doctype, parent_name):
     return frappe.get_all(child_table_doctype, filters={'parenttype': parent_doctype, 'parent': parent_name})
 
 @frappe.whitelist(allow_guest = True)
-def get_lat_lng_bounds(selectedLocation):
-    from math import cos, radians
-    lat_delta_1km = 0.009
-    distance = selectedLocation['distance']
-    lat_center = selectedLocation['center']['latitude']
-    lng_center = selectedLocation['center']['longitude']
-    lng_delta_1km = 0.009/cos(radians(lat_center))
-    lat_min = lat_center - (distance * lat_delta_1km)
-    lat_max = lat_center + (distance * lat_delta_1km)
-    lng_min = lng_center - (distance * lng_delta_1km)
-    lng_max = lng_center + (distance * lng_delta_1km)
-    return {
-        'lat_center': lat_center,
-        'lat_min': lat_min,
-        'lat_max': lat_max,
-        'lng_center': lng_center,
-        'lng_min': lng_min,
-        'lng_max': lng_max
-    }
-
-@frappe.whitelist(allow_guest = True)
-def get_filtered_content(doctype, location, sectors, limit_page_length=20, html=False, guest=True):
-    if isinstance(sectors, str):
-        sectors = json.loads(sectors) or []
-    if isinstance(location, str):
-        location = json.loads(location) or {}
-    if not sectors:
-        sectors = ['all']
-    if 'all' in sectors:
+def get_filtered_content(doctype, filter_location_lat, filter_location_lng, filter_location_range, filter_sectors, limit_page_length=20, html=False):
+    if isinstance(filter_sectors, str):
+        try:
+            filter_sectors = json.loads(filter_sectors)
+        except:
+            filter_sectors = []
+    if isinstance(filter_location_lat, str):
+        try:
+            filter_location_lat = float(filter_location_lat)
+        except:
+            filter_location_lat = None
+    if isinstance(filter_location_lng, str):
+        try:
+            filter_location_lng = float(filter_location_lng)
+        except:
+            filter_location_lng = None
+    if isinstance(filter_location_range, str):
+        try:
+            filter_location_range = float(filter_location_range)
+        except:
+            filter_location_range = None
+    if not filter_sectors:
+        filter_sectors = ['all']
+    if 'all' in filter_sectors:
         filtered = frappe.get_list(doctype, filters={'is_published': True}, limit_page_length=limit_page_length)
         content_set = {f['name'] for f in filtered}
     else:
-        filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', sectors]}, limit_page_length=limit_page_length)
+        filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', filter_sectors]}, limit_page_length=limit_page_length)
         content_set = {f['parent'] for f in filtered}
     # TODO: Implement location filtering using Elasticsearch
     from geopy import distance
-    try:
-        lat = location['center']['latitude']
-        lng = location['center']['longitude']
-        radius = location['distance']
-    except:
-        lat = None
-        lng = None
-        radius = None
     content = []
     for c in content_set:
         doc = frappe.get_doc(doctype, c)
         if doc.is_published:
-            if (doc.latitude != None) and (doc.longitude != None) and (lat != None) and (lng != None) and (radius != None):
-                distance_km = distance.distance((lat, lng), (float(doc.latitude), float(doc.longitude))).km
-                if distance_km > radius:
+            if (doc.latitude != None) and (doc.longitude != None) and (filter_location_lat != None) and (filter_location_lng != None) and (filter_location_range != None):
+                distance_km = distance.distance((filter_location_lat, filter_location_lng), (float(doc.latitude), float(doc.longitude))).km
+                if distance_km > filter_location_range:
+                    # skip this document as it's outside our bounds
                     continue
             doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
             if html:
@@ -194,7 +193,8 @@ def toggle_contribution(child_doctype, parent_doctype, parent_name, field_name):
 def add_comment(doctype, name, text, media=None, html=True):
     doc = frappe.get_doc({
         'doctype': 'Discussion',
-        'text': text
+        'text': text,
+        'user': frappe.session.user
     })
     media = json.loads(media)
     for f in media:
@@ -359,7 +359,7 @@ def add_subscriber(email, first_name=None):
 
 @frappe.whitelist(allow_guest = False)
 def get_content_by_user(doctype, limit_page_length=5):
-    filtered = frappe.get_list(doctype, filters={'owner': frappe.session.user}, limit_page_length=limit_page_length)
+    filtered = frappe.get_list(doctype, filters={'owner': frappe.session.user, 'is_published': True}, limit_page_length=limit_page_length)
     content = []
     for f in filtered:
         doc = frappe.get_doc(doctype, f['name'])

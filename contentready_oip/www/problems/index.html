@@ -1,6 +1,6 @@
 <!-- jinja -->
 <!-- no-breadcrumbs -->
-<!-- static -->
+<!-- no-cache -->
 {% include "templates/includes/common/filter.html" %}
 
 <div class="row">
@@ -13,7 +13,7 @@
                     height="24"
                     width="20"
                 />
-                <h3>Problems Listed (<span id="problems-count">{% if problems %}{{ problems | length }}{% endif %}</span>)</h3>
+                <h3>Problems Listed (<span id="problems-count">{{ problems | length }}</span>)</h3>
             </div>
         </div>
     </div>

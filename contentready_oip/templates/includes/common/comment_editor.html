@@ -55,12 +55,14 @@
                 callback: (r) => {
                     // console.log(r);
                     if (doctype == 'Discussion') {
+                        cancelComment(doctype, name);
                         window.location.reload();
                     } else if (r.message){
                         if ($('#comments-list').length) {
                             $('#comments-list').prepend(r.message);
                             cancelComment(doctype, name);
                         } else {
+                            cancelComment(doctype, name);
                             window.location.reload();
                         }
                     }

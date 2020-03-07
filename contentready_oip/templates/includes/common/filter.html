@@ -1,8 +1,8 @@
 <div class="row" id="filter-section">
     <div class="col-md-2 offset-md-8" id='sector-sel-div'>
-        <select class="custom-select" onChange="setSessionSectorFilter(event)" id='sector-sel'>
+        <select class="custom-select" onChange="storeSectorFilter(event)" id='sector-sel'>
             <option selected value="all">All Sectors</option>
-            {% for sector in availableSectors %}
+            {% for sector in available_sectors %}
                 <option value="{{sector.name}}">{{sector.title}}</option>
             {% endfor %}
         </select>
@@ -10,8 +10,8 @@
     <div class="col-md-2">
         <input type="text" name="" id="autocomplete" placeholder="Search for location..." />
     </div>
-    <div class="col-md-2" id='distance-sel-div' style='display: none;'>
-        <select class="custom-select" onChange="setSessionLocationFilter()" id="distance-sel">
+    <div class="col-md-2" id='range-sel-div' style='display: none;'>
+        <select class="custom-select" onChange="storeLocationFilter()" id="range-sel">
             <option value="0">0 km</option>
             <option selected value="25">25 km</option>
             <option value="50">50 km</option>
