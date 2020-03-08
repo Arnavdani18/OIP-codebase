@@ -8,6 +8,15 @@ frappe.ready(async () => {
   $('ul.navbar-nav:even').addClass('nav-left-list');
   $('ul.navbar-nav:odd').addClass('nav-right-list');
   $('ul.navbar-nav:even .nav-link.active').addClass('tab-focus');
+
+
+  let search = $('a[href="/search"]');
+  search.addClass('d-md-flex align-items-md-center');
+  search.html('<span class="d-block d-lg-none">Search</span>');
+  search.prepend(
+    '<img src="/files/Search.svg" class="mr-4" height="20" width="20" />'
+  );
+
   $('li.nav-item.dropdown.logged-in a').addClass(
     'd-flex align-items-center mr-4'
   );
@@ -27,38 +36,36 @@ frappe.ready(async () => {
   dropdownList.attr('href', '/update-profile');
   dropdownList.text('Profile');
 
-  $('a:contains("Add a Problem / Solution")').addClass('add-problem-btn');
-  $('a:contains("Add a Problem / Solution")')
-    .next()
-    .addClass('dropdown-menu-right');
+  if (frappe.session.user === 'Guest') {
+    $('a:contains("Add a Problem / Solution")').hide();
 
-  // fix moving of nav while clicking menu icon
-  $('nav div.container').addClass('nav-container');
+  } else {
+    $('a:contains("Add a Problem / Solution")').addClass('add-problem-btn');
+    $('a:contains("Add a Problem / Solution")')
+      .next()
+      .addClass('dropdown-menu-right');
 
-  // chnge the list order
-  $('.nav-right-list')
-    .find('li:eq(0)')
-    .insertAfter('.nav-right-list li:eq(2)');
+    // fix moving of nav while clicking menu icon
+    $('nav div.container').addClass('nav-container');
 
-  // insert add problem/solution and search logo
-  let addProblem = $('a[href="/add-problem?new=1"]');
-  let addSolution = $('a[href="/add-solution?new=1"]');
-  let search = $('a[href="/search"]');
+    // chnge the list order
+    $('.nav-right-list')
+      .find('li:eq(0)')
+      .insertAfter('.nav-right-list li:eq(2)');
 
-  addProblem.prepend(
-    '<img src="/files/problem_dark.svg" height="22" width="30" />'
-  );
+    // insert add problem/solution and search logo
+    let addProblem = $('a[href="/add-problem?new=1"]');
+    let addSolution = $('a[href="/add-solution?new=1"]');
 
-  addSolution.prepend(
-    '<img src="/files/solution_dark.svg" height="22" width="30" />'
-  );
+    addProblem.prepend(
+      '<img src="/files/problem_dark.svg" height="22" width="30" />'
+    );
 
-  search.addClass('d-md-flex align-items-md-center');
-  search.html('<span class="d-block d-lg-none">Search</span>');
-  search.prepend(
-    '<img src="/files/Search.svg" class="mr-4" height="20" width="20" />'
-  );
+    addSolution.prepend(
+      '<img src="/files/solution_dark.svg" height="22" width="30" />'
+    );
 
-  addProblem.addClass('py-2');
-  addSolution.addClass('py-2');
+    addProblem.addClass('py-2');
+    addSolution.addClass('py-2');
+  }
 });
