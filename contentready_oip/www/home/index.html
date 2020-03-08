@@ -2,27 +2,22 @@
 <!-- no-breadcrumbs -->
 <!-- static -->
 <div class=" poster jumbo">
-    <div class="container">
-        <div class="banner-text">
-            <h1>Mission to create social impact</h1>
-            <p class="left-bar">
-                {% set about_us = frappe.db.get_single_value('About Us Settings', 'company_introduction') %}
-                {{ about_us | striptags }}
-            </p>
-        </div>
+  <div class="container">
+    <div class="banner-text">
+      <h1>Mission to create social impact</h1>
+      <p class="left-bar">
+        {% set about_us = frappe.db.get_single_value('About Us Settings',
+        'company_introduction') %} {{ about_us | striptags }}
+      </p>
     </div>
+  </div>
 </div>
 
-
-
-{% include "templates/includes/common/homepage_stats.html" %}
-{% include "templates/includes/common/homepage_showcase_content.html" %}
-
-{% include "templates/includes/common/subscribe.html" %}
-{% include "templates/includes/common/partners.html" %}
+{% include "templates/includes/common/homepage_stats.html" %} {% include
+"templates/includes/common/homepage_showcase_content.html" %} {% include
+"templates/includes/common/subscribe.html" %} {% include
+"templates/includes/common/partners.html" %}
 
 <script>
-    frappe.ready(() => {
-        $('main').removeClass('container my-5');
-    })
+  {% include "public/js/global.js" %}
 </script>

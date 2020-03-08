@@ -1,29 +1,32 @@
 <!-- jinja -->
 <!-- no-breadcrumbs -->
 <!-- no-cache -->
-{% include "templates/includes/common/filter.html" %}
 
-<div class="row">
+<div class="container">
+  {% include "templates/includes/common/filter.html" %}
+
+  <div class="row">
     <div class="col">
-        <div class="col-sm-12 problem-listed-container">
-            <div class="d-flex align-items-center">
-                <img
-                    src="/files/problem_icon.svg"
-                    alt=""
-                    height="24"
-                    width="20"
-                />
-                <h3>Problems Listed (<span id="problems-count">{{ problems | length }}</span>)</h3>
-            </div>
+      <div class="col-sm-12 problem-listed-container">
+        <div class="d-flex align-items-center">
+          <img src="/files/problem_icon.svg" alt="" height="24" width="20" />
+          <h3>
+            Problems Listed (<span id="problems-count"
+              >{{ problems | length }}</span
+            >)
+          </h3>
         </div>
+      </div>
     </div>
+  </div>
+  <div class="row" id="problems-container">
+    {% if problems %} {% for problem in problems %}
+    <div class="col-md-6">
+      {% include "templates/includes/problem/problem_card.html" %}
+    </div>
+    {% endfor %} {% endif %}
+  </div>
 </div>
-<div class="row" id="problems-container">
-    {% if problems %}
-    {% for problem in problems %}
-        <div class="col-md-6">
-            {% include "templates/includes/problem/problem_card.html" %}
-        </div>
-    {% endfor %}
-    {% endif %}
-</div>
+<script>
+  {% include "public/js/global.js" %}
+</script>
