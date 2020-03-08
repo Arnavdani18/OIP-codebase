@@ -153,11 +153,20 @@ frappe.ready(async () => {
     }
   };
 
-  addFileToDoc = file => {
-    const response = JSON.parse(file.xhr.response);
-    const file_url = response.message.file_url;
-    if (!frappe.web_form.doc.media) {
-      frappe.web_form.doc.media = [];
+    addFileToDoc = (file) => {
+        // Since we are showing previously added, remote 
+        if (file.xhr) {
+            const response = JSON.parse(file.xhr.response);
+            const file_url = response.message.file_url;
+            if (!frappe.web_form.doc.media) {
+                frappe.web_form.doc.media = [];
+            }
+            frappe.web_form.doc.media.push({
+                attachment: file_url,
+                size: file.size,
+                type: file.type
+            })
+        }
     }
     frappe.web_form.doc.media.push({
       attachment: file_url,
@@ -172,31 +181,36 @@ frappe.ready(async () => {
     );
   };
 
-  addDropzone = () => {
-    // TODO: Allow user to select an image as featured image
-    // disable autoDiscover as we are manually binding the dropzone to a form element
-    Dropzone.autoDiscover = false;
-    const el = `<form class="dropzone dz-clickable" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
-    $('*[data-fieldname="media"]*[data-fieldtype="Table"]')
-      .parent()
-      .after(el);
-    $('#dropzone').dropzone({
-      url: '/api/method/upload_file',
-      autoDiscover: false,
-      addRemoveLinks: true,
-      acceptedFiles: 'image/*',
-      headers: {
-        Accept: 'application/json',
-        'X-Frappe-CSRF-Token': frappe.csrf_token
-      },
-      init: function() {
-        // use this event to add to child table
-        this.on('complete', addFileToDoc);
-        // use this event to remove from child table
-        this.on('removedfile', removeFileFromDoc);
-      }
-    });
-  };
+    addDropzone = () => {
+        // TODO: Allow user to select an image as featured image
+        // disable autoDiscover as we are manually binding the dropzone to a form element
+        Dropzone.autoDiscover = false;
+        const el = `<form class="dropzone dz-clickable" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
+        $('*[data-fieldname="media"]*[data-fieldtype="Table"]').parent().after(el);
+        $('#dropzone').dropzone({
+            url: "/api/method/upload_file",
+            autoDiscover: false,
+            addRemoveLinks: true,
+            acceptedFiles: 'image/*',
+            headers: {
+                'Accept': 'application/json',
+                'X-Frappe-CSRF-Token': frappe.csrf_token
+            },
+            init: function() {
+                // use this event to add to child table
+                this.on("complete", addFileToDoc);
+                // use this event to remove from child table
+                this.on('removedfile', removeFileFromDoc);
+                let myDropzone = this;
+                frappe.web_form.doc.media.map(a => {
+                    let mockFile = { name: a.attachment, size: a.size };
+                    myDropzone.emit("addedfile", mockFile);
+                    myDropzone.options.thumbnail.call(myDropzone, mockFile, a.attachment);
+                    myDropzone.emit("complete", mockFile);
+                });
+            }
+        });
+    }
 
   submitProblemForm = is_draft => {
     frappe.call({
