@@ -124,10 +124,9 @@ frappe.ready(async function() {
                 // use this event to remove from child table
                 this.on('removedfile', removeFileFromDoc);
                 if (frappe.web_form.doc.photo) {
-                    let mockFile = { name: frappe.web_form.doc.photo, size: null };
-                    this.emit("addedfile", mockFile);
-                    this.options.thumbnail.call(this, mockFile, frappe.web_form.doc.photo);
-                    this.emit("complete", mockFile);
+                    const file_url = frappe.web_form.doc.photo;
+                    let mockFile = { name: file_url, size: null };
+                    this.displayExistingFile(mockFile, file_url);
                 }
             }
         });
