@@ -21,9 +21,12 @@ class UserProfile(WebsiteGenerator):
 		if frappe.db.exists('User Profile', self.scrubbed_title()):
 			self.name = self.scrubbed_title()+'-'+frappe.generate_hash("",3)
 
-	def before_insert(self):
+	def on_update(self):
+		# print(self.photo)
+		if self.photo:
+			frappe.set_value('User', self.user, 'user_image', self.photo)
 		try:
-			org = frappe.get_doc('Organisation', {'org_title': self.org_title})
+			org = frappe.get_doc('Organisation', {'title': self.org_title})
 		except:
 			org = frappe.get_doc({
 				'doctype': 'Organisation',
@@ -31,9 +34,4 @@ class UserProfile(WebsiteGenerator):
 			})
 			org.insert()
 		self.org = org.name
-	
-	def on_update(self):
-		# print(self.photo)
-		if self.photo:
-			frappe.set_value('User', self.user, 'user_image', self.photo)
-			frappe.db.commit()
+		frappe.db.commit()

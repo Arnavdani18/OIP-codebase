@@ -363,7 +363,8 @@ def get_content_by_user(doctype, limit_page_length=5):
     content = []
     for f in filtered:
         doc = frappe.get_doc(doctype, f['name'])
-        content.append(doc)
+        if doc.is_published:
+            content.append(doc)
     return content
 
 @frappe.whitelist(allow_guest = False)
@@ -376,7 +377,8 @@ def get_contributions_by_user(parent_doctype, child_doctypes, limit_page_length=
     content = []
     for c in content_set:
         doc = frappe.get_doc(parent_doctype, c)
-        content.append(doc)
+        if doc.is_published:
+            content.append(doc)
     return content
 
 @frappe.whitelist(allow_guest = False)
@@ -386,7 +388,8 @@ def get_content_watched_by_user(doctype, limit_page_length=5):
     content = []
     for c in content_set:
         doc = frappe.get_doc(doctype, c)
-        content.append(doc)
+        if doc.is_published:
+            content.append(doc)
     return content
 
 @frappe.whitelist(allow_guest = False)
