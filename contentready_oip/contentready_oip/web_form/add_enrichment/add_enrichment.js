@@ -93,16 +93,18 @@ frappe.ready(async () => {
     }
 
     addFileToDoc = (file) => {
-        const response = JSON.parse(file.xhr.response);
-        const file_url = response.message.file_url;
-        if (!frappe.web_form.doc.media) {
-            frappe.web_form.doc.media = [];
+        if (file.xhr) {
+            const response = JSON.parse(file.xhr.response);
+            const file_url = response.message.file_url;
+            if (!frappe.web_form.doc.media) {
+                frappe.web_form.doc.media = [];
+            }
+            frappe.web_form.doc.media.push({
+                attachment: file_url,
+                size: file.size,
+                type: file.type
+            })
         }
-        frappe.web_form.doc.media.push({
-            attachment: file_url,
-            size: file.size,
-            type: file.type
-        })
     }
 
     removeFileFromDoc = (file) => {
@@ -129,6 +131,13 @@ frappe.ready(async () => {
                 this.on("complete", addFileToDoc);
                 // use this event to remove from child table
                 this.on('removedfile', removeFileFromDoc);
+                let myDropzone = this;
+                frappe.web_form.doc.media.map(a => {
+                    let mockFile = { name: a.attachment, size: a.size };
+                    myDropzone.emit("addedfile", mockFile);
+                    myDropzone.options.thumbnail.call(myDropzone, mockFile, a.attachment);
+                    myDropzone.emit("complete", mockFile);
+                });
             }
         });
     }

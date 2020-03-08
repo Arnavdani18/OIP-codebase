@@ -92,8 +92,10 @@ frappe.ready(async function() {
     }
     
     addFileToDoc = (file) => {
-        const response = JSON.parse(file.xhr.response);
-        frappe.web_form.doc.photo = response.message.file_url;
+        if (file.xhr) {
+            const response = JSON.parse(file.xhr.response);
+            frappe.web_form.doc.photo = response.message.file_url;
+        }
     }
 
     removeFileFromDoc = (file) => {
@@ -121,6 +123,12 @@ frappe.ready(async function() {
                 this.on("complete", addFileToDoc);
                 // use this event to remove from child table
                 this.on('removedfile', removeFileFromDoc);
+                if (frappe.web_form.doc.photo) {
+                    let mockFile = { name: frappe.web_form.doc.photo, size: null };
+                    this.emit("addedfile", mockFile);
+                    this.options.thumbnail.call(this, mockFile, frappe.web_form.doc.photo);
+                    this.emit("complete", mockFile);
+                }
             }
         });
     }
