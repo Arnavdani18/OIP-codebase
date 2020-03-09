@@ -4,7 +4,7 @@
       {% set doc_owner = frappe.session.user %} {% include
       "templates/includes/common/user_thumbnail.html" %}
     </div>
-    <div class="input-group col pl-0">
+    <div class="input-group col pl-0 mt-0">
       <!-- TODO: onblur="contractCommentArea(event.target.id)" -->
 
       <textarea
@@ -15,7 +15,7 @@
         rows="1"
         onfocus="expandCommentArea('{{doctype}}','{{name}}')"
       ></textarea>
-      <div class="input-group-append">
+      <div class="input-group-append mt-0">
         <button
           class="btn btn-outline-danger pattern1"
           title="Clear"
