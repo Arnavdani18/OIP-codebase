@@ -1,19 +1,18 @@
 <div>
-    {% set doc = frappe.get_doc('User', doc_owner) %}
-    <img
-        src="{{doc.user_image|default('/files/default-avatar.jpg', true)}}"
-        alt="profile photo"
-        class="img-profile"
-        style="object-fit: cover;overflow: hidden !important;"
-        width="50"
-        height="50"
-    />
+  {% set doc = frappe.get_doc('User', doc_owner) %}
+  <img
+    src="{{doc.user_image|default('/files/default-avatar.jpg', true)}}"
+    alt="profile photo"
+    class="img-profile"
+    style="object-fit: cover;overflow: hidden !important;"
+    width="50"
+    height="50"
+  />
 </div>
 <div class="created-by-section">
-    <div class="neutralize">{{doc.full_name}}</div>
-    {% if date %}
-    <div class="neutralize"></div>
-        <div class="neutralize">{{frappe.utils.pretty_date(date)}}</div>
-    {% endif %}
-    
+  <div class="neutralize">{{doc.full_name}}</div>
+  {% if date %}
+  <div class="neutralize"></div>
+  <div class="neutralize">{{frappe.utils.pretty_date(date)}}</div>
+  {% endif %}
 </div>
