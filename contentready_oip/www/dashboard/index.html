@@ -146,6 +146,47 @@
           <li class="nav-item">
             <a
               class="nav-link active"
+              id="contributions-tab"
+              data-toggle="tab"
+              href="#contributions"
+              role="tab"
+              aria-controls="contributions"
+              aria-selected="false"
+              >Your Contributions ({{ (problem_contributions +
+              solution_contributions) | length }})</a
+            >
+          </li>
+        </ul>
+        <div
+          id="rightTabGroup1"
+          class="pb-4"
+          style="border-radius: var(--round4);"
+        >
+          <div class="tab-content" id="rightTabContent1">
+            <div
+              class="row p-0 m-0"
+              id="users"
+              role="tabpanel"
+              aria-labelledby="users-tab"
+            >
+              <div class="col m-0 p-0">
+                {% include "templates/includes/common/your_contributions.html"
+                %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br />
+      <div class="bg-white">
+        <ul
+          class="nav nav-tabs nav-section nav-mob-section"
+          id="rightTab1"
+          role="tablist"
+        >
+          <li class="nav-item">
+            <a
+              class="nav-link active"
               id="users-tab"
               data-toggle="tab"
               href="#users"
