@@ -156,16 +156,23 @@
             >
           </li>
         </ul>
-        <div id="rightTabGroup1" class="pb-2">
+        <div
+          id="rightTabGroup1"
+          class="pb-4"
+          style="border-radius: var(--round4);"
+        >
           <div class="tab-content" id="rightTabContent1">
             <div
-              class="tab-pane fade show active"
+              class="row p-0 m-0"
               id="users"
               role="tabpanel"
               aria-labelledby="users-tab"
             >
-              {% for user in users %} {% include
-              "templates/includes/common/user_card.html" %} {% endfor %}
+              {% for user in users %}
+              <div class="col-md-6 py-4 border">
+                {% include "templates/includes/common/user_card.html" %}
+              </div>
+              {% endfor %}
             </div>
           </div>
         </div>
