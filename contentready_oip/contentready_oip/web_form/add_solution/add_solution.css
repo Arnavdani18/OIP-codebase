@@ -1,37 +1,59 @@
-.page-breadcrumbs{
-    display: none;
+.page-breadcrumbs {
+  display: none;
 }
 
-.hide-control{
-    display: none;
+.hide-control {
+  display: none;
 }
 
 .form-layout {
-    background-color: white;
-    padding: 2rem;
+  background-color: white;
+  padding: 2rem;
 }
 
 .ql-container {
-    background-color: white;
+  background-color: white;
 }
 
-.web-form-actions{
-    display: none;
+.web-form-actions {
+  display: none;
 }
-
 
 .form-group label {
-    font-weight: bolder;
+  font-weight: bolder;
 }
 
 .control-label {
-    font-weight: bolder;
+  font-weight: bolder;
 }
 
 .web-form-footer {
-    display: none;
+  display: none;
 }
 
-.hidden{
-    display: none;
+.hidden {
+  display: none;
+}
+
+.field-styles {
+  padding: 1.5rem 1rem;
+  font-size: 1.4rem;
+  font-weight: normal;
+  margin-bottom: 2rem;
+}
+
+.label-styles {
+  font-size: 1.4rem !important;
+  font-weight: 500 !important;
+}
+
+.form-section-heading hr {
+  margin: 1rem -2.1rem 2rem -2.1rem !important;
+}
+
+.solution-details-page-subheadings {
+  font-size: 2rem;
+  line-height: 2.2rem;
+  font-weight: 400;
+  margin-bottom: 2rem;
 }

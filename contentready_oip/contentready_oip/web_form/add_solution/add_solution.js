@@ -348,6 +348,22 @@ frappe.ready(async () => {
       .append(saveAsDraftBtn)
       .append(publishBtn);
   };
+
+  const styleFormHeadings = () => {
+    $("h6")
+      .not(":first")
+      .prepend("<hr />");
+    $(".form-section-heading").addClass("solution-details-page-subheadings");
+  };
+
+  const styleFields = () => {
+    $(".input-with-feedback").addClass("field-styles");
+  };
+
+  const controlLabels = () => {
+    $(".control-label").addClass("label-styles");
+  };
+
   // End Helpers
 
   // Delay until page is fully rendered
@@ -361,6 +377,9 @@ frappe.ready(async () => {
   moveDivs();
   createOrgOptions();
   createSectorOptions();
+  styleFormHeadings();
+  styleFields();
+  controlLabels();
   // End UI Fixes
 
   // Start Google Maps Autocomplete
