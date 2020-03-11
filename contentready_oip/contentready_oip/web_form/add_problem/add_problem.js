@@ -274,6 +274,24 @@ frappe.ready(async () => {
       .append(saveAsDraftBtn)
       .append(publishBtn);
   };
+
+  const problemDetails = () => {
+    $(".form-layout").prepend(`<h2 class="form-layout-problem-details">1. Problem Details</h2>`);
+  };
+
+  const controlLabels = () => {
+    $(".control-label").addClass("label-styles");
+  };
+
+  const styleFields = () => {
+    $(".input-with-feedback").addClass("field-styles");
+  };
+
+  const styleFormHeadings = () => {
+    $(".form-section-heading").prepend("<hr></hr>");
+    $(".form-section-heading").addClass("problem-details-page-subheadings");
+  };
+
   // End Helpers
 
   // Delay until page is fully rendered
@@ -287,6 +305,10 @@ frappe.ready(async () => {
   moveDivs();
   createOrgOptions();
   createSectorOptions();
+  problemDetails();
+  controlLabels();
+  styleFields();
+  styleFormHeadings();
   // End UI Fixes
 
   // Start Google Maps Autocomplete
