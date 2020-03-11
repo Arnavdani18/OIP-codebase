@@ -288,7 +288,7 @@ frappe.ready(async () => {
   };
 
   const styleFormHeadings = () => {
-    $(".form-section-heading").prepend("<hr></hr>");
+    $(".form-section-heading").prepend("<hr/>");
     $(".form-section-heading").addClass("problem-details-page-subheadings");
   };
 
