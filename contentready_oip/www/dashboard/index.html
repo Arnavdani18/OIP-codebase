@@ -95,19 +95,6 @@
               length }})</a
             >
           </li>
-          <li class="nav-item">
-            <a
-              class="nav-link"
-              id="contributions-tab"
-              data-toggle="tab"
-              href="#contributions"
-              role="tab"
-              aria-controls="contributions"
-              aria-selected="false"
-              >Your Contributions ({{ (problem_contributions +
-              solution_contributions) | length }})</a
-            >
-          </li>
         </ul>
         <div id="rightTabGroup" class="pb-2">
           <div class="tab-content" id="leftTabContent">
@@ -120,17 +107,6 @@
               {% for problem in watched_problems %} {% include
               "templates/includes/problem/problem_card.html" %} {% endfor %} {%
               for solution in watched_solutions %} {% include
-              "templates/includes/solution/solution_card.html" %} {% endfor %}
-            </div>
-            <div
-              class="tab-pane fade"
-              id="contributions"
-              role="tabpanel"
-              aria-labelledby="contributions-tab"
-            >
-              {% for problem in problem_contributions %} {% include
-              "templates/includes/problem/problem_card.html" %} {% endfor %} {%
-              for solution in solution_contributions %} {% include
               "templates/includes/solution/solution_card.html" %} {% endfor %}
             </div>
           </div>
