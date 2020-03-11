@@ -30,7 +30,7 @@ frappe.ready(async function() {
     }
     
     createPersonaOptions = () => {
-        $('*[data-fieldname="personas"]').before('<label class="control-label" style="padding-right: 0px;">Personas</label><br/><div id="persona-options"></div>');
+        $('*[data-fieldname="personas"]').before('<label class="form-group control-label">Personas</label><br/><div id="persona-options"></div>');
         frappe.call({
             method: 'contentready_oip.api.get_persona_list',
             args: {},
