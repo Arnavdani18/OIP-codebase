@@ -1,6 +1,7 @@
 <style>
-  select,
-  input {
+  #sector-sel-div > select,
+  #range-sel-div > select,
+  #location-input-div > input {
     font-weight: var(--wgt500);
     height: 4.2rem;
     border: 0.2rem solid var(--secondary1);
@@ -35,7 +36,7 @@
       {% endfor %}
     </select>
   </div>
-  <div class="in-mob">
+  <div class="in-mob" id="location-input-div">
     <input
       class="pattern1 pl-2"
       type="text"
