@@ -1,26 +1,63 @@
-<div class="row" id="filter-section">
-    <div class="col-md-2 offset-md-8" id='sector-sel-div'>
-        <select class="custom-select" onChange="storeSectorFilter(event)" id='sector-sel'>
-            <option selected value="all">All Sectors</option>
-            {% for sector in available_sectors %}
-                <option value="{{sector.name}}">{{sector.title}}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="col-md-2">
-        <input type="text" name="" id="autocomplete" placeholder="Search for location..." />
-    </div>
-    <div class="col-md-2" id='range-sel-div' style='display: none;'>
-        <select class="custom-select" onChange="storeLocationFilter()" id="range-sel">
-            <option value="0">0 km</option>
-            <option selected value="25">25 km</option>
-            <option value="50">50 km</option>
-            <option value="100">100 km</option>
-            <option value="200">200 km</option>
-        </select>
-    </div>
+<style>
+  select,
+  input {
+    font-weight: var(--wgt500);
+    height: 4.2rem;
+    border: 0.2rem solid var(--secondary1);
+    border-radius: var(--round4);
+    background-color: transparent;
+  }
+
+  .row > div {
+    padding-left: 2rem;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .in-mob {
+      padding-top: 1rem;
+    }
+  }
+</style>
+
+<div
+  class="row justify-content-sm-start justify-content-md-end flex-wrap"
+  id="filter-section"
+>
+  <div class="" id="sector-sel-div">
+    <select
+      class="pattern1"
+      onChange="storeSectorFilter(event)"
+      id="sector-sel"
+    >
+      <option selected value="all">All Sectors</option>
+      {% for sector in available_sectors %}
+      <option value="{{sector.name}}">{{sector.title}}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="in-mob">
+    <input
+      class="pattern1 pl-2"
+      type="text"
+      name=""
+      id="autocomplete"
+      placeholder="Search for location..."
+    />
+  </div>
+  <div class="in-mob" id="range-sel-div" style="display: none;">
+    <select class="pattern1" onChange="storeLocationFilter()" id="range-sel">
+      <option value="0">0 km</option>
+      <option selected value="25">25 km</option>
+      <option value="50">50 km</option>
+      <option value="100">100 km</option>
+      <option value="200">200 km</option>
+    </select>
+  </div>
 </div>
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxSPvgric8Zn54pYneG9NondiINqdvb-w&libraries=places"></script>
+<script
+  type="text/javascript"
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxSPvgric8Zn54pYneG9NondiINqdvb-w&libraries=places"
+></script>
 <script>
-    {% include "templates/includes/common/filter.js" %}
+  {% include "templates/includes/common/filter.js" %}
 </script>

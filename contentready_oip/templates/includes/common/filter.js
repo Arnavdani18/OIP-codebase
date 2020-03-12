@@ -1,8 +1,8 @@
 frappe.ready(() => {
     // Start helpers
     showDistanceSelect = () => {
-        $('#sector-sel-div').removeClass('offset-md-8').addClass('offset-md-6');
         $('#range-sel-div').show();
+        // $('#sector-sel-div').removeClass('offset-md-8').addClass('offset-md-6');
     }
     hideDistanceSelect = () => {
         $('#range-sel-div').hide();
