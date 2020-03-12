@@ -1,17 +1,41 @@
 <!-- jinja -->
 <!-- no-breadcrumbs -->
 <!-- static -->
-<div class="container">
-    <div class="input-group">
-        <input type="text" class="form-control form-control-lg" aria-label="Search the Open Innovation Platform" id="search-input">
-        <div class="input-group-append">
-          <button type="button" data-enabled=1 class="btn btn-primary" onclick="toggleProblems()" id="problem-selector">Problems</button>
-          <button type="button" data-enabled=1 class="btn btn-primary" onclick="toggleSolutions()" id="solution-selector">Solutions</button>
+<div class="container my-5">
+    
+            <div class="input-group input-section">
+                <div class="input-group-prepend style1">
+                    <span class="input-group-text">
+                        <img
+                            src="/files/Search.svg"
+                            alt=""
+                            style="opacity: .3;"
+                        />
+                    </span>
+                </div>
+                <input type="search" class="form-control form-control-lg style1" aria-label="Search the Open Innovation Platform" placeholder="Search for problems, solutions and contributors" id="search-input">
+                <div class="input-group-append style1">
+                <button type="button" data-enabled=1 class="btn active-btn " onclick="toggleProblems()" id="problem-selector">Problems</button>
+                <button type="button" data-enabled=1 class="btn active-btn rounded-right" onclick="toggleSolutions()" id="solution-selector">Solutions</button>
+                </div>
+            </div>
         </div>
-      </div>
+    
+
+        
 </div>
 
-<div class="container card-section hidden" id="search-results-container">
+<div class="container no-result">
+   <section class="row zeroResult-section">
+        <div>
+            <img src="/files/Empty State Search Icon.svg" alt="" />
+        </div>
+        <h5>It seems there are no search results as of now.</h5>
+    </section> 
+</div>
+
+
+<div class="container hidden" id="search-results-container">
     <div class="row">
         <div class="col-lg-6" id="problem-results-container">
             <div class="col p-0">
@@ -68,12 +92,14 @@
             const problemsEnabled = $('#problem-selector').data('enabled');
             if (problemsEnabled) {
                 $('#problem-selector').data('enabled', 0);
-                $('#problem-selector').removeClass('btn-primary').addClass('btn-light');
+                // $('#problem-selector').removeClass('active-btn').addClass('not-active-btn');
+                $('#problem-selector').toggleClass('not-active-btn active-btn');
                 $('#problem-results-container').hide();
                 // $('#solution-results-container').removeClass('col-lg-6').addClass('col-lg-12');
             } else {
                 $('#problem-selector').data('enabled', 1);
-                $('#problem-selector').removeClass('btn-light').addClass('btn-primary');
+                // $('#problem-selector').removeClass('btn-light').addClass('btn-primary');
+                $('#problem-selector').toggleClass('not-active-btn active-btn');
                 $('#problem-results-container').show();
                 // $('#solution-results-container').removeClass('col-lg-12').addClass('col-lg-6');
                 triggerSearch();
@@ -84,11 +110,13 @@
             const solutionsEnabled = $('#solution-selector').data('enabled');
             if (solutionsEnabled) {
                 $('#solution-selector').data('enabled', 0);
-                $('#solution-selector').removeClass('btn-primary').addClass('btn-light');
+                // $('#solution-selector').removeClass('btn-primary').addClass('btn-light');
+                $('#solution-selector').toggleClass('not-active-btn active-btn');
                 $('#solution-results-container').hide();
             } else {
                 $('#solution-selector').data('enabled', 1);
-                $('#solution-selector').removeClass('btn-light').addClass('btn-primary');
+                // $('#solution-selector').removeClass('btn-light').addClass('btn-primary');
+                $('#solution-selector').toggleClass('not-active-btn active-btn');
                 $('#solution-results-container').show();
                 triggerSearch();
             }
@@ -163,6 +191,7 @@
                 $('#solutions-results-container').hide()
             }
             $('#search-results-container').removeClass('hidden');
+            $('.no-result').addClass('hidden');
         }
 
         // Delay until page is fully rendered
@@ -187,6 +216,81 @@
 <style>
     .hidden{
         display: none;
+    }
+
+    style1 {
+        font-size: 18px;
+        font-weight: 500;
+        letter-spacing: -0.1px;
+        line-height: 26px;
+    }
+
+    .zeroResult-section {
+        justify-content: center;
+        flex-direction: column;
+        min-height: 75vh;
+        text-align: center;
+    }
+
+    .zeroResult-section > h5 {
+        margin-top: 2.7rem;
+        font-weight: 500;
+        color: var(--secondary1);
+    }
+
+    input[type='search'] {            
+        height: inherit;
+        border: none;
+        }
+
+    input[type='search']::placeholder {
+        color: var(--secondary3);
+        text-overflow: ellipsis;
+    }
+
+    .input-section {
+        justify-content: center;
+        min-height: 5.6rem;
+        border-radius: var(--round4);
+    }
+
+    .input-group-prepend > .input-group-text {        
+        padding: 2rem 1rem 2rem 2rem;
+        background-color: var(--secondary6);
+        border-radius: 0.4rem 0 0 0.4rem;
+        border: none;
+    }
+
+    .active-btn {
+        background-color: var(--primary2);
+        color: var(--secondary6);
+        font-size: 1.2rem;
+    }
+
+    .active-btn:hover{
+        color: var(--secondary6);
+    }
+
+    .not-active-btn {
+        background-color: var(--secondary6);
+        color: var(--primary2);
+        font-size: 1.2rem !important;
+        border: none;
+    }
+
+    .not-active-btn:hover{
+        background-color: var(--secondary6);
+        color: var(--primary2);
+    }
+
+    @media only screen and (max-width: 600px) {
+    .input-section {
+            min-height: 3.6rem;
+        }
+
+    .input-group-prepend > .input-group-text {        
+            padding: 1rem 0rem 1rem 1rem;
+        }
     }
 </style>
 
