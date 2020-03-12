@@ -246,6 +246,9 @@ frappe.ready(async () => {
   moveDivs();
   createOrgOptions();
   getProblemCard();
+  styleFormHeadings();
+  styleFields();
+  controlLabels();
   // End UI Fixes
 
   // Start Google Maps Autocomplete
@@ -327,4 +330,19 @@ fixNavBar = () => {
     addProblem.addClass("py-2");
     addSolution.addClass("py-2");
   }
+};
+
+const styleFormHeadings = () => {
+  $("h6")
+    .not(":first")
+    .prepend("<hr />");
+  $(".form-section-heading").addClass("enrichment-details-page-subheadings");
+};
+
+const styleFields = () => {
+  $(".input-with-feedback").addClass("field-styles");
+};
+
+const controlLabels = () => {
+  $(".control-label").addClass("label-styles");
 };
