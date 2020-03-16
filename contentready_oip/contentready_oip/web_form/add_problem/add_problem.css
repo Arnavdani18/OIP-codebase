@@ -65,3 +65,56 @@
   font-weight: 400;
   margin-bottom: 2rem;
 }
+
+#sector-options > .form-check-inline {
+  font-size: var(--f14);
+}
+
+.alpha-primary-solid {
+  box-sizing: border-box;
+  color: var(--secondary6);
+  background-color: var(--primary3);
+  border: 2px solid var(--primary3);
+  border-radius: var(--round4);
+  font-size: var(--f14);
+  font-weight: 600;
+  letter-spacing: var(--space);
+  line-height: 2.2rem;
+}
+
+.alpha-primary-solid:hover {
+  color: var(--secondary6);
+  background-color: var(--primary3);
+}
+
+.alpha-primary-outline {
+  box-sizing: border-box;
+  color: var(--primary3);
+  background-color: transparent;
+  border: 2px solid var(--primary1);
+  border-radius: var(--round4);
+  font-size: var(--f14);
+  font-weight: 600;
+  letter-spacing: var(--space);
+  line-height: 2.2rem;
+}
+
+.alpha-primary-outline:hover {
+  color: var(--primary3);
+  background-color: transparent;
+}
+
+.auto-saved {
+  font-size: 1.4rem;
+  line-height: 2.2rem;
+  letter-spacing: var(--space);
+  margin-bottom: 0px;
+}
+
+.add-problem-icon {
+  line-height: 4rem;
+  width: 2rem;
+  font-size: 3rem;
+  height: 2.4rem;
+  margin-right: 1rem;
+}
