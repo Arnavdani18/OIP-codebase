@@ -1,29 +1,35 @@
 <!-- jinja -->
 <!-- no-breadcrumbs -->
 <!-- static -->
-<div class="container my-5">
-    
-            <div class="input-group input-section">
-                <div class="input-group-prepend style1">
-                    <span class="input-group-text">
+<div class="container my-5 p-0">
+
+    <div class="input-group input-section">
+        <div class="input-group-prepend style1">
+            <span class="input-group-text">
                         <img
                             src="/files/Search.svg"
                             alt=""
                             style="opacity: .3;"
                         />
                     </span>
-                </div>
-                <input type="search" class="form-control form-control-lg style1" aria-label="Search the Open Innovation Platform" placeholder="Search for problems, solutions and contributors" id="search-input">
-                <div class="input-group-append style1">
-                <button type="button" data-enabled=1 class="btn active-btn " onclick="toggleProblems()" id="problem-selector">Problems</button>
-                <button type="button" data-enabled=1 class="btn active-btn rounded-right" onclick="toggleSolutions()" id="solution-selector">Solutions</button>
-                </div>
-            </div>
         </div>
-    
-
-        
+        <input type="search" class="form-control form-control-lg style1" aria-label="Search the Open Innovation Platform" placeholder="Search for problems, solutions and contributors" id="search-input">
+        <div class="input-group-append style1">
+            <!-- <button type="button" data-enabled=1 class="btn active-btn " onclick="toggleProblems()" id="problem-selector">Problems</button> -->
+            <!-- <button type="button" data-enabled=1 class="btn active-btn rounded-right" onclick="toggleSolutions()" id="solution-selector">Solutions</button> -->
+            <select class="search-mode" id="">
+                <option selected value="all">All</option>
+                <option value="problem">Problem</option>
+                <option value="solution">Solution</option>
+                <option value="profile">Profile</option>
+            </select>
+        </div>
+    </div>
 </div>
+    
+<div class="container">
+    {% include "templates/includes/common/filter.html" %}
+  </div>
 
 <div class="container no-result">
    <section class="row zeroResult-section">
@@ -267,7 +273,15 @@
         font-size: 1.2rem;
     }
 
-    .active-btn:hover{
+    .search-mode {
+        background-color: var(--secondary6);
+        color: var(--primary2);
+        width: 10rem;
+        font-size: var(--f14);
+        border: none;
+    }
+
+    /* .active-btn:hover{
         color: var(--secondary6);
     }
 
@@ -281,7 +295,7 @@
     .not-active-btn:hover{
         background-color: var(--secondary6);
         color: var(--primary2);
-    }
+    } */
 
     @media only screen and (max-width: 600px) {
     .input-section {
