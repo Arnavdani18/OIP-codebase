@@ -1,37 +1,105 @@
-.page-breadcrumbs{
-    display: none;
+.page-breadcrumbs {
+  display: none;
 }
 
-.hide-control{
-    display: none;
+.hide-control {
+  display: none;
 }
 
 .form-layout {
-    background-color: white;
-    padding: 2rem;
+  background-color: white;
+  padding: 2rem;
 }
 
 .ql-container {
-    background-color: white;
+  background-color: white;
 }
 
-.web-form-actions{
-    display: none;
+.web-form-actions {
+  display: none;
 }
 
 .form-group label {
-    font-size: 1.2rem;
-    font-weight: bolder;
+  font-size: 1.2rem;
+  font-weight: bolder;
 }
 
 .form-control {
-    font-size: 1.2rem;
+  font-size: 1.2rem;
 }
 
 .control-label {
-    font-weight: bolder;
+  font-weight: bolder;
 }
 
 .web-form-footer {
-    display: none;
+  display: none;
+}
+
+.label-styles {
+  font-size: 1.4rem !important;
+  font-weight: 500 !important;
+}
+
+.edit-profile-subheadings {
+  font-size: 2rem;
+  line-height: 2.2rem;
+  font-weight: 400;
+  margin-bottom: 2rem;
+}
+
+.field-styles {
+  padding: 1.5rem 1rem;
+  font-size: 1.4rem;
+  font-weight: normal;
+  margin-bottom: 2rem;
+}
+
+.frappe-control[data-fieldname='org_title'] {
+  margin-top: 0.5rem;
+}
+
+.frappe-control[data-fieldname='user'],
+.frappe-control[data-fieldtype='Check'] > div > label {
+  font-weight: normal;
+  font-size: 1.4rem;
+}
+
+#sector-options > .form-check-inline,
+#persona-options > .form-check-inline {
+  font-size: var(--f14);
+}
+
+.alpha-primary-solid {
+  box-sizing: border-box;
+  color: var(--secondary6);
+  background-color: var(--primary3);
+  border: 2px solid var(--primary3);
+  border-radius: var(--round4);
+  font-size: var(--f14);
+  font-weight: 600;
+  letter-spacing: var(--space);
+  line-height: 2.2rem;
+}
+
+.alpha-primary-solid:hover {
+  color: var(--secondary6);
+  background-color: var(--primary3);
+}
+
+.alpha-primary-outline {
+  box-sizing: border-box;
+  color: var(--primary3);
+  background-color: transparent;
+  border: 2px solid var(--primary1);
+  border-radius: var(--round4);
+  font-size: var(--f14);
+  font-weight: 600;
+  letter-spacing: var(--space);
+  line-height: 2.2rem;
+}
+
+.alpha-primary-outline:hover {
+  color: var(--primary3);
+  background-color: transparent;
 }
