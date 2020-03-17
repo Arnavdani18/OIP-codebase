@@ -50,9 +50,9 @@
       {% if not loop.last %}
       ,&nbsp;
       {% endif %}{% endfor %}
-      {% if (personas | length) > 2 %}
+      {% if (user.personas | length) > 2 %}
       <button class="tag actions text-capitalize">
-        +{{ (personas | length) - 2 }}
+        +{{ (user.personas | length) - 2 }}
       </button>
       {% endif %}
     </p>
