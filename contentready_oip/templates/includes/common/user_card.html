@@ -51,9 +51,7 @@
       ,&nbsp;
       {% endif %}{% endfor %}
       {% if (user.personas | length) > 2 %}
-      <button class="tag actions text-capitalize">
         +{{ (user.personas | length) - 2 }}
-      </button>
       {% endif %}
     </p>
   </div>
