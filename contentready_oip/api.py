@@ -1,5 +1,6 @@
 import frappe
 import json
+from frappe import _
 
 def nudge_guests():
     if not frappe.session.user or frappe.session.user == 'Guest':
@@ -457,3 +458,42 @@ def delete_enrichment(name):
         return True
     except:
         frappe.throw('Enrichment not found.')
+
+@frappe.whitelist(allow_guest=True)
+def register(form=None):
+    if not form:
+        form = dict(frappe.form_dict)
+    frappe.set_user('Administrator')
+    form['doctype'] = 'User'
+    user_by_email = frappe.db.get("User", {"email": form['email']})
+    if not user_by_email:
+        from frappe.utils import random_string
+        user = frappe.get_doc({
+            "doctype":"User",
+            "email": form['email'],
+            "first_name": form['first_name'],
+            "last_name": form['last_name'],
+            "enabled": 1,
+            "user_type": "Website User",
+            "send_welcome_email": False
+        })
+        user.flags.ignore_permissions = True
+        user.insert()
+        # set default signup role as per Portal Settings
+        default_role = frappe.db.get_value("Portal Settings", None, "default_role")
+        if default_role:
+            user.add_roles(default_role)
+        frappe.db.commit()
+        success_msg = "You will shortly receive a verification email with a link to set your password and start the application process."
+        frappe.respond_as_web_page(_("Sign up successful"),
+            _(success_msg),
+            http_status_code=200, indicator_color='green', fullpage = True, primary_action='/')
+        return frappe.website.render.render("message", http_status_code=200)
+    else:
+        error_msg = 'You have already signed up with this email. Try logging in instead.'
+        # frappe.throw(error_msg)
+        frappe.respond_as_web_page(_("Sign up error"),
+            _(error_msg),
+            http_status_code=400, indicator_color='red', fullpage = True, primary_action='/')
+        return frappe.website.render.render("message", http_status_code=400)
+    
