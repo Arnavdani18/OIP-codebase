@@ -239,8 +239,7 @@ frappe.ready(async function() {
   const pageHeadingSection = () => {
     $('button:contains("Update") , button:contains("Save")')
       .removeClass('btn-primary btn-sm')
-      .addClass('alpha-primary-solid')
-      .css({ height: '4rem' });
+      .addClass('btn-outline-primary outline-primary-btn');
 
     $('.page-header-actions-block').addClass('d-flex align-items-center');
 

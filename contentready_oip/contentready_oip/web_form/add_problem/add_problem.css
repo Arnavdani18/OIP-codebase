@@ -69,40 +69,6 @@
   font-size: var(--f14);
 }
 
-.alpha-primary-solid {
-  box-sizing: border-box;
-  color: var(--secondary6);
-  background-color: var(--primary3);
-  border: 2px solid var(--primary3);
-  border-radius: var(--round4);
-  font-size: var(--f14);
-  font-weight: 600;
-  letter-spacing: var(--space);
-  line-height: 2.2rem;
-}
-
-.alpha-primary-solid:hover {
-  color: var(--secondary6);
-  background-color: var(--primary3);
-}
-
-.alpha-primary-outline {
-  box-sizing: border-box;
-  color: var(--primary3);
-  background-color: transparent;
-  border: 2px solid var(--primary1);
-  border-radius: var(--round4);
-  font-size: var(--f14);
-  font-weight: 600;
-  letter-spacing: var(--space);
-  line-height: 2.2rem;
-}
-
-.alpha-primary-outline:hover {
-  color: var(--primary3);
-  background-color: transparent;
-}
-
 .auto-saved {
   font-size: 1.4rem;
   line-height: 2.2rem;

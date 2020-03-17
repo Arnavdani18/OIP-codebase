@@ -380,13 +380,11 @@ frappe.ready(async () => {
   const pageHeadingSection = () => {
     $('button:contains("Save as Draft")')
       .removeClass('btn-sm')
-      .addClass('alpha-primary-outline')
-      .css({ height: '4rem' });
+      .addClass('btn-outline-primary outline-primary-btn');
 
     $('button:contains("Publish")')
-      .removeClass('btn-primary')
-      .addClass('alpha-primary-solid')
-      .css({ height: '4rem' });
+      .removeClass('')
+      .addClass('solid-primary-btn');
 
     $('#auto-save-alert').addClass('auto-saved');
     $('.page-header-actions-block').addClass('d-flex align-items-center');
