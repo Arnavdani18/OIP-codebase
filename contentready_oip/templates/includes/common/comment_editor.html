@@ -25,7 +25,7 @@
           <i class="far fa-backspace fa-horizontal"></i>
         </button>
         <button
-          class="btn btn-outline-primary pattern1"
+          class="btn btn-outline-primary attach-btn pattern1"
           title="Attachment"
           type="button"
           onclick="showDropzone('{{doctype}}', '{{name}}')"
@@ -196,5 +196,15 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
+  }
+  .attach-btn {
+    color: var(--primary1);
+    border: 1px solid var(--primary1);
+    border-color: var(--primary1);
+  }
+  .attach-btn:hover {
+    color: #ffffff;
+    background-color: var(--primary1);
+    border-color: var(--primary1);
   }
 </style>

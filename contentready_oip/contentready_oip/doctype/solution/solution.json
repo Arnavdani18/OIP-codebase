@@ -340,7 +340,7 @@
   }
  ],
  "route": "list_solutions",
- "search_fields": "title, description",
+ "search_fields": "title",
  "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",

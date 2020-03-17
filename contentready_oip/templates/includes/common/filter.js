@@ -12,10 +12,10 @@ frappe.ready(() => {
     // Start Initialisation - Values are set from session into context if available
     // We can use Jinja2 templates with context here as the JS is compiled server-side.
     {% if (filter_location_name and filter_location_range) %}
-        // console.log(`{{selectedLocation}}`);
+        // console.log(`{{filter_location_name}}, {{filter_location_range}}`);
         showDistanceSelect();
         $('#autocomplete').val('{{filter_location_name}}');
-        $('#range-sel').val(`{{filter_location_range}}`);
+        $('#range-sel').val('{{filter_location_range}}');
     {% else %}
         if (localStorage) {
             const filter_location_name = localStorage.getItem('filter_location_name');
@@ -90,6 +90,33 @@ frappe.ready(() => {
         showDistanceSelect();
         return selectedLocation;
     }
+    
+    clearLocationIfEmpty = () => {
+        const location_name = $('#autocomplete').val();
+        if (location_name) {
+            return false; // don't do anything
+        }
+        if (frappe.session.user !== 'Guest') {
+            // Send this information to backend to store in session
+            frappe.call({
+                method: 'contentready_oip.api.clear_location_filter',
+                args: {
+                },
+                callback: function(r) {
+                    // console.log(r.message);
+                    // Reload as index.py will use the session variables to filter problems/solutions shown.
+                    window.location.reload();
+                }
+            });
+        } else if (localStorage) {
+            localStorage.setItem('filter_location_name', '');
+            localStorage.setItem('filter_location_lat', '');
+            localStorage.setItem('filter_location_lng', '');
+            localStorage.setItem('filter_location_range', '');
+            window.location.reload();
+        }
+    }
+
     storeLocationFilter = () => {
         let selectedLocation;
         try {
@@ -125,6 +152,26 @@ frappe.ready(() => {
             localStorage.setItem('filter_location_name', filter_location_name);
             localStorage.setItem('filter_location_lat', filter_location_lat);
             localStorage.setItem('filter_location_lng', filter_location_lng);
+            localStorage.setItem('filter_location_range', filter_location_range);
+            window.location.reload();
+        }
+    }
+    storeRangeFilter = () => {
+        const filter_location_range = Number($('#range-sel').val()); // Read range from the select dropdown
+        if (frappe.session.user !== 'Guest') {
+            // Send this information to backend to store in session
+            frappe.call({
+                method: 'contentready_oip.api.set_location_filter',
+                args: {
+                    filter_location_range: filter_location_range,
+                },
+                callback: function(r) {
+                    // console.log(r.message);
+                    // Reload as index.py will use the session variables to filter problems/solutions shown.
+                    window.location.reload();
+                }
+            });
+        } else if (localStorage) {
             localStorage.setItem('filter_location_range', filter_location_range);
             window.location.reload();
         }

@@ -18,6 +18,15 @@ def set_location_filter(filter_location_name=None, filter_location_lat=None,filt
     return filter_location_lat, filter_location_lng, filter_location_range
 
 @frappe.whitelist(allow_guest = True)
+def clear_location_filter():
+    frappe.session.data['filter_location_name'] = ''
+    frappe.session.data['filter_location_lat'] = None
+    frappe.session.data['filter_location_lng'] = None
+    frappe.session.data['filter_location_range'] = None
+    return True
+
+
+@frappe.whitelist(allow_guest = True)
 def set_sector_filter(filter_sectors=[]):
     if not isinstance(filter_sectors, list):
         filter_sectors = json.loads(filter_sectors)
@@ -66,7 +75,7 @@ def get_child_table(child_table_doctype, parent_doctype, parent_name):
     return frappe.get_all(child_table_doctype, filters={'parenttype': parent_doctype, 'parent': parent_name})
 
 @frappe.whitelist(allow_guest = True)
-def get_filtered_content(doctype, filter_location_lat, filter_location_lng, filter_location_range, filter_sectors, limit_page_length=20, html=False):
+def get_filtered_content(doctype, filter_location_lat, filter_location_lng, filter_location_range, filter_sectors, limit_page_length=20, limit_start = 0, html=False):
     if isinstance(filter_sectors, str):
         try:
             filter_sectors = json.loads(filter_sectors)
@@ -90,15 +99,17 @@ def get_filtered_content(doctype, filter_location_lat, filter_location_lng, filt
     if not filter_sectors:
         filter_sectors = ['all']
     if 'all' in filter_sectors:
-        filtered = frappe.get_list(doctype, filters={'is_published': True}, limit_page_length=limit_page_length)
+        filtered = frappe.get_list(doctype, filters={'is_published': True})
         content_set = {f['name'] for f in filtered}
     else:
-        filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', filter_sectors]}, limit_page_length=limit_page_length)
+        filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', filter_sectors]})
         content_set = {f['parent'] for f in filtered}
     # TODO: Implement location filtering using Elasticsearch
     from geopy import distance
     content = []
-    for c in content_set:
+    start = limit_start*limit_page_length
+    end = start + limit_page_length
+    for c in list(content_set)[start:end]:
         doc = frappe.get_doc(doctype, c)
         if doc.is_published:
             if (doc.latitude != None) and (doc.longitude != None) and (filter_location_lat != None) and (filter_location_lng != None) and (filter_location_range != None):

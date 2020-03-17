@@ -27,7 +27,7 @@
   <div class="" id="sector-sel-div">
     <select
       class="pattern1"
-      onChange="storeSectorFilter(event)"
+      <!-- onChange="storeSectorFilter(event)" -->
       id="sector-sel"
     >
       <option selected value="all">All Sectors</option>
@@ -43,15 +43,16 @@
       name=""
       id="autocomplete"
       placeholder="Search for location..."
+      onChange="clearLocationIfEmpty()"
     />
   </div>
   <div class="in-mob" id="range-sel-div" style="display: none;">
-    <select class="pattern1" onChange="storeLocationFilter()" id="range-sel">
+    <select class="pattern1" onChange="storeRangeFilter()" id="range-sel">
       <option value="0">0 km</option>
-      <option selected value="25">25 km</option>
-      <option value="50">50 km</option>
-      <option value="100">100 km</option>
-      <option value="200">200 km</option>
+      <option selected value="25.0">25 km</option>
+      <option value="50.0">50 km</option>
+      <option value="100.0">100 km</option>
+      <option value="200.0">200 km</option>
     </select>
   </div>
 </div>
