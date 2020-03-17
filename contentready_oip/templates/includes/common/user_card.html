@@ -46,7 +46,7 @@
     </p>
     <p>
       Persona: {% for persona in user.personas[:2] %}
-      <span>{{persona.persona}}</span>,&nbsp;{% endfor %}
+      <span>{{persona.persona}}</span>{{ ",&nbsp;" if not loop.last }}{% endfor %}
       {% if (personas | length) > 2 %}
       <button class="tag actions text-capitalize">
         +{{ (personas | length) - 2 }}
