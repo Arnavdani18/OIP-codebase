@@ -27,16 +27,14 @@
   }
 </style>
 
-<div class="profile-container actions" role="group">
+<div class="profile-container actions" role="group" onclick="window.location.href = '/{{user.route}}'">
   <div class="profile-image">
     <img src="{{ user.photo }}" alt="profile photo" class="profile-image" />
   </div>
 
   <div class="profile-name">
     <h3 class="pattern1">
-      <a href="javascript:void(0);">
-        {{ user.full_name }}
-      </a>
+      {{ user.full_name }}
     </h3>
   </div>
 
