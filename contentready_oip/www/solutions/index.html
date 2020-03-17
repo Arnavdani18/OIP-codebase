@@ -13,8 +13,7 @@
           <img src="/files/problem_icon.svg" alt="" height="24" width="20" />
           <h3>
             Solutions Listed (<span id="solutions-count"
-              >{{ solutions | length }}</span
-            >)
+              >{{ solutions | length }} of {{ total_count }}, Page {{page}}</span>)
           </h3>
         </div>
       </div>
@@ -26,6 +25,19 @@
       {% include "templates/includes/solution/solution_card.html" %}
     </div>
     {% endfor %}
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="col-sm-12 problem-listed-container">
+        <div class="d-flex align-items-center">
+          <h3>
+            <a href="?page={{page + 1}}" style="text-decoration: none;color: white;">
+              Next Page
+            </a>
+          </h3>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

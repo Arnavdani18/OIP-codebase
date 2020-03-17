@@ -1,10 +1,34 @@
 <!-- jinja -->
 <!-- no-breadcrumbs -->
-<!-- static -->
-<div class="container">
-  <p>contributors works!</p>
-</div>
+<!-- no-cache -->
 
+<div class="container my-5">
+  <div class="container">
+    {% include "templates/includes/common/filter.html" %}
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="col-sm-12 problem-listed-container">
+        <div class="d-flex align-items-center">
+          <img src="/files/problem_icon.svg" alt="" height="24" width="20" />
+          <h3>
+            Contributors Listed (<span id="contributors-count"
+              >{{ users | length }}</span
+            >)
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" id="contributors-container">
+    {% if users %} {% for user in users %}
+    <div class="col-md-3 py-4 border">
+      {% include "templates/includes/common/user_card.html" %}
+    </div>
+    {% endfor %} {% endif %}
+  </div>
+</div>
 <script>
   {% include "public/js/global.js" %}
 </script>

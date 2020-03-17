@@ -75,7 +75,7 @@ def get_child_table(child_table_doctype, parent_doctype, parent_name):
     return frappe.get_all(child_table_doctype, filters={'parenttype': parent_doctype, 'parent': parent_name})
 
 @frappe.whitelist(allow_guest = True)
-def get_filtered_content(doctype, filter_location_lat, filter_location_lng, filter_location_range, filter_sectors, limit_page_length=20, html=False):
+def get_filtered_content(doctype, filter_location_lat, filter_location_lng, filter_location_range, filter_sectors, limit_page_length=20, limit_start = 0, html=False):
     if isinstance(filter_sectors, str):
         try:
             filter_sectors = json.loads(filter_sectors)
@@ -99,10 +99,10 @@ def get_filtered_content(doctype, filter_location_lat, filter_location_lng, filt
     if not filter_sectors:
         filter_sectors = ['all']
     if 'all' in filter_sectors:
-        filtered = frappe.get_list(doctype, filters={'is_published': True}, limit_page_length=limit_page_length)
+        filtered = frappe.get_list(doctype, filters={'is_published': True}, limit_page_length=limit_page_length,limit_start=limit_start)
         content_set = {f['name'] for f in filtered}
     else:
-        filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', filter_sectors]}, limit_page_length=limit_page_length)
+        filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', filter_sectors]}, limit_page_length=limit_page_length,limit_start=limit_start)
         content_set = {f['parent'] for f in filtered}
     # TODO: Implement location filtering using Elasticsearch
     from geopy import distance
