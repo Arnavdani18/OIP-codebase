@@ -18,6 +18,15 @@ def set_location_filter(filter_location_name=None, filter_location_lat=None,filt
     return filter_location_lat, filter_location_lng, filter_location_range
 
 @frappe.whitelist(allow_guest = True)
+def clear_location_filter():
+    frappe.session.data['filter_location_name'] = ''
+    frappe.session.data['filter_location_lat'] = None
+    frappe.session.data['filter_location_lng'] = None
+    frappe.session.data['filter_location_range'] = None
+    return True
+
+
+@frappe.whitelist(allow_guest = True)
 def set_sector_filter(filter_sectors=[]):
     if not isinstance(filter_sectors, list):
         filter_sectors = json.loads(filter_sectors)
