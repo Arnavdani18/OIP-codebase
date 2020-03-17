@@ -2,7 +2,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Do you agree with this problem statement?</h5>
+                <h4 class="modal-title">Fill in details to validate</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -10,26 +10,25 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="validation-comment">Please explain your validation.</label>
+                        <label for="validation-comment" class="modal-label">Comment</label>
                         <textarea type="text" class="form-control" id="validation-comment-{{name}}" rows="3"
                             placeholder="Enter comment"></textarea>
                     </div>
                 </form>
                 <form class="dropzone dz-clickable" data-file-url='' id='validation-dropzone-{{name}}'>
-                    <div class="dz-default dz-message"><button class="dz-button" type="button">Drop file here to
-                            upload</button></div>
+                    <div class="dz-default dz-message "><button class="dz-button" type="button">Add your attachment</button></div>
                 </form>
             </div>
             <div class="modal-footer">
                 {% if doctype == 'Validation Table' %}
                 <!-- Edit mode -->
-                <button type="button" class="card-btn"
+                <button type="button" class="modal-btn btn-outline-danger"
                     onclick="deleteValidation('{{doctype}}', '{{name}}')">Delete</button>
                 {% endif %}
-                <button type="button" class="card-btn"
-                    onclick="submitValidation('{{doctype}}', '{{name}}', false)">Disagree</button>
-                <button type="button" class="card-btn"
+                <button type="button" class="modal-btn btn-outline-success"
                     onclick="submitValidation('{{doctype}}', '{{name}}', true)">Agree</button>
+                <button type="button" class="modal-btn btn-outline-danger mr-auto"
+                    onclick="submitValidation('{{doctype}}', '{{name}}', false)">Disagree</button>
             </div>
         </div>
     </div>
@@ -100,13 +99,14 @@
                     'Accept': 'application/json',
                     'X-Frappe-CSRF-Token': frappe.csrf_token
                 },
-                init: function() {
+                init: function () {
                     // use this event to add to child table
                     this.on("complete", (file) => {
                         // console.log('{{name}}');
                         const response = JSON.parse(file.xhr.response);
                         const file_url = response.message.file_url;
-                        $('#validation-dropzone-{{name}}').data('file-url', file_url);
+                        $('#validation-dropzone-{{name}}').data('file-url',
+                            file_url);
                     });
                     // use this event to remove from child table
                     this.on('removedfile', (file) => {
@@ -119,3 +119,25 @@
         // End dropzone.js integration
     })
 </script>
+
+<style>
+    .modal-btn {
+        height: 4.2rem;
+        box-sizing: border-box;
+        /* border: 0.2rem solid #d1811a; */
+        border-radius: 0.4rem;
+        background-color: #ffffff;
+        /* color: #d98b26; */
+        font-size: 1.4rem;
+        font-weight: bold;
+        letter-spacing: -0.01rem;
+        line-height: 1.4rem;
+        align-items: center;
+        text-transform: capitalize;
+        padding: 0 1.5rem;
+    }
+    .modal-label, .dz-message {
+        font-size: 1.4rem;
+        font-weight: bold;
+    }
+</style>
