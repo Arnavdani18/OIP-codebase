@@ -99,15 +99,17 @@ def get_filtered_content(doctype, filter_location_lat, filter_location_lng, filt
     if not filter_sectors:
         filter_sectors = ['all']
     if 'all' in filter_sectors:
-        filtered = frappe.get_list(doctype, filters={'is_published': True}, limit_page_length=limit_page_length,limit_start=limit_start)
+        filtered = frappe.get_list(doctype, filters={'is_published': True})
         content_set = {f['name'] for f in filtered}
     else:
-        filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', filter_sectors]}, limit_page_length=limit_page_length,limit_start=limit_start)
+        filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', filter_sectors]})
         content_set = {f['parent'] for f in filtered}
     # TODO: Implement location filtering using Elasticsearch
     from geopy import distance
     content = []
-    for c in content_set:
+    start = limit_start*limit_page_length
+    end = start + limit_page_length
+    for c in list(content_set)[start:end]:
         doc = frappe.get_doc(doctype, c)
         if doc.is_published:
             if (doc.latitude != None) and (doc.longitude != None) and (filter_location_lat != None) and (filter_location_lng != None) and (filter_location_range != None):
