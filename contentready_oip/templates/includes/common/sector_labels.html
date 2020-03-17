@@ -1,5 +1,10 @@
 <div class="tags my-3">
-  {% for sector in sectors[:2] %} {% set doc = frappe.get_doc('Sector',
+  {% if show_all %}
+  {% set limit = (sectors | length) %}
+  {% else %}
+  {% set limit = 1 %}
+  {% endif %}
+  {% for sector in sectors[:limit] %} {% set doc = frappe.get_doc('Sector',
   sector.sector) %}
   <button
     class="tag actions text-capitalize"
@@ -7,9 +12,9 @@
   >
     {{ doc.title }}
   </button>
-  {% endfor %} {% if (sectors | length) > 2 %}
+  {% endfor %} {% if (sectors | length) > limit %}
   <button class="tag actions text-capitalize">
-    +{{ (sectors | length) - 2 }}
+    +{{ (sectors | length) - limit }}
   </button>
   {% endif %}
 </div>
