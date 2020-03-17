@@ -66,10 +66,17 @@
               role="tabpanel"
               aria-labelledby="user-content-tab"
             >
-              {% for problem in user_problems %} {% include
-              "templates/includes/problem/problem_card.html" %} {% endfor %} {%
-              for solution in user_solutions %} {% include
-              "templates/includes/solution/solution_card.html" %} {% endfor %}
+              {% for problem in user_problems %}
+              <div class="">
+                {% include "templates/includes/problem/problem_card.html" %}
+              </div>
+              <hr />
+              {% endfor %} {% for solution in user_solutions %}
+              <div class="">
+                {% include "templates/includes/solution/solution_card.html" %}
+              </div>
+              <hr class="m-0" />
+              {% endfor %}
             </div>
           </div>
         </div>

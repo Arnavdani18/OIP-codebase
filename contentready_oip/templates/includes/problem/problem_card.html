@@ -1,51 +1,48 @@
-<div class="problem-container" onclick="window.location.href = '/{{problem.route}}'" data-name="{{problem.name}}"
-    style="cursor: pointer; background-color: white; margin-top: 1rem; margin-bottom: 1rem;"
-    id="problem-card-{{problem.name}}">
-    <div class="left-side ">
-        {% include "templates/includes/problem/problem_label.html" %}
+<div
+  class="problem-container"
+  onclick="window.location.href = '/{{problem.route}}'"
+  data-name="{{problem.name}}"
+  style="cursor: pointer; background-color: white;"
+  id="problem-card-{{problem.name}}"
+>
+  <div class="left-side ">
+    {% include "templates/includes/problem/problem_label.html" %}
 
-        <div class="heading-container mt-3 text-capitalize ">
-            <h2 class="heading">
-                {{problem.title}}
-            </h2>
-            {% set city = problem.city %}
-            {% set country = problem.country %}
-            {% include "templates/includes/common/location_tag.html" %}
-        </div>
-
-        <div class="created-by my-3">
-            {% set doc_owner = problem.owner %}
-            {% set date = problem.creation %}
-            {% include "templates/includes/common/user_thumbnail.html" %}
-        </div>
-
-        
-        {% set sectors = problem.sectors %}
-        {% set doctype = problem.doctype %}
-        {% include "templates/includes/common/sector_labels.html" %}
-    
-
-        <div class="interaction-container mt-3">
-            {% set doctype = problem.doctype %}
-            {% set name = problem.name %}
-            <div class="likes-container">
-                {% set likes = problem.likes %}
-                {% include "templates/includes/common/likes.html" %}
-            </div>
-            <div class="watchers-container">
-                {% set watchers = problem.watchers %}
-                {% include "templates/includes/common/watchers.html" %}
-            </div>
-            <div class="validations-container">
-                {% set validations = problem.validations %}
-                {% include "templates/includes/common/validations.html" %}
-            </div>
-        </div>
+    <div class="heading-container mt-3 text-capitalize ">
+      <h2 class="heading">
+        {{problem.title}}
+      </h2>
+      {% set city = problem.city %} {% set country = problem.country %} {%
+      include "templates/includes/common/location_tag.html" %}
     </div>
 
-    <div class="right-side">
-        {% set media = problem.media %}
-        {% set id = 'card-'+problem.name %}
-        {% include "templates/includes/common/card_featured_image.html" %}
+    <div class="created-by my-3">
+      {% set doc_owner = problem.owner %} {% set date = problem.creation %} {%
+      include "templates/includes/common/user_thumbnail.html" %}
     </div>
+
+    {% set sectors = problem.sectors %} {% set doctype = problem.doctype %} {%
+    include "templates/includes/common/sector_labels.html" %}
+
+    <div class="interaction-container mt-3">
+      {% set doctype = problem.doctype %} {% set name = problem.name %}
+      <div class="likes-container">
+        {% set likes = problem.likes %} {% include
+        "templates/includes/common/likes.html" %}
+      </div>
+      <div class="watchers-container">
+        {% set watchers = problem.watchers %} {% include
+        "templates/includes/common/watchers.html" %}
+      </div>
+      <div class="validations-container">
+        {% set validations = problem.validations %} {% include
+        "templates/includes/common/validations.html" %}
+      </div>
+    </div>
+  </div>
+
+  <div class="right-side">
+    {% set media = problem.media %} {% set id = 'card-'+problem.name %} {%
+    include "templates/includes/common/card_featured_image.html" %}
+  </div>
 </div>
