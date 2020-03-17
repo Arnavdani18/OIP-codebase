@@ -2,12 +2,13 @@
   .profile-name {
     margin-top: 1rem;
   }
-  .profile-name > h3 {
+
+  .profile-name>h3 {
     font-weight: bold;
     text-transform: capitalize;
   }
 
-  .profile-name > h3 > a {
+  .profile-name>h3>a {
     color: var(--secondary1);
   }
 
@@ -16,7 +17,7 @@
     min-height: 4.2rem;
   }
 
-  .profile-persona-and-company > p {
+  .profile-persona-and-company>p {
     font-size: var(--f12);
     color: var(--secondary2);
     padding: 0;
@@ -44,8 +45,13 @@
       {{ user.org_title }}
     </p>
     <p>
-      Persona: {% for persona in user.personas %}
+      Persona: {% for persona in user.personas[:2] %}
       <span>{{persona.persona}}</span>,&nbsp;{% endfor %}
+      {% if (personas | length) > 2 %}
+      <button class="tag actions text-capitalize">
+        +{{ (personas | length) - 2 }}
+      </button>
+      {% endif %}
     </p>
   </div>
 
