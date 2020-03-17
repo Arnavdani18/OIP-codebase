@@ -181,8 +181,10 @@
             if (!clicked) await sleep(500);
             // Look up text again - user could have typed something since the event was triggered.
             const key = $('#search-input').val().trim();
-            const problemsEnabled = $('#problem-selector').data('enabled');
-            const solutionsEnabled = $('#solution-selector').data('enabled');
+            // const problemsEnabled = $('#problem-selector').data('enabled');
+            // const solutionsEnabled = $('#solution-selector').data('enabled');
+            const problemsEnabled = true;
+            const solutionsEnabled = true;
             // console.log(problemsEnabled, solutionsEnabled);
             if (problemsEnabled) {
                 $('#solutions-results-container').show();
@@ -208,11 +210,11 @@
         $('#search-input').on('keyup', (e) => {
             const key = e.target.value.trim();
             if (key.length && key.length % 3 === 0) {
-                const problemsEnabled = $('#problem-selector').data('enabled');
-                const solutionsEnabled = $('#solution-selector').data('enabled');
-                if (!problemsEnabled && !solutionsEnabled) {
-                    frappe.throw('Please enable at least one of Problems or Solutions to complete the search.')
-                }
+                // const problemsEnabled = $('#problem-selector').data('enabled');
+                // const solutionsEnabled = $('#solution-selector').data('enabled');
+                // if (!problemsEnabled && !solutionsEnabled) {
+                //     frappe.throw('Please enable at least one of Problems or Solutions to complete the search.')
+                // }
                 triggerSearch();
             }
         });
