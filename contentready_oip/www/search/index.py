@@ -5,6 +5,7 @@ def get_context(context):
     context.matched_problems = []
     context.matched_solutions = []
     context.matched_contributors = []
+    context.available_sectors = api.get_available_sectors()
     context.key = ''
     parameters = frappe.form_dict
     try:
