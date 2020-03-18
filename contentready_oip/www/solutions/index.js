@@ -26,8 +26,8 @@ frappe.ready(() => {
                 filter_location_range = null;
             }
             console.log(filter_sectors, filter_location_lat, filter_location_lng, filter_location_range);
-            limit_start = Number('{{page}}') - 1;
-            limit_page_length = 20;
+            // limit_start = Number('{{page}}') - 1;
+            // limit_page_length = 20;
             frappe.call({
                 method: 'contentready_oip.api.get_filtered_content',
                 args: {
@@ -37,15 +37,15 @@ frappe.ready(() => {
                     filter_location_range: filter_location_range,
                     filter_sectors: filter_sectors,
                     html: true,
-                    limit_page_length: limit_page_length,
-                    limit_start: limit_start
+                    limit_page_length: Number('{{limit_page_length}}'),
+                    limit_start: Number('{{limit_start}}')
                 },
                 callback: function(r) {
                     r.message.map(el => {
                         el = `<div class="col-md-6">`+el+`</div>`;
                         $('#solutions-container').append(el);
                     })
-                    $('#solutions-count').text(r.message.length);
+                    // $('#solutions-count').text(r.message.length);
                 }
             });
         }

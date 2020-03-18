@@ -14,7 +14,7 @@
           <img src="/files/problem_icon.svg" alt="" height="24" width="20" />
           <h3>
             Problems Listed (<span id="problems-count"
-              >{{ problems | length }}</span> of {{ total_count }}, Page {{page}})
+              >{{ start +1 }}</span>-{{end}} of {{ total_count }})
           </h3>
         </div>
       </div>
@@ -27,21 +27,26 @@
     </div>
     {% endfor %} {% endif %}
   </div>
-  {% if has_next_page %}
+  
   <div class="row">
     <div class="col">
       <div class="col-sm-12 problem-listed-container">
         <div class="d-flex align-items-center">
           <h3>
+            {% if has_next_page %}
             <a href="?page={{page + 1}}" style="text-decoration: none;color: white;">
               Next Page
             </a>
+            {% elif page != 1 %}
+            <a href="?page={{page - 1}}" style="text-decoration: none;color: white;">
+              Previous Page
+            </a>
+            {% endif %}
           </h3>
         </div>
       </div>
     </div>
   </div>
-  {% endif %}
   
 </div>
 <script>

@@ -7,11 +7,17 @@ def get_context(context):
         context.page = int(parameters['page'])
     except:
         context.page = 1
-    limit_start = context.page - 1
-    limit_page_length = 20
     r = api.get_filters()
     context.update(r)
     context.total_count = api.get_homepage_stats()['solutions']
+    limit_start = context.page - 1
+    limit_page_length = 20
+    context.start = limit_start*limit_page_length
+    context.end = context.start + limit_page_length
+    context.limit_page_length = limit_page_length
+    context.limit_start = limit_start
+    if context.end > context.total_count:
+        context.end = context.total_count
     context.has_next_page = False
     if context.total_count > limit_page_length*context.page:
         context.has_next_page = True
