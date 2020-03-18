@@ -18,7 +18,7 @@ def set_location_filter(filter_location_name=None, filter_location_lat=None,filt
     if filter_location_lng != None:
         frappe.session.data['filter_location_lng'] = float(filter_location_lng)
     if filter_location_range != None:
-        frappe.session.data['filter_location_range'] = float(filter_location_range)
+        frappe.session.data['filter_location_range'] = int(filter_location_range)
     return filter_location_lat, filter_location_lng, filter_location_range
 
 @frappe.whitelist(allow_guest = True)
@@ -38,6 +38,10 @@ def set_sector_filter(filter_sectors=[]):
         filter_sectors = ['all']
     frappe.session.data['filter_sectors'] = filter_sectors
     return frappe.session.data['filter_sectors']
+
+@frappe.whitelist(allow_guest = True)
+def get_available_sectors():
+    return frappe.get_list('Sector', ['name', 'title'])
 
 @frappe.whitelist(allow_guest = True)
 def get_filters():
@@ -88,15 +92,10 @@ def convert_if_json(value):
 
 @frappe.whitelist(allow_guest = True)
 def get_filtered_content(doctype, filter_location_lat, filter_location_lng, filter_location_range, filter_sectors, limit_page_length=20, limit_start = 0, html=False):
-    # print(filter_sectors, filter_location_lat, filter_location_lng, filter_location_range)
     filter_sectors = convert_if_json(filter_sectors)
     filter_location_lat = convert_if_json(filter_location_lat)
     filter_location_lng = convert_if_json(filter_location_lng)
     filter_location_range = convert_if_json(filter_location_range)
-    html = convert_if_json(html)
-    limit_page_length = convert_if_json(limit_page_length)
-    limit_start = convert_if_json(limit_start)
-    # print(filter_sectors, filter_location_lat, filter_location_lng, filter_location_range)
     if not filter_sectors:
         filter_sectors = ['all']
     if 'all' in filter_sectors:
@@ -167,9 +166,7 @@ def global_search_content_by_text(text, limit_page_length=5, html=True):
             payload[doctype].append(html)
             for s in c.sectors:
                 sectors.add(s.sector)
-    # print(sectors)
     contributors = get_content_recommended_for_user('User Profile', sectors, limit_page_length=limit_page_length)
-    # print(contributors)
     doctype = 'User Profile'
     payload[doctype] = []
     for c in contributors:
@@ -191,7 +188,6 @@ def search_contributors_by_text(text, limit_page_length=5, html=True):
         doc = frappe.get_doc(doctype, p)
         doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
         if html:
-            # content_type = doctype.lower()
             template = "templates/includes/common/user_card.html"
             context = {
                 'user': doc
