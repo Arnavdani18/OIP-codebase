@@ -25,6 +25,7 @@ frappe.ready(() => {
             } else {
                 filter_location_range = null;
             }
+            console.log(filter_sectors, filter_location_lat, filter_location_lng, filter_location_range);
             frappe.call({
                 method: 'contentready_oip.api.get_filtered_content',
                 args: {
