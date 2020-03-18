@@ -1,10 +1,9 @@
 <h3 class="heading" id="problems-section">
-    This solution addresses the following problems.
+  This solution addresses the following problems.
 </h3>
 
 <div class="row">
-    {% for p in problems_addressed %}
-    {% set problem = frappe.get_doc('Problem', p.problem) %}
-    {% include "templates/includes/problem/problem_card.html" %}
-    {% endfor %}
+  {% for p in problems_addressed %} {% set problem = frappe.get_doc('Problem',
+  p.problem) %} {% include "templates/includes/problem/problem_card_small.html"
+  %} {% endfor %}
 </div>
