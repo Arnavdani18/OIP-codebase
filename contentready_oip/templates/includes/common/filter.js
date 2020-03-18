@@ -41,7 +41,7 @@ frappe.ready(() => {
                 $('#sector-sel').val(`${sectors[0]}`);
             }
             if (Object.keys(query_obj).length) {
-                console.log(query_obj);
+                // console.log(query_obj);
                 // console.log('could refresh')
                 return frappe.utils.make_query_string(query_obj);
             } else {
@@ -164,7 +164,7 @@ frappe.ready(() => {
     const local_qs = loadFilters();
     const window_qs = frappe.utils.get_query_string(window.location.href);
     if (!window_qs && local_qs){
-        reloadWithParams();
+        // reloadWithParams();
     }
     // End Inititialisation
     // Start location filter

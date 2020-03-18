@@ -21,12 +21,12 @@
       </div>
     </div>
   </div>
-  <div class="row" id="contributors-container">
-    {% if users %} {% for user in users %}
-    <div class="col-md-3 py-4 border">
+  <div class="container row" id="contributors-container">
+    {% for user in users %}
+    <div class="col-md-3 mt-4 py-4 border">
       {% include "templates/includes/common/user_card.html" %}
     </div>
-    {% endfor %} {% endif %}
+    {% endfor %}
   </div>
 </div>
 <script>
