@@ -2,7 +2,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Contribute to solving this problem.</h5>
+                <h4 class="modal-title">Fill in the details to collaborate</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -10,32 +10,32 @@
             <div class="modal-body">
                 <form class="was-validated">
                     <div class="form-group">
-                        <label for="personaSelect">Role</label>
+                        <div class="form-group">
+                            <label for="collaboration-comment" class="modal-label">Please state your intent</label>
+                            <textarea type="text" class="form-control is-invalid" id="collaboration-comment-{{name}}" rows="3"
+                                placeholder="Enter comment" required></textarea>
+                                <!-- <div class="invalid-feedback">
+                                    Please explain how you can contribute.
+                                  </div> -->
+                        </div>
+                        <label for="personaSelect" class="modal-label">Persona</label>
                         <select class="form-control" id="persona-select-{{name}}" required>
-                            <option value="">Please Select a Role</option>
+                            <option value="">Please Select a Persona</option>
                             {% for persona in personas %}
                             <option value="{{persona.value}}">{{persona.label}}</option>
                             {% endfor %}
                         </select>
-                        <div class="invalid-feedback">Please select a valid role.</div>
-                    </div>
-                    <div class="form-group">
-                        <label for="collaboration-comment">How can you help?</label>
-                        <textarea type="text" class="form-control is-invalid" id="collaboration-comment-{{name}}" rows="3"
-                            placeholder="Enter comment" required></textarea>
-                            <div class="invalid-feedback">
-                                Please explain how you can contribute.
-                              </div>
+                        <!-- <div class="invalid-feedback">Please select a valid persona.</div> -->
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 {% if doctype == 'Collaboration Table' %}
                 <!-- Edit mode -->
-                <button type="button" class="card-btn" onclick="deleteCollaboration('{{doctype}}', '{{name}}')">Delete</button>
+                <button type="button" class="modal-btn btn-outline-danger" onclick="deleteCollaboration('{{doctype}}', '{{name}}')">Delete</button>
                 {% endif %}
-                <button type="button" class="card-btn"
-                    onclick="submitCollaboration('{{doctype}}', '{{name}}')">Submit</button>
+                <button type="button" class="card-btn mr-auto"
+                    onclick="submitCollaboration('{{doctype}}', '{{name}}')">Add</button>
             </div>
         </div>
     </div>
@@ -77,11 +77,11 @@
             persona: $('#persona-select-'+name).val(),
             comment: $('#collaboration-comment-'+name).val()
         }
-        if (!collaboration.persona){
-            frappe.throw('Please select a role.');
-        }
         if (!collaboration.comment){
-            frappe.throw('Please explain how you can contribute.');
+            frappe.throw('Please state your intent.');
+        }
+        if (!collaboration.persona){
+            frappe.throw('Please select a persona.');
         }
         frappe.call({
             method: 'contentready_oip.api.add_or_edit_collaboration',
@@ -109,3 +109,25 @@
         });
     }
 </script>
+
+<style>
+    .modal-btn {
+        height: 4.2rem;
+        box-sizing: border-box;
+        /* border: 0.2rem solid #d1811a; */
+        border-radius: 0.4rem;
+        background-color: #ffffff;
+        /* color: #d98b26; */
+        font-size: 1.4rem;
+        font-weight: bold;
+        letter-spacing: -0.01rem;
+        line-height: 1.4rem;
+        align-items: center;
+        text-transform: capitalize;
+        padding: 0 1.5rem;
+    }
+    .modal-label, .dz-message {
+        font-size: 1.4rem;
+        font-weight: bold;
+    }
+</style>

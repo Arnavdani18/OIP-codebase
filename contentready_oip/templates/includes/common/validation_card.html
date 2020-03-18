@@ -36,7 +36,7 @@
     {% endif %}
 
     <div class="d-flex align-items-center validate-profile">
-        {% set doc_owner = validation.owner %}
+        {% set doc_owner = validation.user %}
         {% set date = validation.modified %}
         {% include "templates/includes/common/user_thumbnail.html" %}
     </div>

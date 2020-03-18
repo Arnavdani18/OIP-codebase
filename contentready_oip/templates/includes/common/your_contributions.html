@@ -1,0 +1,185 @@
+<style>
+  .updated-at {
+    height: 2rem;
+    color: var(--secondary2);
+    font-size: var(--f12);
+    letter-spacing: -0.01rem;
+    line-height: 2rem;
+    text-align: right;
+  }
+</style>
+{% set date = frappe.utils.now() %}
+<div class="contribution-container">
+  <div class="problem-container" style="cursor: pointer;">
+    <div class="left-side">
+      <div class="solution">
+        <span class="green-bullet"></span>
+        <span>Solution</span>
+      </div>
+
+      <div class="heading-container mt-3 text-capitalize ">
+        <a href="javascript:void(0);" (click)="navigation()" class="text-dark">
+          <h2 class="heading">
+            Tracking of court cases (nature & kind) in the district in the DM
+          </h2>
+        </a>
+      </div>
+
+      <div class="">
+        <div class="col d-flex align-items-center problem-on-mobile px-0">
+          {% set doc_owner = owner %} {% set date = date %} {% include
+          "templates/includes/common/user_thumbnail.html" %}
+        </div>
+      </div>
+
+      <div class="tags mt-3" style="min-height: 3rem;">
+        {% for item in ['Environment','Waste Mangment'] %}
+        <div class="tag">
+          {{item}}
+        </div>
+        {% endfor %}
+        <div class="tag">
+          +7
+        </div>
+      </div>
+
+      <div class="interaction-container mt-3">
+        <div class="likes">
+          <!-- <div class="like-icon">
+            <img src="/files/like_icon.svg" alt="Like Icon" />
+          </div>
+          <div class="number-of-likes">
+            21
+          </div> -->
+          {% include "templates/includes/common/likes.html" %}
+        </div>
+
+        <div class="views">
+          <!-- <div class="views-icon">
+            <img src="/files/watch_list_icon.svg" alt="Watchlist icon" />
+          </div>
+          <div class="number-of-views">
+            44
+          </div> -->
+          {% include "templates/includes/common/watchers.html" %}
+        </div>
+
+        <div class="followers">
+          <!-- <div class="followers-icon">
+            <img src="/files/expert_icon.svg" alt="Experts Icon" />
+          </div>
+          <div class="number-of-followers">
+            33
+          </div> -->
+          {% include "templates/includes/common/validations.html" %}
+        </div>
+      </div>
+    </div>
+
+    <div class="right-side">
+      <!-- <div class="image-and-count-container">
+        <img src="/files/image_placeholder.jpg" alt="image" class="image" />
+
+        <div class="total-count" style="line-height: 1.2rem;">
+          +4
+        </div>
+      </div> -->
+      {% include "templates/includes/common/card_featured_image.html" %}
+    </div>
+  </div>
+
+  <div
+    class=" d-flex justify-content-around update-section py-2 border"
+    style="margin: auto 2rem;border-radius: var(--round4);"
+  >
+    <div class="enriched">
+      <div class="d-flex align-items-center">
+        <div>
+          <img src="/files/enriched.svg" alt="Enriched Icon" />
+        </div>
+        <div class=" ml-2 pattern1">Enriched</div>
+      </div>
+      <div class="updated-at">{{frappe.utils.pretty_date(date)}}</div>
+    </div>
+
+    <div class="validated">
+      <div class="d-flex align-items-center">
+        <div>
+          <img src="/files/not_validated.svg" alt="Validated Icon" />
+        </div>
+        <div class="ml-2 pattern1">Validated</div>
+      </div>
+      <div class="updated-at">{{frappe.utils.pretty_date(date)}}</div>
+    </div>
+    <div class="collaborated">
+      <div class="d-flex align-items-center">
+        <div>
+          <img src="/files/collaborated.svg" alt="Collaborated Icon" />
+        </div>
+        <div class="ml-2 pattern1">Collaborated</div>
+      </div>
+      <div class="updated-at">{{frappe.utils.pretty_date(date)}}</div>
+    </div>
+    <div class="commented">
+      <div class="d-flex align-items-center">
+        <div>
+          <img src="/files/not_commented.svg" alt="Commented Icon" />
+        </div>
+        <div class="ml-2 pattern1">Commented</div>
+      </div>
+      <div class="updated-at">{{frappe.utils.pretty_date(date)}}</div>
+    </div>
+  </div>
+
+  <div class="update-section mt-3 d-none">
+    <div class="update mt-1 w-100">
+      <div class="left-section">
+        9 hours ago
+      </div>
+      <div class="right-section">
+        <img src="../../assets/svg/enrich-light-icon.svg" alt="enriched icon" />
+        <p class="update-text">You have enriched this problem</p>
+      </div>
+    </div>
+    <div class="update mt-1">
+      <div class="left-section">
+        9 hours ago
+      </div>
+      <div class="right-section">
+        <img
+          src="../../assets/svg/collaborated-light-icon.svg"
+          alt="collaborated icon"
+        />
+        <p class="update-text">
+          You have collaborated on this problem
+        </p>
+      </div>
+    </div>
+    <div class="update mt-1">
+      <div class="left-section">
+        9 hours ago
+      </div>
+      <div class="right-section">
+        <img
+          src="../../assets/svg/validated-light-icon.svg"
+          alt="validated icon"
+        />
+        <p class="update-text">You have validated this problem</p>
+      </div>
+    </div>
+    <div class="update mt-1">
+      <div class="left-section">
+        9 hours ago
+      </div>
+      <div class="right-section">
+        <img
+          src="../../assets/svg/comments-light-icon.svg"
+          alt="commented icon"
+        />
+        <p class="update-text">
+          You have commented on this problem
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

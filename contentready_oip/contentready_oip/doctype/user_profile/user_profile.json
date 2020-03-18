@@ -7,17 +7,22 @@
  "engine": "InnoDB",
  "field_order": [
   "user",
+  "first_name",
+  "last_name",
   "full_name",
   "photo",
   "org",
   "org_title",
-  "qualifications",
-  "column_break_4",
-  "is_published",
-  "route",
-  "skills",
   "personas",
   "sectors",
+  "column_break_4",
+  "is_published",
+  "is_email_allowed",
+  "is_sms_allowed",
+  "phone",
+  "skills",
+  "qualifications",
+  "route",
   "section_break_11",
   "city",
   "latitude",
@@ -41,9 +46,9 @@
   },
   {
    "fetch_from": "user.full_name",
+   "fetch_if_empty": 1,
    "fieldname": "full_name",
    "fieldtype": "Data",
-   "in_global_search": 1,
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Full Name",
@@ -164,12 +169,46 @@
    "fieldname": "route",
    "fieldtype": "Data",
    "label": "route"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_email_allowed",
+   "fieldtype": "Check",
+   "label": "Email Notifications",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_sms_allowed",
+   "fieldtype": "Check",
+   "label": "SMS Notifications",
+   "reqd": 1
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Data",
+   "label": "Phone"
+  },
+  {
+   "depends_on": " ",
+   "fetch_from": "user.first_name",
+   "fetch_if_empty": 1,
+   "fieldname": "first_name",
+   "fieldtype": "Data",
+   "label": "First Name"
+  },
+  {
+   "fetch_from": "user.last_name",
+   "fetch_if_empty": 1,
+   "fieldname": "last_name",
+   "fieldtype": "Data",
+   "label": "Last Name"
   }
  ],
  "has_web_view": 1,
  "image_field": "photo",
  "is_published_field": "is_published",
- "modified": "2020-03-06 08:31:42.582641",
+ "modified": "2020-03-11 06:57:42.992268",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "User Profile",

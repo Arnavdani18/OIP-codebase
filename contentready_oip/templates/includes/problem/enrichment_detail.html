@@ -1,127 +1,229 @@
-<div class="modal fade" id="enrichment-modal-{{ name }}" tabindex="-1" role="dialog"
-    aria-labelledby="enrichment-label-{{name}}" aria-hidden="true">
-    <div class="modal-dialog modal-full modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="enrichment-label-{{name}}" hidden>enrichment.title</h5>
-                <ul class="nav nav-tabs nav-section nav-justified " id="leftTab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#details" aria-controls="details" role="tab"
-                            data-toggle="tab">Details</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#media" aria-controls="media" role="tab" #media
-                            data-toggle="tab">Media</a>
-                    </li>
-                </ul>
+<style>
+  .modal-header {
+    align-items: center;
+    padding: 0;
+  }
 
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane active" id="details">
-                        <div class="row" style="padding-bottom: 1rem;">
-                            <div class="col">
-                                <h3 class="heading">
-                                    Description
-                                </h3>
-                                {% set long_text = description %}
-                                {% set short_text = short_description %}
-                                {% set name = name %}
-                                {% include "templates/includes/common/read_more.html" %}
-                            </div>
-                        </div>
-                        <div class="row">
-                            {% set fields = {
-                                'Organization': org_title, 
-                                'Beneficiaries': beneficiaries, 
-                                'Resources Needed': resources_needed,
-                                'Impact': impact,
-                                'Extent': extent,
-                                'Min Population': min_population,
-                                'Max Population': max_population,
-                                'Location(s)': city + ', ' + country,
-                            } %}
-                    
-                            {% for field in fields %}
-                            {% set label =  field %}
-                            {% set value = fields[field] %}
-                            {% include "templates/includes/common/overview_field.html" %}
-                            {% endfor %}
-                        </div>
-                    </div>
-                    {% if (enrichment.media | length) > 0 %}
-                    {% set media = enrichment.media %}
-                    {% set id = enrichment.name %}
-                    <div role="tabpanel" class="tab-pane" id="media">
-                        <div class="container-fluid">
-                            <div class="row attachment-container">
-                                <!-- The image in focus -->
-                                <div class="col text-center">
-                                    <img src="{{media[0].attachment}}" class="img-fluid"
-                                        alt="{{ media[0].description }}" id="image-in-focus-{{id}}" />
-                                </div>
-                            </div>
+  .modal-header > .close {
+    margin-right: 1rem;
+    font-size: 2rem;
+  }
 
-                            <div class="row justify-content-center mt-3">
-                                <h5><span id="index-in-focus-{{id}}">1</span> of {{ media | length }}</h5>
-                            </div>
+  .tab-width {
+    width: 10rem;
+  }
 
-                            <div class="row thumbnail-container" id="available-images">
-                                <!-- Grid of thumbnails -->
-                                {% for m in media %}
-                                <div class="m-2">
-                                    <a onclick="moveToImage(event, '{{loop.index}}', '{{id}}')">
-                                        <img src="{{
-                                        m.attachment
-                                    }}" class="thumb-img {{'active-thumbnail' if loop.index==1}}"
-                                            alt="{{ m.description }}" id="{{id}}-{{loop.index}}" />
-                                    </a>
-                                </div>
-                                {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    {% endif %}
+  .modal-footer > .btn-text {
+    border-color: transparent;
+    color: var(--tertiary1);
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: var(--space);
+    line-height: 2rem;
+  }
+
+  .modal-footer > .btn-text:hover {
+    border-color: none;
+    color: var(--tertiary1);
+  }
+
+  .modal-footer > .solid-btn {
+    border-color: var(--primary2);
+    background-color: var(--primary2);
+    padding: 0.5rem 1rem;
+    color: var(--secondary6);
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: var(--space);
+    line-height: 2rem;
+  }
+</style>
+
+<div
+  class="modal fade"
+  id="enrichment-modal-{{ name }}"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="enrichment-label-{{name}}"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-full modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header ">
+        <!-- <h5 class="modal-title" id="enrichment-label-{{name}}" hidden>
+          enrichment.title
+        </h5> -->
+        <ul
+          class="nav nav-tabs nav-section nav-justified nav-tab-section"
+          id="leftTab"
+          role="tablist"
+        >
+          <li class="nav-item">
+            <a
+              class="nav-link active tab-width"
+              href="#details"
+              aria-controls="details"
+              role="tab"
+              data-toggle="tab"
+              >Details</a
+            >
+          </li>
+          <li class="nav-item">
+            <a
+              class="nav-link tab-width"
+              href="#media"
+              aria-controls="media"
+              role="tab"
+              #media
+              data-toggle="tab"
+              >Media</a
+            >
+          </li>
+        </ul>
+
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="tab-content">
+          <div role="tabpanel" class="tab-pane active" id="details">
+            <div class="row px-4">
+              <div class="col-8">
+                <div class="row" style="padding-bottom: 1rem;" hidden>
+                  <div class="col">
+                    <h2
+                      class="modal-title"
+                      id="enrichment-label-{{name}}"
+                      hidden
+                    >
+                      enrichment.title
+                    </h2>
+                  </div>
                 </div>
+                <div class="row" style="padding-bottom: 1rem;">
+                  <div class="col">
+                    <h3 class="heading">
+                      Description
+                    </h3>
+                    {% set long_text = description %} {% set short_text =
+                    short_description %} {% set name = name %} {% include
+                    "templates/includes/common/read_more.html" %}
+                  </div>
+                </div>
+                <div class="row">
+                  {% set fields = { 'Organization': org_title, 'Beneficiaries':
+                  beneficiaries, 'Resources Needed': resources_needed, 'Impact':
+                  impact, 'Extent': extent, 'Min Population': min_population,
+                  'Max Population': max_population, 'Location(s)': city + ', ' +
+                  country, } %} {% for field in fields %} {% set label = field
+                  %} {% set value = fields[field] %} {% include
+                  "templates/includes/common/overview_field.html" %} {% endfor
+                  %}
+                </div>
+              </div>
+
+              <div class="col-4">
+                <!-- Media comes here -->
+              </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-text" onclick="deleteEnrichment('{{name}}')">
-                    Delete
-                </button>
-                <button type="button" class="btn solid-btn" onclick="window.location.href = `/add-enrichment?name={{name}}`">Edit</button>
+          </div>
+
+          {% if (enrichment.media | length) > 0 %} {% set media =
+          enrichment.media %} {% set id = enrichment.name %}
+
+          <div role="tabpanel" class="tab-pane" id="media">
+            <div class="container-fluid">
+              <div class="row attachment-container">
+                <!-- The image in focus -->
+                <div class="col text-center">
+                  <img
+                    src="{{media[0].attachment}}"
+                    class="img-fluid"
+                    alt="{{ media[0].description }}"
+                    id="image-in-focus-{{id}}"
+                  />
+                </div>
+              </div>
+
+              <div class="row justify-content-center mt-3">
+                <h5>
+                  <span id="index-in-focus-{{id}}">1</span> of {{ media | length
+                  }}
+                </h5>
+              </div>
+
+              <div class="row thumbnail-container" id="available-images">
+                <!-- Grid of thumbnails -->
+                {% for m in media %}
+                <div class="m-2">
+                  <a onclick="moveToImage(event, '{{loop.index}}', '{{id}}')">
+                    <img
+                      src="{{
+                                        m.attachment
+                                    }}"
+                      class="thumb-img {{'active-thumbnail' if loop.index==1}}"
+                      alt="{{ m.description }}"
+                      id="{{id}}-{{loop.index}}"
+                    />
+                  </a>
+                </div>
+                {% endfor %}
+              </div>
             </div>
+          </div>
+          {% endif %}
         </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-text"
+          onclick="deleteEnrichment('{{name}}')"
+        >
+          Delete
+        </button>
+        <button
+          type="button"
+          class="btn solid-btn"
+          onclick="window.location.href = `/add-enrichment?name={{name}}`"
+        >
+          Edit
+        </button>
+      </div>
     </div>
+  </div>
 </div>
 
 <script>
-    moveToImage = (event, i, id) => {
-        $("#image-in-focus-"+id).attr('src', event.target.src);
-        $('.thumb-img').removeClass('active-thumbnail');
-        $('#'+event.target.id).addClass('active-thumbnail');
-        $('#index-in-focus-'+id).text(i);
-    }
+  moveToImage = (event, i, id) => {
+    $('#image-in-focus-' + id).attr('src', event.target.src);
+    $('.thumb-img').removeClass('active-thumbnail');
+    $('#' + event.target.id).addClass('active-thumbnail');
+    $('#index-in-focus-' + id).text(i);
+  };
 
-    deleteEnrichment = (name) => {
-        if (confirm('Are you sure you want to delete this enrichment?')){
-            frappe.call({
-                method: 'contentready_oip.api.delete_enrichment',
-                args: {name: name},
-                callback: (r) => {
-                    // console.log(r);
-                    window.location.reload();
-                }
-            });
+  deleteEnrichment = name => {
+    if (confirm('Are you sure you want to delete this enrichment?')) {
+      frappe.call({
+        method: 'contentready_oip.api.delete_enrichment',
+        args: { name: name },
+        callback: r => {
+          // console.log(r);
+          window.location.reload();
         }
+      });
     }
-
+  };
 </script>
 
 <style>
-    .active-thumbnail {
-        outline: 0.5rem auto rgba(108, 108, 245, 0.918);
-    }
+  .active-thumbnail {
+    outline: 0.5rem auto rgba(108, 108, 245, 0.918);
+  }
 </style>

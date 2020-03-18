@@ -1,37 +1,85 @@
-.page-breadcrumbs{
-    display: none;
+.page-breadcrumbs {
+  display: none;
 }
 
-.hide-control{
-    display: none;
+.hide-control {
+  display: none;
 }
 
 .form-layout {
-    background-color: white;
-    padding: 2rem;
+  background-color: white;
+  padding: 2rem;
 }
 
 .ql-container {
-    background-color: white;
+  background-color: white;
 }
 
-.web-form-actions{
-    display: none;
+.web-form-actions {
+  display: none;
 }
 
 .form-group label {
-    font-size: 1.2rem;
-    font-weight: bolder;
+  font-size: 1.2rem;
+  font-weight: bolder;
 }
 
 .control-label {
-    font-weight: bolder;
+  font-weight: bolder;
 }
 
 .web-form-footer {
-    display: none;
+  display: none;
 }
 
 .hidden {
-    display: none;
+  display: none;
+}
+
+.form-layout-problem-details {
+  font-size: 2rem;
+  line-height: 2.2rem;
+  font-weight: 400;
+  margin-bottom: 2rem;
+}
+
+.label-styles {
+  font-size: 1.4rem !important;
+  font-weight: 500 !important;
+}
+
+.field-styles {
+  font-size: 1.4rem;
+  font-weight: normal;
+  margin-bottom: 2rem;
+}
+
+.form-section-heading hr {
+  margin: 1rem -2.1rem 2rem -2.1rem !important;
+}
+
+.problem-details-page-subheadings {
+  font-size: 2rem;
+  line-height: 2.2rem;
+  font-weight: 400;
+  margin-bottom: 2rem;
+}
+
+#sector-options > .form-check-inline {
+  font-size: var(--f14);
+}
+
+.auto-saved {
+  font-size: 1.4rem;
+  line-height: 2.2rem;
+  letter-spacing: var(--space);
+  margin-bottom: 0px;
+}
+
+.add-problem-icon {
+  line-height: 4rem;
+  width: 2rem;
+  font-size: 3rem;
+  height: 2.4rem;
+  margin-right: 1rem;
 }

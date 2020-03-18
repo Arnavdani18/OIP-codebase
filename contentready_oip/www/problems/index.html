@@ -1,29 +1,54 @@
 <!-- jinja -->
 <!-- no-breadcrumbs -->
-<!-- static -->
-{% include "templates/includes/common/filter.html" %}
+<!-- no-cache -->
 
-<div class="row">
+<div class="container my-5">
+  <div class="container">
+    {% include "templates/includes/common/filter.html" %}
+  </div>
+
+  <div class="row">
     <div class="col">
-        <div class="col-sm-12 problem-listed-container">
-            <div class="d-flex align-items-center">
-                <img
-                    src="/files/problem_icon.svg"
-                    alt=""
-                    height="24"
-                    width="20"
-                />
-                <h3>Problems Listed (<span id="problems-count">{% if problems %}{{ problems | length }}{% endif %}</span>)</h3>
-            </div>
+      <div class="col-sm-12 problem-listed-container">
+        <div class="d-flex align-items-center">
+          <img src="/files/problem_icon.svg" alt="" height="24" width="20" />
+          <h3>
+            Problems Listed (<span id="problems-count"
+              >{{ start +1 }}</span>-{{end}} of {{ total_count }})
+          </h3>
         </div>
+      </div>
     </div>
-</div>
-<div class="row" id="problems-container">
-    {% if problems %}
-    {% for problem in problems %}
-        <div class="col-md-6">
-            {% include "templates/includes/problem/problem_card.html" %}
+  </div>
+  <div class="row" id="problems-container">
+    {% if problems %} {% for problem in problems %}
+    <div class="col-md-6">
+      {% include "templates/includes/problem/problem_card.html" %}
+    </div>
+    {% endfor %} {% endif %}
+  </div>
+  
+  <div class="row">
+    <div class="col">
+      <div class="col-sm-12 problem-listed-container">
+        <div class="d-flex align-items-center">
+          <h3>
+            {% if has_next_page %}
+            <a href="?page={{page + 1}}" style="text-decoration: none;color: white;">
+              Next Page
+            </a>
+            {% elif page != 1 %}
+            <a href="?page={{page - 1}}" style="text-decoration: none;color: white;">
+              Previous Page
+            </a>
+            {% endif %}
+          </h3>
         </div>
-    {% endfor %}
-    {% endif %}
+      </div>
+    </div>
+  </div>
+  
 </div>
+<script>
+  {% include "public/js/global.js" %}
+</script>

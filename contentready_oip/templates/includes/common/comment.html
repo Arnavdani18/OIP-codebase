@@ -1,88 +1,123 @@
-{% set doctype = comment.doctype %}
-{% set name = comment.name %}
+{% set doctype = comment.doctype %} {% set name = comment.name %}
 <div class="discussion-section">
-    <div class="comment-section">
-        <div class="">
-            {% set doc = frappe.get_doc('User', comment.owner) %}
-            <img src="{{doc.user_image|default('/files/default-avatar.jpg', true)}}" alt="profile photo" class=""
-                style="object-fit: cover;overflow: hidden;" width="40" height="40" />
-        </div>
-        <div class="details-container">
-            <div>
-                <span>
-                    {{ doc.full_name }}
-                </span>
-                <br />
-                <span class="comment-date">
-                    {{frappe.utils.pretty_date(comment.creation)}}
-                </span>
-            </div>
-            <p>{{comment.text}}</p>
-            {% if (comment.media | length) > 0 %}
-            <h6>Attachments</h6>
-            {% for a in comment.media %}
-            {% set file_name = a.attachment.split('/')[-1] %}
-            <a href="{{a.attachment}}" target="_blank">{{ file_name }}</a>
-            {% endfor %}
-            {% endif %}
-            <div id="reply-{{comment.name}}" class="hidden">
-                {% set doctype = comment.doctype %}
-                {% set name = comment.name %}
-                {% set parent_div = '#reply-' + comment.name %}
-                {% include "templates/includes/common/comment_editor.html" %}
-            </div>
-            <div class="footer-container">
-                <div class="rely-container">
-                    <button class="btn" onclick="replyToComment('{{comment.name}}')">
-                        <i class="far fa-reply"></i>
-                        Reply
-                    </button>
-                </div>
-                <div style="display: flex;">
-                    {% set doctype = comment.doctype %}
-                    {% set name = comment.name %}
-                    {% include "templates/includes/common/likes.html" %}
-                    {% include "templates/includes/common/share.html" %}
-                </div>
-            </div>
-        </div>
+  <div class="comment-section">
+    <div class="">
+      {% set doc = frappe.get_doc('User', comment.user) %}
+      <img
+        src="{{doc.user_image|default('/files/default-avatar.jpg', true)}}"
+        alt="profile photo"
+        class=""
+        style="object-fit: cover;overflow: hidden; border-radius: 50%;"
+        width="40"
+        height="40"
+      />
     </div>
-    
-    {% for reply in comment.replies %}
-    <div class="reply-section">
-        <div class="">
-            {% set doc = frappe.get_doc('User', comment.owner) %}
-            <img src="{{doc.user_image|default('/files/default-avatar.jpg', true)}}" alt="profile photo" class=""
-                style="object-fit: cover;overflow: hidden;" width="40" height="40" />
-        </div>
-        <div class="reply-text-section">
-            <div class="user-info">
-                <span class="text-capitalize replier-name">
-                    {{ doc.full_name }}
-                </span>
-                <span class="dot"></span>
-                <span class="reply-date">
-                    {{frappe.utils.pretty_date(reply.creation)}}
-                </span>
-            </div>
-            <p>{{reply.text}}</p>
-        </div>
+    <div class="details-container">
+      <div>
+        <span>
+          {{ doc.full_name }}
+        </span>
+        <br />
+        <span class="comment-date">
+          {{frappe.utils.pretty_date(comment.creation)}}
+        </span>
+      </div>
+      <p>{{comment.text}}</p>
+      {% if (comment.media | length) > 0 %}
+      <h6>Attachments</h6>
+      {% for a in comment.media %} {% set file_name =
+      a.attachment.split('/')[-1] %}
+      <a href="{{a.attachment}}" target="_blank">{{ file_name }}</a>
+      {% endfor %} {% endif %}
     </div>
-    {% endfor %}
+  </div>
+
+  {% for reply in comment.replies %}
+  <div class="reply-section">
+    <div class="">
+      {% set doc = frappe.get_doc('User', comment.user) %}
+      <img
+        src="{{doc.user_image|default('/files/default-avatar.jpg', true)}}"
+        alt="profile photo"
+        class=""
+        style="object-fit: cover;overflow: hidden;border-radius: 50%;"
+        width="40"
+        height="40"
+      />
+    </div>
+    <div class="reply-text-section">
+      <div class="user-info">
+        <span class="text-capitalize replier-name">
+          {{ doc.full_name }}
+        </span>
+        <span class="dot"></span>
+        <span class="reply-date">
+          {{frappe.utils.pretty_date(reply.creation)}}
+        </span>
+      </div>
+      <p>{{reply.text}}</p>
+      <button class="delete-btn">
+        <i class="fa fa-trash-o" aria-hidden="true"></i>
+      </button>
+    </div>
+  </div>
+  {% endfor %}
+
+  <div class="footer-container">
+    <div class="rely-container">
+      <button class="btn" onclick="replyToComment('{{comment.name}}')">
+        <i class="far fa-reply"></i>
+        Reply
+      </button>
+    </div>
+
+    <div style="display: flex;" class="social-btns">
+      {% set doctype = comment.doctype %} {% set name = comment.name %} {%
+      include "templates/includes/common/likes.html" %} {% include
+      "templates/includes/common/share.html" %}
+    </div>
+  </div>
+
+  <div id="reply-{{comment.name}}" class="hidden">
+    {% set doctype = comment.doctype %} {% set name = comment.name %} {% set
+    parent_div = '#reply-' + comment.name %} {% include
+    "templates/includes/common/comment_editor.html" %}
+  </div>
 </div>
 
 <script>
-    replyToComment = (name) => {
-        $(`#reply-${name}`).removeClass('hidden');
-    }
+  replyToComment = name => {
+    $(`#reply-${name}`).toggleClass('hidden');
+    $('div.comment-user .created-by-section').attr('hidden', true);
+  };
+</script>
 
+<script>
+  frappe.ready(() => {
+    $('div.likes button').addClass('thumbsup-btn');
+    $('div.social-btns button.btn-circle').addClass(
+      'btn-social thumbsup-btn mr-4'
+    );
+    $('div.social-btns button.btn-circle i').removeClass('share-icon');
+    $('div.social-btns button.btn-circle').removeClass('btn-circle');
+
+    $('div.social-btns div.dropdown-menu').addClass(
+      'dropdown-section dropdown-menu-right'
+    );
+  });
 </script>
 
 <style>
-    .orange-text{
-        color: #d98b26 !important;
-    }
-    .hidden{
-        display: none;
-    }
+  .hidden {
+    display: none;
+  }
+
+  .thumbsup-btn {
+    height: 3.1rem;
+    width: 3.1rem;
+  }
+
+  .thumbsup-btn > i {
+    font-size: var(--f14);
+  }
 </style>

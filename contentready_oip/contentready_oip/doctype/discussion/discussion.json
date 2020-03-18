@@ -4,9 +4,11 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "user",
   "text",
   "media",
-  "replies"
+  "replies",
+  "likes"
  ],
  "fields": [
   {
@@ -27,9 +29,22 @@
    "fieldtype": "Table",
    "label": "Media",
    "options": "Media Table"
+  },
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "User",
+   "reqd": 1
+  },
+  {
+   "fieldname": "likes",
+   "fieldtype": "Table",
+   "label": "Likes",
+   "options": "Like Table"
   }
  ],
- "modified": "2020-03-07 07:41:12.446922",
+ "modified": "2020-03-07 19:39:26.957485",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Discussion",

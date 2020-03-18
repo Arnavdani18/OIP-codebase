@@ -1,7 +1,115 @@
-{% extends "templates/web.html" %}
+{% extends "templates/web.html" %} {% block page_content %}
+<div class="container my-5">
+  <div class="row">
+    <div class="col">
+      <h2 class="black-local">{{full_name or name}}</h2>
+    </div>
+    <div class="col text-right">
+      <button
+        class="btn btn-outline-primary outline-primary-btn"
+        onclick="navigateToEditProfile()"
+      >
+        Edit Profile
+      </button>
+    </div>
+  </div>
+  <hr class="hr-border" />
 
-{% block page_content %}
-<h1>{{ title }}</h1>
+  <div class="row">
+    <div class="col-6">
+      <div class="row ">
+        <div class="col">
+          <h3 class="black-local">Profile Photo</h3>
+          <img src="{{photo}}" class="default-profile-photo" alt="" />
+        </div>
+      </div>
+
+      <div class="row mt-5 mb-3">
+        <div class="col">
+          <h3 class="black-local">Basic Information</h3>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <p class="heading">Phone Number</p>
+          <h5>{{phone}}</h5>
+        </div>
+        <div class="col-6">
+          <p class="heading">Email ID</p>
+          <h5>{{ name}}</h5>
+        </div>
+      </div>
+
+      <div class="row my-4">
+        <div class="col-6">
+          <p class="heading">Location</p>
+          <h5>{{state}},{{country}}</h5>
+        </div>
+        <div class="col-6">
+          <p class="heading">Organization</p>
+          <h5>{{ org_title }}</h5>
+        </div>
+      </div>
+
+      <div class="row my-4">
+        <div class="col">
+          <p class="heading">Personas</p>
+          <!-- Here comes Personas -->
+          {% for persona in personas %}
+          {{ persona.persona }}{% if not loop.last %}, {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="row my-4">
+        <div class="col">
+          <p class="heading">Interests</p>
+          {% set sectors = sectors %}
+          {% set show_all = True %}
+          {% include "templates/includes/common/sector_labels.html" %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6">
+      <!-- Empty section -->
+    </div>
+  </div>
+</div>
+
+<style>
+  .hr-border {
+    border-top: 0.2rem solid rgba(0, 0, 0, 0.1);
+  }
+  .default-profile-photo {
+    height: 11.4rem;
+    width: 11.4rem;
+    object-fit: cover;
+  }
+
+  .heading {
+    color: var(--secondary2);
+    margin-bottom: 0px;
+  }
+
+  .heading > h5 {
+    color: var(--secondary1);
+  }
+
+  .black-local {
+    color: var(--secondary1);
+  }
+</style>
+
+<script>
+    {% include "public/js/global.js" %}
+
+    navigateToEditProfile = ()=> {
+      location.href = '/update-profile';
+  };
+</script>
+
 {% endblock %}
 
 <!-- this is a sample default web page template -->

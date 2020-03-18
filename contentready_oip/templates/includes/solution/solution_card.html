@@ -13,23 +13,29 @@
 
         <div class="created-by mt-3">
             {% set doc_owner = solution.owner %}
-            {% set date = solution.modified %}
+            {% set date = solution.creation %}
             {% include "templates/includes/common/user_thumbnail.html" %}
         </div>
 
         {% set sectors = solution.sectors %}
         {% set doctype = solution.doctype %}
         {% include "templates/includes/common/sector_labels.html" %}
-        
+
         <div class="interaction-container mt-3">
             {% set doctype = solution.doctype %}
             {% set name = solution.name %}
-            {% set likes = solution.likes %}
-            {% include "templates/includes/common/likes.html" %}
-            {% set watchers = solution.watchers %}
-            {% include "templates/includes/common/watchers.html" %}
-            {% set validations = solution.validations %}
-            {% include "templates/includes/common/validations.html" %}
+            <div class="likes-container">
+                {% set likes = solution.likes %}
+                {% include "templates/includes/common/likes.html" %}
+            </div>
+            <div class="watchers-container">
+                {% set watchers = solution.watchers %}
+                {% include "templates/includes/common/watchers.html" %}
+            </div>
+            <div class="validations-container">
+                {% set validations = solution.validations %}
+                {% include "templates/includes/common/validations.html" %}
+            </div>
         </div>
     </div>
 

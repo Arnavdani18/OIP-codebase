@@ -5,6 +5,7 @@
  "engine": "InnoDB",
  "field_order": [
   "discussion",
+  "user",
   "text"
  ],
  "fields": [
@@ -22,10 +23,17 @@
    "label": "Discussion",
    "options": "Discussion",
    "reqd": 1
+  },
+  {
+   "fetch_from": "discussion.user",
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "label": "User",
+   "options": "User"
   }
  ],
  "istable": 1,
- "modified": "2020-03-06 08:31:43.881074",
+ "modified": "2020-03-07 22:29:35.174629",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Discussion Table",

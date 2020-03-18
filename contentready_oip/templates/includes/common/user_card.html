@@ -1,32 +1,61 @@
-<div
-    class="profile-container actions"
-    role="group"
->
-    <div class="profile-image">
-        <img
-            src="{{ user.photo }}"
-            alt="profile photo"
-            class="image"
-        />
-    </div>
+<style>
+  .profile-name {
+    margin-top: 1rem;
+  }
 
-    <div class="profile-name mt-negative-5">
-        <h3 class="name">
-            <a href="javascript:void(0);">
-                {{ user.full_name }}
-            </a>
-        </h3>
-    </div>
+  .profile-name>h3 {
+    font-weight: bold;
+    text-transform: capitalize;
+  }
 
-    <div class="profile-persona-and-company">
-        <p class="company">
-            {{ user.org_title }}
-        </p>
-        <p>Persona: {% for persona in user.personas %}<span>{{persona.persona}}</span>,&nbsp;{% endfor %}</p>
-    </div>
+  .profile-name>h3>a {
+    color: var(--secondary1);
+  }
 
-    <div class="profile-tags">
-        {% set sectors = user.sectors %}
-        {% include "templates/includes/common/sector_labels.html" %}
-    </div>
+  .profile-persona-and-company {
+    /* margin-top: 1rem; */
+    min-height: 4.2rem;
+  }
+
+  .profile-persona-and-company>p {
+    font-size: var(--f12);
+    color: var(--secondary2);
+    padding: 0;
+    margin: 0;
+    line-height: 2rem;
+    letter-spacing: -0.01rem;
+  }
+</style>
+
+<div class="profile-container actions" role="group" onclick="window.location.href = '/{{user.route}}'">
+  <div class="profile-image">
+    <img src="{{ user.photo }}" alt="profile photo" class="profile-image" />
+  </div>
+
+  <div class="profile-name">
+    <h3 class="pattern1">
+      {{ user.full_name }}
+    </h3>
+  </div>
+
+  <div class="profile-persona-and-company">
+    <p class="company">
+      {{ user.org_title }}
+    </p>
+    <p>
+      Persona: {% for persona in user.personas[:2] %}
+      <span>{{persona.persona}}</span>
+      {% if not loop.last %}
+      ,&nbsp;
+      {% endif %}{% endfor %}
+      {% if (user.personas | length) > 2 %}
+        +{{ (user.personas | length) - 2 }}
+      {% endif %}
+    </p>
+  </div>
+
+  <div class="">
+    {% set sectors = user.sectors %} {% include
+    "templates/includes/common/sector_labels.html" %}
+  </div>
 </div>

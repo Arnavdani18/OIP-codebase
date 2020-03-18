@@ -268,7 +268,7 @@
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2020-03-07 06:54:11.094830",
+ "modified": "2020-03-07 21:49:12.127040",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Solution",
@@ -315,10 +315,32 @@
    "report": 1,
    "role": "All",
    "share": 1
+  },
+  {
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "permlevel": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Collaborator",
+   "share": 1
   }
  ],
  "route": "list_solutions",
- "search_fields": "title, description",
+ "search_fields": "title",
  "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",

@@ -1,18 +1,19 @@
-{% extends "templates/web.html" %}
-
-{% block page_content %}
-
-{% include "templates/includes/solution/header.html" %}
+{% extends "templates/web.html" %} {% block page_content %} {% include
+"templates/includes/solution/header.html" %}
 
 <div class="container mt-20 mb-5">
-    <div class="row">
-        <div class="col-lg-7">
-            {% include "templates/includes/solution/detail_section.html" %}
-        </div>
-        <div class="col-lg-5 margin-top-20">
-            {% include "templates/includes/common/discussion_section.html" %}
-        </div>
+  <div class="row">
+    <div class="col-lg-7">
+      {% include "templates/includes/solution/detail_section.html" %}
     </div>
+    <div class="col-lg-5 margin-top-20">
+      {% include "templates/includes/common/discussion_section.html" %}
+    </div>
+  </div>
 </div>
+
+<script>
+  {% include "public/js/global.js" %}
+</script>
 
 {% endblock %}
