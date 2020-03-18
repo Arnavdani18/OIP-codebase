@@ -17,6 +17,7 @@ def get_context(context):
     sectors = set()
     # problems
     context = api.get_content_for_context(context, 'Problem', 'problems')
+    # context.matched_problems = context.problems
     for index, p in enumerate(context.problems):
         if p.title.lower().find(key) != -1 or p.description.lower().find(key) != -1:
             context.matched_problems.append(p)

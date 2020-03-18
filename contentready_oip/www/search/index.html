@@ -1,7 +1,7 @@
 <!-- jinja -->
 <!-- no-breadcrumbs -->
 <div class="container my-5 p-0">
-    <form>
+    <form action="">
         <div class="input-group input-section">
             <div class="input-group-prepend style1">
                 <span class="input-group-text">
@@ -40,7 +40,7 @@
     </section>
 </div>
 {% else %}
-<div class="mt-5" id="search-results-container">
+<div class="container mt-5" id="search-results-container">
     <div class="row">
         <div class="col-lg-6" id="problem-results-container">
             <div class="col p-0">
@@ -121,8 +121,14 @@
         triggerSearch = () => {
             const key = $('#search-input').val().trim();
             if (key) {
-                const clean_url = window.location.href.split('?')[0];
-                window.location.href = clean_url + `?key=${key}`;
+                const search_query = {key: key};
+                const existing_query = frappe.utils.get_query_params();
+                const combined_query = {...existing_query, ...search_query };
+                let qp = frappe.utils.make_query_string(combined_query);
+                if (qp) {
+                    const clean_url = window.location.href.split('?')[0]; 
+                    window.location.href = clean_url+qp;
+                }
             }
         }
     })
@@ -214,7 +220,5 @@
 </style>
 
 <script>
-    {
-        % include "public/js/global.js" %
-    }
+    {% include "public/js/global.js" %}
 </script>

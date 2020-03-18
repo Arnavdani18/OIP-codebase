@@ -40,19 +40,20 @@ frappe.ready(() => {
                 query_obj['sectors'] = sectors;
                 $('#sector-sel').val(`${sectors[0]}`);
             }
-            if (Object.keys(query_obj).length) {
-                // console.log(query_obj);
-                // console.log('could refresh')
-                return frappe.utils.make_query_string(query_obj);
-            } else {
-                // console.log('no filters so no params');
-                return null;
-            }
+            return query_obj;
         }
     }
 
     reloadWithParams = () => {
-        const qp = loadFilters();
+        const filter_query = loadFilters();
+        const existing_query = frappe.utils.get_query_params();
+        const combined_query = {...existing_query, ...filter_query };
+        console.log(combined_query, filter_query);
+        let qp;
+        if (Object.keys(filter_query).length) {
+            qp = frappe.utils.make_query_string(combined_query);
+            console.log(qp);
+        }
         if (qp) {
             const clean_url = window.location.href.split('?')[0]; 
             window.location.href = clean_url+qp;
@@ -110,7 +111,6 @@ frappe.ready(() => {
             localStorage.setItem('filter_location_lat', '');
             localStorage.setItem('filter_location_lng', '');
             localStorage.setItem('filter_location_range', '');
-            // window.location.reload();
             reloadWithParams();
         }
     }
@@ -135,7 +135,6 @@ frappe.ready(() => {
             localStorage.setItem('filter_location_lat', filter_location_lat);
             localStorage.setItem('filter_location_lng', filter_location_lng);
             localStorage.setItem('filter_location_range', filter_location_range);
-            // window.location.reload();
             reloadWithParams();
         }
     }
@@ -161,10 +160,10 @@ frappe.ready(() => {
     // Start Initialisation - Values are set from session into context if available
     // We can use Jinja2 templates with context here as the JS is compiled server-side.
 
-    const local_qs = loadFilters();
+    const filter_query = loadFilters();
     const window_qs = frappe.utils.get_query_string(window.location.href);
-    if (!window_qs && local_qs){
-        // reloadWithParams();
+    if (!window_qs && Object.keys(filter_query).length){
+        reloadWithParams();
     }
     // End Inititialisation
     // Start location filter
