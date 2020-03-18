@@ -1,6 +1,9 @@
 import frappe
 import json
 from frappe import _
+import platform
+
+python_version_2 = platform.python_version().startswith('2')
 
 def nudge_guests():
     if not frappe.session.user or frappe.session.user == 'Guest':
@@ -75,28 +78,22 @@ def get_doc_field(doctype, name, field):
 def get_child_table(child_table_doctype, parent_doctype, parent_name):
     return frappe.get_all(child_table_doctype, filters={'parenttype': parent_doctype, 'parent': parent_name})
 
+def convert_if_json(value):
+    cmp_type = str
+    if python_version_2:
+        cmp_type = basestring
+    if isinstance(value, cmp_type):
+        value = json.loads(value)
+    return value
+
 @frappe.whitelist(allow_guest = True)
 def get_filtered_content(doctype, filter_location_lat, filter_location_lng, filter_location_range, filter_sectors, limit_page_length=20, limit_start = 0, html=False):
-    if isinstance(filter_sectors, str):
-        try:
-            filter_sectors = json.loads(filter_sectors)
-        except:
-            filter_sectors = []
-    if isinstance(filter_location_lat, str):
-        try:
-            filter_location_lat = float(filter_location_lat)
-        except:
-            filter_location_lat = None
-    if isinstance(filter_location_lng, str):
-        try:
-            filter_location_lng = float(filter_location_lng)
-        except:
-            filter_location_lng = None
-    if isinstance(filter_location_range, str):
-        try:
-            filter_location_range = float(filter_location_range)
-        except:
-            filter_location_range = None
+    # print(filter_sectors, filter_location_lat, filter_location_lng, filter_location_range)
+    filter_sectors = convert_if_json(filter_sectors)
+    filter_location_lat = convert_if_json(filter_location_lat)
+    filter_location_lng = convert_if_json(filter_location_lng)
+    filter_location_range = convert_if_json(filter_location_range)
+    # print(filter_sectors, filter_location_lat, filter_location_lng, filter_location_range)
     if not filter_sectors:
         filter_sectors = ['all']
     if 'all' in filter_sectors:
