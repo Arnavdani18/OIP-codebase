@@ -132,7 +132,7 @@ def get_filtered_content(doctype, filter_location_lat, filter_location_lng, filt
 
 @frappe.whitelist(allow_guest = True)
 def search_content_by_text(doctype, text, limit_page_length=5, html=True):
-    names = frappe.db.get_list(doctype, or_filters={'title': ['like', '%{}%'.format(text)], 'description': ['like', '%{}%'.format(text)]}, limit_page_length=limit_page_length)
+    names = frappe.db.get_list(doctype, or_filters={'title': ['like', '%{}%'.format(text)], 'description': ['like', '%{}%'.format(text)], 'is_published': True}, limit_page_length=limit_page_length)
     content = []
     names = {n['name'] for n in names}
     for p in names:
@@ -149,6 +149,37 @@ def search_content_by_text(doctype, text, limit_page_length=5, html=True):
         else:
             content.append(doc)
     return content
+
+@frappe.whitelist(allow_guest = True)
+def global_search_content_by_text(text, limit_page_length=5, html=True):
+    sectors = set()
+    payload = {}
+    for doctype in ['Problem', 'Solution']:
+        payload[doctype] = []
+        content = search_content_by_text(doctype, text, limit_page_length, html=False)
+        for c in content:
+            content_type = doctype.lower()
+            template = "templates/includes/{}/{}_card.html".format(content_type, content_type)
+            context = {
+                content_type: c
+            }
+            html = frappe.render_template(template, context)
+            payload[doctype].append(html)
+            for s in c.sectors:
+                sectors.add(s.sector)
+    # print(sectors)
+    contributors = get_content_recommended_for_user('User Profile', sectors, limit_page_length=limit_page_length)
+    # print(contributors)
+    doctype = 'User Profile'
+    payload[doctype] = []
+    for c in contributors:
+        template = "templates/includes/common/user_card.html"
+        context = {
+            'user': c
+        }
+        html = frappe.render_template(template, context)
+        payload[doctype].append(html)
+    return payload
 
 @frappe.whitelist(allow_guest = True)
 def search_contributors_by_text(text, limit_page_length=5, html=True):
