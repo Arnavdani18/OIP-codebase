@@ -26,6 +26,8 @@ frappe.ready(() => {
                 filter_location_range = null;
             }
             console.log(filter_sectors, filter_location_lat, filter_location_lng, filter_location_range);
+            limit_start = Number('{{page}}') - 1;
+            limit_page_length = 20;
             frappe.call({
                 method: 'contentready_oip.api.get_filtered_content',
                 args: {
@@ -34,7 +36,9 @@ frappe.ready(() => {
                     filter_location_lng: filter_location_lng,
                     filter_location_range: filter_location_range,
                     filter_sectors: filter_sectors,
-                    html: true
+                    html: true,
+                    limit_page_length: limit_page_length,
+                    limit_start: limit_start
                 },
                 callback: function(r) {
                     r.message.map(el => {

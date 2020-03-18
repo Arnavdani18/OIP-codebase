@@ -93,6 +93,9 @@ def get_filtered_content(doctype, filter_location_lat, filter_location_lng, filt
     filter_location_lat = convert_if_json(filter_location_lat)
     filter_location_lng = convert_if_json(filter_location_lng)
     filter_location_range = convert_if_json(filter_location_range)
+    html = convert_if_json(html)
+    limit_page_length = convert_if_json(limit_page_length)
+    limit_start = convert_if_json(limit_start)
     # print(filter_sectors, filter_location_lat, filter_location_lng, filter_location_range)
     if not filter_sectors:
         filter_sectors = ['all']
