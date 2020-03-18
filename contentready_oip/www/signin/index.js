@@ -19,22 +19,36 @@ frappe.ready(async () => {
         }, false);
     })();
     const sleep = m => new Promise(r => setTimeout(r, m));
-    await sleep(1000);
-    const register_vue = new Vue({
-        el: '#register-form',
+
+    await sleep(500);
+    const login_vue = new Vue({
+        el: '#login-form',
         data: {
-            first_name: '',
-            last_name: '',
             email: '',
+            password: ''
         },
         methods: {
             validateForm: function(){
-                if (this.first_name && this.last_name && this.email) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return this.email && this.password;
             },
+            login: function(){
+                const me = this;
+                frappe.call({
+                    method: 'login',
+                    args: {
+                        usr: me.email, 
+                        pwd: me.password,
+                    },
+                    callback: function(r) {
+                        console.log(r, frappe.session.user);
+                        if (r.message.toLowerCase() == 'logged in'){
+                            window.location.href = '/dashboard';
+                        } else {
+                            frappe.throw('Incorrect email or password. Please try again or click on the forgot password link.');
+                        }
+                    }
+                });
+            }
         }
     })
 })
