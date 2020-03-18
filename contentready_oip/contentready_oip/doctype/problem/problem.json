@@ -257,8 +257,9 @@
   },
   {
    "fieldname": "min_population",
-   "fieldtype": "Int",
-   "label": "Min Population Affected"
+   "fieldtype": "Select",
+   "label": "Min Population Affected",
+   "options": "\n&gt;100\n&gt;1,000\n&gt;10,000\n&gt;100,000"
   },
   {
    "fieldname": "max_population",
@@ -274,7 +275,7 @@
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2020-03-07 22:32:18.771898",
+ "modified": "2020-03-18 16:07:22.367290",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Problem",
@@ -349,7 +350,7 @@
   }
  ],
  "route": "list_problems",
- "search_fields": "title",
+ "search_fields": "title, description",
  "show_preview_popup": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
