@@ -151,6 +151,27 @@ def search_content_by_text(doctype, text, limit_page_length=5, html=True):
     return content
 
 @frappe.whitelist(allow_guest = True)
+def search_contributors_by_text(text, limit_page_length=5, html=True):
+    doctype = 'User Profile'
+    names = frappe.db.get_list(doctype, or_filters={'full_name': ['like', '%{}%'.format(text)]}, limit_page_length=limit_page_length)
+    content = []
+    names = {n['name'] for n in names}
+    for p in names:
+        doc = frappe.get_doc(doctype, p)
+        doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
+        if html:
+            # content_type = doctype.lower()
+            template = "templates/includes/common/user_card.html"
+            context = {
+                'user': doc
+            }
+            html = frappe.render_template(template, context)
+            content.append(html)
+        else:
+            content.append(doc)
+    return content
+
+@frappe.whitelist(allow_guest = True)
 def get_orgs_list():
     all_orgs = frappe.get_list('Organisation', fields=['title', 'name'])
     return [{'label': o['title'], 'value': o['name']} for o in all_orgs]
