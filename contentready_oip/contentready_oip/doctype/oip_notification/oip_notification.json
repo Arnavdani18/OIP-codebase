@@ -1,49 +1,31 @@
 {
- "creation": "2020-02-27 21:52:25.472674",
+ "creation": "2020-03-19 16:28:05.293117",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "user",
-  "text",
+  "target_user",
+  "source_user",
   "parent_doctype",
   "parent_name",
-  "media",
-  "replies",
-  "likes"
+  "parent_field",
+  "child_doctype",
+  "child_name",
+  "text",
+  "route"
  ],
  "fields": [
   {
-   "fieldname": "text",
-   "fieldtype": "Text",
-   "in_list_view": 1,
-   "label": "Text",
-   "reqd": 1
-  },
-  {
-   "fieldname": "replies",
-   "fieldtype": "Table",
-   "label": "Replies",
-   "options": "Discussion Table"
-  },
-  {
-   "fieldname": "media",
-   "fieldtype": "Table",
-   "label": "Media",
-   "options": "Media Table"
-  },
-  {
-   "fieldname": "user",
+   "fieldname": "target_user",
    "fieldtype": "Link",
-   "label": "User",
-   "options": "User",
-   "reqd": 1
+   "label": "Target User",
+   "options": "User"
   },
   {
-   "fieldname": "likes",
-   "fieldtype": "Table",
-   "label": "Likes",
-   "options": "Like Table"
+   "fieldname": "source_user",
+   "fieldtype": "Link",
+   "label": "Source User",
+   "options": "User"
   },
   {
    "fieldname": "parent_doctype",
@@ -55,12 +37,38 @@
    "fieldname": "parent_name",
    "fieldtype": "Data",
    "label": "Parent Name"
+  },
+  {
+   "fieldname": "child_doctype",
+   "fieldtype": "Link",
+   "label": "Child Doctype",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "text",
+   "fieldtype": "Data",
+   "label": "Notification Text"
+  },
+  {
+   "fieldname": "child_name",
+   "fieldtype": "Data",
+   "label": "Child Name"
+  },
+  {
+   "fieldname": "parent_field",
+   "fieldtype": "Data",
+   "label": "Parent Fieldname"
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "label": "Notification Route"
   }
  ],
- "modified": "2020-03-19 18:02:32.517666",
+ "modified": "2020-03-19 17:18:40.127136",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
- "name": "Discussion",
+ "name": "OIP Notification",
  "owner": "Administrator",
  "permissions": [
   {
@@ -80,7 +88,6 @@
    "delete": 1,
    "email": 1,
    "export": 1,
-   "if_owner": 1,
    "print": 1,
    "read": 1,
    "report": 1,
@@ -89,7 +96,6 @@
    "write": 1
   }
  ],
- "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "track_changes": 1
