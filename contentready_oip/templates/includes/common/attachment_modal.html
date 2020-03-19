@@ -30,23 +30,19 @@
       </div>
       <div class="modal-body">
         <div class="container-fluid">
-          <div class="row attachment-container">
-            <!-- The image in focus -->
-            <div class="col text-center">
-              <img
-                src="{{media[0].attachment}}"
-                class="img-fluid"
-                alt="{{ media[0].description }}"
-                id="image-in-focus-{{id}}"
-              />
+          <div class="row thumbnail-container">
+            {% for m in media %}
+            <div class="m-2">
+              <a data-fancybox="gallery" href="{{m.attachment}}">
+                <img
+                  src="{{m.thumbnail or m.attachment }}"
+                  class="thumb-img {{'active-thumbnail' if loop.index==1}}"
+                  alt="{{ m.description }}"
+                  id="{{id}}-{{loop.index}}"
+                />
+              </a>
             </div>
-          </div>
-
-          <div class="row justify-content-center mt-3">
-            <h5>
-              <span id="index-in-focus-{{id}}">1</span>
-              of {{ media | length }}
-            </h5>
+            {% endfor %}
           </div>
 
           <div
@@ -55,26 +51,7 @@
             data-images="{{media}}"
           >
             <!-- Grid of thumbnails -->
-            {% for m in media %}
-            <div class="m-2">
-              <a data-fancybox="gallery" href="{{m.attachment}}">
-                <img
-                  src="{{m.attachment }}"
-                  class="thumb-img {{'active-thumbnail' if loop.index==1}}"
-                  alt="{{ m.description }}"
-                  id="{{id}}-{{loop.index}}"
-                />
-              </a>
-              <!-- <a onclick="moveToImage(event, '{{loop.index}}', '{{id}}')">
-                <img
-                  src="{{m.attachment }}"
-                  class="thumb-img {{'active-thumbnail' if loop.index==1}}"
-                  alt="{{ m.description }}"
-                  id="{{id}}-{{loop.index}}"
-                />
-              </a> -->
-            </div>
-            {% endfor %}
+            
           </div>
         </div>
       </div>
