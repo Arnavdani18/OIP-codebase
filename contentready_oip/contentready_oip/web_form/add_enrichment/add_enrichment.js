@@ -29,7 +29,7 @@ frappe.ready(async () => {
 
   getProblemCard = () => {
     frappe.call({
-      method: "contentready_oip.api.get_problem_card",
+      method: "contentready_oip.api.get_problem_overview",
       args: { name: frappe.web_form.doc.problem },
       callback: function(r) {
         // r.message[0] is the html
@@ -135,7 +135,7 @@ frappe.ready(async () => {
       url: "/api/method/upload_file",
       autoDiscover: false,
       addRemoveLinks: true,
-      acceptedFiles: "image/*",
+      acceptedFiles: "image/*,video/*",
       headers: {
         Accept: "application/json",
         "X-Frappe-CSRF-Token": frappe.csrf_token
@@ -146,10 +146,12 @@ frappe.ready(async () => {
         // use this event to remove from child table
         this.on("removedfile", removeFileFromDoc);
         let myDropzone = this;
-        frappe.web_form.doc.media.map(a => {
-          let mockFile = { name: a.attachment, size: a.size };
-          myDropzone.displayExistingFile(mockFile, a.attachment);
-        });
+        if (frappe.web_form.doc.media){
+          frappe.web_form.doc.media.map(a => {
+            let mockFile = { name: a.attachment, size: a.size };
+            myDropzone.displayExistingFile(mockFile, a.attachment);
+          });
+        }
       }
     });
   };

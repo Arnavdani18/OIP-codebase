@@ -1,92 +1,83 @@
-
+<!-- <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css"
+/>
+<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
 <div
-    class="modal fade"
-    id="attachment-modal-{{ id }}"
-    tabindex="-1"
-    role="dialog"
-    aria-labelledby="viewmediaLabel"
-    aria-hidden="true"
+  class="modal fade"
+  id="attachment-modal-{{ id }}"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="viewmediaLabel"
+  aria-hidden="true"
 >
-    <div class="modal-dialog modal-full modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="viewmediaLabel" hidden>
-                    Modal title
-                </h5>
-                <button
-                    type="button"
-                    class="close"
-                    data-dismiss="modal"
-                    aria-label="Close"
-                >
-                    <span aria-hidden="true">&times;</span>
-                </button>
+  <div class="modal-dialog modal-full modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="viewmediaLabel" hidden>
+          Modal title
+        </h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row attachment-modal-container">
+            {% for m in media %}
+            <div class="m-2">
+              <a data-fancybox="gallery" href="{{m.attachment}}">
+                <img
+                  src="{{m.thumbnail or m.attachment }}"
+                  class="small-img-attachment-modal"
+                  alt="{{ m.description }}"
+                  id="{{id}}-{{loop.index}}"
+                />
+              </a>
             </div>
-            <div class="modal-body">
-                <div
-                    class="container-fluid"
-                >
-                    <div class="row attachment-container">
-                        <!-- The image in focus -->
-                        <div class="col text-center">
-                            <img
-                                src="{{media[0].attachment}}"
-                                class="img-fluid"
-                                alt="{{ media[0].description }}"
-                                id="image-in-focus-{{id}}"
-                            />
-                        </div>
-                    </div>
+            {% endfor %}
+          </div>
 
-                    <div class="row justify-content-center mt-3">
-                        <h5><span id="index-in-focus-{{id}}">1</span> of {{ media | length }}</h5>
-                    </div>
-
-                    <div class="row thumbnail-container" id="available-images" data-images="{{media}}">
-                        <!-- Grid of thumbnails -->
-                        {% for m in media %}
-                        <div
-                            class="m-2"
-                        >
-                            <a
-                                onclick="moveToImage(event, '{{loop.index}}', '{{id}}')"
-                            >
-                                <img
-                                    src="{{
-                                        m.attachment
-                                    }}"
-                                    class="thumb-img {{'active-thumbnail' if loop.index==1}}"
-                                    alt="{{ m.description }}"
-                                    id="{{id}}-{{loop.index}}"
-                                />
-                            </a>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
+          <div
+            class="row thumbnail-container"
+            id="available-images"
+            data-images="{{media}}"
+          >
+            <!-- Grid of thumbnails -->
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <script>
-    moveToImage = (event, i, id) => {
-        $("#image-in-focus-"+id).attr('src', event.target.src);
-        $('.thumb-img').removeClass('active-thumbnail');
-        $('#'+event.target.id).addClass('active-thumbnail');
-        $('#index-in-focus-'+id).text(i);
-    }
-
+  moveToImage = (event, i, id) => {
+    $('#image-in-focus-' + id).attr('src', event.target.src)
+    $('.thumb-img').removeClass('active-thumbnail')
+    $('#' + event.target.id).addClass('active-thumbnail')
+    $('#index-in-focus-' + id).text(i)
+  }
 </script>
 
 <style>
-    .active-thumbnail {
-        outline: 0.5rem auto rgba(108, 108, 245, 0.918);
-    }
+  .small-img-attachment-modal {
+    width: 15rem !important;
+    height: 15rem !important;
+    object-fit: cover;
+  }
+
+  .attachment-modal-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 15rem);
+    grid-gap: 10px;
+    overflow: scroll;
+  }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
-<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
-
-

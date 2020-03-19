@@ -28,14 +28,15 @@
   "extent",
   "resources_needed",
   "beneficiaries",
-  "min_population",
-  "max_population",
+  "population_affected",
   "media",
   "column_break_14",
   "description",
   "short_description",
   "section_break_25",
-  "likes"
+  "likes",
+  "parent_doctype",
+  "parent_name"
  ],
  "fields": [
   {
@@ -46,8 +47,7 @@
    "in_preview": 1,
    "in_standard_filter": 1,
    "label": "Title",
-   "reqd": 1,
-   "search_index": 1
+   "reqd": 1
   },
   {
    "fieldname": "column_break_8",
@@ -201,25 +201,31 @@
    "reqd": 1
   },
   {
-   "fieldname": "min_population",
-   "fieldtype": "Select",
-   "label": "Min Population Affected",
-   "options": "\n&gt;100\n&gt;1,000\n&gt;10,000\n&gt;100,000"
-  },
-  {
-   "fieldname": "max_population",
-   "fieldtype": "Int",
-   "label": "Max Population Affected"
-  },
-  {
    "fieldname": "media",
    "fieldtype": "Table",
    "label": "Media",
    "options": "Media Table"
+  },
+  {
+   "fieldname": "parent_doctype",
+   "fieldtype": "Link",
+   "label": "Parent Doctype",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "parent_name",
+   "fieldtype": "Data",
+   "label": "Parent Name"
+  },
+  {
+   "fieldname": "population_affected",
+   "fieldtype": "Select",
+   "label": "Population Affected",
+   "options": "\n&lt;100\n&lt;1,000\n&lt;10,000\n&gt;100,000"
   }
  ],
  "is_published_field": "is_published",
- "modified": "2020-03-18 16:07:52.176765",
+ "modified": "2020-03-19 19:36:41.691747",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Enrichment",

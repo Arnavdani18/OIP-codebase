@@ -288,7 +288,9 @@ def add_comment(doctype, name, text, media=None, html=True):
     doc = frappe.get_doc({
         'doctype': 'Discussion',
         'text': text,
-        'user': frappe.session.user
+        'user': frappe.session.user,
+        'parent_doctype': doctype,
+        'parent_name': name
     })
     media = json.loads(media)
     for f in media:
@@ -322,6 +324,22 @@ def get_problem_card(name, html=True):
         }
         template = "templates/includes/problem/problem_card.html"
         html = frappe.render_template(template, context)
+        return html, doc.name
+    else:
+        return doc
+
+@frappe.whitelist(allow_guest = False)
+def get_problem_overview(name, html=True):
+    doc = frappe.get_doc('Problem', name)
+    if html:
+        context = {
+            'problem': doc
+        }
+        template = "templates/includes/problem/problem_card.html"
+        html = frappe.render_template(template, context)
+        context = doc.as_dict()
+        template = "templates/includes/problem/overview.html"
+        html += '<div style="background-color: white;">' + frappe.render_template(template, context) + '</div>'
         return html, doc.name
     else:
         return doc
