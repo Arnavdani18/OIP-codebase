@@ -1,251 +1,127 @@
 <nav class="navbar navbar-light bg-white navbar-expand-lg sticky-top shadow-sm">
-	<div class="container">
-		<a class="navbar-brand" href="{{ url_prefix }}{{ home_page or "/" }}">
-			<span>{{ brand_html or (frappe.get_hooks("brand_html") or [_("Home")])[0] }}</span>
-		</a>
-		<button class="navbar-toggler" type="button"
-			data-toggle="collapse"
-			data-target="#navbarSupportedContent"
-			aria-controls="navbarSupportedContent"
-			aria-expanded="false"
-			aria-label="Toggle navigation"
-		>
-			<span class="navbar-toggler-icon"></span>
-		</button>
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_prefix }}{{ home_page or "/" }}">
+            <span>{{ brand_html or (frappe.get_hooks("brand_html") or [_("Home")])[0] }}</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-		
-		<div class="collapse navbar-collapse" id="navbarSupportedContent">
-			
-			<ul class="navbar-nav mt-lg-0 tab-bar nav-left-list">
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+            <ul class="navbar-nav mt-lg-0 tab-bar nav-left-list">
+                {% if frappe.session.user != 'Guest' %}
                 <li class="nav-item">
-                    <a
-                        class="nav-item nav-link"
-                        href="/dashboard"
-
-                    >
+                    <a class="nav-item nav-link" href="/dashboard">
                         Dashboard
                     </a>
                 </li>
+                {% endif %}
                 <li class="nav-item">
-                    <a
-                        class="nav-item nav-link "
-                        href="/problems"
-                        
-                        >Problems</a
-                    >
+                    <a class="nav-item nav-link " href="/problems">Problems</a>
                 </li>
                 <li class="nav-item">
-                    <a
-                        class="nav-item nav-link "
-                        href="/solutions"
-                        >Solutions</a
-                    >
+                    <a class="nav-item nav-link " href="/solutions">Solutions</a>
                 </li>
-			</ul>
-			
+            </ul>
+
             <hr />
 
             <ul class="navbar-nav mt-lg-0 nav-right-list pattern1">
-				<li class="nav-item ml-lg-3 search-icon-li d-flex align-items-center ">
+                <li class="nav-item ml-lg-3 search-icon-li d-flex align-items-center ">
                     <button onclick="onClickSearch()">
-                        <img
-                            src="/files/Search.svg"
-                            alt=""
-                            width="20"
-                            height="20"
-                        />
+                        <img src="/files/Search.svg" alt="" width="20" height="20" />
                     </button>
                     <span class="d-block d-lg-none">Search</span>
-				</li>
-				<li
-                    class="nav-item dropdown ml-lg-3 mr-lg-4 message-icon-li d-flex align-items-center"   
-                >
-                    <button
-                        role="button"
-                        data-toggle="dropdown"
-                        aria-haspopup="true"
-                        aria-expanded="false"
-                        class="icon-btn"
-                    >
-                        <img
-                            src="/files/Message.svg"
-                            alt=""
-                            height="16.84"
-                            width="24.06"
-                        />
+                </li>
+                {% if frappe.session.user != 'Guest' %}
+                <li class="nav-item dropdown ml-lg-3 mr-lg-4 message-icon-li d-flex align-items-center">
+                    <button role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                        class="icon-btn">
+                        <img src="/files/Message.svg" alt="" height="16.84" width="24.06" />
 
-                        <span
-                            class="notification-icon"
-                        ></span>
+                        <span class="notification-icon"></span>
                     </button>
-					<span class="d-block d-lg-none">Messages</span>
-					
-					<div
-              class="dropdown-menu dropdown-menu-right p-0 mt-2 pattern1"
-              style="width: 47rem;"
-            >
-              <div class=" clearfix" style="background-color: #E1E1E1;">
-                <p class="float-left dropdown-header" style="font-size: 1.4rem;">Messages(0)</p>
-                <button type="button" class="btn btn-link float-right pattern1">
-                  View All
-                </button>
-              </div>
-              <a class="dropdown-item" href="#">Action</a>
-              
-              <div class=" clearfix pattern1" style="background-color: #E1E1E1;">
-                <p class="float-left dropdown-header" style="font-size: 1.4rem;">Notifications(2)</p>
-                <button type="button" class="btn btn-link float-right pattern1">
-                  View All
-                </button>
-              </div>
-              <a class="dropdown-item" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-            </div>
-					</li>
+                    <div class="dropdown-menu dropdown-menu-right p-0 mt-2 pattern1" style="width: 47rem;">
 
-					<li
-                    class="nav-item dropdown profile-btn-li"
-                    
-                >
-                    <a
-                        class="nav-link profile-icon dropdown-toggle"
-                        href="#"
-                        id="profileDropdown"
-                        role="button"
-                        data-toggle="dropdown"
-                        aria-haspopup="true"
-                        aria-expanded="false"
-                    >
-                        <img
-                            src="/files/default-avatar.jpg"
-                            alt="profile photo"
-                            height="30"
-                            width="30"
-                            style="border-radius: .4rem; object-fit:cover;"
-                        />
+                        <div class=" clearfix pattern1" style="background-color: #E1E1E1;">
+                            <p class="float-left dropdown-header" style="font-size: 1.4rem;">Notifications (2)</p>
+                            <button type="button" class="btn btn-link float-right pattern1">
+                                View All
+                            </button>
+                        </div>
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown profile-btn-li">
+                    <a class="nav-link profile-icon dropdown-toggle" href="#" id="profileDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <img src="/files/default-avatar.jpg" alt="profile photo" height="30" width="30"
+                            style="border-radius: .4rem; object-fit:cover;" />
 
-                        <span class="d-lg-none text-capitalize ml-3"
-                            >Profile</span
-                        >
+                        <span class="d-lg-none text-capitalize ml-3">Profile</span>
                     </a>
-                    <div
-                        class="dropdown-menu mt-2 dropdown-menu-right dropdown-section"
-                    >
-                        <a
-                            class="dropdown-item"
-                            [routerLink]="'/users/' + auth.currentUserValue.id"
-                            queryParamsHandling="merge"
-                        >
-                            <img
-                                src="/files/profile.svg"
-                                alt=""
-                                width="16"
-                                height="16"
-                            />
+                    <div class="dropdown-menu mt-2 dropdown-menu-right dropdown-section">
+                        <a class="dropdown-item" href="/update-profile">
+                            <img src="/files/profile.svg" alt="" width="16" height="16" />
                             <span> Profile</span>
                         </a>
-                        <a
-                            href="javascript:void(0);"
-                            class="dropdown-item d-none d-lg-block"
-                            onclick="logout()"
-                        >
-                            <img
-                                src="/files/logout.svg"
-                                alt=""
-                                width="16"
-                                height="16"
-                            />
+                        <a href="javascript:void(0);" class="dropdown-item d-none d-lg-block" onclick="logout()">
+                            <img src="/files/logout.svg" alt="" width="16" height="16" />
                             <span>Log Out</span>
                         </a>
                     </div>
-				</li>
-				
-				 <li
-                    class="nav-item d-block d-lg-none"
-                    
-                >
+                </li>
+                <li class="nav-item d-block d-lg-none">
                     <button (click)="logout()" class="">
-                        <img
-                            src="/files/logout.svg"
-                            alt=""
-                            width="20"
-                            height="20"
-                        />
+                        <img src="/files/logout.svg" alt="" width="20" height="20" />
                     </button>
 
                     <span class="display-sm-md ">Log Out</span>
                 </li>
 
-					<li
-                    class="nav-item dropdown ml-lg-5 d-none d-md-block add-problem-li"
-                    
-                >
-                    <a
-                        class="nav-link dropdown-toggle add-problem-btn"
-                        href="javascript:void(0);"
-                        role="button"
-                        data-toggle="dropdown"
-                        aria-haspopup="true"
-                        aria-expanded="false"
-                    >
+                <li class="nav-item dropdown ml-lg-5 d-none d-md-block add-problem-li">
+                    <a class="nav-link dropdown-toggle add-problem-btn" href="javascript:void(0);" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Add a Problem / Solution
                     </a>
-                    <div
-                        class="dropdown-menu mt-3 dropdown-menu-right dropdown-section"
-                    >
-                        <a
-                            class="dropdown-item"
-                            href="/add-problem?new=1"
-                            
-                        >
-                            <img
-                                src="./files/problem_dark.svg"
-                                alt=""
-                                height="22"
-                                width="30"
-                            />
+                    <div class="dropdown-menu mt-3 dropdown-menu-right dropdown-section">
+                        <a class="dropdown-item" href="/add-problem?new=1">
+                            <img src="./files/problem_dark.svg" alt="" height="22" width="30" />
                             <span> Add a Problem</span>
                         </a>
-                        <a
-                            class="dropdown-item"
-                            href="/add-solution?new=1"
-                            
-                        >
-                            <img
-                                src="/files/solution_dark.svg"
-                                alt=""
-                                height="22"
-                                width="30"
-                            />
+                        <a class="dropdown-item" href="/add-solution?new=1">
+                            <img src="/files/solution_dark.svg" alt="" height="22" width="30" />
                             <span> Add a Solution </span>
                         </a>
                     </div>
-				</li>
-				
-				<li class="nav-item" >
-                    <button
-                        class="pr-0 text-primary"
-                        onclick="onClickLogin()"
-                    >
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <button class="pr-0 text-primary" onclick="onClickLogin()">
                         Login
                     </button>
                 </li>
-			</ul>
-		</div>
-	</div>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
 </nav>
 
 
 <script>
-	onClickLogin = ()=>{
-		location.href = '/login#login';
-	}
+    onClickLogin = () => {
+        window.location.href = '/login#login';
+    }
 
-	logout = ()=>{
-		console.log('logout clicked');
-	}
+    logout = () => {
+        window.location.href = '/?cmd=web_logout'
+    }
 
-	onClickSearch = ()=>{
-		location.href = '/search';
-	}
+    onClickSearch = () => {
+        location.href = '/search';
+    }
 </script>
