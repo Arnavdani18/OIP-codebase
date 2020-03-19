@@ -206,6 +206,7 @@ frappe.ready(async () => {
           r.message.map(el => {
             $('#matching-problems').append(el);
           });
+          $('#matching-problems').find('*').unbind().removeAttr('onclick').removeAttr('data-toggle');
           // TODO: Prevent all other click events: nav, like, watch, modal
           setupProblemsForSelection();
         }
@@ -259,10 +260,12 @@ frappe.ready(async () => {
         // use this event to remove from child table
         this.on('removedfile', removeFileFromDoc);
         let myDropzone = this;
-        frappe.web_form.doc.media.map(a => {
-          let mockFile = { name: a.attachment, size: a.size };
-          myDropzone.displayExistingFile(mockFile, a.attachment);
-        });
+        if (frappe.web_form.doc.media) {
+          frappe.web_form.doc.media.map(a => {
+            let mockFile = { name: a.attachment, size: a.size };
+            myDropzone.displayExistingFile(mockFile, a.attachment);
+          });
+        }
       }
     });
   };
@@ -291,6 +294,7 @@ frappe.ready(async () => {
         is_draft: is_draft
       },
       callback: function(r) {
+        console.log(r);
         if (r.message && r.message.is_published && r.message.route) {
           window.location.href = r.message.route;
         } else {
@@ -318,6 +322,7 @@ frappe.ready(async () => {
           is_draft: true
         },
         callback: function(r) {
+          console.log(r);
           // update local form technical fields so that they are up to date with server values
           // Important: do no update fields on the UI as that will interfere with user experience.
           const keysToCopy = [
