@@ -1,0 +1,25 @@
+<style>
+    .small-created-by-section {
+        color: #717171;
+        font-size: 1.2rem;
+        letter-spacing: -0.01rem;
+        line-height: 2rem;
+        margin-left: 0.8rem;
+        text-transform: capitalize;
+    }
+</style>
+
+<div>
+    {% set doc = frappe.get_doc('User', doc_owner) %}
+    <img
+            src="{{doc.user_image|default('/files/default-avatar.jpg', true)}}"
+            alt="profile photo"
+            class="img-profile"
+            style="object-fit: cover;overflow: hidden !important;"
+            width="50"
+            height="50"
+    />
+</div>
+<div class="small-created-by-section">
+    <div class="neutralize">Created by {{doc.full_name}}</div>
+</div>

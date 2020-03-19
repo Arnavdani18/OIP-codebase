@@ -463,15 +463,35 @@ def get_content_by_user(doctype, limit_page_length=5):
 
 @frappe.whitelist(allow_guest = False)
 def get_contributions_by_user(parent_doctype, child_doctypes, limit_page_length=5):
-    content_set = set()
+    # content_set = set()
+    content_dict = {}
     for child_doctype in child_doctypes:
-        filtered = frappe.get_list(child_doctype, fields=['parent'], filters={'user': frappe.session.user, 'parenttype': parent_doctype}, limit_page_length=limit_page_length)
+        filtered = frappe.get_list(child_doctype, fields=['parent', 'modified'], filters={'user': frappe.session.user, 'parenttype': parent_doctype})
         for f in filtered:
-            content_set.add(f['parent'])
+            if f['parent'] not in content_dict:
+                content_dict[f['parent']] = []
+            content_dict[f['parent']].append({'type': child_doctype, 'modified': f['modified']})
+            # content_set.add(f['parent'])
     content = []
-    for c in content_set:
+    # print(content_dict)
+    # for c in content_set:
+    for c in content_dict:
         doc = frappe.get_doc(parent_doctype, c)
         if doc.is_published:
+            doc.enriched = False
+            doc.validated = False
+            doc.collaborated = False
+            doc.discussed = False
+            for e in content_dict[c]:
+                contribution_type = e['type']
+                if contribution_type == 'Enrichment Table':
+                    doc.enriched = e['modified']
+                elif contribution_type == 'Validation Table':
+                    doc.validated = e['modified']
+                elif contribution_type == 'Collaboration Table':
+                    doc.collaborated = e['modified']
+                elif contribution_type == 'Discussion Table':
+                    doc.discussed = e['modified']
             content.append(doc)
     return content
 
