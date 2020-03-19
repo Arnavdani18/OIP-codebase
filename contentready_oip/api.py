@@ -329,6 +329,22 @@ def get_problem_card(name, html=True):
         return doc
 
 @frappe.whitelist(allow_guest = False)
+def get_problem_overview(name, html=True):
+    doc = frappe.get_doc('Problem', name)
+    if html:
+        context = {
+            'problem': doc
+        }
+        template = "templates/includes/problem/problem_card.html"
+        html = frappe.render_template(template, context)
+        context = doc.as_dict()
+        template = "templates/includes/problem/overview.html"
+        html += '<div style="background-color: white;">' + frappe.render_template(template, context) + '</div>'
+        return html, doc.name
+    else:
+        return doc
+
+@frappe.whitelist(allow_guest = False)
 def add_primary_content(doctype, doc, is_draft=False):
     doc = json.loads(doc)
     if isinstance(is_draft,str):
