@@ -30,7 +30,7 @@ frappe.ready(async () => {
           aria-controls="matchedProblems"
           aria-selected="true"
         >
-          Matching Problems
+          Matching Problems <span id="matchingProblemsCount"></span>
         </a>
       </li>
       <li class="nav-item">
@@ -43,7 +43,7 @@ frappe.ready(async () => {
           aria-controls="similarSolutions"
           aria-selected="true"
         >
-          Similar Solutions
+          Similar Solutions <span id="similarSolutionsCount"></span>
         </a>
       </li>
     </ul>
@@ -240,10 +240,10 @@ frappe.ready(async () => {
     }
   };
 
-  lookForSimilarProblems = async text => {
+  lookForMatchingProblems = async (text) => {
     // Delay as the user is probably still typing
     await sleep(500);
-    // Look up title again - user could have typed something since the event was triggered.
+    // Look up text again - user could have typed something since the event was triggered.
     if (!text) {
       text = $('#problem-search-input')
         .val()
@@ -259,9 +259,11 @@ frappe.ready(async () => {
         callback: function(r) {
           // Add matching problems to div
           $('#matching-problems').empty();
+          $('#matchingProblemsCount').text('');
           r.message.map(el => {
             $('#matching-problems').append(el);
           });
+          $('#matchingProblemsCount').text(`(${r.message.length})`);
           $('#matching-problems')
             .find('*')
             .unbind()
@@ -273,6 +275,37 @@ frappe.ready(async () => {
       });
     } else if (text.length === 0) {
       $('#matching-problems').empty();
+      $('#matchingProblemsCount').text('');
+    }
+  };
+
+  lookForSimilarSolutions = async (text) => {
+    // Delay as the user is probably still typing
+    await sleep(500);
+    // Look up text again - user could have typed something since the event was triggered.
+    if (!text) {
+      text = frappe.web_form.doc.title;
+    }
+    if (text && text.length > 3) {
+      frappe.call({
+        method: 'contentready_oip.api.search_content_by_text',
+        args: {
+          doctype: 'Solution',
+          text: text
+        },
+        callback: function(r) {
+          // Add matching solutions to div
+          $('#similarSolutions').empty();
+          $('#similarSolutionsCount').text('');
+          r.message.map(el => {
+            $('#similarSolutions').append(el);
+          });
+          $('#similarSolutionsCount').text(`(${r.message.length})`);
+        }
+      });
+    } else if (text && text.length === 0) {
+      $('#similarSolutions').empty();
+      $('#similarSolutionsCount').text('');
     }
   };
 
@@ -498,9 +531,24 @@ frappe.ready(async () => {
   $('#problem-search-input').on('keyup', e => {
     const value = e.target.value.trim();
     if (value.length && value.length % 3 === 0) {
-      lookForSimilarProblems();
+      lookForMatchingProblems();
     }
   });
+  // Look for similar solutions when title is typed
+  // $('*[data-fieldname="title"]:input').on('keyup', e => {
+  //   const value = e.target.value.trim();
+  //   if (value.length && value.length % 3 === 0) {
+  //     console.log(value);
+  //     lookForSimilarSolutions();
+  //   }
+  // });
+  frappe.web_form.on('title', () => {
+    const value = frappe.web_form.doc.title.trim();
+    if (value.length >= 3) {
+      lookForSimilarSolutions(value);
+    }
+  })
+
 
   // Set org link field when org title is selected
   $('*[data-fieldname="org"]').on('change', e => {
