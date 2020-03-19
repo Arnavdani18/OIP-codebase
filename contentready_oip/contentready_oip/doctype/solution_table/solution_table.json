@@ -5,7 +5,9 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "solution"
+  "solution",
+  "user",
+  "route"
  ],
  "fields": [
   {
@@ -14,10 +16,25 @@
    "in_list_view": 1,
    "label": "Solution",
    "reqd": 1
+  },
+  {
+   "fetch_from": "solution.owner",
+   "fetch_if_empty": 1,
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "User",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "label": "Route"
   }
  ],
  "istable": 1,
- "modified": "2020-03-06 08:31:43.637872",
+ "modified": "2020-03-19 17:15:18.093556",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Solution Table",
