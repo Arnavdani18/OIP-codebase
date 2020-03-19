@@ -146,10 +146,12 @@ frappe.ready(async () => {
         // use this event to remove from child table
         this.on("removedfile", removeFileFromDoc);
         let myDropzone = this;
-        frappe.web_form.doc.media.map(a => {
-          let mockFile = { name: a.attachment, size: a.size };
-          myDropzone.displayExistingFile(mockFile, a.attachment);
-        });
+        if (frappe.web_form.doc.media){
+          frappe.web_form.doc.media.map(a => {
+            let mockFile = { name: a.attachment, size: a.size };
+            myDropzone.displayExistingFile(mockFile, a.attachment);
+          });
+        }
       }
     });
   };
