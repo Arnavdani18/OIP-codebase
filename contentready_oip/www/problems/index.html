@@ -14,7 +14,8 @@
           <img src="/files/problem_icon.svg" alt="" height="24" width="20" />
           <h3>
             Problems Listed (<span id="problems-count"
-              >{{ start +1 }}</span>-{{end}} of {{ total_count }})
+              >{{ problems | length }} of {{ total_count }}, Page {{page}}</span
+            >)
           </h3>
         </div>
       </div>
@@ -22,7 +23,7 @@
   </div>
   <div class="row" id="problems-container">
     {% if problems %} {% for problem in problems %}
-    <div class="col-md-6">
+    <div class="col-md-6 mt-4">
       {% include "templates/includes/problem/problem_card.html" %}
     </div>
     {% endfor %} {% endif %}
@@ -34,7 +35,10 @@
         <div class="d-flex align-items-center">
           <h3>
             {% if has_next_page %}
-            <a href="?page={{page + 1}}" style="text-decoration: none;color: white;">
+            <a
+              href="?page={{page + 1}}"
+              style="text-decoration: none;color: white;"
+            >
               Next Page
             </a>
             {% elif page != 1 %}
@@ -47,7 +51,6 @@
       </div>
     </div>
   </div>
-  
 </div>
 <script>
   {% include "public/js/global.js" %}

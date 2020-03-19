@@ -90,12 +90,57 @@ def convert_if_json(value):
         value = json.loads(value)
     return value
 
+def get_content_for_context(context, doctype, key, limit_page_length=20):
+    context.available_sectors = get_available_sectors()
+    parameters = frappe.form_dict
+    # page
+    try:
+        context.page = int(parameters['page'])
+    except:
+        context.page = 1
+    limit_start = context.page - 1
+    # limit_page_length = 20
+    filtered_content = get_filtered_content(doctype)
+    context.start = limit_start*limit_page_length
+    context.end = context.start + limit_page_length
+    context.total_count = len(filtered_content)
+    if context.end > context.total_count:
+        context.end = context.total_count
+    context.has_next_page = False
+    if context.total_count > limit_page_length*context.page:
+        context.has_next_page = True
+    context[key] = filtered_content[context.start:context.end]
+    return context
+
+
 @frappe.whitelist(allow_guest = True)
-def get_filtered_content(doctype, filter_location_lat, filter_location_lng, filter_location_range, filter_sectors, limit_page_length=20, limit_start = 0, html=False):
-    filter_sectors = convert_if_json(filter_sectors)
-    filter_location_lat = convert_if_json(filter_location_lat)
-    filter_location_lng = convert_if_json(filter_location_lng)
-    filter_location_range = convert_if_json(filter_location_range)
+def get_filtered_content(doctype):
+    parameters = frappe.form_dict
+    # filter_location_name
+    try:
+        filter_location_name = parameters['loc']
+    except:
+        filter_location_name = None
+    # filter_location_lat
+    try:
+        filter_location_lat = float(parameters['lat'])
+    except:
+        filter_location_lat = None
+    # filter_location_lng
+    try:
+        filter_location_lng = float(parameters['lng'])
+    except:
+        filter_location_lng = None
+    # filter_location_range
+    try:
+        filter_location_range = int(parameters['rng'])
+    except:
+        filter_location_range = None
+    # filter_sectors
+    try:
+        filter_sectors = json.loads(parameters['sectors'])
+    except Exception as e:
+        filter_sectors = ['all']
     if not filter_sectors:
         filter_sectors = ['all']
     if 'all' in filter_sectors:
@@ -107,9 +152,7 @@ def get_filtered_content(doctype, filter_location_lat, filter_location_lng, filt
     # TODO: Implement location filtering using Elasticsearch
     from geopy import distance
     content = []
-    start = limit_start*limit_page_length
-    end = start + limit_page_length
-    for c in list(content_set)[start:end]:
+    for c in content_set:
         doc = frappe.get_doc(doctype, c)
         if doc.is_published:
             if (doc.latitude != None) and (doc.longitude != None) and (filter_location_lat != None) and (filter_location_lng != None) and (filter_location_range != None):
@@ -117,16 +160,7 @@ def get_filtered_content(doctype, filter_location_lat, filter_location_lng, filt
                 if distance_km > filter_location_range:
                     # skip this document as it's outside our bounds
                     continue
-            doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
-            if html:
-                template = "templates/includes/problem/problem_card.html"
-                context = {
-                    'problem': doc
-                }
-                html = frappe.render_template(template, context)
-                content.append(html)
-            else:
-                content.append(doc)
+            content.append(doc)
     return content
 
 @frappe.whitelist(allow_guest = True)
@@ -429,15 +463,35 @@ def get_content_by_user(doctype, limit_page_length=5):
 
 @frappe.whitelist(allow_guest = False)
 def get_contributions_by_user(parent_doctype, child_doctypes, limit_page_length=5):
-    content_set = set()
+    # content_set = set()
+    content_dict = {}
     for child_doctype in child_doctypes:
-        filtered = frappe.get_list(child_doctype, fields=['parent'], filters={'user': frappe.session.user, 'parenttype': parent_doctype}, limit_page_length=limit_page_length)
+        filtered = frappe.get_list(child_doctype, fields=['parent', 'modified'], filters={'user': frappe.session.user, 'parenttype': parent_doctype})
         for f in filtered:
-            content_set.add(f['parent'])
+            if f['parent'] not in content_dict:
+                content_dict[f['parent']] = []
+            content_dict[f['parent']].append({'type': child_doctype, 'modified': f['modified']})
+            # content_set.add(f['parent'])
     content = []
-    for c in content_set:
+    # print(content_dict)
+    # for c in content_set:
+    for c in content_dict:
         doc = frappe.get_doc(parent_doctype, c)
         if doc.is_published:
+            doc.enriched = False
+            doc.validated = False
+            doc.collaborated = False
+            doc.discussed = False
+            for e in content_dict[c]:
+                contribution_type = e['type']
+                if contribution_type == 'Enrichment Table':
+                    doc.enriched = e['modified']
+                elif contribution_type == 'Validation Table':
+                    doc.validated = e['modified']
+                elif contribution_type == 'Collaboration Table':
+                    doc.collaborated = e['modified']
+                elif contribution_type == 'Discussion Table':
+                    doc.discussed = e['modified']
             content.append(doc)
     return content
 
