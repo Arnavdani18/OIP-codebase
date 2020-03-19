@@ -1,3 +1,5 @@
+// frappe.provide('Vue');
+
 frappe.ready(async () => {
   // Start Helpers
   let autocomplete;
@@ -12,7 +14,61 @@ frappe.ready(async () => {
         .before(this);
     });
     $('.web-form-wrapper').prepend(
-      '<div class="row"><div class="col-md-6" id="add-solution-form"></div><div class="col-md-6"><h3>Matching Problems</h3><input type="text" id="problem-search-input" placeholder="Search for matching problems" class="input-with-feedback form-control bold"></input><span id="matching-problems"></span></div></div>'
+      `<div class="row"><div class="col-md-6" id="add-solution-form"></div><div class="col-md-6">
+      <ul
+      class="nav nav-tabs nav-section nav-mob-section bg-white"
+      id="leftTab"
+      role="tablist"
+    >
+      <li class="nav-item">
+        <a
+          class="nav-link active"
+          id="matchedProblemsTab"
+          data-toggle="tab"
+          href="#matchedProblems"
+          role="tab"
+          aria-controls="matchedProblems"
+          aria-selected="true"
+        >
+          Matching Problems
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          id="similarSolutionsTab"
+          data-toggle="tab"
+          href="#similarSolutions"
+          role="tab"
+          aria-controls="similarSolutions"
+          aria-selected="true"
+        >
+          Similar Solutions
+        </a>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <div
+        class="tab-pane fade show active"
+        id="matchedProblems"
+        role="tabpanel"
+        aria-labelledby="matchedProblemsTab"
+      >
+        <input type="text" id="problem-search-input" placeholder="Search for matching problems" class="input-with-feedback form-control bold my-4"></input><span id="matching-problems"></span>
+      </div>
+      <div
+        class="tab-pane fade"
+        id="similarSolutions"
+        role="tabpanel"
+        aria-labelledby="similarSolutionsTab"
+      >
+        <p class="pattern1 my-4" id="matching-solutions">No Similar Solutions Found</p>
+      </div>
+    </div>
+
+    
+    </div></div>`
     );
     $('#add-solution-form').append($('.form-layout'));
     $('#matching-problems').append('<div></div>');
@@ -206,7 +262,11 @@ frappe.ready(async () => {
           r.message.map(el => {
             $('#matching-problems').append(el);
           });
-          $('#matching-problems').find('*').unbind().removeAttr('onclick').removeAttr('data-toggle');
+          $('#matching-problems')
+            .find('*')
+            .unbind()
+            .removeAttr('onclick')
+            .removeAttr('data-toggle');
           // TODO: Prevent all other click events: nav, like, watch, modal
           setupProblemsForSelection();
         }
@@ -294,7 +354,6 @@ frappe.ready(async () => {
         is_draft: is_draft
       },
       callback: function(r) {
-        console.log(r);
         if (r.message && r.message.is_published && r.message.route) {
           window.location.href = r.message.route;
         } else {
@@ -322,7 +381,7 @@ frappe.ready(async () => {
           is_draft: true
         },
         callback: function(r) {
-          console.log(r);
+          // console.log(r);
           // update local form technical fields so that they are up to date with server values
           // Important: do no update fields on the UI as that will interfere with user experience.
           const keysToCopy = [
@@ -418,6 +477,7 @@ frappe.ready(async () => {
   styleFields();
   controlLabels();
   pageHeadingSection();
+
   // End UI Fixes
 
   // Start Google Maps Autocomplete
@@ -441,6 +501,7 @@ frappe.ready(async () => {
       lookForSimilarProblems();
     }
   });
+
   // Set org link field when org title is selected
   $('*[data-fieldname="org"]').on('change', e => {
     frappe.web_form.doc.org = e.target.value;
