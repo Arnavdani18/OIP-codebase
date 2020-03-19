@@ -616,4 +616,8 @@ def register(form=None):
             _(error_msg),
             http_status_code=400, indicator_color='red', fullpage = True, primary_action='/')
         return frappe.website.render.render("message", http_status_code=400)
-    
+
+@frappe.whitelist(allow_guest=False)
+def set_notification_as_read(notification_name):
+    frappe.set_value('OIP Notification', notification_name, 'is_read', True)
+    return True

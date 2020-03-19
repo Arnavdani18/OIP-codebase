@@ -45,15 +45,16 @@
                         <span class="notification-icon"></span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-right p-0 mt-2 pattern1" style="width: 47rem;">
-
+                        {% set notifications = frappe.get_all('OIP Notification', fields=['text', 'route', 'name'], filters={'target_user': frappe.session.user, 'is_read': False}) %}
                         <div class=" clearfix pattern1" style="background-color: #E1E1E1;">
-                            <p class="float-left dropdown-header" style="font-size: 1.4rem;">Notifications (2)</p>
-                            <button type="button" class="btn btn-link float-right pattern1">
+                            <p class="float-left dropdown-header" style="font-size: 1.4rem;">Notifications ({{notifications | length}})</p>
+                            <!-- <button type="button" class="btn btn-link float-right pattern1">
                                 View All
-                            </button>
+                            </button> -->
                         </div>
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
+                        {% for n in notifications %}
+                            <a class="dropdown-item" href="javascript:void(0)" onclick="openNotification(`{{n.name}}`, `{{n.route}}`)">{{n.text[:60]}}{{'...' if n.text|length > 60}}</a>
+                        {% endfor %}
                     </div>
                 </li>
                 <li class="nav-item dropdown profile-btn-li">
@@ -123,5 +124,20 @@
 
     onClickSearch = () => {
         location.href = '/search';
+    }
+    openNotification = (name, route) => {
+        console.log(name, route);
+        // set notification as read
+        frappe.call({
+            method: 'contentready_oip.api.set_notification_as_read',
+            args: {
+                'notification_name': name
+            }, 
+            callback: (r) => {
+                // console.log(r.message);
+                // then open the link
+                window.location.href = route;
+            }
+        })
     }
 </script>
