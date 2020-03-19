@@ -187,7 +187,7 @@ frappe.ready(async () => {
       url: '/api/method/upload_file',
       autoDiscover: false,
       addRemoveLinks: true,
-      acceptedFiles: 'image/*',
+      acceptedFiles: 'image/*,video/*',
       headers: {
         Accept: 'application/json',
         'X-Frappe-CSRF-Token': frappe.csrf_token
