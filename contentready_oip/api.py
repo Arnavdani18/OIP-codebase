@@ -288,7 +288,9 @@ def add_comment(doctype, name, text, media=None, html=True):
     doc = frappe.get_doc({
         'doctype': 'Discussion',
         'text': text,
-        'user': frappe.session.user
+        'user': frappe.session.user,
+        'parent_doctype': doctype,
+        'parent_name': name
     })
     media = json.loads(media)
     for f in media:

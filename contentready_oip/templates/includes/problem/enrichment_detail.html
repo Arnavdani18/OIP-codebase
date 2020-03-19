@@ -119,9 +119,8 @@
                 <div class="row">
                   {% set fields = { 'Organization': org_title, 'Beneficiaries':
                   beneficiaries, 'Resources Needed': resources_needed, 'Impact':
-                  impact, 'Extent': extent, 'Min Population': min_population,
-                  'Max Population': max_population, 'Location(s)': city + ', ' +
-                  country, } %} {% for field in fields %} {% set label = field
+                  impact, 'Extent': extent, 'Population Affected': population_affected,
+                  'Location(s)': city + ', ' + country, } %} {% for field in fields %} {% set label = field
                   %} {% set value = fields[field] %} {% include
                   "templates/includes/common/overview_field.html" %} {% endfor
                   %}
