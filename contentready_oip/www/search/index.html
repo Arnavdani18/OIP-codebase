@@ -1,59 +1,53 @@
 <!-- jinja -->
 <!-- no-breadcrumbs -->
-<!-- static -->
 <div class="container my-5 p-0">
-
-    <div class="input-group input-section">
-        <div class="input-group-prepend style1">
-            <span class="input-group-text">
-                        <img
-                            src="/files/Search.svg"
-                            alt=""
-                            style="opacity: .3;"
-                        />
-                    </span>
+    <form action="">
+        <div class="input-group input-section">
+            <div class="input-group-prepend style1">
+                <span class="input-group-text">
+                    <img src="/files/Search.svg" alt="" style="opacity: .3;" />
+                </span>
+            </div>
+            <input type="search" class="form-control form-control-lg style1"
+                aria-label="Search the Open Innovation Platform"
+                placeholder="Search for problems, solutions and contributors" name='key' value='{{key}}' id="search-input">
+            <div class="input-group-append style1">
+                <button type="button" data-enabled=1 class="btn active-btn" onclick="triggerSearch()" id="search-btn"><img
+                        src="/files/Search.svg" class="" width="20" height="20"></button>
+                <!-- <button type="button" data-enabled=1 class="btn active-btn rounded-right" onclick="toggleSolutions()" id="solution-selector">Solutions</button> -->
+                <!-- <select class="search-mode" id="">
+                    <option selected value="all">All</option>
+                    <option value="problem">Problem</option>
+                    <option value="solution">Solution</option>
+                    <option value="profile">Profile</option>
+                </select> -->
+            </div>
         </div>
-        <input type="search" class="form-control form-control-lg style1" aria-label="Search the Open Innovation Platform" placeholder="Search for problems, solutions and contributors" id="search-input">
-        <div class="input-group-append style1 d-none">
-            <!-- <button type="button" data-enabled=1 class="btn active-btn " onclick="toggleProblems()" id="problem-selector">Problems</button> -->
-            <!-- <button type="button" data-enabled=1 class="btn active-btn rounded-right" onclick="toggleSolutions()" id="solution-selector">Solutions</button> -->
-            <select class="search-mode" id="">
-                <option selected value="all">All</option>
-                <option value="problem">Problem</option>
-                <option value="solution">Solution</option>
-                <option value="profile">Profile</option>
-            </select>
-        </div>
-    </div>
+    </form>
 </div>
-    
-<div class="container d-none">
-    {% include "templates/includes/common/filter.html" %}
-  </div>
 
+<div class="container">
+    {% include "templates/includes/common/filter.html" %}
+</div>
+
+{% if (matched_problems + matched_solutions + matched_contributors) | length == 0 %}
 <div class="container no-result">
-   <section class="row zeroResult-section">
+    <section class="row zeroResult-section">
         <div>
             <img src="/files/Empty State Search Icon.svg" alt="" />
         </div>
         <h5>It seems there are no search results as of now.</h5>
-    </section> 
+    </section>
 </div>
-
-
-<div class="container hidden" id="search-results-container">
+{% else %}
+<div class="container mt-5" id="search-results-container">
     <div class="row">
         <div class="col-lg-6" id="problem-results-container">
             <div class="col p-0">
                 <div class="problem-listed-title text-white">
                     <div class="d-flex align-items-center header">
-                        <img
-                            src="/files/problem_icon.svg"
-                            alt=""
-                            height="20px"
-                            width="24px"
-                        />
-                        <h2 class="heading">Problems Listed</h2>
+                        <img src="/files/problem_icon.svg" alt="" height="20px" width="24px" />
+                        <h2 class="heading">Problems Matched</h2>
                         <div class="view-all">
                             <a href="/problems">
                                 View All
@@ -61,172 +55,87 @@
                         </div>
                     </div>
                 </div>
-                <div id="matching-problems"></div>
+                <div id="matching-problems">
+                    {% for problem in matched_problems %}
+                    {% include "templates/includes/problem/problem_card.html" %}
+                    {% endfor %}
                 </div>
             </div>
-            <div class="col-lg-6 margin-sm-md-30" id="solution-results-container">
-                <div class="col p-0">
-                    <div class="problem-listed-title text-white">
-                        <div class="d-flex align-items-center header">
-                            <img
-                                src="/files/problem_icon.svg"
-                                alt=""
-                                height="20px"
-                                width="24px"
-                            />
-                            <h2 class="heading">Solutions Listed</h2>
-                            <div class="view-all">
-                                <a href="/solutions">
-                                    View All
-                                </a>
-                            </div>
+        </div>
+        <div class="col-lg-6 margin-sm-md-30" id="solution-results-container">
+            <div class="col p-0">
+                <div class="problem-listed-title text-white">
+                    <div class="d-flex align-items-center header">
+                        <img src="/files/problem_icon.svg" alt="" height="20px" width="24px" />
+                        <h2 class="heading">Solutions Matched</h2>
+                        <div class="view-all">
+                            <a href="/solutions">
+                                View All
+                            </a>
                         </div>
                     </div>
-                    <div id="matching-solutions"></div>
+                </div>
+                <div id="matching-solutions">
+                    {% for solution in matched_solutions %}
+                    {% include "templates/includes/solution/solution_card.html" %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12" id="contributor-results-container">
+            <div class="col p-0">
+                <div class="problem-listed-title text-white py-4">
+                    <div class="d-flex align-items-center header">
+                        <img src="/files/problem_icon.svg" alt="" height="20px" width="24px" />
+                        <h2 class="heading">Contributors</h2>
+                        <div class="view-all">
+                            <a href="/contributors">
+                                View All
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div id="matching-contributors" class="row">
+                    {% for user in matched_contributors %}
+                    <div class="col-md-3">
+                        {% include "templates/includes/common/user_card.html" %}
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endif %}
+
 
 <script>
     frappe.ready(async () => {
         // Simple sleep(ms) function from https://stackoverflow.com/a/48882182
         const sleep = m => new Promise(r => setTimeout(r, m));
 
-        toggleProblems = () => {
-            const problemsEnabled = $('#problem-selector').data('enabled');
-            if (problemsEnabled) {
-                $('#problem-selector').data('enabled', 0);
-                // $('#problem-selector').removeClass('active-btn').addClass('not-active-btn');
-                $('#problem-selector').toggleClass('not-active-btn active-btn');
-                $('#problem-results-container').hide();
-                // $('#solution-results-container').removeClass('col-lg-6').addClass('col-lg-12');
-            } else {
-                $('#problem-selector').data('enabled', 1);
-                // $('#problem-selector').removeClass('btn-light').addClass('btn-primary');
-                $('#problem-selector').toggleClass('not-active-btn active-btn');
-                $('#problem-results-container').show();
-                // $('#solution-results-container').removeClass('col-lg-12').addClass('col-lg-6');
-                triggerSearch();
-            }
-        }
-
-        toggleSolutions = () => {
-            const solutionsEnabled = $('#solution-selector').data('enabled');
-            if (solutionsEnabled) {
-                $('#solution-selector').data('enabled', 0);
-                // $('#solution-selector').removeClass('btn-primary').addClass('btn-light');
-                $('#solution-selector').toggleClass('not-active-btn active-btn');
-                $('#solution-results-container').hide();
-            } else {
-                $('#solution-selector').data('enabled', 1);
-                // $('#solution-selector').removeClass('btn-light').addClass('btn-primary');
-                $('#solution-selector').toggleClass('not-active-btn active-btn');
-                $('#solution-results-container').show();
-                triggerSearch();
-            }
-        }
-
-        lookForMatchingProblems = async (text) => {
-            if (!text.length > 0) {
-                return false;
-            }
-            frappe.call({
-                method: 'contentready_oip.api.search_content_by_text',
-                args: {
-                    doctype: 'Problem',
-                    text: text,
-                },
-                callback: function(r) {
-                    // Add matching problems to div
-                    $('#matching-problems').empty();
-                    if (r.message.length > 0) {
-                        r.message.map(el => {
-                            $('#matching-problems').append(el);
-                        });
-                    } else {
-                        $('#matching-problems').append('<br/><h4>No results found.</h4>');
-                    }
-                }
-            });
-        }
-
-        lookForMatchingSolutions = async (text) => {
-            if (!text.length > 0) {
-                return false;
-            }
-            frappe.call({
-                method: 'contentready_oip.api.search_content_by_text',
-                args: {
-                    doctype: 'Solution',
-                    text: text,
-                },
-                callback: function(r) {
-                    // Add matching problems to div
-                    $('#matching-solutions').empty();
-                    if (r.message.length > 0) {
-                        r.message.map(el => {
-                            $('#matching-solutions').append(el);
-                        });
-                    } else {
-                        $('#matching-solutions').append('<br/><h4>No results found.</h4>');
-                    }
-                }
-            });
-        }
-
-        triggerSearch = async (clicked) => {
-            // Delay as the user is probably still typing. Only triggered on autosearch.
-            if (!clicked) await sleep(500);
-            // Look up text again - user could have typed something since the event was triggered.
-            const key = $('#search-input').val().trim();
-            // const problemsEnabled = $('#problem-selector').data('enabled');
-            // const solutionsEnabled = $('#solution-selector').data('enabled');
-            const problemsEnabled = true;
-            const solutionsEnabled = true;
-            // console.log(problemsEnabled, solutionsEnabled);
-            if (problemsEnabled) {
-                $('#solutions-results-container').show();
-                lookForMatchingProblems(key);
-            } else {
-                $('#problem-results-container').hide();
-            }
-            if (solutionsEnabled) {
-                $('#solutions-results-container').show();
-                lookForMatchingSolutions(key);
-            } else {
-                $('#solutions-results-container').hide()
-            }
-            $('#search-results-container').removeClass('hidden');
-            $('.no-result').addClass('hidden');
-        }
-
-        // Delay until page is fully rendered
-        await sleep(200);
-
         // Look for similar problems and solutions when text is entered
-        $('#search-input').val('');
-        $('#search-input').on('keyup', (e) => {
-            const key = e.target.value.trim();
-            if (key.length && key.length % 3 === 0) {
-                // const problemsEnabled = $('#problem-selector').data('enabled');
-                // const solutionsEnabled = $('#solution-selector').data('enabled');
-                // if (!problemsEnabled && !solutionsEnabled) {
-                //     frappe.throw('Please enable at least one of Problems or Solutions to complete the search.')
-                // }
-                triggerSearch();
+        // $('#search-input').val('');
+        triggerSearch = () => {
+            const key = $('#search-input').val().trim();
+            if (key) {
+                const search_query = {key: key};
+                const existing_query = frappe.utils.get_query_params();
+                const combined_query = {...existing_query, ...search_query };
+                let qp = frappe.utils.make_query_string(combined_query);
+                if (qp) {
+                    const clean_url = window.location.href.split('?')[0]; 
+                    window.location.href = clean_url+qp;
+                }
             }
-        });
+        }
     })
 </script>
 
 <style>
-    .hidden{
-        display: none;
-    }
-
-    style1 {
+    .style1 {
         font-size: 18px;
         font-weight: 500;
         letter-spacing: -0.1px;
@@ -240,16 +149,16 @@
         text-align: center;
     }
 
-    .zeroResult-section > h5 {
+    .zeroResult-section>h5 {
         margin-top: 2.7rem;
         font-weight: 500;
         color: var(--secondary1);
     }
 
-    input[type='search'] {            
+    input[type='search'] {
         height: inherit;
         border: none;
-        }
+    }
 
     input[type='search']::placeholder {
         color: var(--secondary3);
@@ -262,7 +171,7 @@
         border-radius: var(--round4);
     }
 
-    .input-group-prepend > .input-group-text {        
+    .input-group-prepend>.input-group-text {
         padding: 2rem 1rem 2rem 2rem;
         background-color: var(--secondary6);
         border-radius: 0.4rem 0 0 0.4rem;
@@ -300,16 +209,16 @@
     } */
 
     @media only screen and (max-width: 600px) {
-    .input-section {
+        .input-section {
             min-height: 3.6rem;
         }
 
-    .input-group-prepend > .input-group-text {        
+        .input-group-prepend>.input-group-text {
             padding: 1rem 0rem 1rem 1rem;
         }
     }
 </style>
 
 <script>
-  {% include "public/js/global.js" %}
+    {% include "public/js/global.js" %}
 </script>

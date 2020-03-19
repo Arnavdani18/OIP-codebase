@@ -39,6 +39,11 @@
             >
               Next Page
             </a>
+            {% elif page != 1 %}
+            <a href="?page={{page - 1}}" style="text-decoration: none;color: white;">
+              Previous Page
+            </a>
+            {% endif %}
           </h3>
         </div>
       </div>

@@ -1,0 +1,47 @@
+<style>
+  .updated-at {
+    height: 2rem;
+    color: var(--secondary2);
+    font-size: var(--f12);
+    letter-spacing: -0.01rem;
+    line-height: 2rem;
+    text-align: right;
+  }
+</style>
+{% set date = frappe.utils.now() %}
+<div class="contribution-container">
+  {% include "templates/includes/solution/solution_card.html" %}
+
+  <div class=" d-flex justify-content-around update-section py-2 border"
+    style="margin: auto 2rem;border-radius: var(--round4);">
+
+    <div class="validated">
+      <div class="d-flex align-items-center">
+        <div>
+          <img src="{{'/files/validated.svg' if solution.validated else '/files/not_validated.svg'}}" alt="Validated Icon" />
+        </div>
+        <div class="ml-2 pattern1">Validated</div>
+      </div>
+      <div class="updated-at">{{frappe.utils.pretty_date(solution.validated) if solution.validated else ''}}</div>
+    </div>
+    <div class="collaborated">
+      <div class="d-flex align-items-center">
+        <div>
+          <img src="{{'/files/collaborated.svg' if solution.collaborated else '/files/not_collaborated.svg'}}" alt="Collaborated Icon" />
+        </div>
+        <div class="ml-2 pattern1">Collaborated</div>
+      </div>
+      <div class="updated-at">{{frappe.utils.pretty_date(solution.collaborated) if solution.collaborated else ''}}</div>
+    </div>
+    <div class="commented">
+      <div class="d-flex align-items-center">
+        <div>
+          <img src="{{'/files/commented.svg' if solution.discussed else '/files/not_commented.svg'}}" alt="Commented Icon" />
+        </div>
+        <div class="ml-2 pattern1">Commented</div>
+      </div>
+      <div class="updated-at">{{frappe.utils.pretty_date(solution.discussed) if solution.discussed else ''}}</div>
+    </div>
+  </div>
+
+</div>

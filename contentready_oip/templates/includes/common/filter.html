@@ -1,7 +1,7 @@
 <style>
-  #sector-sel-div > select,
-  #range-sel-div > select,
-  #location-input-div > input {
+  #sector-sel-div>select,
+  #range-sel-div>select,
+  #location-input-div>input {
     font-weight: var(--wgt500);
     height: 4.2rem;
     border: 0.2rem solid var(--secondary1);
@@ -9,7 +9,7 @@
     background-color: transparent;
   }
 
-  .row > div {
+  .row>div {
     padding-left: 2rem;
   }
 
@@ -20,16 +20,9 @@
   }
 </style>
 
-<div
-  class="row justify-content-sm-start justify-content-md-end flex-wrap"
-  id="filter-section"
->
+<div class="row justify-content-sm-start justify-content-md-end flex-wrap" id="filter-section">
   <div class="" id="sector-sel-div">
-    <select
-      class="pattern1"
-      <!-- onChange="storeSectorFilter(event)" -->
-      id="sector-sel"
-    >
+    <select class="pattern1" onChange="storeSectorFilter(event)" id="sector-sel">
       <option selected value="all">All Sectors</option>
       {% for sector in available_sectors %}
       <option value="{{sector.name}}">{{sector.title}}</option>
@@ -37,29 +30,21 @@
     </select>
   </div>
   <div class="in-mob" id="location-input-div">
-    <input
-      class="pattern1 pl-2"
-      type="text"
-      name=""
-      id="autocomplete"
-      placeholder="Search for location..."
-      onChange="clearLocationIfEmpty()"
-    />
+    <input class="pattern1 pl-2" type="text" name="" id="autocomplete" placeholder="Search for location..."
+      onChange="clearLocationIfEmpty()" />
   </div>
   <div class="in-mob" id="range-sel-div" style="display: none;">
     <select class="pattern1" onChange="storeRangeFilter()" id="range-sel">
       <option value="0">0 km</option>
-      <option selected value="25.0">25 km</option>
-      <option value="50.0">50 km</option>
-      <option value="100.0">100 km</option>
-      <option value="200.0">200 km</option>
+      <option selected value="25">25 km</option>
+      <option value="50">50 km</option>
+      <option value="100">100 km</option>
+      <option value="200">200 km</option>
     </select>
   </div>
 </div>
-<script
-  type="text/javascript"
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxSPvgric8Zn54pYneG9NondiINqdvb-w&libraries=places"
-></script>
+<script type="text/javascript"
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxSPvgric8Zn54pYneG9NondiINqdvb-w&libraries=places"></script>
 <script>
   {% include "templates/includes/common/filter.js" %}
 </script>

@@ -1,5 +1,9 @@
 import frappe
 import json
+from frappe import _
+import platform
+
+python_version_2 = platform.python_version().startswith('2')
 
 def nudge_guests():
     if not frappe.session.user or frappe.session.user == 'Guest':
@@ -14,7 +18,7 @@ def set_location_filter(filter_location_name=None, filter_location_lat=None,filt
     if filter_location_lng != None:
         frappe.session.data['filter_location_lng'] = float(filter_location_lng)
     if filter_location_range != None:
-        frappe.session.data['filter_location_range'] = float(filter_location_range)
+        frappe.session.data['filter_location_range'] = int(filter_location_range)
     return filter_location_lat, filter_location_lng, filter_location_range
 
 @frappe.whitelist(allow_guest = True)
@@ -34,6 +38,10 @@ def set_sector_filter(filter_sectors=[]):
         filter_sectors = ['all']
     frappe.session.data['filter_sectors'] = filter_sectors
     return frappe.session.data['filter_sectors']
+
+@frappe.whitelist(allow_guest = True)
+def get_available_sectors():
+    return frappe.get_list('Sector', ['name', 'title'])
 
 @frappe.whitelist(allow_guest = True)
 def get_filters():
@@ -74,28 +82,65 @@ def get_doc_field(doctype, name, field):
 def get_child_table(child_table_doctype, parent_doctype, parent_name):
     return frappe.get_all(child_table_doctype, filters={'parenttype': parent_doctype, 'parent': parent_name})
 
+def convert_if_json(value):
+    cmp_type = str
+    if python_version_2:
+        cmp_type = basestring
+    if isinstance(value, cmp_type):
+        value = json.loads(value)
+    return value
+
+def get_content_for_context(context, doctype, key, limit_page_length=20):
+    context.available_sectors = get_available_sectors()
+    parameters = frappe.form_dict
+    # page
+    try:
+        context.page = int(parameters['page'])
+    except:
+        context.page = 1
+    limit_start = context.page - 1
+    # limit_page_length = 20
+    filtered_content = get_filtered_content(doctype)
+    context.start = limit_start*limit_page_length
+    context.end = context.start + limit_page_length
+    context.total_count = len(filtered_content)
+    if context.end > context.total_count:
+        context.end = context.total_count
+    context.has_next_page = False
+    if context.total_count > limit_page_length*context.page:
+        context.has_next_page = True
+    context[key] = filtered_content[context.start:context.end]
+    return context
+
+
 @frappe.whitelist(allow_guest = True)
-def get_filtered_content(doctype, filter_location_lat, filter_location_lng, filter_location_range, filter_sectors, limit_page_length=20, limit_start = 0, html=False):
-    if isinstance(filter_sectors, str):
-        try:
-            filter_sectors = json.loads(filter_sectors)
-        except:
-            filter_sectors = []
-    if isinstance(filter_location_lat, str):
-        try:
-            filter_location_lat = float(filter_location_lat)
-        except:
-            filter_location_lat = None
-    if isinstance(filter_location_lng, str):
-        try:
-            filter_location_lng = float(filter_location_lng)
-        except:
-            filter_location_lng = None
-    if isinstance(filter_location_range, str):
-        try:
-            filter_location_range = float(filter_location_range)
-        except:
-            filter_location_range = None
+def get_filtered_content(doctype):
+    parameters = frappe.form_dict
+    # filter_location_name
+    try:
+        filter_location_name = parameters['loc']
+    except:
+        filter_location_name = None
+    # filter_location_lat
+    try:
+        filter_location_lat = float(parameters['lat'])
+    except:
+        filter_location_lat = None
+    # filter_location_lng
+    try:
+        filter_location_lng = float(parameters['lng'])
+    except:
+        filter_location_lng = None
+    # filter_location_range
+    try:
+        filter_location_range = int(parameters['rng'])
+    except:
+        filter_location_range = None
+    # filter_sectors
+    try:
+        filter_sectors = json.loads(parameters['sectors'])
+    except Exception as e:
+        filter_sectors = ['all']
     if not filter_sectors:
         filter_sectors = ['all']
     if 'all' in filter_sectors:
@@ -107,9 +152,7 @@ def get_filtered_content(doctype, filter_location_lat, filter_location_lng, filt
     # TODO: Implement location filtering using Elasticsearch
     from geopy import distance
     content = []
-    start = limit_start*limit_page_length
-    end = start + limit_page_length
-    for c in list(content_set)[start:end]:
+    for c in content_set:
         doc = frappe.get_doc(doctype, c)
         if doc.is_published:
             if (doc.latitude != None) and (doc.longitude != None) and (filter_location_lat != None) and (filter_location_lng != None) and (filter_location_range != None):
@@ -117,21 +160,12 @@ def get_filtered_content(doctype, filter_location_lat, filter_location_lng, filt
                 if distance_km > filter_location_range:
                     # skip this document as it's outside our bounds
                     continue
-            doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
-            if html:
-                template = "templates/includes/problem/problem_card.html"
-                context = {
-                    'problem': doc
-                }
-                html = frappe.render_template(template, context)
-                content.append(html)
-            else:
-                content.append(doc)
+            content.append(doc)
     return content
 
 @frappe.whitelist(allow_guest = True)
 def search_content_by_text(doctype, text, limit_page_length=5, html=True):
-    names = frappe.db.get_list(doctype, or_filters={'title': ['like', '%{}%'.format(text)], 'description': ['like', '%{}%'.format(text)]}, limit_page_length=limit_page_length)
+    names = frappe.db.get_list(doctype, or_filters={'title': ['like', '%{}%'.format(text)], 'description': ['like', '%{}%'.format(text)], 'is_published': True}, limit_page_length=limit_page_length)
     content = []
     names = {n['name'] for n in names}
     for p in names:
@@ -142,6 +176,55 @@ def search_content_by_text(doctype, text, limit_page_length=5, html=True):
             template = "templates/includes/{}/{}_card.html".format(content_type, content_type)
             context = {
                 content_type: doc
+            }
+            html = frappe.render_template(template, context)
+            content.append(html)
+        else:
+            content.append(doc)
+    return content
+
+@frappe.whitelist(allow_guest = True)
+def global_search_content_by_text(text, limit_page_length=5, html=True):
+    sectors = set()
+    payload = {}
+    for doctype in ['Problem', 'Solution']:
+        payload[doctype] = []
+        content = search_content_by_text(doctype, text, limit_page_length, html=False)
+        for c in content:
+            content_type = doctype.lower()
+            template = "templates/includes/{}/{}_card.html".format(content_type, content_type)
+            context = {
+                content_type: c
+            }
+            html = frappe.render_template(template, context)
+            payload[doctype].append(html)
+            for s in c.sectors:
+                sectors.add(s.sector)
+    contributors = get_content_recommended_for_user('User Profile', sectors, limit_page_length=limit_page_length)
+    doctype = 'User Profile'
+    payload[doctype] = []
+    for c in contributors:
+        template = "templates/includes/common/user_card.html"
+        context = {
+            'user': c
+        }
+        html = frappe.render_template(template, context)
+        payload[doctype].append(html)
+    return payload
+
+@frappe.whitelist(allow_guest = True)
+def search_contributors_by_text(text, limit_page_length=5, html=True):
+    doctype = 'User Profile'
+    names = frappe.db.get_list(doctype, or_filters={'full_name': ['like', '%{}%'.format(text)]}, limit_page_length=limit_page_length)
+    content = []
+    names = {n['name'] for n in names}
+    for p in names:
+        doc = frappe.get_doc(doctype, p)
+        doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
+        if html:
+            template = "templates/includes/common/user_card.html"
+            context = {
+                'user': doc
             }
             html = frappe.render_template(template, context)
             content.append(html)
@@ -380,15 +463,35 @@ def get_content_by_user(doctype, limit_page_length=5):
 
 @frappe.whitelist(allow_guest = False)
 def get_contributions_by_user(parent_doctype, child_doctypes, limit_page_length=5):
-    content_set = set()
+    # content_set = set()
+    content_dict = {}
     for child_doctype in child_doctypes:
-        filtered = frappe.get_list(child_doctype, fields=['parent'], filters={'user': frappe.session.user, 'parenttype': parent_doctype}, limit_page_length=limit_page_length)
+        filtered = frappe.get_list(child_doctype, fields=['parent', 'modified'], filters={'user': frappe.session.user, 'parenttype': parent_doctype})
         for f in filtered:
-            content_set.add(f['parent'])
+            if f['parent'] not in content_dict:
+                content_dict[f['parent']] = []
+            content_dict[f['parent']].append({'type': child_doctype, 'modified': f['modified']})
+            # content_set.add(f['parent'])
     content = []
-    for c in content_set:
+    # print(content_dict)
+    # for c in content_set:
+    for c in content_dict:
         doc = frappe.get_doc(parent_doctype, c)
         if doc.is_published:
+            doc.enriched = False
+            doc.validated = False
+            doc.collaborated = False
+            doc.discussed = False
+            for e in content_dict[c]:
+                contribution_type = e['type']
+                if contribution_type == 'Enrichment Table':
+                    doc.enriched = e['modified']
+                elif contribution_type == 'Validation Table':
+                    doc.validated = e['modified']
+                elif contribution_type == 'Collaboration Table':
+                    doc.collaborated = e['modified']
+                elif contribution_type == 'Discussion Table':
+                    doc.discussed = e['modified']
             content.append(doc)
     return content
 
@@ -457,3 +560,42 @@ def delete_enrichment(name):
         return True
     except:
         frappe.throw('Enrichment not found.')
+
+@frappe.whitelist(allow_guest=True)
+def register(form=None):
+    if not form:
+        form = dict(frappe.form_dict)
+    frappe.set_user('Administrator')
+    form['doctype'] = 'User'
+    user_by_email = frappe.db.get("User", {"email": form['email']})
+    if not user_by_email:
+        from frappe.utils import random_string
+        user = frappe.get_doc({
+            "doctype":"User",
+            "email": form['email'],
+            "first_name": form['first_name'],
+            "last_name": form['last_name'],
+            "enabled": 1,
+            "user_type": "Website User",
+            "send_welcome_email": False
+        })
+        user.flags.ignore_permissions = True
+        user.insert()
+        # set default signup role as per Portal Settings
+        default_role = frappe.db.get_value("Portal Settings", None, "default_role")
+        if default_role:
+            user.add_roles(default_role)
+        frappe.db.commit()
+        success_msg = "You will shortly receive a verification email with a link to set your password and start the application process."
+        frappe.respond_as_web_page(_("Sign up successful"),
+            _(success_msg),
+            http_status_code=200, indicator_color='green', fullpage = True, primary_action='/')
+        return frappe.website.render.render("message", http_status_code=200)
+    else:
+        error_msg = 'You have already signed up with this email. Try logging in instead.'
+        # frappe.throw(error_msg)
+        frappe.respond_as_web_page(_("Sign up error"),
+            _(error_msg),
+            http_status_code=400, indicator_color='red', fullpage = True, primary_action='/')
+        return frappe.website.render.render("message", http_status_code=400)
+    

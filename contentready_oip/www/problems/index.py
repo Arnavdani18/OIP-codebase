@@ -1,16 +1,8 @@
 import frappe
 from contentready_oip import api
+import json
 
 def get_context(context):
-    parameters = frappe.form_dict
-    try:
-        context.page = int(parameters['page'])
-    except:
-        context.page = 1
-    limit_start = context.page - 1
-    limit_page_length = 20
-    r = api.get_filters()
-    context.update(r)
-    if frappe.session.user != 'Guest':
-        context.problems = api.get_filtered_content('Problem', context.filter_location_lat, context.filter_location_lng, context.filter_location_range, context.filter_sectors, limit_page_length=limit_page_length, limit_start=limit_start)
-        context.total_count = api.get_homepage_stats()['problems']
+    doctype = 'Problem'
+    context = api.get_content_for_context(context, doctype, 'problems')
+    
