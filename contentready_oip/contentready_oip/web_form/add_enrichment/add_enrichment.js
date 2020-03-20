@@ -104,7 +104,7 @@ frappe.ready(async () => {
     frappe.web_form.set_value("longitude", place.geometry.location.lng());
   };
 
-  addFileToDoc = file => {
+  addFileToDoc = (file) => {
     if (file.xhr) {
       const response = JSON.parse(file.xhr.response);
       const file_url = response.message.file_url;
@@ -119,7 +119,7 @@ frappe.ready(async () => {
     }
   };
 
-  removeFileFromDoc = file => {
+  removeFileFromDoc = (file) => {
     frappe.web_form.doc.media = frappe.web_form.doc.media.filter(i => !i.attachment.endsWith(file.name));
   };
 
@@ -156,7 +156,7 @@ frappe.ready(async () => {
     });
   };
 
-  submitEnrichmentForm = is_draft => {
+  submitEnrichmentForm = (is_draft) => {
     frappe.web_form.doc.doctype = "Enrichment";
     frappe.web_form.doc.user = frappe.session.user;
     frappe.call({
@@ -215,12 +215,12 @@ frappe.ready(async () => {
     });
   };
 
-  saveAsDraft = event => {
+  saveAsDraft = (event) => {
     const is_draft = true;
     submitEnrichmentForm(is_draft);
   };
 
-  publishEnrichment = event => {
+  publishEnrichment = (event) => {
     const is_draft = false;
     frappe.web_form.doc.is_published = true;
     submitEnrichmentForm(is_draft);

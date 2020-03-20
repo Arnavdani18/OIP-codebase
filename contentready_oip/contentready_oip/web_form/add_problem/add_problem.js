@@ -54,7 +54,7 @@ frappe.ready(async () => {
     });
   };
 
-  addSectorToDoc = event => {
+  addSectorToDoc = (event) => {
     if (!frappe.web_form.doc.sectors) {
       frappe.web_form.doc.sectors = [];
     }
@@ -153,7 +153,7 @@ frappe.ready(async () => {
     }
   };
 
-  addFileToDoc = file => {
+  addFileToDoc = (file) => {
     // Since we are showing previously added, remote
     if (file.xhr) {
       const response = JSON.parse(file.xhr.response);
@@ -169,7 +169,7 @@ frappe.ready(async () => {
     }
   };
 
-  removeFileFromDoc = file => {
+  removeFileFromDoc = (file) => {
     frappe.web_form.doc.media = frappe.web_form.doc.media.filter(
       i => !i.attachment.endsWith(file.name)
     );
@@ -208,7 +208,7 @@ frappe.ready(async () => {
     });
   };
 
-  submitProblemForm = is_draft => {
+  submitProblemForm = (is_draft) => {
     frappe.call({
       method: 'contentready_oip.api.add_primary_content',
       args: {
@@ -268,13 +268,13 @@ frappe.ready(async () => {
     }
   };
 
-  saveAsDraft = event => {
+  saveAsDraft = (event) => {
     frappe.web_form.doc.is_published = false;
     const is_draft = true;
     submitProblemForm(is_draft);
   };
 
-  publishProblem = event => {
+  publishProblem = (event) => {
     frappe.web_form.doc.is_published = true;
     const is_draft = false;
     submitProblemForm(is_draft);

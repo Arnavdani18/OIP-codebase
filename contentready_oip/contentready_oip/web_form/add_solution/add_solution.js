@@ -110,7 +110,7 @@ frappe.ready(async () => {
     });
   };
 
-  addSectorToDoc = event => {
+  addSectorToDoc = (event) => {
     if (!frappe.web_form.doc.sectors) {
       frappe.web_form.doc.sectors = [];
     }
@@ -228,19 +228,19 @@ frappe.ready(async () => {
       });
   };
 
-  deselectProblemUI = name => {
+  deselectProblemUI = (name) => {
     const id = '#problem-card-' + name;
     $(id).css('background', '#ffffff');
     $(id).data('selected', false);
   };
 
-  selectProblemUI = name => {
+  selectProblemUI = (name) => {
     const id = '#problem-card-' + name;
     $(id).css('background', '#eeffee');
     $(id).data('selected', true);
   };
 
-  getProblemCard = name => {
+  getProblemCard = (name) => {
     frappe.call({
       method: 'contentready_oip.api.get_problem_card',
       args: { name: name },
@@ -248,6 +248,12 @@ frappe.ready(async () => {
         // r.message[0] is the html
         // r.message[1] is the doc_name in case we need to do any processing client side
         $('#matching-problems').append(r.message[0]);
+        // disable click to navigate on the card
+        $('#matching-problems')
+            .find('*')
+            .unbind()
+            .removeAttr('onclick')
+            .removeAttr('data-toggle');
         selectProblemUI(r.message[1]);
         setupProblemsForSelection();
       }
@@ -258,6 +264,10 @@ frappe.ready(async () => {
     // Read query parameter to see if routed from a problem. Add that problem to matching problems.
     const qp = frappe.utils.get_query_params();
     if (qp.problem) {
+      if (!frappe.web_form.doc.problems_addressed){
+        frappe.web_form.doc.problems_addressed = [];
+      }
+      frappe.web_form.doc.problems_addressed.push({problem: qp.problem});
       getProblemCard(qp.problem);
     }
     // When editing, show all the existing problems.
@@ -337,7 +347,7 @@ frappe.ready(async () => {
     }
   };
 
-  addFileToDoc = file => {
+  addFileToDoc = (file) => {
     if (file.xhr) {
       const response = JSON.parse(file.xhr.response);
       const file_url = response.message.file_url;
@@ -352,7 +362,7 @@ frappe.ready(async () => {
     }
   };
 
-  removeFileFromDoc = file => {
+  removeFileFromDoc = (file) => {
     frappe.web_form.doc.media = frappe.web_form.doc.media.filter(
       i => !i.attachment.endsWith(file.name)
     );
@@ -391,7 +401,7 @@ frappe.ready(async () => {
     });
   };
 
-  addProblemToSolvedSet = name => {
+  addProblemToSolvedSet = (name) => {
     if (!frappe.web_form.doc.problems_addressed) {
       frappe.web_form.doc.problems_addressed = [];
     }
@@ -400,7 +410,7 @@ frappe.ready(async () => {
     });
   };
 
-  removeProblemFromSolvedSet = name => {
+  removeProblemFromSolvedSet = (name) => {
     frappe.web_form.doc.problems_addressed = frappe.web_form.doc.problems_addressed.filter(
       i => !i.problem === name
     );
@@ -429,7 +439,7 @@ frappe.ready(async () => {
     }
   }
 
-  submitSolutionForm = is_draft => {
+  submitSolutionForm = (is_draft) => {
     getSolversFromMultiselect();
     frappe.call({
       method: 'contentready_oip.api.add_primary_content',
@@ -490,13 +500,13 @@ frappe.ready(async () => {
     }
   };
 
-  saveAsDraft = event => {
+  saveAsDraft = (event) => {
     frappe.web_form.doc.is_published = false;
     const is_draft = true;
     submitSolutionForm(is_draft);
   };
 
-  publishSolution = event => {
+  publishSolution = (event) => {
     frappe.web_form.doc.is_published = true;
     const is_draft = false;
     submitSolutionForm(is_draft);
