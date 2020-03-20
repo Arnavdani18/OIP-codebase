@@ -2,7 +2,6 @@ import frappe
 from contentready_oip import api
 
 def get_context(context):
-    print(frappe.session.user)
     if frappe.session.user != 'Guest':
         dashboard_content = api.get_dashboard_content(limit_page_length=2)
         context.problems = dashboard_content['problems']

@@ -121,6 +121,34 @@ frappe.ready(async () => {
     $('*[data-fieldtype="Table"]').hide();
   };
 
+  addMultiselectForSolverTeam = () => {
+    const el = `
+    <h6 class="mt-3">Solver Team</h6>
+    <select class="select2" name="solver_team[]" multiple="multiple" id="solver-team-select">
+    </select>
+    `
+    $('*[data-fieldname="solver_team"]').before(el);
+    // $('#solver-team-select').select2({
+    //   width: '100%'
+    // });
+    frappe.call({
+      method: 'contentready_oip.api.get_user_list',
+      args: {},
+      callback: function(r) {
+        $('#solver-team-select').select2({
+          width: '100%',
+          data: r.message
+        });
+        setSolversMultiselectFromDoc();
+        // r.message.map(op => {
+        //   if (!op.value.endsWith('example.com')){
+        //     $('#solver-team-select').append(`<option value="${op.value}"> ${op.label}</option>`);
+        //   }
+        // })
+      }
+    })
+  }
+
   initAutocomplete = () => {
     // TODO: Use domain settings to retrieve country list
     $('*[data-fieldname="city"]:text')
@@ -378,7 +406,31 @@ frappe.ready(async () => {
     );
   };
 
+  getSolversFromMultiselect = () => {
+    const solvers = $('#solver-team-select').val();
+    console.log(solvers);
+    if (solvers){
+      frappe.web_form.doc.solver_team = [];
+      solvers.map(s => {
+        frappe.web_form.doc.solver_team.push({user: s});
+      });
+    }
+  }
+
+  setSolversMultiselectFromDoc = () => {
+    if (frappe.web_form.doc.solver_team){
+      const solvers = [];
+      frappe.web_form.doc.solver_team.map(s => {
+        solvers.push(s.user);
+      });
+      console.log(solvers);
+      $('#solver-team-select').val(solvers);
+      $('#solver-team-select').trigger('change');
+    }
+  }
+
   submitSolutionForm = is_draft => {
+    getSolversFromMultiselect();
     frappe.call({
       method: 'contentready_oip.api.add_primary_content',
       args: {
@@ -405,6 +457,7 @@ frappe.ready(async () => {
   };
 
   autoSaveDraft = () => {
+    getSolversFromMultiselect();
     if (frappe.web_form.doc.title) {
       frappe.call({
         method: 'contentready_oip.api.add_primary_content',
@@ -500,7 +553,6 @@ frappe.ready(async () => {
 
   // Start UI Fixes
   $('*[data-doctype="Web Form"]').wrap('<div class="container pt-5"></div>');
-  fixNavBar();
   // We hide the default form buttons (using css) and add our own
   addActionButtons();
   moveDivs();
@@ -510,6 +562,8 @@ frappe.ready(async () => {
   styleFields();
   controlLabels();
   pageHeadingSection();
+  addMultiselectForSolverTeam();
+  // setSolversMultiselectFromDoc();
 
   // End UI Fixes
 
@@ -559,69 +613,3 @@ frappe.ready(async () => {
 
   // End Events
 });
-
-fixNavBar = () => {
-  $('main').removeClass('container my-5');
-  $('nav.navbar').addClass('navbar-section');
-  $('ul.navbar-nav:even').addClass('nav-left-list');
-  $('ul.navbar-nav:odd').addClass('nav-right-list');
-  $('ul.navbar-nav:even .nav-link.active').addClass('tab-focus');
-
-  let search = $('a[href="/search"]');
-  search.addClass('d-md-flex align-items-md-center');
-  search.html('<span class="d-block d-lg-none">Search</span>');
-  search.prepend(
-    '<img src="/files/Search.svg" class="mr-4" height="20" width="20" />'
-  );
-
-  $('li.nav-item.dropdown.logged-in a').addClass(
-    'd-flex align-items-center mr-4'
-  );
-  $('li.nav-item.dropdown.logged-in a span.full-name').attr('hidden', true);
-  $('div.standard-image').css({
-    height: '3rem',
-    width: '3rem',
-    'text-align': 'center'
-  });
-
-  $('ul.dropdown-menu').addClass('dropdown-section');
-  // menu button
-  $('button.navbar-toggler').addClass('py-2');
-
-  // changing My Account to Edit Profile
-  const dropdownList = $('a[href="/me"]');
-  dropdownList.attr('href', '/update-profile');
-  dropdownList.text('Profile');
-
-  if (frappe.session.user === 'Guest') {
-    $('a:contains("Add a Problem / Solution")').hide();
-  } else {
-    $('a:contains("Add a Problem / Solution")').addClass('add-problem-btn');
-    $('a:contains("Add a Problem / Solution")')
-      .next()
-      .addClass('dropdown-menu-right');
-
-    // fix moving of nav while clicking menu icon
-    $('nav div.container').addClass('nav-container');
-
-    // chnge the list order
-    $('.nav-right-list')
-      .find('li:eq(0)')
-      .insertAfter('.nav-right-list li:eq(2)');
-
-    // insert add problem/solution and search logo
-    let addProblem = $('a[href="/add-problem?new=1"]');
-    let addSolution = $('a[href="/add-solution?new=1"]');
-
-    addProblem.prepend(
-      '<img src="/files/problem_dark.svg" height="22" width="30" />'
-    );
-
-    addSolution.prepend(
-      '<img src="/files/solution_dark.svg" height="22" width="30" />'
-    );
-
-    addProblem.addClass('py-2');
-    addSolution.addClass('py-2');
-  }
-};
