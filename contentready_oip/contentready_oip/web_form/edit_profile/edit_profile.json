@@ -18,7 +18,7 @@
  "is_standard": 1,
  "login_required": 1,
  "max_attachment_size": 10,
- "modified": "2020-03-17 10:34:13.125478",
+ "modified": "2020-03-20 15:23:58.133929",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "edit-profile",
@@ -254,7 +254,7 @@
    "max_value": 0,
    "options": "Organisation",
    "read_only": 0,
-   "reqd": 1,
+   "reqd": 0,
    "show_in_filter": 0
   },
   {

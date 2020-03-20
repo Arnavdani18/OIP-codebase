@@ -2,9 +2,9 @@
 <div class="discussion-section">
   <div class="comment-section">
     <div class="">
-      {% set doc = frappe.get_doc('User', comment.user) %}
+      {% set doc = frappe.get_doc('User Profile', comment.user) %}
       <img
-        src="{{doc.user_image|default('/files/default-avatar.jpg', true)}}"
+        src="{{doc.photo|default('/files/default-avatar.jpg', true)}}"
         alt="profile photo"
         class=""
         style="object-fit: cover;overflow: hidden; border-radius: 50%;"
@@ -35,9 +35,9 @@
   {% for reply in comment.replies %}
   <div class="reply-section">
     <div class="">
-      {% set doc = frappe.get_doc('User', comment.user) %}
+      {% set doc = frappe.get_doc('User Profile', comment.user) %}
       <img
-        src="{{doc.user_image|default('/files/default-avatar.jpg', true)}}"
+        src="{{doc.photo|default('/files/default-avatar.jpg', true)}}"
         alt="profile photo"
         class=""
         style="object-fit: cover;overflow: hidden;border-radius: 50%;"
