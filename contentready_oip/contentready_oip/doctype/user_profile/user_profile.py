@@ -23,8 +23,9 @@ class UserProfile(WebsiteGenerator):
             self.name = self.scrubbed_title()+'-'+frappe.generate_hash("", 3)
 
     def on_update(self):
-        if self.photo:
-            frappe.set_value('User', self.user, 'user_image', self.photo)
+        # disable until we can figure out the right way to do this.
+        # if self.photo:
+        #     frappe.set_value('User', self.user, 'user_image', self.photo)
         try:
             org = frappe.get_doc('Organisation', {'title': self.org_title})
         except:
