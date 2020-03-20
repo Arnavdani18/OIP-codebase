@@ -121,6 +121,34 @@ frappe.ready(async () => {
     $('*[data-fieldtype="Table"]').hide();
   };
 
+  addMultiselectForSolverTeam = () => {
+    const el = `
+    <h6 class="mt-3">Solver Team</h6>
+    <select class="select2" name="solver_team[]" multiple="multiple" id="solver-team-select">
+    </select>
+    `
+    $('*[data-fieldname="solver_team"]').before(el);
+    // $('#solver-team-select').select2({
+    //   width: '100%'
+    // });
+    frappe.call({
+      method: 'contentready_oip.api.get_user_list',
+      args: {},
+      callback: function(r) {
+        $('#solver-team-select').select2({
+          width: '100%',
+          data: r.message
+        });
+        setSolversMultiselectFromDoc();
+        // r.message.map(op => {
+        //   if (!op.value.endsWith('example.com')){
+        //     $('#solver-team-select').append(`<option value="${op.value}"> ${op.label}</option>`);
+        //   }
+        // })
+      }
+    })
+  }
+
   initAutocomplete = () => {
     // TODO: Use domain settings to retrieve country list
     $('*[data-fieldname="city"]:text')
@@ -378,7 +406,31 @@ frappe.ready(async () => {
     );
   };
 
+  getSolversFromMultiselect = () => {
+    const solvers = $('#solver-team-select').val();
+    console.log(solvers);
+    if (solvers){
+      frappe.web_form.doc.solver_team = [];
+      solvers.map(s => {
+        frappe.web_form.doc.solver_team.push({user: s});
+      });
+    }
+  }
+
+  setSolversMultiselectFromDoc = () => {
+    if (frappe.web_form.doc.solver_team){
+      const solvers = [];
+      frappe.web_form.doc.solver_team.map(s => {
+        solvers.push(s.user);
+      });
+      console.log(solvers);
+      $('#solver-team-select').val(solvers);
+      $('#solver-team-select').trigger('change');
+    }
+  }
+
   submitSolutionForm = is_draft => {
+    getSolversFromMultiselect();
     frappe.call({
       method: 'contentready_oip.api.add_primary_content',
       args: {
@@ -405,6 +457,7 @@ frappe.ready(async () => {
   };
 
   autoSaveDraft = () => {
+    getSolversFromMultiselect();
     if (frappe.web_form.doc.title) {
       frappe.call({
         method: 'contentready_oip.api.add_primary_content',
@@ -509,6 +562,8 @@ frappe.ready(async () => {
   styleFields();
   controlLabels();
   pageHeadingSection();
+  addMultiselectForSolverTeam();
+  // setSolversMultiselectFromDoc();
 
   // End UI Fixes
 
