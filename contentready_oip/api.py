@@ -103,27 +103,28 @@ def convert_if_json(value):
         value = json.loads(value)
     return value
 
-def get_content_for_context(context, doctype, key, limit_page_length=20):
-    context.available_sectors = get_available_sectors()
+def get_filtered_paginated_content(context, doctype, key, limit_page_length=20):
+    payload = {}
+    payload['available_sectors'] = get_available_sectors()
     parameters = frappe.form_dict
     # page
     try:
-        context.page = int(parameters['page'])
+        payload['page'] = int(parameters['page'])
     except:
-        context.page = 1
-    limit_start = context.page - 1
+        payload['page'] = 1
+    limit_start = payload['page'] - 1
     # limit_page_length = 20
     filtered_content = get_filtered_content(doctype)
-    context.start = limit_start*limit_page_length
-    context.end = context.start + limit_page_length
-    context.total_count = len(filtered_content)
-    if context.end > context.total_count:
-        context.end = context.total_count
-    context.has_next_page = False
-    if context.total_count > limit_page_length*context.page:
-        context.has_next_page = True
-    context[key] = filtered_content[context.start:context.end]
-    return context
+    payload['start'] = limit_start*limit_page_length
+    payload['end'] = payload['start'] + limit_page_length
+    payload['total_count'] = len(filtered_content)
+    if payload['end'] > payload['total_count']:
+        payload['end'] = payload['total_count']
+    payload['has_next_page'] = False
+    if payload['total_count'] > limit_page_length*payload['page']:
+        payload['has_next_page'] = True
+    payload[key] = filtered_content[payload['start']:payload['end']]
+    return payload
 
 
 @frappe.whitelist(allow_guest = True)
@@ -153,9 +154,10 @@ def get_filtered_content(doctype):
     try:
         filter_sectors = json.loads(parameters['sectors'])
     except Exception as e:
-        filter_sectors = ['all']
-    if not filter_sectors:
-        filter_sectors = ['all']
+        # filter_sectors = ['all']
+        filter_sectors = []
+    # if not filter_sectors:
+    #     filter_sectors = ['all']
     if 'all' in filter_sectors:
         filtered = frappe.get_list(doctype, filters={'is_published': True})
         content_set = {f['name'] for f in filtered}
