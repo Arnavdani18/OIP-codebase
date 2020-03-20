@@ -239,6 +239,7 @@ def get_orgs_list():
 
 @frappe.whitelist(allow_guest = False)
 def get_user_list():
+    frappe.set_user('Administrator')
     all_users = frappe.get_list('User', filters={'enabled': 1, 'email': ['not like', '%example.com%']}, fields=['full_name', 'email'])
     return [{'text': o['full_name'], 'id': o['email']} for o in all_users]
 
