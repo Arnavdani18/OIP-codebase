@@ -9,18 +9,18 @@ def nudge_guests():
     if not frappe.session.user or frappe.session.user == 'Guest':
         frappe.throw('Please login to collaborate.')
 
-def create_user_profile_if_missing(email):
+def create_user_profile_if_missing(doc, event_name):
     try:
-        if not frappe.db.exists('User Profile', email):
+        if not frappe.db.exists('User Profile', doc.email):
             profile = frappe.get_doc({
                 'doctype': 'User Profile',
-                'user': email
+                'user': doc.email,
+                'owner': doc.email
             })
             profile.save()
             frappe.db.commit()
-        return True
     except:
-        return False
+        pass
 
 @frappe.whitelist(allow_guest = True)
 def set_location_filter(filter_location_name=None, filter_location_lat=None,filter_location_lng=None, filter_location_range=25):
@@ -289,7 +289,6 @@ def can_user_contribute(child_doctype, parent_doctype, parent_name):
 @frappe.whitelist(allow_guest = False)
 def toggle_contribution(child_doctype, parent_doctype, parent_name, field_name):
     nudge_guests()
-    create_user_profile_if_missing(frappe.session.user)
     contributions = frappe.get_all(child_doctype, filters={'user': frappe.session.user, 'parenttype': parent_doctype, 'parent': parent_name})
     if len(contributions) > 0:
         # user has already contributed to this document
@@ -306,7 +305,6 @@ def toggle_contribution(child_doctype, parent_doctype, parent_name, field_name):
 
 @frappe.whitelist(allow_guest = False)
 def add_comment(doctype, name, text, media=None, html=True):
-    create_user_profile_if_missing(frappe.session.user)
     doc = frappe.get_doc({
         'doctype': 'Discussion',
         'text': text,
@@ -368,7 +366,6 @@ def get_problem_overview(name, html=True):
 
 @frappe.whitelist(allow_guest = False)
 def add_primary_content(doctype, doc, is_draft=False):
-    create_user_profile_if_missing(frappe.session.user)
     doc = json.loads(doc)
     if isinstance(is_draft,str):
         is_draft = json.loads(is_draft)
@@ -392,7 +389,6 @@ def add_primary_content(doctype, doc, is_draft=False):
 
 @frappe.whitelist(allow_guest = False)
 def add_enrichment(doc,is_draft=False):
-    create_user_profile_if_missing(frappe.session.user)
     doc = json.loads(doc)
     if isinstance(is_draft,str):
         is_draft = json.loads(is_draft)
@@ -421,7 +417,6 @@ def add_enrichment(doc,is_draft=False):
 
 @frappe.whitelist(allow_guest = False)
 def add_or_edit_validation(doctype, name, validation, html=True):
-    create_user_profile_if_missing(frappe.session.user)
     validation = json.loads(validation)
     if doctype == 'Validation Table':
         # in edit mode
@@ -450,7 +445,6 @@ def add_or_edit_validation(doctype, name, validation, html=True):
 
 @frappe.whitelist(allow_guest = False)
 def add_or_edit_collaboration(doctype, name, collaboration, html=True):
-    create_user_profile_if_missing(frappe.session.user)
     collaboration = json.loads(collaboration)
     if doctype == 'Collaboration Table':
         # in edit mode
@@ -587,7 +581,6 @@ def get_dashboard_content(limit_page_length=5):
 
 @frappe.whitelist(allow_guest = False)
 def delete_contribution(child_doctype, name):
-    create_user_profile_if_missing(frappe.session.user)
     try:
         frappe.delete_doc(child_doctype, name)
         return True
@@ -596,7 +589,6 @@ def delete_contribution(child_doctype, name):
 
 @frappe.whitelist(allow_guest = False)
 def delete_enrichment(name):
-    create_user_profile_if_missing(frappe.session.user)
     try:
         e = frappe.get_doc('Enrichment Table', {'enrichment': name})
         # delete from the problem child table
@@ -631,7 +623,6 @@ def register(form=None):
         default_role = frappe.db.get_value("Portal Settings", None, "default_role")
         if default_role:
             user.add_roles(default_role)
-        create_user_profile_if_missing(form['email'])
         frappe.db.commit()
         success_msg = "You will shortly receive a verification email with a link to set your password and start the application process."
         frappe.respond_as_web_page(_("Sign up successful"),
