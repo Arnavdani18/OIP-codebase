@@ -10,13 +10,18 @@
   <div class="row">
     <div class="col">
       <div class="col-sm-12 problem-listed-container">
-        <div class="d-flex align-items-center">
-          <img src="/files/problem_icon.svg" alt="" height="24" width="20" />
-          <h3>
-            Problems Listed (<span id="problems-count"
-              >{{ problems | length }} of {{ total_count }}, Page {{page}}</span
-            >)
-          </h3>
+        <div class="d-flex justify-content-between">
+          <div class="d-flex align-items-center">
+            <img src="/files/problem_icon.svg" alt="" height="24" width="20" />
+            <h3>
+              Problems Listed
+            </h3>
+          </div>
+
+          <div>
+            <h3>(<span id="problems-count">{{ problems | length }} of {{ total_count }}, Page {{page}}</span>)</h3>
+          </div>
+
         </div>
       </div>
     </div>
@@ -28,17 +33,14 @@
     </div>
     {% endfor %} {% endif %}
   </div>
-  
+
   <div class="row">
     <div class="col">
       <div class="col-sm-12 problem-listed-container">
         <div class="d-flex align-items-center">
           <h3>
             {% if has_next_page %}
-            <a
-              href="?page={{page + 1}}"
-              style="text-decoration: none;color: white;"
-            >
+            <a href="?page={{page + 1}}" style="text-decoration: none;color: white;">
               Next Page
             </a>
             {% elif page != 1 %}
