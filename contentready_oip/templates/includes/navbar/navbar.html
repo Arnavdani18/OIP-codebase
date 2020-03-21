@@ -60,7 +60,8 @@
                 <li class="nav-item dropdown profile-btn-li">
                     <a class="nav-link profile-icon dropdown-toggle" href="#" id="profileDropdown" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img src="/files/default-avatar.jpg" alt="profile photo" height="30" width="30"
+                        {% set doc = frappe.get_doc('User Profile', frappe.session.user) %}
+                        <img src="{{doc.photo|default('/files/default-avatar.jpg', true)}}" alt="profile photo" height="30" width="30"
                             style="border-radius: .4rem; object-fit:cover;" />
 
                         <span class="d-lg-none text-capitalize ml-3">Profile</span>

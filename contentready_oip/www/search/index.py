@@ -17,14 +17,16 @@ def get_context(context):
     context.key = key
     sectors = set()
     # problems
-    context = api.get_content_for_context(context, 'Problem', 'problems')
+    r = api.get_filtered_paginated_content(context, 'Problem', 'problems')
+    context.update(r)
     # context.matched_problems = context.problems
     for index, p in enumerate(context.problems):
         if p.title.lower().find(key) != -1 or p.description.lower().find(key) != -1:
             context.matched_problems.append(p)
             for s in p.sectors:
                 sectors.add(s.sector)
-    context = api.get_content_for_context(context, 'Solution', 'solutions')
+    s = api.get_filtered_paginated_content(context, 'Solution', 'solutions')
+    context.update(s)
     for index, p in enumerate(context.solutions):
         if p.title.lower().find(key) != -1 or p.description.lower().find(key) != -1:
             context.matched_solutions.append(p)

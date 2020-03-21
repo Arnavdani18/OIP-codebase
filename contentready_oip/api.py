@@ -9,6 +9,19 @@ def nudge_guests():
     if not frappe.session.user or frappe.session.user == 'Guest':
         frappe.throw('Please login to collaborate.')
 
+def create_user_profile_if_missing(doc, event_name):
+    try:
+        if not frappe.db.exists('User Profile', doc.email):
+            profile = frappe.get_doc({
+                'doctype': 'User Profile',
+                'user': doc.email,
+                'owner': doc.email
+            })
+            profile.save()
+            frappe.db.commit()
+    except:
+        pass
+
 @frappe.whitelist(allow_guest = True)
 def set_location_filter(filter_location_name=None, filter_location_lat=None,filter_location_lng=None, filter_location_range=25):
     if filter_location_name != None:
@@ -90,27 +103,28 @@ def convert_if_json(value):
         value = json.loads(value)
     return value
 
-def get_content_for_context(context, doctype, key, limit_page_length=20):
-    context.available_sectors = get_available_sectors()
+def get_filtered_paginated_content(context, doctype, key, limit_page_length=20):
+    payload = {}
+    payload['available_sectors'] = get_available_sectors()
     parameters = frappe.form_dict
     # page
     try:
-        context.page = int(parameters['page'])
+        payload['page'] = int(parameters['page'])
     except:
-        context.page = 1
-    limit_start = context.page - 1
+        payload['page'] = 1
+    limit_start = payload['page'] - 1
     # limit_page_length = 20
     filtered_content = get_filtered_content(doctype)
-    context.start = limit_start*limit_page_length
-    context.end = context.start + limit_page_length
-    context.total_count = len(filtered_content)
-    if context.end > context.total_count:
-        context.end = context.total_count
-    context.has_next_page = False
-    if context.total_count > limit_page_length*context.page:
-        context.has_next_page = True
-    context[key] = filtered_content[context.start:context.end]
-    return context
+    payload['start'] = limit_start*limit_page_length
+    payload['end'] = payload['start'] + limit_page_length
+    payload['total_count'] = len(filtered_content)
+    if payload['end'] > payload['total_count']:
+        payload['end'] = payload['total_count']
+    payload['has_next_page'] = False
+    if payload['total_count'] > limit_page_length*payload['page']:
+        payload['has_next_page'] = True
+    payload[key] = filtered_content[payload['start']:payload['end']]
+    return payload
 
 
 @frappe.whitelist(allow_guest = True)
@@ -140,9 +154,10 @@ def get_filtered_content(doctype):
     try:
         filter_sectors = json.loads(parameters['sectors'])
     except Exception as e:
-        filter_sectors = ['all']
-    if not filter_sectors:
-        filter_sectors = ['all']
+        # filter_sectors = ['all']
+        filter_sectors = []
+    # if not filter_sectors:
+    #     filter_sectors = ['all']
     if 'all' in filter_sectors:
         filtered = frappe.get_list(doctype, filters={'is_published': True})
         content_set = {f['name'] for f in filtered}
@@ -165,12 +180,12 @@ def get_filtered_content(doctype):
 
 @frappe.whitelist(allow_guest = True)
 def search_content_by_text(doctype, text, limit_page_length=5, html=True):
-    names = frappe.db.get_list(doctype, or_filters={'title': ['like', '%{}%'.format(text)], 'description': ['like', '%{}%'.format(text)], 'is_published': True}, limit_page_length=limit_page_length)
+    names = frappe.db.get_list(doctype, or_filters={'title': ['like', '%{}%'.format(text)], 'description': ['like', '%{}%'.format(text)]}, filters={'is_published': True}, limit_page_length=limit_page_length)
     content = []
     names = {n['name'] for n in names}
     for p in names:
         doc = frappe.get_doc(doctype, p)
-        doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
+        doc.photo = frappe.get_value('User Profile', doc.owner, 'photo')
         if html:
             content_type = doctype.lower()
             template = "templates/includes/{}/{}_card.html".format(content_type, content_type)
@@ -220,7 +235,7 @@ def search_contributors_by_text(text, limit_page_length=5, html=True):
     names = {n['name'] for n in names}
     for p in names:
         doc = frappe.get_doc(doctype, p)
-        doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
+        doc.photo = frappe.get_value('User Profile', doc.owner, 'photo')
         if html:
             template = "templates/includes/common/user_card.html"
             context = {
@@ -239,10 +254,8 @@ def get_orgs_list():
 
 @frappe.whitelist(allow_guest = False)
 def get_user_list():
-    frappe.set_user('Administrator')
-    all_users = frappe.get_list('User', filters={'enabled': 1, 'email': ['not like', '%example.com%']}, fields=['full_name', 'email'])
-    return [{'text': o['full_name'], 'id': o['email']} for o in all_users]
-
+    all_users = frappe.get_list('User Profile', filters={'user': ['not in', ['Guest', 'Administrator']]}, fields=['full_name', 'user'])
+    return [{'text': o['full_name'], 'id': o['user']} for o in all_users]
 
 @frappe.whitelist(allow_guest = True)
 def get_persona_list():
@@ -270,7 +283,7 @@ def has_user_contributed(child_doctype, parent_doctype, parent_name):
 @frappe.whitelist(allow_guest = True)
 def can_user_contribute(child_doctype, parent_doctype, parent_name):
     doc_owner = frappe.get_value(parent_doctype, parent_name, 'owner')
-    print(doc_owner, frappe.session.user)
+    # print(doc_owner, frappe.session.user)
     return has_user_contributed(child_doctype, parent_doctype, parent_name), doc_owner == frappe.session.user
 
 @frappe.whitelist(allow_guest = False)
@@ -540,7 +553,7 @@ def get_content_recommended_for_user(doctype, sectors, limit_page_length=5):
         for c in content_set:
             doc = frappe.get_doc(doctype, c)
             if doc.is_published:
-                doc.user_image = frappe.get_value('User', doc.owner, 'user_image')
+                doc.photo = frappe.get_value('User Profile', doc.owner, 'photo')
                 content.append(doc)
     except:
         pass
