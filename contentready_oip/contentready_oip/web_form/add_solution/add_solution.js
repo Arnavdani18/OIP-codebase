@@ -595,13 +595,30 @@ frappe.ready(async () => {
       let unorderedList = `
       <li class="list-group-item d-flex justify-content-between align-items-center">
         ${link['attachment']}
-        <button type="button" class="close" id="removeBtn-${index + 1}" aria-label="Close">
+        <button type="button" class="close" id="removeBtn-${index + 1}" data-attachment="${link.attachment}" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
       </li>`;
 
 
       $('.attach-links-section ul').append(unorderedList);
+      let btnId = `#removeBtn-${index + 1}`;
+
+      $(btnId)
+        .click(function () {
+          let linkText = $(this).attr('data-attachment');
+
+          if (media) {
+            let foundIndex = media.findIndex((linkObj) => {
+              return linkObj['attachment'] === linkText;
+            })
+
+            if (foundIndex > 0) {
+              media.splice(foundIndex, 1);
+              displayAttachedLinks();
+            }
+          }
+        });
     }
   };
 
