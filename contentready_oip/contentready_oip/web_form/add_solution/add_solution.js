@@ -8,7 +8,7 @@ frappe.ready(async () => {
 
   // Fix layout - without this, the entire form occupies col-2 due to custom CSS.
   moveDivs = () => {
-    $('.section-body > div').each(function() {
+    $('.section-body > div').each(function () {
       $(this)
         .parent()
         .before(this);
@@ -78,7 +78,7 @@ frappe.ready(async () => {
     frappe.call({
       method: 'contentready_oip.api.get_orgs_list',
       args: {},
-      callback: function(r) {
+      callback: function (r) {
         frappe.web_form.set_df_property('org', 'options', r.message);
       }
     });
@@ -91,7 +91,7 @@ frappe.ready(async () => {
     frappe.call({
       method: 'contentready_oip.api.get_sector_list',
       args: {},
-      callback: function(r) {
+      callback: function (r) {
         let solution_sectors;
         if (frappe.web_form.doc.sectors) {
           solution_sectors = frappe.web_form.doc.sectors.map(s => s.sector);
@@ -126,7 +126,7 @@ frappe.ready(async () => {
     <h6 class="mt-3">Solver Team</h6>
     <select class="select2" name="solver_team[]" multiple="multiple" id="solver-team-select">
     </select>
-    `
+    `;
     $('*[data-fieldname="solver_team"]').before(el);
     // $('#solver-team-select').select2({
     //   width: '100%'
@@ -134,7 +134,7 @@ frappe.ready(async () => {
     frappe.call({
       method: 'contentready_oip.api.get_user_list',
       args: {},
-      callback: function(r) {
+      callback: function (r) {
         $('#solver-team-select').select2({
           width: '100%',
           data: r.message
@@ -146,8 +146,8 @@ frappe.ready(async () => {
         //   }
         // })
       }
-    })
-  }
+    });
+  };
 
   initAutocomplete = () => {
     // TODO: Use domain settings to retrieve country list
@@ -244,7 +244,7 @@ frappe.ready(async () => {
     frappe.call({
       method: 'contentready_oip.api.get_problem_card',
       args: { name: name },
-      callback: function(r) {
+      callback: function (r) {
         // r.message[0] is the html
         // r.message[1] is the doc_name in case we need to do any processing client side
         $('#matching-problems').append(r.message[0]);
@@ -268,7 +268,7 @@ frappe.ready(async () => {
     }
   };
 
-  lookForMatchingProblems = async (text) => {
+  lookForMatchingProblems = async text => {
     // Delay as the user is probably still typing
     await sleep(500);
     // Look up text again - user could have typed something since the event was triggered.
@@ -284,7 +284,7 @@ frappe.ready(async () => {
           doctype: 'Problem',
           text: text
         },
-        callback: function(r) {
+        callback: function (r) {
           // Add matching problems to div
           $('#matching-problems').empty();
           $('#matchingProblemsCount').text('');
@@ -307,7 +307,7 @@ frappe.ready(async () => {
     }
   };
 
-  lookForSimilarSolutions = async (text) => {
+  lookForSimilarSolutions = async text => {
     // Delay as the user is probably still typing
     await sleep(500);
     // Look up text again - user could have typed something since the event was triggered.
@@ -321,7 +321,7 @@ frappe.ready(async () => {
           doctype: 'Solution',
           text: text
         },
-        callback: function(r) {
+        callback: function (r) {
           // Add matching solutions to div
           $('#similarSolutions').empty();
           $('#similarSolutionsCount').text('');
@@ -375,7 +375,7 @@ frappe.ready(async () => {
         Accept: 'application/json',
         'X-Frappe-CSRF-Token': frappe.csrf_token
       },
-      init: function() {
+      init: function () {
         // use this event to add to child table
         this.on('complete', addFileToDoc);
         // use this event to remove from child table
@@ -409,16 +409,16 @@ frappe.ready(async () => {
   getSolversFromMultiselect = () => {
     const solvers = $('#solver-team-select').val();
     console.log(solvers);
-    if (solvers){
+    if (solvers) {
       frappe.web_form.doc.solver_team = [];
       solvers.map(s => {
-        frappe.web_form.doc.solver_team.push({user: s});
+        frappe.web_form.doc.solver_team.push({ user: s });
       });
     }
-  }
+  };
 
   setSolversMultiselectFromDoc = () => {
-    if (frappe.web_form.doc.solver_team){
+    if (frappe.web_form.doc.solver_team) {
       const solvers = [];
       frappe.web_form.doc.solver_team.map(s => {
         solvers.push(s.user);
@@ -427,7 +427,7 @@ frappe.ready(async () => {
       $('#solver-team-select').val(solvers);
       $('#solver-team-select').trigger('change');
     }
-  }
+  };
 
   submitSolutionForm = is_draft => {
     getSolversFromMultiselect();
@@ -438,7 +438,7 @@ frappe.ready(async () => {
         doc: frappe.web_form.doc,
         is_draft: is_draft
       },
-      callback: function(r) {
+      callback: function (r) {
         if (r.message && r.message.is_published && r.message.route) {
           window.location.href = r.message.route;
         } else {
@@ -466,7 +466,7 @@ frappe.ready(async () => {
           doc: frappe.web_form.doc,
           is_draft: true
         },
-        callback: function(r) {
+        callback: function (r) {
           // console.log(r);
           // update local form technical fields so that they are up to date with server values
           // Important: do no update fields on the UI as that will interfere with user experience.
@@ -546,6 +546,65 @@ frappe.ready(async () => {
 
     $('.page-header h2').css({ 'margin-bottom': '0px' });
   };
+
+  const appendAttachLink = () => {
+    let btn = `
+    <div class="attach-links-section pattern1">
+      <button class="btn btn-primary solid-primary-btn mb-3" >Attach video link</button>
+      <ul class="list-group"></ul>
+    </div>`;
+
+    $('h6:contains("Media")')
+      .parent()
+      .append(btn);
+
+    // if media attachment already exist
+    displayAttachedLinks();
+
+    $('.attach-links-section button').click(function () {
+      let links = prompt('Attach comma separated list of links: ');
+      if (links) {
+        if (!frappe.web_form.doc.media) {
+          frappe.web_form.doc.media = []
+        }
+
+        let media = frappe.web_form.doc.media;
+        let linkArr = links.split(',');
+        linkArr.forEach(link => {
+          media.push({ attachment: link, type: 'link' })
+        });
+
+        displayAttachedLinks();
+      }
+    });
+  };
+
+  const displayAttachedLinks = () => {
+    if (!frappe.web_form.doc.media) {
+      return;
+    }
+    let media = frappe.web_form.doc.media;
+
+    let linkArr = [];
+    $('.attach-links-section ul').empty();
+    if (media && media.length) {
+      linkArr = media.filter(mediaObj => mediaObj['type'] === 'link');
+    }
+
+    for (const [index, link] of linkArr.entries()) {
+      let unorderedList = `
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        ${link['attachment']}
+        <button type="button" class="close" id="removeBtn-${index + 1}" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+      </li>`;
+
+
+      $('.attach-links-section ul').append(unorderedList);
+    }
+  };
+
   // End Helpers
 
   // Delay until page is fully rendered
@@ -563,6 +622,8 @@ frappe.ready(async () => {
   controlLabels();
   pageHeadingSection();
   addMultiselectForSolverTeam();
+  appendAttachLink();
+
   // setSolversMultiselectFromDoc();
 
   // End UI Fixes
@@ -601,8 +662,7 @@ frappe.ready(async () => {
     if (value.length >= 3) {
       lookForSimilarSolutions(value);
     }
-  })
-
+  });
 
   // Set org link field when org title is selected
   $('*[data-fieldname="org"]').on('change', e => {
