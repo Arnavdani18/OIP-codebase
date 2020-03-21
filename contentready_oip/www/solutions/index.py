@@ -4,4 +4,5 @@ import json
 
 def get_context(context):
     doctype = 'Solution'
-    context = api.get_content_for_context(context, doctype, 'solutions')
+    r = api.get_filtered_paginated_content(context, doctype, 'solutions')
+    context.update(r)

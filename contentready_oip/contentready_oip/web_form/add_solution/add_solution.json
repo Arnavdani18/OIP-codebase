@@ -17,7 +17,7 @@
  "is_standard": 1,
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2020-03-11 18:28:37.513788",
+ "modified": "2020-03-19 23:38:54.732144",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "add-solution",
@@ -348,6 +348,19 @@
   },
   {
    "allow_read_on_all_link_options": 0,
+   "fieldname": "solver_team",
+   "fieldtype": "Table",
+   "hidden": 1,
+   "label": "Solver Team",
+   "max_length": 0,
+   "max_value": 0,
+   "options": "User Table",
+   "read_only": 0,
+   "reqd": 0,
+   "show_in_filter": 0
+  },
+  {
+   "allow_read_on_all_link_options": 0,
    "fieldname": "section_break_9",
    "fieldtype": "Section Break",
    "hidden": 0,
@@ -367,6 +380,17 @@
    "max_length": 0,
    "max_value": 0,
    "options": "Media Table",
+   "read_only": 0,
+   "reqd": 0,
+   "show_in_filter": 0
+  },
+  {
+   "allow_read_on_all_link_options": 0,
+   "fieldname": "",
+   "fieldtype": "Section Break",
+   "hidden": 0,
+   "max_length": 0,
+   "max_value": 0,
    "read_only": 0,
    "reqd": 0,
    "show_in_filter": 0

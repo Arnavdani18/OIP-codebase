@@ -1,3 +1,5 @@
+// frappe.provide('Vue');
+
 frappe.ready(async () => {
   // Start Helpers
   let autocomplete;
@@ -12,7 +14,61 @@ frappe.ready(async () => {
         .before(this);
     });
     $('.web-form-wrapper').prepend(
-      '<div class="row"><div class="col-md-6" id="add-solution-form"></div><div class="col-md-6"><h3>Matching Problems</h3><input type="text" id="problem-search-input" placeholder="Search for matching problems" class="input-with-feedback form-control bold"></input><span id="matching-problems"></span></div></div>'
+      `<div class="row"><div class="col-md-6" id="add-solution-form"></div><div class="col-md-6">
+      <ul
+      class="nav nav-tabs nav-section nav-mob-section bg-white"
+      id="leftTab"
+      role="tablist"
+    >
+      <li class="nav-item">
+        <a
+          class="nav-link active"
+          id="matchedProblemsTab"
+          data-toggle="tab"
+          href="#matchedProblems"
+          role="tab"
+          aria-controls="matchedProblems"
+          aria-selected="true"
+        >
+          Matching Problems <span id="matchingProblemsCount"></span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          id="similarSolutionsTab"
+          data-toggle="tab"
+          href="#similarSolutions"
+          role="tab"
+          aria-controls="similarSolutions"
+          aria-selected="true"
+        >
+          Similar Solutions <span id="similarSolutionsCount"></span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <div
+        class="tab-pane fade show active"
+        id="matchedProblems"
+        role="tabpanel"
+        aria-labelledby="matchedProblemsTab"
+      >
+        <input type="text" id="problem-search-input" placeholder="Search for matching problems" class="input-with-feedback form-control bold my-4"></input><span id="matching-problems"></span>
+      </div>
+      <div
+        class="tab-pane fade"
+        id="similarSolutions"
+        role="tabpanel"
+        aria-labelledby="similarSolutionsTab"
+      >
+        <p class="pattern1 my-4" id="matching-solutions">No Similar Solutions Found</p>
+      </div>
+    </div>
+
+    
+    </div></div>`
     );
     $('#add-solution-form').append($('.form-layout'));
     $('#matching-problems').append('<div></div>');
@@ -54,7 +110,7 @@ frappe.ready(async () => {
     });
   };
 
-  addSectorToDoc = event => {
+  addSectorToDoc = (event) => {
     if (!frappe.web_form.doc.sectors) {
       frappe.web_form.doc.sectors = [];
     }
@@ -64,6 +120,34 @@ frappe.ready(async () => {
   hideTables = () => {
     $('*[data-fieldtype="Table"]').hide();
   };
+
+  addMultiselectForSolverTeam = () => {
+    const el = `
+    <h6 class="mt-3">Solver Team</h6>
+    <select class="select2" name="solver_team[]" multiple="multiple" id="solver-team-select">
+    </select>
+    `
+    $('*[data-fieldname="solver_team"]').before(el);
+    // $('#solver-team-select').select2({
+    //   width: '100%'
+    // });
+    frappe.call({
+      method: 'contentready_oip.api.get_user_list',
+      args: {},
+      callback: function(r) {
+        $('#solver-team-select').select2({
+          width: '100%',
+          data: r.message
+        });
+        setSolversMultiselectFromDoc();
+        // r.message.map(op => {
+        //   if (!op.value.endsWith('example.com')){
+        //     $('#solver-team-select').append(`<option value="${op.value}"> ${op.label}</option>`);
+        //   }
+        // })
+      }
+    })
+  }
 
   initAutocomplete = () => {
     // TODO: Use domain settings to retrieve country list
@@ -144,19 +228,19 @@ frappe.ready(async () => {
       });
   };
 
-  deselectProblemUI = name => {
+  deselectProblemUI = (name) => {
     const id = '#problem-card-' + name;
     $(id).css('background', '#ffffff');
     $(id).data('selected', false);
   };
 
-  selectProblemUI = name => {
+  selectProblemUI = (name) => {
     const id = '#problem-card-' + name;
     $(id).css('background', '#eeffee');
     $(id).data('selected', true);
   };
 
-  getProblemCard = name => {
+  getProblemCard = (name) => {
     frappe.call({
       method: 'contentready_oip.api.get_problem_card',
       args: { name: name },
@@ -164,6 +248,12 @@ frappe.ready(async () => {
         // r.message[0] is the html
         // r.message[1] is the doc_name in case we need to do any processing client side
         $('#matching-problems').append(r.message[0]);
+        // disable click to navigate on the card
+        $('#matching-problems')
+            .find('*')
+            .unbind()
+            .removeAttr('onclick')
+            .removeAttr('data-toggle');
         selectProblemUI(r.message[1]);
         setupProblemsForSelection();
       }
@@ -174,6 +264,10 @@ frappe.ready(async () => {
     // Read query parameter to see if routed from a problem. Add that problem to matching problems.
     const qp = frappe.utils.get_query_params();
     if (qp.problem) {
+      if (!frappe.web_form.doc.problems_addressed){
+        frappe.web_form.doc.problems_addressed = [];
+      }
+      frappe.web_form.doc.problems_addressed.push({problem: qp.problem});
       getProblemCard(qp.problem);
     }
     // When editing, show all the existing problems.
@@ -184,10 +278,10 @@ frappe.ready(async () => {
     }
   };
 
-  lookForSimilarProblems = async text => {
+  lookForMatchingProblems = async (text) => {
     // Delay as the user is probably still typing
     await sleep(500);
-    // Look up title again - user could have typed something since the event was triggered.
+    // Look up text again - user could have typed something since the event was triggered.
     if (!text) {
       text = $('#problem-search-input')
         .val()
@@ -203,20 +297,57 @@ frappe.ready(async () => {
         callback: function(r) {
           // Add matching problems to div
           $('#matching-problems').empty();
+          $('#matchingProblemsCount').text('');
           r.message.map(el => {
             $('#matching-problems').append(el);
           });
-          $('#matching-problems').find('*').unbind().removeAttr('onclick').removeAttr('data-toggle');
+          $('#matchingProblemsCount').text(`(${r.message.length})`);
+          $('#matching-problems')
+            .find('*')
+            .unbind()
+            .removeAttr('onclick')
+            .removeAttr('data-toggle');
           // TODO: Prevent all other click events: nav, like, watch, modal
           setupProblemsForSelection();
         }
       });
     } else if (text.length === 0) {
       $('#matching-problems').empty();
+      $('#matchingProblemsCount').text('');
     }
   };
 
-  addFileToDoc = file => {
+  lookForSimilarSolutions = async (text) => {
+    // Delay as the user is probably still typing
+    await sleep(500);
+    // Look up text again - user could have typed something since the event was triggered.
+    if (!text) {
+      text = frappe.web_form.doc.title;
+    }
+    if (text && text.length > 3) {
+      frappe.call({
+        method: 'contentready_oip.api.search_content_by_text',
+        args: {
+          doctype: 'Solution',
+          text: text
+        },
+        callback: function(r) {
+          // Add matching solutions to div
+          $('#similarSolutions').empty();
+          $('#similarSolutionsCount').text('');
+          r.message.map(el => {
+            $('#similarSolutions').append(el);
+          });
+          $('#similarSolutionsCount').text(`(${r.message.length})`);
+        }
+      });
+    } else if (text && text.length === 0) {
+      $('#similarSolutions').empty();
+      $('#similarSolutionsCount').text('');
+    }
+  };
+
+  addFileToDoc = (file) => {
     if (file.xhr) {
       const response = JSON.parse(file.xhr.response);
       const file_url = response.message.file_url;
@@ -231,7 +362,7 @@ frappe.ready(async () => {
     }
   };
 
-  removeFileFromDoc = file => {
+  removeFileFromDoc = (file) => {
     frappe.web_form.doc.media = frappe.web_form.doc.media.filter(
       i => !i.attachment.endsWith(file.name)
     );
@@ -249,7 +380,7 @@ frappe.ready(async () => {
       url: '/api/method/upload_file',
       autoDiscover: false,
       addRemoveLinks: true,
-      acceptedFiles: 'image/*',
+      acceptedFiles: 'image/*,video/*',
       headers: {
         Accept: 'application/json',
         'X-Frappe-CSRF-Token': frappe.csrf_token
@@ -270,7 +401,7 @@ frappe.ready(async () => {
     });
   };
 
-  addProblemToSolvedSet = name => {
+  addProblemToSolvedSet = (name) => {
     if (!frappe.web_form.doc.problems_addressed) {
       frappe.web_form.doc.problems_addressed = [];
     }
@@ -279,13 +410,37 @@ frappe.ready(async () => {
     });
   };
 
-  removeProblemFromSolvedSet = name => {
+  removeProblemFromSolvedSet = (name) => {
     frappe.web_form.doc.problems_addressed = frappe.web_form.doc.problems_addressed.filter(
       i => !i.problem === name
     );
   };
 
-  submitSolutionForm = is_draft => {
+  getSolversFromMultiselect = () => {
+    const solvers = $('#solver-team-select').val();
+    console.log(solvers);
+    if (solvers){
+      frappe.web_form.doc.solver_team = [];
+      solvers.map(s => {
+        frappe.web_form.doc.solver_team.push({user: s});
+      });
+    }
+  }
+
+  setSolversMultiselectFromDoc = () => {
+    if (frappe.web_form.doc.solver_team){
+      const solvers = [];
+      frappe.web_form.doc.solver_team.map(s => {
+        solvers.push(s.user);
+      });
+      console.log(solvers);
+      $('#solver-team-select').val(solvers);
+      $('#solver-team-select').trigger('change');
+    }
+  }
+
+  submitSolutionForm = (is_draft) => {
+    getSolversFromMultiselect();
     frappe.call({
       method: 'contentready_oip.api.add_primary_content',
       args: {
@@ -294,7 +449,6 @@ frappe.ready(async () => {
         is_draft: is_draft
       },
       callback: function(r) {
-        console.log(r);
         if (r.message && r.message.is_published && r.message.route) {
           window.location.href = r.message.route;
         } else {
@@ -313,6 +467,7 @@ frappe.ready(async () => {
   };
 
   autoSaveDraft = () => {
+    getSolversFromMultiselect();
     if (frappe.web_form.doc.title) {
       frappe.call({
         method: 'contentready_oip.api.add_primary_content',
@@ -322,7 +477,7 @@ frappe.ready(async () => {
           is_draft: true
         },
         callback: function(r) {
-          console.log(r);
+          // console.log(r);
           // update local form technical fields so that they are up to date with server values
           // Important: do no update fields on the UI as that will interfere with user experience.
           const keysToCopy = [
@@ -345,13 +500,13 @@ frappe.ready(async () => {
     }
   };
 
-  saveAsDraft = event => {
+  saveAsDraft = (event) => {
     frappe.web_form.doc.is_published = false;
     const is_draft = true;
     submitSolutionForm(is_draft);
   };
 
-  publishSolution = event => {
+  publishSolution = (event) => {
     frappe.web_form.doc.is_published = true;
     const is_draft = false;
     submitSolutionForm(is_draft);
@@ -408,7 +563,6 @@ frappe.ready(async () => {
 
   // Start UI Fixes
   $('*[data-doctype="Web Form"]').wrap('<div class="container pt-5"></div>');
-  fixNavBar();
   // We hide the default form buttons (using css) and add our own
   addActionButtons();
   moveDivs();
@@ -418,6 +572,9 @@ frappe.ready(async () => {
   styleFields();
   controlLabels();
   pageHeadingSection();
+  addMultiselectForSolverTeam();
+  // setSolversMultiselectFromDoc();
+
   // End UI Fixes
 
   // Start Google Maps Autocomplete
@@ -438,9 +595,25 @@ frappe.ready(async () => {
   $('#problem-search-input').on('keyup', e => {
     const value = e.target.value.trim();
     if (value.length && value.length % 3 === 0) {
-      lookForSimilarProblems();
+      lookForMatchingProblems();
     }
   });
+  // Look for similar solutions when title is typed
+  // $('*[data-fieldname="title"]:input').on('keyup', e => {
+  //   const value = e.target.value.trim();
+  //   if (value.length && value.length % 3 === 0) {
+  //     console.log(value);
+  //     lookForSimilarSolutions();
+  //   }
+  // });
+  frappe.web_form.on('title', () => {
+    const value = frappe.web_form.doc.title.trim();
+    if (value.length >= 3) {
+      lookForSimilarSolutions(value);
+    }
+  })
+
+
   // Set org link field when org title is selected
   $('*[data-fieldname="org"]').on('change', e => {
     frappe.web_form.doc.org = e.target.value;
@@ -450,69 +623,3 @@ frappe.ready(async () => {
 
   // End Events
 });
-
-fixNavBar = () => {
-  $('main').removeClass('container my-5');
-  $('nav.navbar').addClass('navbar-section');
-  $('ul.navbar-nav:even').addClass('nav-left-list');
-  $('ul.navbar-nav:odd').addClass('nav-right-list');
-  $('ul.navbar-nav:even .nav-link.active').addClass('tab-focus');
-
-  let search = $('a[href="/search"]');
-  search.addClass('d-md-flex align-items-md-center');
-  search.html('<span class="d-block d-lg-none">Search</span>');
-  search.prepend(
-    '<img src="/files/Search.svg" class="mr-4" height="20" width="20" />'
-  );
-
-  $('li.nav-item.dropdown.logged-in a').addClass(
-    'd-flex align-items-center mr-4'
-  );
-  $('li.nav-item.dropdown.logged-in a span.full-name').attr('hidden', true);
-  $('div.standard-image').css({
-    height: '3rem',
-    width: '3rem',
-    'text-align': 'center'
-  });
-
-  $('ul.dropdown-menu').addClass('dropdown-section');
-  // menu button
-  $('button.navbar-toggler').addClass('py-2');
-
-  // changing My Account to Edit Profile
-  const dropdownList = $('a[href="/me"]');
-  dropdownList.attr('href', '/update-profile');
-  dropdownList.text('Profile');
-
-  if (frappe.session.user === 'Guest') {
-    $('a:contains("Add a Problem / Solution")').hide();
-  } else {
-    $('a:contains("Add a Problem / Solution")').addClass('add-problem-btn');
-    $('a:contains("Add a Problem / Solution")')
-      .next()
-      .addClass('dropdown-menu-right');
-
-    // fix moving of nav while clicking menu icon
-    $('nav div.container').addClass('nav-container');
-
-    // chnge the list order
-    $('.nav-right-list')
-      .find('li:eq(0)')
-      .insertAfter('.nav-right-list li:eq(2)');
-
-    // insert add problem/solution and search logo
-    let addProblem = $('a[href="/add-problem?new=1"]');
-    let addSolution = $('a[href="/add-solution?new=1"]');
-
-    addProblem.prepend(
-      '<img src="/files/problem_dark.svg" height="22" width="30" />'
-    );
-
-    addSolution.prepend(
-      '<img src="/files/solution_dark.svg" height="22" width="30" />'
-    );
-
-    addProblem.addClass('py-2');
-    addSolution.addClass('py-2');
-  }
-};

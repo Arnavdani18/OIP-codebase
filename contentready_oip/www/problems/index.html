@@ -2,11 +2,11 @@
 <!-- no-breadcrumbs -->
 <!-- no-cache -->
 
-<div class="container my-5">
+<div class="">
   <div class="container">
     {% include "templates/includes/common/filter.html" %}
   </div>
-
+  {% if problems %}
   <div class="row">
     <div class="col">
       <div class="col-sm-12 problem-listed-container">
@@ -27,13 +27,13 @@
     </div>
   </div>
   <div class="row" id="problems-container">
-    {% if problems %} {% for problem in problems %}
+    {% for problem in problems %}
     <div class="col-md-6 mt-4">
       {% include "templates/includes/problem/problem_card.html" %}
     </div>
-    {% endfor %} {% endif %}
+    {% endfor %}
   </div>
-
+  {% if has_next_page or page != 1 %}
   <div class="row">
     <div class="col">
       <div class="col-sm-12 problem-listed-container">
@@ -53,7 +53,10 @@
       </div>
     </div>
   </div>
+  {% endif %}
+  {% else %}
+  <div class="alert alert-primary mt-5" role="alert">
+    Loading content. If no content appears within a few seconds, try changing the filters.
+  </div>
+  {% endif %}
 </div>
-<script>
-  {% include "public/js/global.js" %}
-</script>

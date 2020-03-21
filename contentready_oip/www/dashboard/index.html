@@ -6,35 +6,17 @@
   <div class="row">
     <div class="col-lg-6">
       <div class="bg-white">
-        <ul
-          class="nav nav-tabs nav-section nav-mob-section"
-          id="leftTab"
-          role="tablist"
-        >
+        <ul class="nav nav-tabs nav-section nav-mob-section" id="leftTab" role="tablist">
           <li class="nav-item">
-            <a
-              class="nav-link active"
-              id="recommended-content-tab"
-              data-toggle="tab"
-              href="#recommended-content"
-              role="tab"
-              aria-controls="recommended-content"
-              aria-selected="true"
-            >
+            <a class="nav-link active" id="recommended-content-tab" data-toggle="tab" href="#recommended-content"
+              role="tab" aria-controls="recommended-content" aria-selected="true">
               Areas That May Interest You ({{ (problems + solutions) | length
               }})
             </a>
           </li>
           <li class="nav-item">
-            <a
-              class="nav-link"
-              id="user-content-tab"
-              data-toggle="tab"
-              href="#user-content"
-              role="tab"
-              aria-controls="user-content"
-              aria-selected="true"
-            >
+            <a class="nav-link" id="user-content-tab" data-toggle="tab" href="#user-content" role="tab"
+              aria-controls="user-content" aria-selected="true">
               Areas Added By You ({{ (user_problems + user_solutions) | length
               }})
             </a>
@@ -42,12 +24,8 @@
         </ul>
         <div id="leftTabGroup" class="pb-2">
           <div class="tab-content" id="leftTabContent">
-            <div
-              class="tab-pane fade show active"
-              id="recommended-content"
-              role="tabpanel"
-              aria-labelledby="recommended-content-tab"
-            >
+            <div class="tab-pane fade show active" id="recommended-content" role="tabpanel"
+              aria-labelledby="recommended-content-tab">
               {% if problems or solutions %} {% for problem in problems %}
               <div>
                 {% include "templates/includes/problem/problem_card.html" %}
@@ -66,12 +44,7 @@
               </h6>
               {% endif %}
             </div>
-            <div
-              class="tab-pane fade"
-              id="user-content"
-              role="tabpanel"
-              aria-labelledby="user-content-tab"
-            >
+            <div class="tab-pane fade" id="user-content" role="tabpanel" aria-labelledby="user-content-tab">
               {% for problem in user_problems %}
               <div class="">
                 {% include "templates/includes/problem/problem_card.html" %}
@@ -90,33 +63,17 @@
     </div>
     <div class="col-lg-6 margin-top-20">
       <div class="bg-white">
-        <ul
-          class="nav nav-tabs nav-section nav-mob-section"
-          id="rightTab"
-          role="tablist"
-        >
+        <ul class="nav nav-tabs nav-section nav-mob-section" id="rightTab" role="tablist">
           <li class="nav-item">
-            <a
-              class="nav-link active"
-              id="watched-content-tab"
-              data-toggle="tab"
-              href="#watched-content"
-              role="tab"
-              aria-controls="watched-content"
-              aria-selected="true"
-              >Your Watch List ({{ (watched_problems + watched_solutions) |
-              length }})</a
-            >
+            <a class="nav-link active" id="watched-content-tab" data-toggle="tab" href="#watched-content" role="tab"
+              aria-controls="watched-content" aria-selected="true">Your Watch List ({{ (watched_problems + watched_solutions) |
+              length }})</a>
           </li>
         </ul>
         <div id="rightTabGroup" class="pb-2">
           <div class="tab-content" id="leftTabContent">
-            <div
-              class="tab-pane fade show active"
-              id="watched-content"
-              role="tabpanel"
-              aria-labelledby="watched-content-tab"
-            >
+            <div class="tab-pane fade show active" id="watched-content" role="tabpanel"
+              aria-labelledby="watched-content-tab">
               {% for problem in watched_problems %}
               <div>
                 {% include "templates/includes/problem/problem_card.html" %}
@@ -134,37 +91,16 @@
       </div>
       <br />
       <div class="bg-white">
-        <ul
-          class="nav nav-tabs nav-section nav-mob-section"
-          id="rightTab1"
-          role="tablist"
-        >
+        <ul class="nav nav-tabs nav-section nav-mob-section" id="rightTab1" role="tablist">
           <li class="nav-item">
-            <a
-              class="nav-link active"
-              id="contributions-tab"
-              data-toggle="tab"
-              href="#contributions"
-              role="tab"
-              aria-controls="contributions"
-              aria-selected="false"
-              >Your Contributions ({{ (problem_contributions +
-              solution_contributions) | length }})</a
-            >
+            <a class="nav-link active" id="contributions-tab" data-toggle="tab" href="#contributions" role="tab"
+              aria-controls="contributions" aria-selected="false">Your Contributions ({{ (problem_contributions +
+              solution_contributions) | length }})</a>
           </li>
         </ul>
-        <div
-          id="rightTabGroup1"
-          class="pb-4"
-          style="border-radius: var(--round4);"
-        >
+        <div id="rightTabGroup1" class="pb-4" style="border-radius: var(--round4);">
           <div class="tab-content" id="rightTabContent1">
-            <div
-              class="row p-0 m-0"
-              id="users"
-              role="tabpanel"
-              aria-labelledby="users-tab"
-            >
+            <div class="row p-0 m-0" id="users" role="tabpanel" aria-labelledby="users-tab">
               <div class="col m-0 p-0">
                 {% for problem in problem_contributions %}
                 <div>
@@ -187,36 +123,15 @@
       </div>
       <br />
       <div class="bg-white">
-        <ul
-          class="nav nav-tabs nav-section nav-mob-section"
-          id="rightTab1"
-          role="tablist"
-        >
+        <ul class="nav nav-tabs nav-section nav-mob-section" id="rightTab1" role="tablist">
           <li class="nav-item">
-            <a
-              class="nav-link active"
-              id="users-tab"
-              data-toggle="tab"
-              href="#users"
-              role="tab"
-              aria-controls="users"
-              aria-selected="false"
-              >Users With Similar Interests ({{ users | length }})</a
-            >
+            <a class="nav-link active" id="users-tab" data-toggle="tab" href="#users" role="tab" aria-controls="users"
+              aria-selected="false">Users With Similar Interests ({{ users | length }})</a>
           </li>
         </ul>
-        <div
-          id="rightTabGroup1"
-          class="pb-4"
-          style="border-radius: var(--round4);"
-        >
+        <div id="rightTabGroup1" class="pb-4" style="border-radius: var(--round4);">
           <div class="tab-content" id="rightTabContent1">
-            <div
-              class="row p-0 m-0"
-              id="users"
-              role="tabpanel"
-              aria-labelledby="users-tab"
-            >
+            <div class="row p-0 m-0" id="users" role="tabpanel" aria-labelledby="users-tab">
               {% for user in users %}
               <div class="col-md-6 py-4 border">
                 {% include "templates/includes/common/user_card.html" %}
@@ -229,11 +144,3 @@
     </div>
   </div>
 </div>
-
-<style>
-  {% include "public/css/global.css" %}
-</style>
-
-<script>
-  {% include "public/js/global.js" %}
-</script>

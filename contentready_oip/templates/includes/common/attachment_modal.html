@@ -30,13 +30,13 @@
       </div>
       <div class="modal-body">
         <div class="container-fluid">
-          <div class="row thumbnail-container">
+          <div class="row attachment-modal-container">
             {% for m in media %}
             <div class="m-2">
               <a data-fancybox="gallery" href="{{m.attachment}}">
                 <img
                   src="{{m.thumbnail or m.attachment }}"
-                  class="thumb-img {{'active-thumbnail' if loop.index==1}}"
+                  class="small-img-attachment-modal"
                   alt="{{ m.description }}"
                   id="{{id}}-{{loop.index}}"
                 />
@@ -51,7 +51,6 @@
             data-images="{{media}}"
           >
             <!-- Grid of thumbnails -->
-            
           </div>
         </div>
       </div>
@@ -69,7 +68,16 @@
 </script>
 
 <style>
-  .active-thumbnail {
-    outline: 0.5rem auto rgba(108, 108, 245, 0.918);
+  .small-img-attachment-modal {
+    width: 15rem !important;
+    height: 15rem !important;
+    object-fit: cover;
+  }
+
+  .attachment-modal-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 15rem);
+    grid-gap: 10px;
+    overflow: scroll;
   }
 </style>

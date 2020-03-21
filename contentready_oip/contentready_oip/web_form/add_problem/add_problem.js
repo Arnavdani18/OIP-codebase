@@ -54,7 +54,7 @@ frappe.ready(async () => {
     });
   };
 
-  addSectorToDoc = event => {
+  addSectorToDoc = (event) => {
     if (!frappe.web_form.doc.sectors) {
       frappe.web_form.doc.sectors = [];
     }
@@ -153,7 +153,7 @@ frappe.ready(async () => {
     }
   };
 
-  addFileToDoc = file => {
+  addFileToDoc = (file) => {
     // Since we are showing previously added, remote
     if (file.xhr) {
       const response = JSON.parse(file.xhr.response);
@@ -169,7 +169,7 @@ frappe.ready(async () => {
     }
   };
 
-  removeFileFromDoc = file => {
+  removeFileFromDoc = (file) => {
     frappe.web_form.doc.media = frappe.web_form.doc.media.filter(
       i => !i.attachment.endsWith(file.name)
     );
@@ -187,7 +187,7 @@ frappe.ready(async () => {
       url: '/api/method/upload_file',
       autoDiscover: false,
       addRemoveLinks: true,
-      acceptedFiles: 'image/*',
+      acceptedFiles: 'image/*,video/*',
       headers: {
         Accept: 'application/json',
         'X-Frappe-CSRF-Token': frappe.csrf_token
@@ -208,7 +208,7 @@ frappe.ready(async () => {
     });
   };
 
-  submitProblemForm = is_draft => {
+  submitProblemForm = (is_draft) => {
     frappe.call({
       method: 'contentready_oip.api.add_primary_content',
       args: {
@@ -268,13 +268,13 @@ frappe.ready(async () => {
     }
   };
 
-  saveAsDraft = event => {
+  saveAsDraft = (event) => {
     frappe.web_form.doc.is_published = false;
     const is_draft = true;
     submitProblemForm(is_draft);
   };
 
-  publishProblem = event => {
+  publishProblem = (event) => {
     frappe.web_form.doc.is_published = true;
     const is_draft = false;
     submitProblemForm(is_draft);
@@ -337,7 +337,6 @@ frappe.ready(async () => {
 
   // Start UI Fixes
   $('*[data-doctype="Web Form"]').wrap('<div class="container pt-5"></div>');
-  fixNavBar();
   // We hide the default form buttons (using css) and add our own
   addActionButtons();
   moveDivs();
@@ -381,69 +380,3 @@ frappe.ready(async () => {
 
   // End Events
 });
-
-fixNavBar = () => {
-  $('main').removeClass('container my-5');
-  $('nav.navbar').addClass('navbar-section');
-  $('ul.navbar-nav:even').addClass('nav-left-list');
-  $('ul.navbar-nav:odd').addClass('nav-right-list');
-  $('ul.navbar-nav:even .nav-link.active').addClass('tab-focus');
-
-  let search = $('a[href="/search"]');
-  search.addClass('d-md-flex align-items-md-center');
-  search.html('<span class="d-block d-lg-none">Search</span>');
-  search.prepend(
-    '<img src="/files/Search.svg" class="mr-4" height="20" width="20" />'
-  );
-
-  $('li.nav-item.dropdown.logged-in a').addClass(
-    'd-flex align-items-center mr-4'
-  );
-  $('li.nav-item.dropdown.logged-in a span.full-name').attr('hidden', true);
-  $('div.standard-image').css({
-    height: '3rem',
-    width: '3rem',
-    'text-align': 'center'
-  });
-
-  $('ul.dropdown-menu').addClass('dropdown-section');
-  // menu button
-  $('button.navbar-toggler').addClass('py-2');
-
-  // changing My Account to Edit Profile
-  const dropdownList = $('a[href="/me"]');
-  dropdownList.attr('href', '/update-profile');
-  dropdownList.text('Profile');
-
-  if (frappe.session.user === 'Guest') {
-    $('a:contains("Add a Problem / Solution")').hide();
-  } else {
-    $('a:contains("Add a Problem / Solution")').addClass('add-problem-btn');
-    $('a:contains("Add a Problem / Solution")')
-      .next()
-      .addClass('dropdown-menu-right');
-
-    // fix moving of nav while clicking menu icon
-    $('nav div.container').addClass('nav-container');
-
-    // chnge the list order
-    $('.nav-right-list')
-      .find('li:eq(0)')
-      .insertAfter('.nav-right-list li:eq(2)');
-
-    // insert add problem/solution and search logo
-    let addProblem = $('a[href="/add-problem?new=1"]');
-    let addSolution = $('a[href="/add-solution?new=1"]');
-
-    addProblem.prepend(
-      '<img src="/files/problem_dark.svg" height="22" width="30" />'
-    );
-
-    addSolution.prepend(
-      '<img src="/files/solution_dark.svg" height="22" width="30" />'
-    );
-
-    addProblem.addClass('py-2');
-    addSolution.addClass('py-2');
-  }
-};
