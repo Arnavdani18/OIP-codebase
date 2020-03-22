@@ -675,8 +675,6 @@ def complete_linkedin_login(code, state):
     oauth2_providers = oauth.get_oauth2_providers()
     provider = 'linkedin'
     flow = oauth.get_oauth2_flow(provider)
-    # redirect_uri = oauth2_providers[provider]["redirect_uri"]
-    # redirect_uri = frappe.utils.get_url(redirect_uri)
     args = {
         "data": {
             "code": code,
