@@ -667,3 +667,70 @@ def register(form=None):
 def set_notification_as_read(notification_name):
     frappe.set_value('OIP Notification', notification_name, 'is_read', True)
     return True
+    
+@frappe.whitelist(allow_guest=True)
+def complete_linkedin_login(code, state):
+    from frappe.integrations.oauth2_logins import decoder_compat
+    from frappe.utils import oauth
+    oauth2_providers = oauth.get_oauth2_providers()
+    provider = 'linkedin'
+    flow = oauth.get_oauth2_flow(provider)
+    # redirect_uri = oauth2_providers[provider]["redirect_uri"]
+    # redirect_uri = frappe.utils.get_url(redirect_uri)
+    args = {
+        "data": {
+            "code": code,
+            "redirect_uri": oauth.get_redirect_uri(provider),
+            "grant_type": "authorization_code",
+        },
+        "decoder": decoder_compat
+    }
+    session = flow.get_auth_session(**args)
+    api_endpoint = oauth2_providers[provider].get("api_endpoint")
+    api_endpoint_args = oauth2_providers[provider].get("api_endpoint_args")
+    info = session.get(api_endpoint, params=api_endpoint_args).json()
+    profile_endpoint = 'https://api.linkedin.com/v2/me'
+    profile_params = {'projection':'(id,firstName,lastName,profilePicture(displayImage~:playableStreams))'}
+    profile = session.get(profile_endpoint, params=profile_params).json()
+    info = unpack_linkedin_response(info, profile)
+    if not (info.get("email_verified") or info.get("email")):
+        frappe.throw(_("Email not verified with {0}").format(provider.title()))
+    oauth.login_oauth_user(info, provider=provider, state=state)
+    # print('once logged in, we create the profile')
+    doc = frappe.get_doc('User', info.get('email'))
+    # create user profile because social login does not seem to trigger frappe hook
+    create_user_profile_if_missing(doc, 'social_login')
+
+def unpack_linkedin_response(info, profile=None):
+    # print(profile)
+    # print(info)
+    # info = {'elements': [{'handle~': {'emailAddress': 'tej@iotready.co'}, 'handle': 'urn:li:emailAddress:7957229897'}]}
+    payload = {}
+    payload['email'] = info['elements'][0]['handle~']['emailAddress']
+    payload['handle'] = info['elements'][0]['handle']
+    if not profile:
+        # needs a second API call to get name info, we should save the user even if that fails
+        payload['first_name'] = payload['email']
+    else:
+        import requests
+        lang = list(profile['firstName']['localized'].keys())[0]
+        payload['first_name'] = profile['firstName']['localized'][lang]
+        payload['last_name'] = profile['lastName']['localized'][lang]
+        # The last element of the pictures array is the largest image
+        picture_element = profile['profilePicture']['displayImage~']['elements'][-1]
+        picture_url = picture_element['identifiers'][0]['identifier']
+        try:
+            r = requests.get(picture_url)
+            new_file = frappe.get_doc({
+                'doctype': 'File',
+                'file_name': '{}_profile.jpg'.format(payload['email']),
+                'content': r.content,
+                'decode': False
+            })
+            new_file.save()
+            frappe.db.commit()
+            payload['picture'] = new_file.file_url
+        except Exception as e:
+            print(str(e))
+            payload['picture'] = picture_url
+    return payload
