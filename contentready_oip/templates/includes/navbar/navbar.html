@@ -122,7 +122,17 @@
     }
 
     logout = () => {
-        window.location.href = '/?cmd=web_logout'
+        var me = this;
+		me.logged_out = true;
+		return frappe.call({
+			method:'logout',
+			callback: function(r) {
+				if(r.exc) {
+					return;
+				}
+                window.location.href = '/';
+			}
+		});
     }
 
     onClickSearch = () => {
