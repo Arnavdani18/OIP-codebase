@@ -7,7 +7,6 @@ import frappe
 from frappe.website.website_generator import WebsiteGenerator
 from frappe.utils.html_utils import clean_html
 
-
 class Solution(WebsiteGenerator):
     def make_route(self):
         # This method overrides the parent class method to use a route prefix
@@ -87,3 +86,8 @@ class Solution(WebsiteGenerator):
             except:
                 pass
         frappe.db.commit()
+
+    def get_context(self, context):
+        # print("solution.py, get_context", context.keys())
+        # context.ping = 'pong'
+        return context
