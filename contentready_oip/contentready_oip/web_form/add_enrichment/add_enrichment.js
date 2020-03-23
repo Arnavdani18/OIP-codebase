@@ -236,9 +236,22 @@ frappe.ready(async () => {
       .append(publishBtn);
   };
 
-  const appendAttachLink = () => {
-    console.log("kkkkkkk");
+  const pageHeadingSection = () => {
+    $('button:contains("Save as Draft")')
+      .removeClass('btn-sm')
+      .addClass('btn-outline-primary outline-primary-btn');
 
+    $('button:contains("Publish")')
+      .removeClass('')
+      .addClass('solid-primary-btn');
+
+    $('#auto-save-alert').addClass('auto-saved');
+    $('.page-header-actions-block').addClass('d-flex align-items-center');
+
+    $('.page-header h2').css({ 'margin-bottom': '0px' });
+  };
+
+  const appendAttachLink = () => {
     let btn = `
     <div class="attach-links-section pattern1">
       <button class="btn btn-primary solid-primary-btn mb-3" >Attach video link</button>
@@ -353,6 +366,7 @@ frappe.ready(async () => {
   styleFields();
   controlLabels();
   appendAttachLink();
+  pageHeadingSection();
   // End UI Fixes
 
   // Start Google Maps Autocomplete
