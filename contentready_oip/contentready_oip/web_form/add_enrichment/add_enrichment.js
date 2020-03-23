@@ -6,7 +6,7 @@ frappe.ready(async () => {
 
   // Fix layout - without this, the entire form occupies col-2 due to custom CSS.
   moveDivs = () => {
-    $(".section-body > div").each(function() {
+    $(".section-body > div").each(function () {
       $(this)
         .parent()
         .before(this);
@@ -21,7 +21,7 @@ frappe.ready(async () => {
     frappe.call({
       method: "contentready_oip.api.get_orgs_list",
       args: {},
-      callback: function(r) {
+      callback: function (r) {
         frappe.web_form.set_df_property("org", "options", r.message);
       }
     });
@@ -31,7 +31,7 @@ frappe.ready(async () => {
     frappe.call({
       method: "contentready_oip.api.get_problem_overview",
       args: { name: frappe.web_form.doc.problem },
-      callback: function(r) {
+      callback: function (r) {
         // r.message[0] is the html
         // r.message[1] is the doc_name in case we need to do any processing client side
         $("#parent-problem").append(r.message[0]);
@@ -140,13 +140,13 @@ frappe.ready(async () => {
         Accept: "application/json",
         "X-Frappe-CSRF-Token": frappe.csrf_token
       },
-      init: function() {
+      init: function () {
         // use this event to add to child table
         this.on("complete", addFileToDoc);
         // use this event to remove from child table
         this.on("removedfile", removeFileFromDoc);
         let myDropzone = this;
-        if (frappe.web_form.doc.media){
+        if (frappe.web_form.doc.media) {
           frappe.web_form.doc.media.map(a => {
             let mockFile = { name: a.attachment, size: a.size };
             myDropzone.displayExistingFile(mockFile, a.attachment);
@@ -166,7 +166,7 @@ frappe.ready(async () => {
         doc: frappe.web_form.doc,
         is_draft: is_draft
       },
-      callback: function(r) {
+      callback: function (r) {
         if (r.message & r.message[1]) {
           window.location.href = r.message[1];
         } else {
@@ -192,7 +192,7 @@ frappe.ready(async () => {
         doc: frappe.web_form.doc,
         is_draft: true
       },
-      callback: function(r) {
+      callback: function (r) {
         // update local form technical fields so that they are up to date with server values
         // Important: do no update fields on the UI as that will interfere with user experience.
         const keysToCopy = [
@@ -235,6 +235,121 @@ frappe.ready(async () => {
       .append(saveAsDraftBtn)
       .append(publishBtn);
   };
+
+  const pageHeadingSection = () => {
+    $('button:contains("Save as Draft")')
+      .removeClass('btn-sm')
+      .addClass('btn-outline-primary outline-primary-btn');
+
+    $('button:contains("Publish")')
+      .removeClass('')
+      .addClass('solid-primary-btn');
+
+    $('#auto-save-alert').addClass('auto-saved');
+    $('.page-header-actions-block').addClass('d-flex align-items-center');
+
+    $('.page-header h2').css({ 'margin-bottom': '0px' });
+  };
+
+  const appendAttachLink = () => {
+    let btn = `
+    <div class="attach-links-section pattern1">
+      <button class="btn btn-primary solid-primary-btn mb-3" >Attach video link</button>
+      <ul class="list-group"></ul>
+    </div>`;
+
+    $('h6:contains("Media")')
+      .parent()
+      .append(btn);
+
+    // if media attachment already exist
+    displayAttachedLinks();
+
+    $('.attach-links-section button').click(function () {
+      let links = prompt('Please enter links from Youtube or Vimeo. Separate multiple links with commas.');
+      if (links) {
+        if (!frappe.web_form.doc.media) {
+          frappe.web_form.doc.media = []
+        }
+
+        let media = frappe.web_form.doc.media;
+        let linkArr = links.split(',');
+
+        linkArr.forEach(link => {
+          // check if link exist
+          let idxExist = media.findIndex(mediaObj => {
+            return mediaObj['attachment'] === link;
+          })
+
+
+          if (checkMedialUrl(link) && idxExist < 0) {
+            media.push({ attachment: link, type: 'link' });
+          } else if (idxExist > -1) {
+            alert('Provided link already exists.')
+          } else {
+            alert("Please enter links from Youtube or Vimeo only.");
+          }
+        });
+
+        displayAttachedLinks();
+      }
+    });
+  };
+
+
+  const checkMedialUrl = function (url) {
+    const regex = /(youtube|youtu|vimeo)\.(com|be)\/((watch\?v=([-\w]+))|(video\/([-\w]+))|(projects\/([-\w]+)\/([-\w]+))|([-\w]+))/;
+
+    if (url.match(regex)) {
+      return true
+    }
+    else {
+      return false
+    }
+  }
+
+  const displayAttachedLinks = () => {
+    if (!frappe.web_form.doc.media) {
+      return;
+    }
+    let media = frappe.web_form.doc.media;
+
+    let linkArr = [];
+    $('.attach-links-section ul').empty();
+    if (media && media.length) {
+      linkArr = media.filter(mediaObj => mediaObj['type'] === 'link');
+    }
+
+    for (const [index, link] of linkArr.entries()) {
+      let unorderedList = `
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        ${link['attachment']}
+        <button type="button" class="close" id="removeBtn-${index + 1}" data-attachment="${link.attachment}" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+      </li>`;
+
+
+      $('.attach-links-section ul').append(unorderedList);
+      let btnId = `#removeBtn-${index + 1}`;
+
+      $(btnId)
+        .click(function () {
+          let linkText = $(this).attr('data-attachment');
+
+          if (media) {
+            let foundIndex = media.findIndex((linkObj) => {
+              return linkObj['attachment'] === linkText;
+            })
+
+            if (foundIndex > -1) {
+              media.splice(foundIndex, 1);
+              displayAttachedLinks();
+            }
+          }
+        });
+    }
+  };
   // End Helpers
 
   // Delay until page is fully rendered
@@ -250,6 +365,8 @@ frappe.ready(async () => {
   styleFormHeadings();
   styleFields();
   controlLabels();
+  appendAttachLink();
+  pageHeadingSection();
   // End UI Fixes
 
   // Start Google Maps Autocomplete
@@ -271,6 +388,8 @@ frappe.ready(async () => {
   });
 
   setInterval(autoSaveDraft, 10000);
+
+
 
   // End Events
 });
