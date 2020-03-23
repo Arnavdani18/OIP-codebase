@@ -26,11 +26,17 @@
           <div class="tab-content" id="leftTabContent">
             <div class="tab-pane fade show active" id="recommended-content" role="tabpanel"
               aria-labelledby="recommended-content-tab">
-              {% if problems or solutions %} {% for problem in problems %} {%
-              include "templates/includes/problem/problem_card.html" %} {%
-              endfor %} {% for solution in solutions %} {% include
-              "templates/includes/solution/solution_card.html" %} {% endfor %}
-              {% else %}
+              {% if problems or solutions %} {% for problem in problems %}
+              <div>
+                {% include "templates/includes/problem/problem_card.html" %}
+              </div>
+              {% endfor %}
+              <hr />
+              {% for solution in solutions %}
+              <div>
+                {% include "templates/includes/solution/solution_card.html" %}
+              </div>
+              {% endfor %} {% else %}
               <br />
               <h6 style="padding-left: 1rem;">
                 Please <a href="/update-profile">update your profile</a> to
@@ -38,12 +44,7 @@
               </h6>
               {% endif %}
             </div>
-            <div
-              class="tab-pane fade"
-              id="user-content"
-              role="tabpanel"
-              aria-labelledby="user-content-tab"
-            >
+            <div class="tab-pane fade" id="user-content" role="tabpanel" aria-labelledby="user-content-tab">
               {% for problem in user_problems %}
               <div class="">
                 {% include "templates/includes/problem/problem_card.html" %}
@@ -73,10 +74,17 @@
           <div class="tab-content" id="leftTabContent">
             <div class="tab-pane fade show active" id="watched-content" role="tabpanel"
               aria-labelledby="watched-content-tab">
-              {% for problem in watched_problems %} {% include
-              "templates/includes/problem/problem_card.html" %} {% endfor %} {%
-              for solution in watched_solutions %} {% include
-              "templates/includes/solution/solution_card.html" %} {% endfor %}
+              {% for problem in watched_problems %}
+              <div>
+                {% include "templates/includes/problem/problem_card.html" %}
+              </div>
+              {% endfor %}
+              <hr />
+              {% for solution in watched_solutions %}
+              <div>
+                {% include "templates/includes/solution/solution_card.html" %}
+              </div>
+              {% endfor %}
             </div>
           </div>
         </div>
@@ -95,10 +103,18 @@
             <div class="row p-0 m-0" id="users" role="tabpanel" aria-labelledby="users-tab">
               <div class="col m-0 p-0">
                 {% for problem in problem_contributions %}
-                  {% include "templates/includes/problem/problem_contribution_card.html" %}
+                <div>
+                  {% include
+                  "templates/includes/problem/problem_contribution_card.html" %}
+                </div>
                 {% endfor %}
+                <hr />
                 {% for solution in solution_contributions %}
-                  {% include "templates/includes/solution/solution_contribution_card.html" %}
+                <div>
+                  {% include
+                  "templates/includes/solution/solution_contribution_card.html"
+                  %}
+                </div>
                 {% endfor %}
               </div>
             </div>

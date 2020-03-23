@@ -47,13 +47,15 @@
                     <div class="dropdown-menu dropdown-menu-right p-0 mt-2 pattern1" style="width: 47rem;">
                         {% set notifications = frappe.get_all('OIP Notification', fields=['text', 'route', 'name'], filters={'target_user': frappe.session.user, 'is_read': False}) %}
                         <div class=" clearfix pattern1" style="background-color: #E1E1E1;">
-                            <p class="float-left dropdown-header" style="font-size: 1.4rem;">Notifications ({{notifications | length}})</p>
+                            <p class="float-left dropdown-header" style="font-size: 1.4rem;">Notifications
+                                ({{notifications | length}})</p>
                             <!-- <button type="button" class="btn btn-link float-right pattern1">
                                 View All
                             </button> -->
                         </div>
                         {% for n in notifications %}
-                            <a class="dropdown-item" href="javascript:void(0)" onclick="openNotification(`{{n.name}}`, `{{n.route}}`)">{{n.text[:60]}}{{'...' if n.text|length > 60}}</a>
+                        <a class="dropdown-item text-wrap" href="javascript:void(0)"
+                            onclick="openNotification(`{{n.name}}`, `{{n.route}}`)">{{n.text[:60]}}{{'...' if n.text|length > 60}}</a>
                         {% endfor %}
                     </div>
                 </li>
@@ -61,8 +63,8 @@
                     <a class="nav-link profile-icon dropdown-toggle" href="#" id="profileDropdown" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         {% set doc = frappe.get_doc('User Profile', frappe.session.user) %}
-                        <img src="{{doc.photo|default('/files/default-avatar.jpg', true)}}" alt="profile photo" height="30" width="30"
-                            style="border-radius: .4rem; object-fit:cover;" />
+                        <img src="{{doc.photo|default('/files/default-avatar.jpg', true)}}" alt="profile photo"
+                            height="30" width="30" style="border-radius: .4rem; object-fit:cover;" />
 
                         <span class="d-lg-none text-capitalize ml-3">Profile</span>
                     </a>
@@ -90,7 +92,7 @@
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Add a Problem / Solution
                     </a>
-                    <div class="dropdown-menu mt-3 dropdown-menu-right dropdown-section">
+                    <div class="dropdown-menu mt-2 dropdown-menu-right dropdown-section">
                         <a class="dropdown-item" href="/add-problem?new=1">
                             <img src="./files/problem_dark.svg" alt="" height="22" width="30" />
                             <span> Add a Problem</span>
@@ -143,7 +145,7 @@
             method: 'contentready_oip.api.set_notification_as_read',
             args: {
                 'notification_name': name
-            }, 
+            },
             callback: (r) => {
                 // console.log(r.message);
                 // then open the link
