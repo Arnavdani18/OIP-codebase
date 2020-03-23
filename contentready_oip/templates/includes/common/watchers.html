@@ -1,10 +1,7 @@
 <div class="views">
-    <button
-        onclick="toggle_watcher('{{doctype}}','{{name}}')"
-        role="button"
-        class="btn btn-social"
-    >
-        <i data-has-user-watched=0 id="watcher-icon-{{doctype}}-{{name}}" class="far fa-eye"></i>
+    <button onclick="toggle_watcher('{{doctype}}','{{name}}')" role="button" class="btn btn-social"
+        data-has-user-watched=0 id="watcher-icon-{{doctype}}-{{name}}">
+        <i class="far fa-eye"></i>
     </button>
     <span class="social-stats" data-num-watchers="{{watchers | length}}" id="watcher-count-{{doctype}}-{{name}}">
         {{watchers | length}}
@@ -14,7 +11,7 @@
 <script>
     changeUI = (btnId, countId, hasUserWatched, numWatchers) => {
         $(btnId).data('has-user-watched', hasUserWatched);
-        hasUserWatched ? $(btnId).addClass('selected'): $(btnId).removeClass('selected');
+        hasUserWatched ? $(btnId).addClass('selected') : $(btnId).removeClass('selected');
         $(countId).text(numWatchers);
         $(countId).data('num-watchers', numWatchers);
     }
@@ -25,11 +22,11 @@
         }
         frappe.call({
             method: 'contentready_oip.api.can_user_contribute',
-            args: {child_doctype: 'Watch Table', parent_doctype: doctype, parent_name: name},
+            args: { child_doctype: 'Watch Table', parent_doctype: doctype, parent_name: name },
             callback: (r) => {
                 const has_contributed = r.message[0];
                 const is_owner = r.message[1];
-                if (is_owner){
+                if (is_owner) {
                     frappe.throw(`You cannot watch your own ${doctype}`);
                 } else {
                     const btnId = `#watcher-icon-${doctype}-${name}`;
@@ -47,7 +44,7 @@
                     // changeUI(btnId, countId, hasUserWatched, numWatchers);
                     frappe.call({
                         method: 'contentready_oip.api.toggle_contribution',
-                        args: {child_doctype: 'Watch Table', parent_doctype: doctype, parent_name: name, field_name: 'watchers'},
+                        args: { child_doctype: 'Watch Table', parent_doctype: doctype, parent_name: name, field_name: 'watchers' },
                         callback: (r) => {
                             // console.log(r);
                             // server is the source of truth so we change the UI to reflect that.
@@ -66,7 +63,7 @@
     frappe.ready(() => {
         frappe.call({
             method: 'contentready_oip.api.has_user_contributed',
-            args: {child_doctype: 'Watch Table', parent_doctype: '{{doctype}}', parent_name: '{{name}}'},
+            args: { child_doctype: 'Watch Table', parent_doctype: '{{doctype}}', parent_name: '{{name}}' },
             callback: (r) => {
                 const btnId = `#watcher-icon-{{doctype}}-{{name}}`;
                 changeUI(btnId, null, r.message, null);

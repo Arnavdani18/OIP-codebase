@@ -23,17 +23,16 @@ class UserProfile(WebsiteGenerator):
             self.name = self.scrubbed_title()+'-'+frappe.generate_hash("", 3)
 
     def on_update(self):
-        if self.photo:
-            frappe.set_value('User', self.user, 'user_image', self.photo)
-        try:
-            org = frappe.get_doc('Organisation', {'title': self.org_title})
-        except:
-            org = frappe.get_doc({
-                'doctype': 'Organisation',
-                'title': self.org_title
-            })
-            org.insert()
-        self.org = org.name
+        if self.org_title:
+            try:
+                org = frappe.get_doc('Organisation', {'title': self.org_title})
+            except:
+                org = frappe.get_doc({
+                    'doctype': 'Organisation',
+                    'title': self.org_title
+                })
+                org.insert()
+            self.org = org.name
         # use sets for sectors and personas
         sectors = {s.sector for s in self.sectors}
         self.sectors = []

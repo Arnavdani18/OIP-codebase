@@ -7,7 +7,6 @@ import frappe
 from frappe.website.website_generator import WebsiteGenerator
 from frappe.utils.html_utils import clean_html
 
-
 class Solution(WebsiteGenerator):
     def make_route(self):
         # This method overrides the parent class method to use a route prefix
@@ -15,7 +14,11 @@ class Solution(WebsiteGenerator):
         '''Returns the default route. If `route` is specified in DocType it will be
         route/title'''
         from_title = self.scrubbed_title()
-        return 'solutions' + '/' + from_title
+        route = 'solutions/' + from_title
+        similar_content = frappe.get_all('Solution', filters={'route': route})
+        if len(similar_content) > 0:
+            from_title = self.scrubbed_title()+'-'+frappe.generate_hash("", 3)
+        return 'solutions/' + from_title
 
     def autoname(self):
         # Override autoname from parent class to allow creation of problems with the same name.
@@ -87,3 +90,8 @@ class Solution(WebsiteGenerator):
             except:
                 pass
         frappe.db.commit()
+
+    def get_context(self, context):
+        # print("solution.py, get_context", context.keys())
+        # context.ping = 'pong'
+        return context

@@ -6,7 +6,7 @@ frappe.ready(async () => {
 
   // Fix layout - without this, the entire form occupies col-2 due to custom CSS.
   moveDivs = () => {
-    $('.section-body > div').each(function() {
+    $('.section-body > div').each(function () {
       $(this)
         .parent()
         .before(this);
@@ -22,7 +22,7 @@ frappe.ready(async () => {
     frappe.call({
       method: 'contentready_oip.api.get_orgs_list',
       args: {},
-      callback: function(r) {
+      callback: function (r) {
         frappe.web_form.set_df_property('org', 'options', r.message);
       }
     });
@@ -35,7 +35,7 @@ frappe.ready(async () => {
     frappe.call({
       method: 'contentready_oip.api.get_sector_list',
       args: {},
-      callback: function(r) {
+      callback: function (r) {
         let problem_sectors;
         if (frappe.web_form.doc.sectors) {
           problem_sectors = frappe.web_form.doc.sectors.map(s => s.sector);
@@ -54,7 +54,7 @@ frappe.ready(async () => {
     });
   };
 
-  addSectorToDoc = event => {
+  addSectorToDoc = (event) => {
     if (!frappe.web_form.doc.sectors) {
       frappe.web_form.doc.sectors = [];
     }
@@ -140,7 +140,7 @@ frappe.ready(async () => {
           doctype: 'Problem',
           text: text
         },
-        callback: function(r) {
+        callback: function (r) {
           // Add similar problems to div
           $('#similar-problems').empty();
           r.message.map(el => {
@@ -153,7 +153,7 @@ frappe.ready(async () => {
     }
   };
 
-  addFileToDoc = file => {
+  addFileToDoc = (file) => {
     // Since we are showing previously added, remote
     if (file.xhr) {
       const response = JSON.parse(file.xhr.response);
@@ -169,7 +169,7 @@ frappe.ready(async () => {
     }
   };
 
-  removeFileFromDoc = file => {
+  removeFileFromDoc = (file) => {
     frappe.web_form.doc.media = frappe.web_form.doc.media.filter(
       i => !i.attachment.endsWith(file.name)
     );
@@ -192,13 +192,13 @@ frappe.ready(async () => {
         Accept: 'application/json',
         'X-Frappe-CSRF-Token': frappe.csrf_token
       },
-      init: function() {
+      init: function () {
         // use this event to add to child table
         this.on('complete', addFileToDoc);
         // use this event to remove from child table
         this.on('removedfile', removeFileFromDoc);
         let myDropzone = this;
-        if (frappe.web_form.doc.media){
+        if (frappe.web_form.doc.media) {
           frappe.web_form.doc.media.map(a => {
             let mockFile = { name: a.attachment, size: a.size };
             myDropzone.displayExistingFile(mockFile, a.attachment);
@@ -208,7 +208,7 @@ frappe.ready(async () => {
     });
   };
 
-  submitProblemForm = is_draft => {
+  submitProblemForm = (is_draft) => {
     frappe.call({
       method: 'contentready_oip.api.add_primary_content',
       args: {
@@ -216,8 +216,8 @@ frappe.ready(async () => {
         doc: frappe.web_form.doc,
         is_draft: is_draft
       },
-      callback: function(r) {
-        console.log(r);
+      callback: function (r) {
+        // console.log(r);
         if (r.message && r.message.is_published && r.message.route) {
           window.location.href = r.message.route;
         } else {
@@ -244,8 +244,8 @@ frappe.ready(async () => {
           doc: frappe.web_form.doc,
           is_draft: true
         },
-        callback: function(r) {
-          console.log(r);
+        callback: function (r) {
+          // console.log(r);
           // update local form technical fields so that they are up to date with server values
           // Important: do no update fields on the UI as that will interfere with user experience.
           const keysToCopy = [
@@ -268,13 +268,13 @@ frappe.ready(async () => {
     }
   };
 
-  saveAsDraft = event => {
+  saveAsDraft = (event) => {
     frappe.web_form.doc.is_published = false;
     const is_draft = true;
     submitProblemForm(is_draft);
   };
 
-  publishProblem = event => {
+  publishProblem = (event) => {
     frappe.web_form.doc.is_published = true;
     const is_draft = false;
     submitProblemForm(is_draft);
@@ -330,6 +330,107 @@ frappe.ready(async () => {
     $('#introduction').addClass('d-none');
   };
 
+  const appendAttachLink = () => {
+    let btn = `
+    <div class="attach-links-section pattern1">
+      <button class="btn btn-primary solid-primary-btn mb-3" >Attach video link</button>
+      <ul class="list-group"></ul>
+    </div>`;
+
+    $('h6:contains("Media")')
+      .parent()
+      .append(btn);
+
+    // if media attachment already exist
+    displayAttachedLinks();
+
+    $('.attach-links-section button').click(function () {
+      let links = prompt('Please enter links from Youtube or Vimeo. Separate multiple links with commas.');
+      if (links) {
+        if (!frappe.web_form.doc.media) {
+          frappe.web_form.doc.media = []
+        }
+
+        let media = frappe.web_form.doc.media;
+        let linkArr = links.split(',');
+
+        linkArr.forEach(link => {
+          // check if link exist
+          let idxExist = media.findIndex(mediaObj => {
+            return mediaObj['attachment'] === link;
+          })
+
+
+          if (checkMedialUrl(link) && idxExist < 0) {
+            media.push({ attachment: link, type: 'link' });
+          } else if (idxExist > -1) {
+            alert('Provided link already exists.')
+          } else {
+            alert("Please enter links from Youtube or Vimeo only.");
+          }
+        });
+
+        displayAttachedLinks();
+      }
+    });
+  };
+
+
+  const checkMedialUrl = function (url) {
+    const regex = /(youtube|youtu|vimeo)\.(com|be)\/((watch\?v=([-\w]+))|(video\/([-\w]+))|(projects\/([-\w]+)\/([-\w]+))|([-\w]+))/;
+
+    if (url.match(regex)) {
+      return true
+    }
+    else {
+      return false
+    }
+  }
+
+  const displayAttachedLinks = () => {
+    if (!frappe.web_form.doc.media) {
+      return;
+    }
+    let media = frappe.web_form.doc.media;
+
+    let linkArr = [];
+    $('.attach-links-section ul').empty();
+    if (media && media.length) {
+      linkArr = media.filter(mediaObj => mediaObj['type'] === 'link');
+    }
+
+    for (const [index, link] of linkArr.entries()) {
+      let unorderedList = `
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        ${link['attachment']}
+        <button type="button" class="close" id="removeBtn-${index + 1}" data-attachment="${link.attachment}" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+      </li>`;
+
+
+      $('.attach-links-section ul').append(unorderedList);
+      let btnId = `#removeBtn-${index + 1}`;
+
+      // remove button event listener
+      $(btnId)
+        .click(function () {
+          let linkText = $(this).attr('data-attachment');
+
+          if (media) {
+            let foundIndex = media.findIndex((linkObj) => {
+              return linkObj['attachment'] === linkText;
+            })
+
+            if (foundIndex > -1) {
+              media.splice(foundIndex, 1);
+              displayAttachedLinks();
+            }
+          }
+        });
+    }
+  };
+
   // End Helpers
 
   // Delay until page is fully rendered
@@ -337,7 +438,6 @@ frappe.ready(async () => {
 
   // Start UI Fixes
   $('*[data-doctype="Web Form"]').wrap('<div class="container pt-5"></div>');
-  fixNavBar();
   // We hide the default form buttons (using css) and add our own
   addActionButtons();
   moveDivs();
@@ -348,6 +448,7 @@ frappe.ready(async () => {
   styleFields();
   styleFormHeadings();
   pageHeadingSection();
+  appendAttachLink();
   // End UI Fixes
 
   // Start Google Maps Autocomplete
@@ -381,69 +482,3 @@ frappe.ready(async () => {
 
   // End Events
 });
-
-fixNavBar = () => {
-  $('main').removeClass('container my-5');
-  $('nav.navbar').addClass('navbar-section');
-  $('ul.navbar-nav:even').addClass('nav-left-list');
-  $('ul.navbar-nav:odd').addClass('nav-right-list');
-  $('ul.navbar-nav:even .nav-link.active').addClass('tab-focus');
-
-  let search = $('a[href="/search"]');
-  search.addClass('d-md-flex align-items-md-center');
-  search.html('<span class="d-block d-lg-none">Search</span>');
-  search.prepend(
-    '<img src="/files/Search.svg" class="mr-4" height="20" width="20" />'
-  );
-
-  $('li.nav-item.dropdown.logged-in a').addClass(
-    'd-flex align-items-center mr-4'
-  );
-  $('li.nav-item.dropdown.logged-in a span.full-name').attr('hidden', true);
-  $('div.standard-image').css({
-    height: '3rem',
-    width: '3rem',
-    'text-align': 'center'
-  });
-
-  $('ul.dropdown-menu').addClass('dropdown-section');
-  // menu button
-  $('button.navbar-toggler').addClass('py-2');
-
-  // changing My Account to Edit Profile
-  const dropdownList = $('a[href="/me"]');
-  dropdownList.attr('href', '/update-profile');
-  dropdownList.text('Profile');
-
-  if (frappe.session.user === 'Guest') {
-    $('a:contains("Add a Problem / Solution")').hide();
-  } else {
-    $('a:contains("Add a Problem / Solution")').addClass('add-problem-btn');
-    $('a:contains("Add a Problem / Solution")')
-      .next()
-      .addClass('dropdown-menu-right');
-
-    // fix moving of nav while clicking menu icon
-    $('nav div.container').addClass('nav-container');
-
-    // chnge the list order
-    $('.nav-right-list')
-      .find('li:eq(0)')
-      .insertAfter('.nav-right-list li:eq(2)');
-
-    // insert add problem/solution and search logo
-    let addProblem = $('a[href="/add-problem?new=1"]');
-    let addSolution = $('a[href="/add-solution?new=1"]');
-
-    addProblem.prepend(
-      '<img src="/files/problem_dark.svg" height="22" width="30" />'
-    );
-
-    addSolution.prepend(
-      '<img src="/files/solution_dark.svg" height="22" width="30" />'
-    );
-
-    addProblem.addClass('py-2');
-    addSolution.addClass('py-2');
-  }
-};

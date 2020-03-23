@@ -12,7 +12,8 @@
   "child_doctype",
   "child_name",
   "text",
-  "route"
+  "route",
+  "is_read"
  ],
  "fields": [
   {
@@ -46,7 +47,7 @@
   },
   {
    "fieldname": "text",
-   "fieldtype": "Data",
+   "fieldtype": "Text",
    "label": "Notification Text"
   },
   {
@@ -63,9 +64,15 @@
    "fieldname": "route",
    "fieldtype": "Data",
    "label": "Notification Route"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_read",
+   "fieldtype": "Check",
+   "label": "Is Read"
   }
  ],
- "modified": "2020-03-19 17:18:40.127136",
+ "modified": "2020-03-23 17:19:48.230300",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP Notification",

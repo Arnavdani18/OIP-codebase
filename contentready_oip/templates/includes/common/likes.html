@@ -1,20 +1,9 @@
 <div class="likes">
-  <button
-    onclick="toggle_like('{{doctype}}','{{name}}' )"
-    role="button"
-    class="btn btn-social"
-  >
-    <i
-      data-has-user-liked="0"
-      id="like-icon-{{doctype}}-{{name}}"
-      class="far fa-thumbs-up"
-    ></i>
+  <button data-has-user-liked="0" id="like-icon-{{doctype}}-{{name}}" onclick="toggle_like('{{doctype}}','{{name}}' )"
+    role="button" class="btn btn-social">
+    <i class="far fa-thumbs-up"></i>
   </button>
-  <span
-    class="social-stats"
-    data-num-likes="{{likes | length}}"
-    id="like-count-{{doctype}}-{{name}}"
-  >
+  <span class="social-stats" data-num-likes="{{likes | length}}" id="like-count-{{doctype}}-{{name}}">
     {{likes | length}}
   </span>
 </div>
@@ -22,13 +11,12 @@
 <script>
   changeUI = (btnId, countId, hasUserLiked, numLikes) => {
     $(btnId).data('has-user-liked', hasUserLiked);
+
     hasUserLiked
       ? $(btnId)
-          .parent()
-          .addClass('selected')
+        .addClass('selected')
       : $(btnId)
-          .parent()
-          .removeClass('selected');
+        .removeClass('selected');
     $(countId).text(numLikes);
     $(countId).data('num-likes', numLikes);
   };
@@ -85,6 +73,7 @@
     });
   };
 
+
   // TODO: Replace this call with a filter on the data-likes attribute.
   // However, currently, frappe does not expand child tables within child tables into dicts.
   frappe.ready(() => {
@@ -97,6 +86,7 @@
       },
       callback: r => {
         const btnId = `#like-icon-{{doctype}}-{{name}}`;
+
         changeUI(btnId, null, r.message, null);
       }
     });

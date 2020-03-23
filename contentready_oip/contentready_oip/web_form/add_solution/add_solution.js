@@ -8,7 +8,7 @@ frappe.ready(async () => {
 
   // Fix layout - without this, the entire form occupies col-2 due to custom CSS.
   moveDivs = () => {
-    $('.section-body > div').each(function() {
+    $('.section-body > div').each(function () {
       $(this)
         .parent()
         .before(this);
@@ -78,7 +78,7 @@ frappe.ready(async () => {
     frappe.call({
       method: 'contentready_oip.api.get_orgs_list',
       args: {},
-      callback: function(r) {
+      callback: function (r) {
         frappe.web_form.set_df_property('org', 'options', r.message);
       }
     });
@@ -91,7 +91,7 @@ frappe.ready(async () => {
     frappe.call({
       method: 'contentready_oip.api.get_sector_list',
       args: {},
-      callback: function(r) {
+      callback: function (r) {
         let solution_sectors;
         if (frappe.web_form.doc.sectors) {
           solution_sectors = frappe.web_form.doc.sectors.map(s => s.sector);
@@ -110,7 +110,7 @@ frappe.ready(async () => {
     });
   };
 
-  addSectorToDoc = event => {
+  addSectorToDoc = (event) => {
     if (!frappe.web_form.doc.sectors) {
       frappe.web_form.doc.sectors = [];
     }
@@ -119,6 +119,34 @@ frappe.ready(async () => {
 
   hideTables = () => {
     $('*[data-fieldtype="Table"]').hide();
+  };
+
+  addMultiselectForSolverTeam = () => {
+    const el = `
+    <h6 class="mt-3">Solver Team</h6>
+    <select class="select2" name="solver_team[]" multiple="multiple" id="solver-team-select">
+    </select>
+    `;
+    $('*[data-fieldname="solver_team"]').before(el);
+    // $('#solver-team-select').select2({
+    //   width: '100%'
+    // });
+    frappe.call({
+      method: 'contentready_oip.api.get_user_list',
+      args: {},
+      callback: function (r) {
+        $('#solver-team-select').select2({
+          width: '100%',
+          data: r.message
+        });
+        setSolversMultiselectFromDoc();
+        // r.message.map(op => {
+        //   if (!op.value.endsWith('example.com')){
+        //     $('#solver-team-select').append(`<option value="${op.value}"> ${op.label}</option>`);
+        //   }
+        // })
+      }
+    });
   };
 
   initAutocomplete = () => {
@@ -200,26 +228,32 @@ frappe.ready(async () => {
       });
   };
 
-  deselectProblemUI = name => {
+  deselectProblemUI = (name) => {
     const id = '#problem-card-' + name;
     $(id).css('background', '#ffffff');
     $(id).data('selected', false);
   };
 
-  selectProblemUI = name => {
+  selectProblemUI = (name) => {
     const id = '#problem-card-' + name;
     $(id).css('background', '#eeffee');
     $(id).data('selected', true);
   };
 
-  getProblemCard = name => {
+  getProblemCard = (name) => {
     frappe.call({
       method: 'contentready_oip.api.get_problem_card',
       args: { name: name },
-      callback: function(r) {
+      callback: function (r) {
         // r.message[0] is the html
         // r.message[1] is the doc_name in case we need to do any processing client side
         $('#matching-problems').append(r.message[0]);
+        // disable click to navigate on the card
+        $('#matching-problems')
+          .find('*')
+          .unbind()
+          .removeAttr('onclick')
+          .removeAttr('data-toggle');
         selectProblemUI(r.message[1]);
         setupProblemsForSelection();
       }
@@ -230,6 +264,10 @@ frappe.ready(async () => {
     // Read query parameter to see if routed from a problem. Add that problem to matching problems.
     const qp = frappe.utils.get_query_params();
     if (qp.problem) {
+      if (!frappe.web_form.doc.problems_addressed) {
+        frappe.web_form.doc.problems_addressed = [];
+      }
+      frappe.web_form.doc.problems_addressed.push({ problem: qp.problem });
       getProblemCard(qp.problem);
     }
     // When editing, show all the existing problems.
@@ -240,7 +278,7 @@ frappe.ready(async () => {
     }
   };
 
-  lookForMatchingProblems = async (text) => {
+  lookForMatchingProblems = async text => {
     // Delay as the user is probably still typing
     await sleep(500);
     // Look up text again - user could have typed something since the event was triggered.
@@ -256,7 +294,7 @@ frappe.ready(async () => {
           doctype: 'Problem',
           text: text
         },
-        callback: function(r) {
+        callback: function (r) {
           // Add matching problems to div
           $('#matching-problems').empty();
           $('#matchingProblemsCount').text('');
@@ -279,7 +317,7 @@ frappe.ready(async () => {
     }
   };
 
-  lookForSimilarSolutions = async (text) => {
+  lookForSimilarSolutions = async text => {
     // Delay as the user is probably still typing
     await sleep(500);
     // Look up text again - user could have typed something since the event was triggered.
@@ -293,7 +331,7 @@ frappe.ready(async () => {
           doctype: 'Solution',
           text: text
         },
-        callback: function(r) {
+        callback: function (r) {
           // Add matching solutions to div
           $('#similarSolutions').empty();
           $('#similarSolutionsCount').text('');
@@ -309,7 +347,7 @@ frappe.ready(async () => {
     }
   };
 
-  addFileToDoc = file => {
+  addFileToDoc = (file) => {
     if (file.xhr) {
       const response = JSON.parse(file.xhr.response);
       const file_url = response.message.file_url;
@@ -324,7 +362,7 @@ frappe.ready(async () => {
     }
   };
 
-  removeFileFromDoc = file => {
+  removeFileFromDoc = (file) => {
     frappe.web_form.doc.media = frappe.web_form.doc.media.filter(
       i => !i.attachment.endsWith(file.name)
     );
@@ -347,7 +385,7 @@ frappe.ready(async () => {
         Accept: 'application/json',
         'X-Frappe-CSRF-Token': frappe.csrf_token
       },
-      init: function() {
+      init: function () {
         // use this event to add to child table
         this.on('complete', addFileToDoc);
         // use this event to remove from child table
@@ -363,7 +401,7 @@ frappe.ready(async () => {
     });
   };
 
-  addProblemToSolvedSet = name => {
+  addProblemToSolvedSet = (name) => {
     if (!frappe.web_form.doc.problems_addressed) {
       frappe.web_form.doc.problems_addressed = [];
     }
@@ -372,13 +410,37 @@ frappe.ready(async () => {
     });
   };
 
-  removeProblemFromSolvedSet = name => {
+  removeProblemFromSolvedSet = (name) => {
     frappe.web_form.doc.problems_addressed = frappe.web_form.doc.problems_addressed.filter(
       i => !i.problem === name
     );
   };
 
-  submitSolutionForm = is_draft => {
+  getSolversFromMultiselect = () => {
+    const solvers = $('#solver-team-select').val();
+    console.log(solvers);
+    if (solvers) {
+      frappe.web_form.doc.solver_team = [];
+      solvers.map(s => {
+        frappe.web_form.doc.solver_team.push({ user: s });
+      });
+    }
+  };
+
+  setSolversMultiselectFromDoc = () => {
+    if (frappe.web_form.doc.solver_team) {
+      const solvers = [];
+      frappe.web_form.doc.solver_team.map(s => {
+        solvers.push(s.user);
+      });
+      console.log(solvers);
+      $('#solver-team-select').val(solvers);
+      $('#solver-team-select').trigger('change');
+    }
+  };
+
+  submitSolutionForm = (is_draft) => {
+    getSolversFromMultiselect();
     frappe.call({
       method: 'contentready_oip.api.add_primary_content',
       args: {
@@ -386,7 +448,7 @@ frappe.ready(async () => {
         doc: frappe.web_form.doc,
         is_draft: is_draft
       },
-      callback: function(r) {
+      callback: function (r) {
         if (r.message && r.message.is_published && r.message.route) {
           window.location.href = r.message.route;
         } else {
@@ -405,6 +467,7 @@ frappe.ready(async () => {
   };
 
   autoSaveDraft = () => {
+    getSolversFromMultiselect();
     if (frappe.web_form.doc.title) {
       frappe.call({
         method: 'contentready_oip.api.add_primary_content',
@@ -413,7 +476,7 @@ frappe.ready(async () => {
           doc: frappe.web_form.doc,
           is_draft: true
         },
-        callback: function(r) {
+        callback: function (r) {
           // console.log(r);
           // update local form technical fields so that they are up to date with server values
           // Important: do no update fields on the UI as that will interfere with user experience.
@@ -437,13 +500,13 @@ frappe.ready(async () => {
     }
   };
 
-  saveAsDraft = event => {
+  saveAsDraft = (event) => {
     frappe.web_form.doc.is_published = false;
     const is_draft = true;
     submitSolutionForm(is_draft);
   };
 
-  publishSolution = event => {
+  publishSolution = (event) => {
     frappe.web_form.doc.is_published = true;
     const is_draft = false;
     submitSolutionForm(is_draft);
@@ -493,6 +556,107 @@ frappe.ready(async () => {
 
     $('.page-header h2').css({ 'margin-bottom': '0px' });
   };
+
+  const appendAttachLink = () => {
+    let btn = `
+    <div class="attach-links-section pattern1">
+      <button class="btn btn-primary solid-primary-btn mb-3" >Attach video link</button>
+      <ul class="list-group"></ul>
+    </div>`;
+
+    $('h6:contains("Media")')
+      .parent()
+      .append(btn);
+
+    // if media attachment already exist
+    displayAttachedLinks();
+
+    $('.attach-links-section button').click(function () {
+      let links = prompt('Please enter links from Youtube or Vimeo. Separate multiple links with commas.');
+      if (links) {
+        if (!frappe.web_form.doc.media) {
+          frappe.web_form.doc.media = []
+        }
+
+        let media = frappe.web_form.doc.media;
+        let linkArr = links.split(',');
+
+        linkArr.forEach(link => {
+          // check if link exist
+          let idxExist = media.findIndex(mediaObj => {
+            return mediaObj['attachment'] === link;
+          })
+
+
+          if (checkMedialUrl(link) && idxExist < 0) {
+            media.push({ attachment: link, type: 'link' });
+          } else if (idxExist > -1) {
+            alert('Provided link already exists.')
+          } else {
+            alert("Please enter links from Youtube or Vimeo only.");
+          }
+        });
+
+        displayAttachedLinks();
+      }
+    });
+  };
+
+
+  const checkMedialUrl = function (url) {
+    const regex = /(youtube|youtu|vimeo)\.(com|be)\/((watch\?v=([-\w]+))|(video\/([-\w]+))|(projects\/([-\w]+)\/([-\w]+))|([-\w]+))/;
+
+    if (url.match(regex)) {
+      return true
+    }
+    else {
+      return false
+    }
+  }
+
+  const displayAttachedLinks = () => {
+    if (!frappe.web_form.doc.media) {
+      return;
+    }
+    let media = frappe.web_form.doc.media;
+
+    let linkArr = [];
+    $('.attach-links-section ul').empty();
+    if (media && media.length) {
+      linkArr = media.filter(mediaObj => mediaObj['type'] === 'link');
+    }
+
+    for (const [index, link] of linkArr.entries()) {
+      let unorderedList = `
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        ${link['attachment']}
+        <button type="button" class="close" id="removeBtn-${index + 1}" data-attachment="${link.attachment}" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+      </li>`;
+
+
+      $('.attach-links-section ul').append(unorderedList);
+      let btnId = `#removeBtn-${index + 1}`;
+
+      $(btnId)
+        .click(function () {
+          let linkText = $(this).attr('data-attachment');
+
+          if (media) {
+            let foundIndex = media.findIndex((linkObj) => {
+              return linkObj['attachment'] === linkText;
+            })
+
+            if (foundIndex > -1) {
+              media.splice(foundIndex, 1);
+              displayAttachedLinks();
+            }
+          }
+        });
+    }
+  };
+
   // End Helpers
 
   // Delay until page is fully rendered
@@ -500,7 +664,6 @@ frappe.ready(async () => {
 
   // Start UI Fixes
   $('*[data-doctype="Web Form"]').wrap('<div class="container pt-5"></div>');
-  fixNavBar();
   // We hide the default form buttons (using css) and add our own
   addActionButtons();
   moveDivs();
@@ -510,6 +673,10 @@ frappe.ready(async () => {
   styleFields();
   controlLabels();
   pageHeadingSection();
+  addMultiselectForSolverTeam();
+  appendAttachLink();
+
+  // setSolversMultiselectFromDoc();
 
   // End UI Fixes
 
@@ -547,8 +714,7 @@ frappe.ready(async () => {
     if (value.length >= 3) {
       lookForSimilarSolutions(value);
     }
-  })
-
+  });
 
   // Set org link field when org title is selected
   $('*[data-fieldname="org"]').on('change', e => {
@@ -559,69 +725,3 @@ frappe.ready(async () => {
 
   // End Events
 });
-
-fixNavBar = () => {
-  $('main').removeClass('container my-5');
-  $('nav.navbar').addClass('navbar-section');
-  $('ul.navbar-nav:even').addClass('nav-left-list');
-  $('ul.navbar-nav:odd').addClass('nav-right-list');
-  $('ul.navbar-nav:even .nav-link.active').addClass('tab-focus');
-
-  let search = $('a[href="/search"]');
-  search.addClass('d-md-flex align-items-md-center');
-  search.html('<span class="d-block d-lg-none">Search</span>');
-  search.prepend(
-    '<img src="/files/Search.svg" class="mr-4" height="20" width="20" />'
-  );
-
-  $('li.nav-item.dropdown.logged-in a').addClass(
-    'd-flex align-items-center mr-4'
-  );
-  $('li.nav-item.dropdown.logged-in a span.full-name').attr('hidden', true);
-  $('div.standard-image').css({
-    height: '3rem',
-    width: '3rem',
-    'text-align': 'center'
-  });
-
-  $('ul.dropdown-menu').addClass('dropdown-section');
-  // menu button
-  $('button.navbar-toggler').addClass('py-2');
-
-  // changing My Account to Edit Profile
-  const dropdownList = $('a[href="/me"]');
-  dropdownList.attr('href', '/update-profile');
-  dropdownList.text('Profile');
-
-  if (frappe.session.user === 'Guest') {
-    $('a:contains("Add a Problem / Solution")').hide();
-  } else {
-    $('a:contains("Add a Problem / Solution")').addClass('add-problem-btn');
-    $('a:contains("Add a Problem / Solution")')
-      .next()
-      .addClass('dropdown-menu-right');
-
-    // fix moving of nav while clicking menu icon
-    $('nav div.container').addClass('nav-container');
-
-    // chnge the list order
-    $('.nav-right-list')
-      .find('li:eq(0)')
-      .insertAfter('.nav-right-list li:eq(2)');
-
-    // insert add problem/solution and search logo
-    let addProblem = $('a[href="/add-problem?new=1"]');
-    let addSolution = $('a[href="/add-solution?new=1"]');
-
-    addProblem.prepend(
-      '<img src="/files/problem_dark.svg" height="22" width="30" />'
-    );
-
-    addSolution.prepend(
-      '<img src="/files/solution_dark.svg" height="22" width="30" />'
-    );
-
-    addProblem.addClass('py-2');
-    addSolution.addClass('py-2');
-  }
-};

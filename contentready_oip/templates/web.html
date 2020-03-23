@@ -13,7 +13,11 @@
 	</div>
 
 	{% block page_container %}
-	<main class="container my-5">
+	{% if full_width %}
+		<main class="">
+	{% else %}
+		<main class="container my-5">
+	{% endif %}
 		<div class="d-flex justify-content-between align-items-center">
 			<div class="page-header">
 				{% block header %}{% endblock %}

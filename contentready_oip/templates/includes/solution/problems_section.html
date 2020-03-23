@@ -2,7 +2,7 @@
   This solution addresses the following problems.
 </h3>
 
-<div class="row">
+<div class="problem-section-container">
   {% for p in problems_addressed %}
   <div>
     {% set problem = frappe.get_doc('Problem',
@@ -12,3 +12,11 @@
   <hr>
   {% endfor %}
 </div>
+
+<style>
+    .problem-section-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 1rem;
+    }
+</style>

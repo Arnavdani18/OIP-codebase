@@ -2,38 +2,35 @@
 <!-- no-breadcrumbs -->
 <!-- no-cache -->
 
-<div class="container my-5">
+<div class="">
   <div class="container">
     {% include "templates/includes/common/filter.html" %}
   </div>
-
+  {% if problems %}
   <div class="row">
     <div class="col">
       <div class="col-sm-12 problem-listed-container">
-        <div class="d-flex justify-content-between">
+        <div class="d-flex justify-content-between align-items-center">
           <div class="d-flex align-items-center">
             <img src="/files/problem_icon.svg" alt="" height="24" width="20" />
             <h3>
-              Problems Listed
+              Problems Listed (<span id="problems-count">{{ problems | length }} of {{ total_count }}</span>)
             </h3>
           </div>
 
-          <div>
-            <h3>(<span id="problems-count">{{ problems | length }} of {{ total_count }}, Page {{page}}</span>)</h3>
-          </div>
-
+          <h3 id="problems-count">Page {{page}}</h3>
         </div>
       </div>
     </div>
   </div>
   <div class="row" id="problems-container">
-    {% if problems %} {% for problem in problems %}
+    {% for problem in problems %}
     <div class="col-md-6 mt-4">
       {% include "templates/includes/problem/problem_card.html" %}
     </div>
-    {% endfor %} {% endif %}
+    {% endfor %}
   </div>
-
+  {% if has_next_page or page != 1 %}
   <div class="row">
     <div class="col">
       <div class="col-sm-12 problem-listed-container">
@@ -53,7 +50,10 @@
       </div>
     </div>
   </div>
+  {% endif %}
+  {% else %}
+  <div class="alert alert-primary mt-5" role="alert">
+    Loading content. If no content appears within a few seconds, try changing the filters.
+  </div>
+  {% endif %}
 </div>
-<script>
-  {% include "public/js/global.js" %}
-</script>
