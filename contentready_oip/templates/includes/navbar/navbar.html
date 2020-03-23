@@ -55,7 +55,7 @@
                         </div>
                         {% for n in notifications %}
                         <a class="dropdown-item text-wrap" href="javascript:void(0)"
-                            onclick="openNotification(`{{n.name}}`, `{{n.route}}`)">{{n.text[:60]}}{{'...' if n.text|length > 60}}</a>
+                            onclick="openNotification(`{{n.name}}`, `{{n.route}}`)">{{n.text[:60]}}{{'...' if n.text|length > 60 else ''}}</a>
                         {% endfor %}
                     </div>
                 </li>
