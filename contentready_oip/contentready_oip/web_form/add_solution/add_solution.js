@@ -580,8 +580,6 @@ frappe.ready(async () => {
 
         let media = frappe.web_form.doc.media;
         let linkArr = links.split(',');
-        console.log(">>>>>> ", media);
-
 
         linkArr.forEach(link => {
           // check if link exist

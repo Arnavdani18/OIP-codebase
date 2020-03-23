@@ -217,7 +217,7 @@ frappe.ready(async () => {
         is_draft: is_draft
       },
       callback: function (r) {
-        console.log(r);
+        // console.log(r);
         if (r.message && r.message.is_published && r.message.route) {
           window.location.href = r.message.route;
         } else {
@@ -245,7 +245,7 @@ frappe.ready(async () => {
           is_draft: true
         },
         callback: function (r) {
-          console.log(r);
+          // console.log(r);
           // update local form technical fields so that they are up to date with server values
           // Important: do no update fields on the UI as that will interfere with user experience.
           const keysToCopy = [
@@ -388,8 +388,6 @@ frappe.ready(async () => {
   }
 
   const displayAttachedLinks = () => {
-    console.log(frappe.web_form.doc.media);
-
     if (!frappe.web_form.doc.media) {
       return;
     }
@@ -423,8 +421,6 @@ frappe.ready(async () => {
             let foundIndex = media.findIndex((linkObj) => {
               return linkObj['attachment'] === linkText;
             })
-
-            console.log("foundIndex>>> ", foundIndex === 0);
 
             if (foundIndex > -1) {
               media.splice(foundIndex, 1);
