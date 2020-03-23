@@ -31,15 +31,16 @@ frappe.ready(() => {
                 query_obj['rng'] = rng;
                 $('#range-sel').val(rng);
             }
-            let sectors = localStorage.getItem('filter_sectors'); // since we stringify while storing
+            let sectors = localStorage.getItem('filter_sectors');
+            if (!sectors) {
+                sectors = JSON.stringify(['all']);
+            }
             if(sectors){
-                sectors = JSON.parse(sectors);
-                if (!sectors) {
-                    sectors = ['all'];
-                }
+                sectors = JSON.parse(sectors);// since we stringify while storing
                 query_obj['sectors'] = sectors;
                 $('#sector-sel').val(`${sectors[0]}`);
             }
+            console.log(query_obj);
             return query_obj;
         }
     }
@@ -47,10 +48,10 @@ frappe.ready(() => {
     reloadWithParams = () => {
         const filter_query = loadFilters();
         const existing_query = frappe.utils.get_query_params();
-        const combined_query = {...existing_query, ...filter_query };
-        console.log(combined_query, filter_query);
         let qp;
         if (Object.keys(filter_query).length) {
+            const combined_query = {...existing_query, ...filter_query };
+            console.log(combined_query, filter_query);
             qp = frappe.utils.make_query_string(combined_query);
             console.log(qp);
         }

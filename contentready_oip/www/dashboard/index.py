@@ -2,25 +2,70 @@ import frappe
 from contentready_oip import api
 
 def get_context(context):
+    # catch all
+    context.recommended_problems = []
+    context.recommended_solutions = []
+    context.recommended_users = []
+    context.user_problems = []
+    context.user_solutions = []
+    context.watched_problems = []
+    context.watched_solutions = []
+    context.contributed_problems = []
+    context.contributed_solutions = []
+    context.show_default_view = False
     if frappe.session.user != 'Guest':
-        context.problems = []
-        context.user_problems = []
-        context.watched_problems = []
-        context.problem_contributions = []
-        context.solutions = []
-        context.user_solutions = []
-        context.watched_solutions = []
-        context.solution_contributions = []
-        dashboard_content = api.get_dashboard_content(limit_page_length=2)
-        context.problems = dashboard_content['problems']
-        context.solutions = dashboard_content['solutions']
-        context.users = dashboard_content['users']
-        context.user_problems = dashboard_content['user_problems']
-        context.user_solutions = dashboard_content['user_solutions']
-        context.watched_problems = dashboard_content['watched_problems']
-        context.watched_solutions = dashboard_content['watched_solutions']
-        context.problem_contributions = dashboard_content['problem_contributions']
-        context.solution_contributions = dashboard_content['solution_contributions']
+        parameters = frappe.form_dict
+        valid_types = ['recommended_areas', 'user_areas', 'watch_list', 'contributions', 'recommended_users']
+        content_type = parameters.get('type')
+        context.content_type = content_type
+        if not content_type or content_type not in valid_types:
+            context.show_default_view = True 
+            dashboard_content = api.get_dashboard_content(limit_page_length=2)
+            context.recommended_problems = dashboard_content['recommended_problems']
+            context.recommended_solutions = dashboard_content['recommended_solutions']
+            context.recommended_users = dashboard_content['recommended_users']
+            context.user_problems = dashboard_content['user_problems']
+            context.user_solutions = dashboard_content['user_solutions']
+            context.watched_problems = dashboard_content['watched_problems']
+            context.watched_solutions = dashboard_content['watched_solutions']
+            context.contributed_problems = dashboard_content['contributed_problems']
+            context.contributed_solutions = dashboard_content['contributed_solutions']
+            return context
+        if content_type == 'recommended_areas':
+            content_list = ['recommended_problems', 'recommended_solutions']
+            dashboard_content = api.get_dashboard_content(limit_page_length=20, content_list=content_list)
+            context.content_title = 'Areas Recommended For You'
+            # use generic identifiers, problems & solutions, so we can create one view for all content_types
+            context.problems = dashboard_content['recommended_problems']
+            context.solutions = dashboard_content['recommended_solutions']
+            return context
+        if content_type == 'user_areas':
+            content_list = ['user_problems', 'user_solutions']
+            dashboard_content = api.get_dashboard_content(limit_page_length=20, content_list=content_list)
+            context.content_title = 'Areas Added By You'
+            context.problems = dashboard_content['user_problems']
+            context.solutions = dashboard_content['user_solutions']
+            return context
+        if content_type == 'watch_list':
+            content_list = ['watched_problems', 'watched_solutions']
+            dashboard_content = api.get_dashboard_content(limit_page_length=20, content_list=content_list)
+            context.content_title = 'Your Watch List'
+            context.problems = dashboard_content['watched_problems']
+            context.solutions = dashboard_content['watched_solutions']
+            return context
+        if content_type == 'contributions':
+            content_list = ['contributed_problems', 'contributed_solutions']
+            dashboard_content = api.get_dashboard_content(limit_page_length=20, content_list=content_list)
+            context.content_title = 'Your Contributions'
+            context.problems = dashboard_content['contributed_problems']
+            context.solutions = dashboard_content['contributed_solutions']
+            return context
+        if content_type == 'recommended_users':
+            content_list = ['recommended_users']
+            dashboard_content = api.get_dashboard_content(limit_page_length=20, content_list=content_list)
+            context.content_title = 'Users With Similar Interests'
+            context.recommended_users = dashboard_content['recommended_users']
+            return context
     else:
         frappe.local.flags.redirect_location = '/'
         raise frappe.Redirect
