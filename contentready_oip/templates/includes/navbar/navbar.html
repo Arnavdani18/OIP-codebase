@@ -55,7 +55,7 @@
                         </div>
                         {% for n in notifications %}
                         <a class="dropdown-item text-wrap" href="javascript:void(0)"
-                            onclick="openNotification(`{{n.name}}`, `{{n.route}}`)">{{n.text[:60]}}{{'...' if n.text|length > 60}}</a>
+                            onclick="openNotification(`{{n.name}}`, `{{n.route}}`)">{{n.text[:60]}}{{'...' if n.text|length > 60 else ''}}</a>
                         {% endfor %}
                     </div>
                 </li>
@@ -139,7 +139,7 @@
         location.href = '/search';
     }
     openNotification = (name, route) => {
-        console.log(name, route);
+        // console.log(name, route);
         // set notification as read
         frappe.call({
             method: 'contentready_oip.api.set_notification_as_read',
@@ -147,6 +147,9 @@
                 'notification_name': name
             },
             callback: (r) => {
+                if (!route.startsWith('/')){
+                    route = '/' + route;
+                }
                 // console.log(r.message);
                 // then open the link
                 window.location.href = route;

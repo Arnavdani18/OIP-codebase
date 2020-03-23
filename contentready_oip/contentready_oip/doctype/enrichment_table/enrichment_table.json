@@ -6,7 +6,8 @@
  "field_order": [
   "enrichment",
   "user",
-  "title"
+  "title",
+  "is_published"
  ],
  "fields": [
   {
@@ -31,10 +32,18 @@
    "in_list_view": 1,
    "label": "User",
    "options": "User"
+  },
+  {
+   "default": "0",
+   "fetch_from": "enrichment.is_published",
+   "fieldname": "is_published",
+   "fieldtype": "Check",
+   "label": "Published?",
+   "read_only": 1
   }
  ],
  "istable": 1,
- "modified": "2020-03-06 08:31:41.671909",
+ "modified": "2020-03-23 14:46:41.533600",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Enrichment Table",
