@@ -250,10 +250,10 @@ frappe.ready(async () => {
         $('#matching-problems').append(r.message[0]);
         // disable click to navigate on the card
         $('#matching-problems')
-            .find('*')
-            .unbind()
-            .removeAttr('onclick')
-            .removeAttr('data-toggle');
+          .find('*')
+          .unbind()
+          .removeAttr('onclick')
+          .removeAttr('data-toggle');
         selectProblemUI(r.message[1]);
         setupProblemsForSelection();
       }
@@ -264,10 +264,10 @@ frappe.ready(async () => {
     // Read query parameter to see if routed from a problem. Add that problem to matching problems.
     const qp = frappe.utils.get_query_params();
     if (qp.problem) {
-      if (!frappe.web_form.doc.problems_addressed){
+      if (!frappe.web_form.doc.problems_addressed) {
         frappe.web_form.doc.problems_addressed = [];
       }
-      frappe.web_form.doc.problems_addressed.push({problem: qp.problem});
+      frappe.web_form.doc.problems_addressed.push({ problem: qp.problem });
       getProblemCard(qp.problem);
     }
     // When editing, show all the existing problems.
@@ -572,7 +572,7 @@ frappe.ready(async () => {
     displayAttachedLinks();
 
     $('.attach-links-section button').click(function () {
-      let links = prompt('Attach comma separated list of links: ');
+      let links = prompt('Please enter links from Youtube or Vimeo. Separate multiple links with commas.');
       if (links) {
         if (!frappe.web_form.doc.media) {
           frappe.web_form.doc.media = []
@@ -580,14 +580,41 @@ frappe.ready(async () => {
 
         let media = frappe.web_form.doc.media;
         let linkArr = links.split(',');
+        console.log(">>>>>> ", media);
+
+
         linkArr.forEach(link => {
-          media.push({ attachment: link, type: 'link' })
+          // check if link exist
+          let idxExist = media.findIndex(mediaObj => {
+            return mediaObj['attachment'] === link;
+          })
+
+
+          if (checkMedialUrl(link) && idxExist < 0) {
+            media.push({ attachment: link, type: 'link' });
+          } else if (idxExist > -1) {
+            alert('Provided link already exists.')
+          } else {
+            alert("Please enter links from Youtube or Vimeo only.");
+          }
         });
 
         displayAttachedLinks();
       }
     });
   };
+
+
+  const checkMedialUrl = function (url) {
+    const regex = /(youtube|youtu|vimeo)\.(com|be)\/((watch\?v=([-\w]+))|(video\/([-\w]+))|(projects\/([-\w]+)\/([-\w]+))|([-\w]+))/;
+
+    if (url.match(regex)) {
+      return true
+    }
+    else {
+      return false
+    }
+  }
 
   const displayAttachedLinks = () => {
     if (!frappe.web_form.doc.media) {
