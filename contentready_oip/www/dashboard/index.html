@@ -3,6 +3,7 @@
 <!-- static -->
 
 <div class="container mt-20 mb-5">
+  {% if show_default_view %}
   <div class="row">
     <div class="col-lg-6">
       <div class="bg-white">
@@ -10,7 +11,7 @@
           <li class="nav-item">
             <a class="nav-link active" id="recommended-content-tab" data-toggle="tab" href="#recommended-content"
               role="tab" aria-controls="recommended-content" aria-selected="true">
-              Areas That May Interest You ({{ (problems + solutions) | length
+              Areas That May Interest You ({{ (recommended_problems + recommended_solutions) | length
               }})
             </a>
           </li>
@@ -26,13 +27,13 @@
           <div class="tab-content" id="leftTabContent">
             <div class="tab-pane fade show active" id="recommended-content" role="tabpanel"
               aria-labelledby="recommended-content-tab">
-              {% if problems or solutions %} {% for problem in problems %}
+              {% if recommended_problems or recommended_solutions %} {% for problem in recommended_problems %}
               <div>
                 {% include "templates/includes/problem/problem_card.html" %}
               </div>
               {% endfor %}
               <hr />
-              {% for solution in solutions %}
+              {% for solution in recommended_solutions %}
               <div>
                 {% include "templates/includes/solution/solution_card.html" %}
               </div>
@@ -94,22 +95,22 @@
         <ul class="nav nav-tabs nav-section nav-mob-section" id="rightTab1" role="tablist">
           <li class="nav-item">
             <a class="nav-link active" id="contributions-tab" data-toggle="tab" href="#contributions" role="tab"
-              aria-controls="contributions" aria-selected="false">Your Contributions ({{ (problem_contributions +
-              solution_contributions) | length }})</a>
+              aria-controls="contributions" aria-selected="false">Your Contributions ({{ (contributed_problems +
+              contributed_solutions) | length }})</a>
           </li>
         </ul>
         <div id="rightTabGroup1" class="pb-4" style="border-radius: var(--round4);">
           <div class="tab-content" id="rightTabContent1">
             <div class="row p-0 m-0" id="users" role="tabpanel" aria-labelledby="users-tab">
               <div class="col m-0 p-0">
-                {% for problem in problem_contributions %}
+                {% for problem in contributed_problems %}
                 <div>
                   {% include
                   "templates/includes/problem/problem_contribution_card.html" %}
                 </div>
                 {% endfor %}
                 <hr />
-                {% for solution in solution_contributions %}
+                {% for solution in contributed_solutions %}
                 <div>
                   {% include
                   "templates/includes/solution/solution_contribution_card.html"
@@ -143,4 +144,40 @@
       </div>
     </div>
   </div>
+  {% else %}
+  <div class="row">
+    <div class="col">
+      <div class="col-sm-12 problem-listed-container">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center">
+            <img src="/files/problem_icon.svg" alt="" height="24" width="20" />
+            <h3>
+              {{content_title}}
+            </h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row" id="problems-container">
+    {% if content_type == 'recommended_users' %}
+      {% for user in recommended_users %}
+      <div class="col-md-3 mt-4 py-4 border">
+        {% include "templates/includes/common/user_card.html" %}
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="col-md-6 mt-4">
+        {% for problem in problems %}
+          {% include "templates/includes/problem/problem_card.html" %}
+        {% endfor %}
+      </div>
+      <div class="col-md-6 mt-4">
+        {% for solution in solutions %}
+          {% include "templates/includes/solution/solution_card.html" %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+  {% endif %}
 </div>
