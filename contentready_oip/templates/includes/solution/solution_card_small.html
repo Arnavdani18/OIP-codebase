@@ -14,7 +14,7 @@
 </style>
 
 <div
-  class="solution-container-small col-md-6"
+  class="solution-container-small"
   onclick="window.location.href = '/{{solution.route}}'"
   data-name="{{solution.name}}"
   id="solution-card-{{solution.name}}"
@@ -31,4 +31,6 @@
     {% set doc_owner = solution.owner %} {% set date = solution.creation %} {%
     include "templates/includes/common/small_user_thumbnail.html" %}
   </div>
+
+    <hr>
 </div>
