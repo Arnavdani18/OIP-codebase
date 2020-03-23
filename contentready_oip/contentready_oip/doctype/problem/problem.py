@@ -15,7 +15,11 @@ class Problem(WebsiteGenerator):
         '''Returns the default route. If `route` is specified in DocType it will be
         route/title'''
         from_title = self.scrubbed_title()
-        return 'problems' + '/' + from_title
+        route = 'problems/' + from_title
+        similar_content = frappe.get_all('Problem', filters={'route': route})
+        if len(similar_content) > 0:
+            from_title = self.scrubbed_title()+'-'+frappe.generate_hash("", 3)
+        return 'problems/' + from_title
 
     def autoname(self):
         # Override autoname from parent class to allow creation of problems with the same name.
@@ -118,3 +122,7 @@ class Problem(WebsiteGenerator):
                 pass
         frappe.db.commit()
 
+    def get_context(self, context):
+        published_enrichments = [e for e in self.enrichments if e.is_published]
+        context.enrichment_count = len(published_enrichments)
+        return context

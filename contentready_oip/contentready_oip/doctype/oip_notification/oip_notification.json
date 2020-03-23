@@ -47,7 +47,7 @@
   },
   {
    "fieldname": "text",
-   "fieldtype": "Data",
+   "fieldtype": "Text",
    "label": "Notification Text"
   },
   {
@@ -72,7 +72,7 @@
    "label": "Is Read"
   }
  ],
- "modified": "2020-03-19 22:17:53.745002",
+ "modified": "2020-03-23 17:19:48.230300",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP Notification",

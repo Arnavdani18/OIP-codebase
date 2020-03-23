@@ -586,24 +586,56 @@ def get_content_recommended_for_user(doctype, sectors, limit_page_length=5):
     return content
 
 @frappe.whitelist(allow_guest = False)
-def get_dashboard_content(limit_page_length=5):
+def get_dashboard_content(limit_page_length=5,content_list=None):
+    if not content_list:
+        content_list = [
+            'recommended_problems',
+            'recommended_solutions',
+            'recommended_users',
+            'user_problems',
+            'user_solutions',
+            'watched_problems',
+            'watched_solutions',
+            'contributed_problems',
+            'contributed_solutions',
+        ]
     try:
         user = frappe.get_doc('User Profile', frappe.session.user)
         sectors = [sector.sector for sector in user.sectors]
     except:
         sectors = []
         # frappe.throw('Please create your user profile to personalise this page')
-    return {
-        'problems': get_content_recommended_for_user('Problem', sectors, limit_page_length=limit_page_length),
-        'solutions': get_content_recommended_for_user('Solution', sectors, limit_page_length=limit_page_length),
-        'users': get_content_recommended_for_user('User Profile', sectors, limit_page_length=limit_page_length),
-        'user_problems': get_content_by_user('Problem', limit_page_length=limit_page_length),
-        'user_solutions': get_content_by_user('Solution', limit_page_length=limit_page_length),
-        'watched_problems': get_content_watched_by_user('Problem', limit_page_length=limit_page_length),
-        'watched_solutions': get_content_watched_by_user('Solution', limit_page_length=limit_page_length),
-        'problem_contributions': get_contributions_by_user('Problem', ['Enrichment Table', 'Validation Table', 'Collaboration Table', 'Discussion Table'], limit_page_length=limit_page_length),
-        'solution_contributions': get_contributions_by_user('Solution', ['Validation Table', 'Collaboration Table', 'Discussion Table'], limit_page_length=limit_page_length),
-    }
+    payload = {}
+    if 'recommended_problems' in content_list:
+        payload['recommended_problems'] = get_content_recommended_for_user('Problem', sectors, limit_page_length=limit_page_length)
+    if 'recommended_solutions' in content_list:
+        payload['recommended_solutions'] = get_content_recommended_for_user('Solution', sectors, limit_page_length=limit_page_length)
+    if 'recommended_users' in content_list:
+        payload['recommended_users'] = get_content_recommended_for_user('User Profile', sectors, limit_page_length=limit_page_length)
+    if 'user_problems' in content_list:
+        payload['user_problems'] = get_content_by_user('Problem', limit_page_length=limit_page_length)
+    if 'user_solutions' in content_list:
+        payload['user_solutions'] = get_content_by_user('Solution', limit_page_length=limit_page_length)
+    if 'watched_problems' in content_list:
+        payload['watched_problems'] = get_content_watched_by_user('Problem', limit_page_length=limit_page_length)
+    if 'watched_solutions' in content_list:
+        payload['watched_solutions'] = get_content_watched_by_user('Solution', limit_page_length=limit_page_length)
+    if 'contributed_problems' in content_list:
+        payload['contributed_problems'] = get_contributions_by_user('Problem', ['Enrichment Table', 'Validation Table', 'Collaboration Table', 'Discussion Table'], limit_page_length=limit_page_length)
+    if 'contributed_solutions' in content_list:
+        payload['contributed_solutions'] = get_contributions_by_user('Solution', ['Validation Table', 'Collaboration Table', 'Discussion Table'], limit_page_length=limit_page_length)
+    return payload
+    # return {
+    #     'recommended_problems': get_content_recommended_for_user('Problem', sectors, limit_page_length=limit_page_length),
+    #     'recommended_solutions': get_content_recommended_for_user('Solution', sectors, limit_page_length=limit_page_length),
+    #     'recommended_users': get_content_recommended_for_user('User Profile', sectors, limit_page_length=limit_page_length),
+    #     'user_problems': get_content_by_user('Problem', limit_page_length=limit_page_length),
+    #     'user_solutions': get_content_by_user('Solution', limit_page_length=limit_page_length),
+    #     'watched_problems': get_content_watched_by_user('Problem', limit_page_length=limit_page_length),
+    #     'watched_solutions': get_content_watched_by_user('Solution', limit_page_length=limit_page_length),
+    #     'contributed_problems': get_contributions_by_user('Problem', ['Enrichment Table', 'Validation Table', 'Collaboration Table', 'Discussion Table'], limit_page_length=limit_page_length),
+    #     'contributed_solutions': get_contributions_by_user('Solution', ['Validation Table', 'Collaboration Table', 'Discussion Table'], limit_page_length=limit_page_length),
+    # }
 
 @frappe.whitelist(allow_guest = False)
 def delete_contribution(child_doctype, name):
