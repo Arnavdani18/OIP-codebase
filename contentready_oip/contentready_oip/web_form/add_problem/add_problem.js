@@ -6,7 +6,7 @@ frappe.ready(async () => {
 
   // Fix layout - without this, the entire form occupies col-2 due to custom CSS.
   moveDivs = () => {
-    $('.section-body > div').each(function() {
+    $('.section-body > div').each(function () {
       $(this)
         .parent()
         .before(this);
@@ -22,7 +22,7 @@ frappe.ready(async () => {
     frappe.call({
       method: 'contentready_oip.api.get_orgs_list',
       args: {},
-      callback: function(r) {
+      callback: function (r) {
         frappe.web_form.set_df_property('org', 'options', r.message);
       }
     });
@@ -35,7 +35,7 @@ frappe.ready(async () => {
     frappe.call({
       method: 'contentready_oip.api.get_sector_list',
       args: {},
-      callback: function(r) {
+      callback: function (r) {
         let problem_sectors;
         if (frappe.web_form.doc.sectors) {
           problem_sectors = frappe.web_form.doc.sectors.map(s => s.sector);
@@ -140,7 +140,7 @@ frappe.ready(async () => {
           doctype: 'Problem',
           text: text
         },
-        callback: function(r) {
+        callback: function (r) {
           // Add similar problems to div
           $('#similar-problems').empty();
           r.message.map(el => {
@@ -192,13 +192,13 @@ frappe.ready(async () => {
         Accept: 'application/json',
         'X-Frappe-CSRF-Token': frappe.csrf_token
       },
-      init: function() {
+      init: function () {
         // use this event to add to child table
         this.on('complete', addFileToDoc);
         // use this event to remove from child table
         this.on('removedfile', removeFileFromDoc);
         let myDropzone = this;
-        if (frappe.web_form.doc.media){
+        if (frappe.web_form.doc.media) {
           frappe.web_form.doc.media.map(a => {
             let mockFile = { name: a.attachment, size: a.size };
             myDropzone.displayExistingFile(mockFile, a.attachment);
@@ -216,7 +216,7 @@ frappe.ready(async () => {
         doc: frappe.web_form.doc,
         is_draft: is_draft
       },
-      callback: function(r) {
+      callback: function (r) {
         console.log(r);
         if (r.message && r.message.is_published && r.message.route) {
           window.location.href = r.message.route;
@@ -244,7 +244,7 @@ frappe.ready(async () => {
           doc: frappe.web_form.doc,
           is_draft: true
         },
-        callback: function(r) {
+        callback: function (r) {
           console.log(r);
           // update local form technical fields so that they are up to date with server values
           // Important: do no update fields on the UI as that will interfere with user experience.
@@ -330,6 +330,111 @@ frappe.ready(async () => {
     $('#introduction').addClass('d-none');
   };
 
+  const appendAttachLink = () => {
+    let btn = `
+    <div class="attach-links-section pattern1">
+      <button class="btn btn-primary solid-primary-btn mb-3" >Attach video link</button>
+      <ul class="list-group"></ul>
+    </div>`;
+
+    $('h6:contains("Media")')
+      .parent()
+      .append(btn);
+
+    // if media attachment already exist
+    displayAttachedLinks();
+
+    $('.attach-links-section button').click(function () {
+      let links = prompt('Please enter links from Youtube or Vimeo. Separate multiple links with commas.');
+      if (links) {
+        if (!frappe.web_form.doc.media) {
+          frappe.web_form.doc.media = []
+        }
+
+        let media = frappe.web_form.doc.media;
+        let linkArr = links.split(',');
+
+        linkArr.forEach(link => {
+          // check if link exist
+          let idxExist = media.findIndex(mediaObj => {
+            return mediaObj['attachment'] === link;
+          })
+
+
+          if (checkMedialUrl(link) && idxExist < 0) {
+            media.push({ attachment: link, type: 'link' });
+          } else if (idxExist > -1) {
+            alert('Provided link already exists.')
+          } else {
+            alert("Please enter links from Youtube or Vimeo only.");
+          }
+        });
+
+        displayAttachedLinks();
+      }
+    });
+  };
+
+
+  const checkMedialUrl = function (url) {
+    const regex = /(youtube|youtu|vimeo)\.(com|be)\/((watch\?v=([-\w]+))|(video\/([-\w]+))|(projects\/([-\w]+)\/([-\w]+))|([-\w]+))/;
+
+    if (url.match(regex)) {
+      return true
+    }
+    else {
+      return false
+    }
+  }
+
+  const displayAttachedLinks = () => {
+    console.log(frappe.web_form.doc.media);
+
+    if (!frappe.web_form.doc.media) {
+      return;
+    }
+    let media = frappe.web_form.doc.media;
+
+    let linkArr = [];
+    $('.attach-links-section ul').empty();
+    if (media && media.length) {
+      linkArr = media.filter(mediaObj => mediaObj['type'] === 'link');
+    }
+
+    for (const [index, link] of linkArr.entries()) {
+      let unorderedList = `
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        ${link['attachment']}
+        <button type="button" class="close" id="removeBtn-${index + 1}" data-attachment="${link.attachment}" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+      </li>`;
+
+
+      $('.attach-links-section ul').append(unorderedList);
+      let btnId = `#removeBtn-${index + 1}`;
+
+      // remove button event listener
+      $(btnId)
+        .click(function () {
+          let linkText = $(this).attr('data-attachment');
+
+          if (media) {
+            let foundIndex = media.findIndex((linkObj) => {
+              return linkObj['attachment'] === linkText;
+            })
+
+            console.log("foundIndex>>> ", foundIndex === 0);
+
+            if (foundIndex > -1) {
+              media.splice(foundIndex, 1);
+              displayAttachedLinks();
+            }
+          }
+        });
+    }
+  };
+
   // End Helpers
 
   // Delay until page is fully rendered
@@ -347,6 +452,7 @@ frappe.ready(async () => {
   styleFields();
   styleFormHeadings();
   pageHeadingSection();
+  appendAttachLink();
   // End UI Fixes
 
   // Start Google Maps Autocomplete

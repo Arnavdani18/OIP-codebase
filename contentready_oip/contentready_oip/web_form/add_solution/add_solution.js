@@ -650,7 +650,7 @@ frappe.ready(async () => {
               return linkObj['attachment'] === linkText;
             })
 
-            if (foundIndex > 0) {
+            if (foundIndex > -1) {
               media.splice(foundIndex, 1);
               displayAttachedLinks();
             }
