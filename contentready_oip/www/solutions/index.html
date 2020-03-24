@@ -32,25 +32,7 @@
     {% endfor %}
   </div>
   {% if has_next_page or page != 1 %}
-  <div class="row">
-    <div class="col">
-      <div class="col-sm-12 problem-listed-container">
-        <div class="d-flex align-items-center">
-          <h3>
-            {% if has_next_page %}
-            <a href="?page={{page + 1}}" style="text-decoration: none;color: white;">
-              Next Page
-            </a>
-            {% elif page != 1 %}
-            <a href="?page={{page - 1}}" style="text-decoration: none;color: white;">
-              Previous Page
-            </a>
-            {% endif %}
-          </h3>
-        </div>
-      </div>
-    </div>
-  </div>
+    {% include "templates/includes/common/page_navigator.html" %}
   {% endif %}
   {% else %}
   <div class="alert alert-primary mt-5" role="alert">
