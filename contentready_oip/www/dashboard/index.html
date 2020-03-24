@@ -37,12 +37,20 @@
               <div>
                 {% include "templates/includes/solution/solution_card.html" %}
               </div>
+              <hr />
               {% endfor %} {% else %}
               <br />
               <h6 style="padding-left: 1rem;">
                 Please <a href="/update-profile">update your profile</a> to
                 receive recommendations.
               </h6>
+              {% endif %}
+
+              {% if(recommended_problems + recommended_solutions) | length > 5 %}
+              <div class="text-center py-3">
+                <a href="/dashboard?type=recommended_areas" class="viewAll">View All
+                  ({{ (recommended_problems + recommended_solutions) | length }})</a>
+              </div>
               {% endif %}
             </div>
             <div class="tab-pane fade" id="user-content" role="tabpanel" aria-labelledby="user-content-tab">
@@ -57,6 +65,13 @@
               </div>
               <hr class="m-0" />
               {% endfor %}
+
+              {%  if (user_problems + user_solutions) | length > 5 %}
+              <div class="text-center py-3">
+                <a href="/dashboard?type=user_areas" class="viewAll">View All
+                  ({{ (user_problems + user_solutions) | length }})</a>
+              </div>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -79,13 +94,21 @@
               <div>
                 {% include "templates/includes/problem/problem_card.html" %}
               </div>
-              {% endfor %}
               <hr />
+              {% endfor %}
               {% for solution in watched_solutions %}
               <div>
                 {% include "templates/includes/solution/solution_card.html" %}
               </div>
+              <hr>
               {% endfor %}
+
+              {% if (watched_problems + watched_solutions) | length > 2 %}
+              <div class="text-center py-3">
+                <a href="/dashboard?type=watch_list" class="viewAll">View All
+                  ({{ (watched_problems + watched_solutions) | length }})</a>
+              </div>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -108,16 +131,25 @@
                   {% include
                   "templates/includes/problem/problem_contribution_card.html" %}
                 </div>
-                {% endfor %}
                 <hr />
+                {% endfor %}
                 {% for solution in contributed_solutions %}
                 <div>
                   {% include
                   "templates/includes/solution/solution_contribution_card.html"
                   %}
                 </div>
+                <hr>
                 {% endfor %}
+
+                {% if (contributed_problems + contributed_solutions) | length > 2 %}
+                <div class="text-center py-2">
+                  <a href="/dashboard?type=contributions" class="viewAll">View All
+                    ({{ (contributed_problems + contributed_solutions) | length }})</a>
+                </div>
+                {% endif %}
               </div>
+
             </div>
           </div>
         </div>
@@ -138,6 +170,13 @@
                 {% include "templates/includes/common/user_card.html" %}
               </div>
               {% endfor %}
+
+              {% if users | length > 2 %}
+              <div class="text-center py-3">
+                <a href="/dashboard?type=recommended_users" class="viewAll">View All
+                  ({{ users | length }})</a>
+              </div>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -161,23 +200,37 @@
   </div>
   <div class="row" id="problems-container">
     {% if content_type == 'recommended_users' %}
-      {% for user in recommended_users %}
-      <div class="col-md-3 mt-4 py-4 border">
-        {% include "templates/includes/common/user_card.html" %}
-      </div>
-      {% endfor %}
+    {% for user in recommended_users %}
+    <div class="col-md-3 mt-4 py-4 border">
+      {% include "templates/includes/common/user_card.html" %}
+    </div>
+    {% endfor %}
     {% else %}
-      <div class="col-md-6 mt-4">
-        {% for problem in problems %}
-          {% include "templates/includes/problem/problem_card.html" %}
-        {% endfor %}
-      </div>
-      <div class="col-md-6 mt-4">
-        {% for solution in solutions %}
-          {% include "templates/includes/solution/solution_card.html" %}
-        {% endfor %}
-      </div>
+    <div class="col-md-6 mt-4">
+      {% for problem in problems %}
+      {% include "templates/includes/problem/problem_card.html" %}
+      {% endfor %}
+    </div>
+    <div class="col-md-6 mt-4">
+      {% for solution in solutions %}
+      {% include "templates/includes/solution/solution_card.html" %}
+      {% endfor %}
+    </div>
     {% endif %}
   </div>
   {% endif %}
 </div>
+
+<style>
+  .viewAll {
+    font-size: 1.2rem;
+    font-weight: bold;
+    letter-spacing: 0;
+    line-height: 1.6rem;
+    color: var(--primary5);
+  }
+
+  .viewAll:hover {
+    color: var(--primary5);
+  }
+</style>
