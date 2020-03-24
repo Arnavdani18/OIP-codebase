@@ -27,6 +27,14 @@
           <div class="tab-content" id="leftTabContent">
             <div class="tab-pane fade show active" id="recommended-content" role="tabpanel"
               aria-labelledby="recommended-content-tab">
+              {% if (recommended_problems + recommended_solutions) | length < 1 %}
+              <div class="w-100">
+                {% set msg = "No recommendations yet" %}
+                {% set img_src = "" %}
+                {% include "templates/includes/common/empty_card.html" %}
+              </div>
+              {% endif %}
+
               {% if recommended_problems or recommended_solutions %} {% for problem in recommended_problems %}
               <div>
                 {% include "templates/includes/problem/problem_card.html" %}
@@ -54,6 +62,14 @@
               {% endif %}
             </div>
             <div class="tab-pane fade" id="user-content" role="tabpanel" aria-labelledby="user-content-tab">
+              {% if (user_problems + user_solutions) | length < 1 %}
+              <div class="w-100">
+                {% set msg = "No area added yet" %}
+                {% set img_src = "" %}
+                {% include "templates/includes/common/empty_card.html" %}
+              </div>
+              {% endif %}
+
               {% for problem in user_problems %}
               <div class="">
                 {% include "templates/includes/problem/problem_card.html" %}
@@ -90,6 +106,15 @@
           <div class="tab-content" id="leftTabContent">
             <div class="tab-pane fade show active" id="watched-content" role="tabpanel"
               aria-labelledby="watched-content-tab">
+
+              {% if (watched_problems + watched_solutions) | length < 1 %}
+              <div>
+                {% set msg = "No watchlist yet" %}
+                {% set img_src = "" %}
+                {% include "templates/includes/common/empty_card.html" %}
+              </div>
+              {% endif %}
+
               {% for problem in watched_problems %}
               <div>
                 {% include "templates/includes/problem/problem_card.html" %}
@@ -126,6 +151,15 @@
           <div class="tab-content" id="rightTabContent1">
             <div class="row p-0 m-0" id="users" role="tabpanel" aria-labelledby="users-tab">
               <div class="col m-0 p-0">
+
+                {% if (contributed_problems + contributed_solutions) | length < 1 %}
+                <div>
+                  {% set msg = "No contributions yet" %}
+                  {% set img_src = "" %}
+                  {% include "templates/includes/common/empty_card.html" %}
+                </div>
+                {% endif %}
+
                 {% for problem in contributed_problems %}
                 <div>
                   {% include
@@ -165,6 +199,14 @@
         <div id="rightTabGroup1" class="pb-4" style="border-radius: var(--round4);">
           <div class="tab-content" id="rightTabContent1">
             <div class="row p-0 m-0" id="users" role="tabpanel" aria-labelledby="users-tab">
+              {% if users | length < 1 %}
+              <div class="w-100">
+                {% set msg = "No user matched" %}
+                {% set img_src = "" %}
+                {% include "templates/includes/common/empty_card.html" %}
+              </div>
+              {% endif %}
+
               {% for user in users %}
               <div class="col-md-6 py-4 border">
                 {% include "templates/includes/common/user_card.html" %}
