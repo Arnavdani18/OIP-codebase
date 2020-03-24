@@ -38,15 +38,18 @@
                 </li>
                 {% if frappe.session.user != 'Guest' %}
                 <li class="nav-item dropdown ml-lg-3 mr-lg-4 message-icon-li d-flex align-items-center">
+                    {% set notifications = frappe.get_all('OIP Notification', fields=['text', 'route', 'name'], filters={'target_user': frappe.session.user, 'is_read': False}) %}
                     <button role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                         class="icon-btn">
                         <img src="/files/Message.svg" alt="" height="16.84" width="24.06" />
 
+                        {% if notifications | length > 1 %}
                         <span class="notification-icon"></span>
+                        {% endif %}
                     </button>
                     <div class="dropdown-menu dropdown-menu-right p-0 mt-2 pattern1"
                         style="width: 47rem; max-height: 70vh; overflow: auto;">
-                        {% set notifications = frappe.get_all('OIP Notification', fields=['text', 'route', 'name'], filters={'target_user': frappe.session.user, 'is_read': False}) %}
+
                         <div class=" clearfix pattern1" style="background-color: #E1E1E1;">
                             <p class="float-left dropdown-header" style="font-size: 1.4rem;">Notifications
                                 ({{notifications | length}})</p>
