@@ -44,7 +44,8 @@
 
                         <span class="notification-icon"></span>
                     </button>
-                    <div class="dropdown-menu dropdown-menu-right p-0 mt-2 pattern1" style="width: 47rem;">
+                    <div class="dropdown-menu dropdown-menu-right p-0 mt-2 pattern1"
+                        style="width: 47rem; max-height: 70vh; overflow: auto;">
                         {% set notifications = frappe.get_all('OIP Notification', fields=['text', 'route', 'name'], filters={'target_user': frappe.session.user, 'is_read': False}) %}
                         <div class=" clearfix pattern1" style="background-color: #E1E1E1;">
                             <p class="float-left dropdown-header" style="font-size: 1.4rem;">Notifications
@@ -53,9 +54,38 @@
                                 View All
                             </button> -->
                         </div>
+
+                        {% if notifications | length < 1 %}
+                        <div class="dropdown-item p-4">
+                            <img src="/files/no_message.svg" alt="">
+                            <span class="pattern1 ml-2" style="font-weight: 500;">No new notifications. You are all
+                                caught up.</span>
+                        </div>
+                        {% endif %}
+
                         {% for n in notifications %}
-                        <a class="dropdown-item text-wrap" href="javascript:void(0)"
-                            onclick="openNotification(`{{n.name}}`, `{{n.route}}`)">{{n.text[:60]}}{{'...' if n.text|length > 60 else ''}}</a>
+                        {% set heading = n.text.split(":")[0] %}
+                        {% set description = n.text.split(":")[1] %}
+
+                        <a class="dropdown-item text-wrap p-4 border-bottom" href="javascript:void(0)"
+                            onclick="openNotification(`{{n.name}}`, `{{n.route}}`)">
+                            <section>
+                                {% if "enrich" in heading %}
+                                <img src="/files/enriched.svg" alt="">
+                                {% elif "like" in heading %}
+                                <img src="/files/like_icon.svg" alt="">
+                                {% elif "comment" in heading %}
+                                <img src="/files/commented.svg" alt="">
+                                {% elif "collaborate" in heading %}
+                                <img src="/files/collaborated.svg" alt="">
+                                {% elif "validate" in heading %}
+                                <img src="/files/validated.svg" alt="">
+                                {% endif %}
+                                <span class="pattern1 ml-2" style="font-weight: 500;">{{heading}}</span>
+                            </section>
+                            <section class="text-muted">{{description[:100]}}{{'...' if n.text|length > 60 else ''}}
+                            </section>
+                        </a>
                         {% endfor %}
                     </div>
                 </li>
@@ -123,16 +153,16 @@
 
     logout = () => {
         var me = this;
-		me.logged_out = true;
-		return frappe.call({
-			method:'logout',
-			callback: function(r) {
-				if(r.exc) {
-					return;
-				}
+        me.logged_out = true;
+        return frappe.call({
+            method: 'logout',
+            callback: function (r) {
+                if (r.exc) {
+                    return;
+                }
                 window.location.href = '/';
-			}
-		});
+            }
+        });
     }
 
     onClickSearch = () => {
@@ -147,7 +177,7 @@
                 'notification_name': name
             },
             callback: (r) => {
-                if (!route.startsWith('/')){
+                if (!route.startsWith('/')) {
                     route = '/' + route;
                 }
                 // console.log(r.message);
