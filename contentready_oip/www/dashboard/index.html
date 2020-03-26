@@ -35,20 +35,22 @@
               </div>
               {% endif %}
 
-              {% if recommended_problems or recommended_solutions %} {% for problem in recommended_problems %}
+              {% if recommended_problems or recommended_solutions %}
+              {% for problem in recommended_problems %}
               <div>
                 {% include "templates/includes/problem/problem_card.html" %}
               </div>
-              {% endfor %}
               <hr />
+              {% endfor %}
               {% for solution in recommended_solutions %}
               <div>
                 {% include "templates/includes/solution/solution_card.html" %}
               </div>
               <hr />
-              {% endfor %} {% else %}
+              {% endfor %}
+              {% else %}
               <br />
-              <h6 style="padding-left: 1rem;">
+              <h6 style="padding-left: 2rem;">
                 Please <a href="/update-profile">update your profile</a> to
                 receive recommendations.
               </h6>
