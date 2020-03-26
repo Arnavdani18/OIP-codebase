@@ -54,7 +54,7 @@
               </h6>
               {% endif %}
 
-              {% if(recommended_problems + recommended_solutions) | length > 5 %}
+              {% if(recommended_problems + recommended_solutions) | length > 4 %}
               <div class="text-center py-3">
                 <a href="/dashboard?type=recommended_areas" class="viewAll">View All
                   ({{ (recommended_problems + recommended_solutions) | length }})</a>
@@ -82,7 +82,7 @@
               <hr class="m-0" />
               {% endfor %}
 
-              {%  if (user_problems + user_solutions) | length > 5 %}
+              {%  if (user_problems + user_solutions) | length > 4 %}
               <div class="text-center py-3">
                 <a href="/dashboard?type=user_areas" class="viewAll">View All
                   ({{ (user_problems + user_solutions) | length }})</a>
