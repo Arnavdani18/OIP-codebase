@@ -154,8 +154,8 @@ frappe.ready(async function() {
     // geographical location types.
     autocomplete = new google.maps.places.Autocomplete(
       document.getElementById('autocomplete'),
-      // { types: ['(cities)'], componentRestrictions: {country: 'in'} }
-      { types: ['(cities)'] }
+      { types: ['(cities)'], componentRestrictions: {country: 'in'} }
+      // { types: ['(cities)'] }
     );
     // Avoid paying for data that you don't need by restricting the set of
     // place fields that are returned to just the address components.

@@ -170,8 +170,8 @@ frappe.ready(() => {
     // Start location filter
     const autocomplete = new google.maps.places.Autocomplete(
         document.getElementById('autocomplete'),
-        // { types: ['(cities)'], componentRestrictions: {country: 'in'} }
-        { types: ['(cities)'] }
+        { types: ['(cities)'], componentRestrictions: {country: 'in'} }
+        // { types: ['(cities)'] }
         // TODO: Use domain settings to retrieve country list
     );
     // Specify fields to retrieve from the Google Maps API - cost implications.
