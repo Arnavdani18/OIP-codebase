@@ -1,4 +1,4 @@
-// frappe.provide('Vue');
+frappe.provide('Vue');
 
 frappe.ready(async () => {
   // Start Helpers
@@ -408,7 +408,27 @@ frappe.ready(async () => {
     frappe.web_form.doc.problems_addressed.push({
       problem: name
     });
+
+    getTitleByName(frappe.web_form.doc.problems_addressed);
   };
+
+  getTitleByName = async function (problems_addressed_arr) {
+    let result = [];
+
+    for (const problem of problems_addressed_arr) {
+      let promise = new Promise(function (resolve, reject) {
+        resolve(frappe.call({
+          method: 'contentready_oip.api.get_problem_details',
+          args: { name: problem['problem'] }
+        }))
+      });
+
+      let problemObj = await promise;
+      result.push(problemObj['message']);
+    }
+
+    vm.selectedProblems = result;
+  }
 
   removeProblemFromSolvedSet = (name) => {
     frappe.web_form.doc.problems_addressed = frappe.web_form.doc.problems_addressed.filter(
@@ -657,6 +677,10 @@ frappe.ready(async () => {
     }
   };
 
+  insertSelectedProblem = function () {
+    $('div[data-fieldname="title"]').append(`<div id="selectedProblem"></div>`);
+  }
+
   // End Helpers
 
   // Delay until page is fully rendered
@@ -675,6 +699,43 @@ frappe.ready(async () => {
   pageHeadingSection();
   addMultiselectForSolverTeam();
   appendAttachLink();
+  insertSelectedProblem();
+
+  if (frappe.web_form.doc.problems_addressed) {
+    getTitleByName(frappe.web_form.doc.problems_addressed);
+  }
+
+  const vm = new Vue({
+    el: '#selectedProblem',
+    data: function () {
+      return {
+        selectedProblems: [],
+      }
+    },
+    methods: {
+      removeTitle: function (name) {
+        let problemIndex = frappe.web_form.doc.problems_addressed.findIndex(p => p['problem'] === name);
+
+        frappe.web_form.doc.problems_addressed.splice(problemIndex, 1);
+        getTitleByName(frappe.web_form.doc.problems_addressed);
+        deselectProblemUI(name)
+      }
+    },
+    template: `
+    <div>
+    {% raw %}
+    <ul class="list-group mb-3">
+      <li v-for="(problem,i) in selectedProblems" class="list-group-item">
+        {{ problem['title'] }} 
+        <button type="button" class="close" aria-label="Close" v-on:click="removeTitle(problem['name'])">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </li>
+    </ul>
+    {% endraw %}
+    </div>
+    `
+  });
 
   // setSolversMultiselectFromDoc();
 
