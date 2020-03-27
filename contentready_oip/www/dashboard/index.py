@@ -20,16 +20,27 @@ def get_context(context):
         context.content_type = content_type
         if not content_type or content_type not in valid_types:
             context.show_default_view = True 
-            dashboard_content = api.get_dashboard_content(limit_page_length=2)
-            context.recommended_problems = dashboard_content['recommended_problems']
-            context.recommended_solutions = dashboard_content['recommended_solutions']
-            context.recommended_users = dashboard_content['recommended_users']
-            context.user_problems = dashboard_content['user_problems']
-            context.user_solutions = dashboard_content['user_solutions']
-            context.watched_problems = dashboard_content['watched_problems']
-            context.watched_solutions = dashboard_content['watched_solutions']
-            context.contributed_problems = dashboard_content['contributed_problems']
-            context.contributed_solutions = dashboard_content['contributed_solutions']
+            dashboard_content = api.get_dashboard_content(limit_page_length=4)
+            recommended_areas_length = 4
+            if len(dashboard_content['recommended_solutions']) >= 2:
+                context.recommended_problems = dashboard_content['recommended_problems'][:2]
+            else:
+                num_to_show = recommended_areas_length - len(dashboard_content['recommended_solutions'])
+                context.recommended_problems = dashboard_content['recommended_problems'][:num_to_show]
+            if len(dashboard_content['recommended_problems']) >= 2:
+                context.recommended_solutions = dashboard_content['recommended_solutions'][:2]
+            else:
+                num_to_show = recommended_areas_length - len(dashboard_content['recommended_problems'])
+                context.recommended_solutions = dashboard_content['recommended_solutions'][:num_to_show]
+            # context.recommended_problems = dashboard_content['recommended_problems']
+            # context.recommended_solutions = dashboard_content['recommended_solutions']
+            context.recommended_users = dashboard_content['recommended_users'][:2]
+            context.user_problems = dashboard_content['user_problems'][:2]
+            context.user_solutions = dashboard_content['user_solutions'][:2]
+            context.watched_problems = dashboard_content['watched_problems'][:2]
+            context.watched_solutions = dashboard_content['watched_solutions'][:2]
+            context.contributed_problems = dashboard_content['contributed_problems'][:2]
+            context.contributed_solutions = dashboard_content['contributed_solutions'][:2]
             return context
         if content_type == 'recommended_areas':
             content_list = ['recommended_problems', 'recommended_solutions']
