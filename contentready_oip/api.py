@@ -364,6 +364,11 @@ def get_problem_card(name, html=True):
         return doc
 
 @frappe.whitelist(allow_guest = False)
+def get_problem_details(name):
+    doc = frappe.get_doc('Problem', name)
+    return doc
+
+@frappe.whitelist(allow_guest = False)
 def get_problem_overview(name, html=True):
     doc = frappe.get_doc('Problem', name)
     if html:
