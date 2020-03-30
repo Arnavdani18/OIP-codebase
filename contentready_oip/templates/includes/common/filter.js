@@ -1,5 +1,6 @@
 frappe.ready(() => {
     // Start helpers
+    const available_sectors = JSON.parse(`{{available_sectors | json}}`);
     showDistanceSelect = () => {
         $('#range-sel-div').show();
         // $('#sector-sel-div').removeClass('offset-md-8').addClass('offset-md-6');
@@ -32,15 +33,21 @@ frappe.ready(() => {
                 $('#range-sel').val(rng);
             }
             let sectors = localStorage.getItem('filter_sectors');
+            sectors = available_sectors.map(s => s.name);
+            sectors = JSON.stringify(sectors);
+            console.log(sectors);
             if (!sectors) {
-                sectors = JSON.stringify(['all']);
+                sectors = available_sectors.map(s => s.name);
+                console.log(sectors);
+                sectors = JSON.stringify(sectors);
+                // sectors = JSON.stringify(['all']);
             }
             if(sectors){
                 sectors = JSON.parse(sectors);// since we stringify while storing
                 query_obj['sectors'] = sectors;
                 $('#sector-sel').val(`${sectors[0]}`);
             }
-            console.log(query_obj);
+            // console.log(query_obj);
             return query_obj;
         }
     }

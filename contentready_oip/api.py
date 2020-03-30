@@ -175,6 +175,7 @@ def get_filtered_content(doctype):
             filter_sectors = []
         # if not filter_sectors:
         #     filter_sectors = ['all']
+        # print('\n\n\n', filter_sectors, len(filter_sectors), '\n\n\n')
         if 'all' in filter_sectors:
             filtered = frappe.get_list(doctype, filters={'is_published': True})
             content_set = {f['name'] for f in filtered}
@@ -184,14 +185,17 @@ def get_filtered_content(doctype):
         # TODO: Implement location filtering using Elasticsearch
         from geopy import distance
         for c in content_set:
-            doc = frappe.get_doc(doctype, c)
-            if doc.is_published:
-                if (doc.latitude != None) and (doc.longitude != None) and (filter_location_lat != None) and (filter_location_lng != None) and (filter_location_range != None):
-                    distance_km = distance.distance((filter_location_lat, filter_location_lng), (float(doc.latitude), float(doc.longitude))).km
-                    if distance_km > filter_location_range:
-                        # skip this document as it's outside our bounds
-                        continue
-                content.append(doc)
+            try:
+                doc = frappe.get_doc(doctype, c)
+                if doc.is_published:
+                    if (doc.latitude != None) and (doc.longitude != None) and (filter_location_lat != None) and (filter_location_lng != None) and (filter_location_range != None):
+                        distance_km = distance.distance((filter_location_lat, filter_location_lng), (float(doc.latitude), float(doc.longitude))).km
+                        if distance_km > filter_location_range:
+                            # skip this document as it's outside our bounds
+                            continue
+                    content.append(doc)
+            except Exception as e:
+                print(str(e))
     except Exception as e:
         print(str(e))
     return content
@@ -203,18 +207,21 @@ def search_content_by_text(doctype, text, limit_page_length=5, html=True):
         names = frappe.db.get_list(doctype, or_filters={'title': ['like', '%{}%'.format(text)], 'description': ['like', '%{}%'.format(text)]}, filters={'is_published': True}, limit_page_length=limit_page_length)
         names = {n['name'] for n in names}
         for p in names:
-            doc = frappe.get_doc(doctype, p)
-            doc.photo = frappe.get_value('User Profile', doc.owner, 'photo')
-            if html:
-                content_type = doctype.lower()
-                template = "templates/includes/{}/{}_card.html".format(content_type, content_type)
-                context = {
-                    content_type: doc
-                }
-                html = frappe.render_template(template, context)
-                content.append(html)
-            else:
-                content.append(doc)
+            try:
+                doc = frappe.get_doc(doctype, p)
+                doc.photo = frappe.get_value('User Profile', doc.owner, 'photo')
+                if html:
+                    content_type = doctype.lower()
+                    template = "templates/includes/{}/{}_card.html".format(content_type, content_type)
+                    context = {
+                        content_type: doc
+                    }
+                    html = frappe.render_template(template, context)
+                    content.append(html)
+                else:
+                    content.append(doc)
+            except Exception as e:
+                print(str(e))
     except Exception as e:
         print(str(e))
     return content
@@ -259,17 +266,20 @@ def search_contributors_by_text(text, limit_page_length=5, html=True):
         names = frappe.db.get_list(doctype, or_filters={'full_name': ['like', '%{}%'.format(text)]}, limit_page_length=limit_page_length)
         names = {n['name'] for n in names}
         for p in names:
-            doc = frappe.get_doc(doctype, p)
-            doc.photo = frappe.get_value('User Profile', doc.owner, 'photo')
-            if html:
-                template = "templates/includes/common/user_card.html"
-                context = {
-                    'user': doc
-                }
-                html = frappe.render_template(template, context)
-                content.append(html)
-            else:
-                content.append(doc)
+            try:
+                doc = frappe.get_doc(doctype, p)
+                doc.photo = frappe.get_value('User Profile', doc.owner, 'photo')
+                if html:
+                    template = "templates/includes/common/user_card.html"
+                    context = {
+                        'user': doc
+                    }
+                    html = frappe.render_template(template, context)
+                    content.append(html)
+                else:
+                    content.append(doc)
+            except Exception as e:
+                print(str(e))
     except Exception as e:
         print(str(e))
     return content
@@ -526,11 +536,13 @@ def get_content_by_user(doctype, limit_page_length=5):
     content = []
     try:
         filtered = frappe.get_list(doctype, filters={'owner': frappe.session.user, 'is_published': True}, limit_page_length=limit_page_length)
-        content = []
         for f in filtered:
-            doc = frappe.get_doc(doctype, f['name'])
-            if doc.is_published:
-                content.append(doc)
+            try:
+                doc = frappe.get_doc(doctype, f['name'])
+                if doc.is_published:
+                    content.append(doc)
+            except Exception as e:
+                print(str(e))
     except Exception as e:
         print(str(e))
     return content
@@ -552,23 +564,26 @@ def get_contributions_by_user(parent_doctype, child_doctypes, limit_page_length=
         # print(content_dict)
         # for c in content_set:
         for c in content_dict:
-            doc = frappe.get_doc(parent_doctype, c)
-            if doc.is_published:
-                doc.enriched = False
-                doc.validated = False
-                doc.collaborated = False
-                doc.discussed = False
-                for e in content_dict[c]:
-                    contribution_type = e['type']
-                    if contribution_type == 'Enrichment Table':
-                        doc.enriched = e['modified']
-                    elif contribution_type == 'Validation Table':
-                        doc.validated = e['modified']
-                    elif contribution_type == 'Collaboration Table':
-                        doc.collaborated = e['modified']
-                    elif contribution_type == 'Discussion Table':
-                        doc.discussed = e['modified']
-                content.append(doc)
+            try:
+                doc = frappe.get_doc(parent_doctype, c)
+                if doc.is_published:
+                    doc.enriched = False
+                    doc.validated = False
+                    doc.collaborated = False
+                    doc.discussed = False
+                    for e in content_dict[c]:
+                        contribution_type = e['type']
+                        if contribution_type == 'Enrichment Table':
+                            doc.enriched = e['modified']
+                        elif contribution_type == 'Validation Table':
+                            doc.validated = e['modified']
+                        elif contribution_type == 'Collaboration Table':
+                            doc.collaborated = e['modified']
+                        elif contribution_type == 'Discussion Table':
+                            doc.discussed = e['modified']
+                    content.append(doc)
+            except Exception as e:
+                print(str(e))
     except Exception as e:
         print(str(e))
     return content
@@ -580,9 +595,12 @@ def get_content_watched_by_user(doctype, limit_page_length=5):
         filtered = frappe.get_list('Watch Table', fields=['parent'], filters={'parenttype': doctype, 'user': frappe.session.user}, limit_page_length=limit_page_length)
         content_set = {f['parent'] for f in filtered}
         for c in content_set:
-            doc = frappe.get_doc(doctype, c)
-            if doc.is_published:
-                content.append(doc)
+            try:
+                doc = frappe.get_doc(doctype, c)
+                if doc.is_published:
+                    content.append(doc)
+            except Exception as e:
+                print(str(e))
     except Exception as e:
         print(str(e))
     return content
@@ -594,10 +612,13 @@ def get_content_recommended_for_user(doctype, sectors, limit_page_length=5):
         filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', sectors], 'owner': ['!=', frappe.session.user]}, limit_page_length=limit_page_length)
         content_set = {f['parent'] for f in filtered}
         for c in content_set:
-            doc = frappe.get_doc(doctype, c)
-            if doc.is_published:
-                doc.photo = frappe.get_value('User Profile', doc.owner, 'photo')
-                content.append(doc)
+            try:
+                doc = frappe.get_doc(doctype, c)
+                if doc.is_published:
+                    doc.photo = frappe.get_value('User Profile', doc.owner, 'photo')
+                    content.append(doc)
+            except Exception as e:
+                print(str(e))
     except Exception as e:
         print(str(e))
     return content
