@@ -1,0 +1,106 @@
+{
+ "allow_rename": 1,
+ "autoname": "field:url",
+ "creation": "2020-03-30 18:24:18.929832",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "url",
+  "column_break_3",
+  "brandmark",
+  "website_theme",
+  "section_break_6",
+  "sectors"
+ ],
+ "fields": [
+  {
+   "description": "This will be shown as the primary title of the site",
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title",
+   "reqd": 1
+  },
+  {
+   "description": "E.g. https://accessibility.openinnovationplatform.org",
+   "fieldname": "url",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "URL",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "fieldname": "brandmark",
+   "fieldtype": "Attach",
+   "in_list_view": 1,
+   "label": "Brandmark",
+   "reqd": 1
+  },
+  {
+   "fieldname": "website_theme",
+   "fieldtype": "Link",
+   "label": "Website Theme",
+   "options": "Website Theme"
+  },
+  {
+   "fieldname": "column_break_3",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_6",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "sectors",
+   "fieldtype": "Table",
+   "label": "Sectors",
+   "options": "Sector Table"
+  }
+ ],
+ "modified": "2020-03-30 21:01:16.403667",
+ "modified_by": "Administrator",
+ "module": "ContentReady OIP",
+ "name": "OIP White Label Domain",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Guest",
+   "share": 1
+  }
+ ],
+ "quick_entry": 1,
+ "search_fields": "title, url",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "title",
+ "track_changes": 1
+}

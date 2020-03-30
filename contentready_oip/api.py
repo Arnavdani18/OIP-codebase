@@ -53,8 +53,20 @@ def set_sector_filter(filter_sectors=[]):
     return frappe.session.data['filter_sectors']
 
 @frappe.whitelist(allow_guest = True)
-def get_available_sectors():
-    return frappe.get_list('Sector', ['name', 'title'])
+def get_available_sectors(domain=None):
+    hostname = get_url()
+    try:
+        domain = frappe.get_doc('OIP White Label Domain', hostname)
+        sectors = [{'name': s.sector, 'title': s.sector_title} for s in domain.sectors]
+        assert len(sectors) > 0, 'Need at least 1 sector per domain. Reverting to defaults.'
+        return sectors
+    except Exception as e:
+        print(str(e))
+        return frappe.get_list('Sector', ['name', 'title'])
+
+@frappe.whitelist(allow_guest = True)
+def get_url(domain=None):
+    return frappe.utils.get_host_name_from_request()
 
 @frappe.whitelist(allow_guest = True)
 def get_filters():
@@ -73,7 +85,7 @@ def get_filters():
         filter_location_range = frappe.session.data.filter_location_range
     if 'filter_sectors' in frappe.session.data:
         filter_sectors = frappe.session.data.filter_sectors
-    available_sectors = frappe.get_list('Sector', ['name', 'title'])
+    available_sectors = get_available_sectors()
     return {
         'filter_location_name': filter_location_name,
         'filter_location_lat': filter_location_lat,
