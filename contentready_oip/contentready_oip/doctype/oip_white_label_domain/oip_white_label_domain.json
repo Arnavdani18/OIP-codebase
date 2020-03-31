@@ -8,9 +8,11 @@
  "field_order": [
   "title",
   "url",
-  "column_break_3",
   "brandmark",
+  "favicon",
+  "column_break_3",
   "website_theme",
+  "theme_url",
   "section_break_6",
   "sectors"
  ],
@@ -58,9 +60,21 @@
    "fieldtype": "Table",
    "label": "Sectors",
    "options": "Sector Table"
+  },
+  {
+   "fetch_from": "website_theme.theme_url",
+   "fieldname": "theme_url",
+   "fieldtype": "Data",
+   "label": "Theme URL",
+   "read_only": 1
+  },
+  {
+   "fieldname": "favicon",
+   "fieldtype": "Attach",
+   "label": "Favicon"
   }
  ],
- "modified": "2020-03-30 21:01:16.403667",
+ "modified": "2020-03-31 10:51:06.997017",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP White Label Domain",

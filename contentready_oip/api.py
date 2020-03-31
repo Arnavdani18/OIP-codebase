@@ -53,7 +53,7 @@ def set_sector_filter(filter_sectors=[]):
     return frappe.session.data['filter_sectors']
 
 @frappe.whitelist(allow_guest = True)
-def get_available_sectors(domain=None):
+def get_available_sectors():
     hostname = get_url()
     try:
         domain = frappe.get_doc('OIP White Label Domain', hostname)
@@ -65,7 +65,20 @@ def get_available_sectors(domain=None):
         return frappe.get_list('Sector', ['name', 'title'])
 
 @frappe.whitelist(allow_guest = True)
-def get_url(domain=None):
+def get_domain_theme():
+    hostname = get_url()
+    theme_url = ''
+    try:
+        assert True==False, 'Impossible'
+    except Exception as e:
+        print(str(e))
+        default_theme = frappe.get_value('Website Settings','', 'website_theme')
+        if default_theme:
+            theme_url = frappe.get_value('Website Theme', default_theme, 'theme_url')
+    return theme_url
+
+@frappe.whitelist(allow_guest = True)
+def get_url():
     return frappe.utils.get_host_name_from_request()
 
 @frappe.whitelist(allow_guest = True)

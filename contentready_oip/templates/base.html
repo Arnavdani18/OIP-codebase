@@ -2,93 +2,99 @@
 <!-- Built on Frappe. https://frappe.io/ -->
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<meta name="generator" content="frappe">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="generator" content="frappe">
 
-	{% block meta_block %}
-		{% include "templates/includes/meta_block.html" %}
-	{% endblock %}
+    {% set hostname = frappe.get_url() %}
 
-	<title>{% block title %} {{ title | striptags }} {% endblock %}</title>
+    {% set domain_settings = frappe.get_doc('OIP White Label Domain', hostname) %}
 
-	{% block favicon %}
-	<link
-		rel="shortcut icon"
-		href="{{ (favicon or "/assets/frappe/images/favicon.png") | abs_url }}"
-		type="image/x-icon"
-	>
-	{% endblock %}
+    {% block meta_block %}
+        {% include "templates/includes/meta_block.html" %}
+    {% endblock %}
 
-	{%- block head -%}
-		{% if head_html is defined -%}
-		{{ head_html or "" }}
-		{%- endif %}
-		<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
-		{% if theme.theme_url %}
-		<link type="text/css" rel="stylesheet" href="{{ theme.theme_url }}">
-		{% else %}
-		<link type="text/css" rel="stylesheet" href="/assets/css/frappe-web-b4.css">
+    <title>{% block title %} {{ domain_settings.title | striptags }} {% endblock %}</title>
 
-		{%- for link in web_include_css %}
-		<link type="text/css" rel="stylesheet" href="{{ link|abs_url }}">
-		{%- endfor -%}
-		{% endif %}
-	{%- endblock -%}
+    {% block favicon %}
+    <link
+        rel="shortcut icon"
+        href="{{ (domain_settings.favicon or favicon or "/assets/frappe/images/favicon.png") | abs_url }}"
+        type="image/x-icon"
+    >
+    {% endblock %}
 
-	{%- block head_include %}
-		{{ head_include or "" }}
-	{% endblock -%}
+    {%- block head -%}
+        {% if head_html is defined -%}
+        {{ head_html or "" }}
+        {%- endif %}
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+        {% if domain_settings.theme_url %}
+        <link type="text/css" rel="stylesheet" href="{{ domain_settings.theme_url }}">
+        {% elif theme.theme_url %}
+        <link type="text/css" rel="stylesheet" href="{{ theme.theme_url }}">
+        {% else %}
+        <link type="text/css" rel="stylesheet" href="/assets/css/frappe-web-b4.css">
 
-	{%- block style %}{%- endblock -%}
+        {%- for link in web_include_css %}
+        <link type="text/css" rel="stylesheet" href="{{ link|abs_url }}">
+        {%- endfor -%}
+        {% endif %}
+    {%- endblock -%}
 
-	<script>
-		window.frappe = {};
-		frappe.ready_events = [];
-		frappe.ready = function(fn) {
-			frappe.ready_events.push(fn);
-		}
-		window.dev_server = {{ dev_server }};
-		window.socketio_port = {{ frappe.socketio_port }};
+    {%- block head_include %}
+        {{ head_include or "" }}
+    {% endblock -%}
+
+    {%- block style %}{%- endblock -%}
+
+    <script>
+        window.frappe = {};
+        frappe.ready_events = [];
+        frappe.ready = function(fn) {
+            frappe.ready_events.push(fn);
+        }
+        window.dev_server = {{ dev_server }};
+        window.socketio_port = {{ frappe.socketio_port }};
     </script>
 </head>
 <body frappe-session-status="{{ 'logged-in' if frappe.session.user != 'Guest' else 'logged-out'}}" data-path="{{ path | e }}" {%- if template and template.endswith('.md') %} frappe-content-type="markdown" {% endif -%}>
-	{%- block banner -%}
-		{% include "templates/includes/banner_extension.html" ignore missing %}
+    {%- block banner -%}
+        {% include "templates/includes/banner_extension.html" ignore missing %}
 
-		{% if banner_html -%}
-		{{ banner_html or "" }}
-		{%- endif %}
-	{%- endblock -%}
+        {% if banner_html -%}
+        {{ banner_html or "" }}
+        {%- endif %}
+    {%- endblock -%}
 
-	<!-- Replace this with our navbar -->
-	{%- block navbar -%}
-		{% include "templates/includes/navbar/navbar.html" %}
-	{%- endblock -%}
+    <!-- Replace this with our navbar -->
+    {%- block navbar -%}
+        {% include "templates/includes/navbar/navbar.html" %}
+    {%- endblock -%}
 
-	{% block content %}
-		{{ content }}
-	{% endblock %}
+    {% block content %}
+        {{ content }}
+    {% endblock %}
 
-	<!-- Replace this with our footer -->
-	{%- block footer -%}
-		{% include "templates/includes/footer/footer.html" %}
-	{%- endblock -%}
+    <!-- Replace this with our footer -->
+    {%- block footer -%}
+        {% include "templates/includes/footer/footer.html" %}
+    {%- endblock -%}
 
-	{% block base_scripts %}
-	<!-- js should be loaded in body! -->
-	<script type="text/javascript" src="/assets/frappe/js/lib/jquery/jquery.min.js"></script>
-	<script type="text/javascript" src="/assets/js/frappe-web.min.js"></script>
-	<script type="text/javascript" src="/assets/js/bootstrap-4-web.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-	{% endblock %}
+    {% block base_scripts %}
+    <!-- js should be loaded in body! -->
+    <script type="text/javascript" src="/assets/frappe/js/lib/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/assets/js/frappe-web.min.js"></script>
+    <script type="text/javascript" src="/assets/js/bootstrap-4-web.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    {% endblock %}
 
-	{%- for link in web_include_js %}
-	<script type="text/javascript" src="{{ link | abs_url }}"></script>
-	{%- endfor -%}
+    {%- for link in web_include_js %}
+    <script type="text/javascript" src="{{ link | abs_url }}"></script>
+    {%- endfor -%}
 
-	{%- block script %}{%- endblock %}
-	<!-- csrf_token -->
-	{%- block body_include %}{{ body_include or "" }}{% endblock -%}
+    {%- block script %}{%- endblock %}
+    <!-- csrf_token -->
+    {%- block body_include %}{{ body_include or "" }}{% endblock -%}
 </body>
 </html>
