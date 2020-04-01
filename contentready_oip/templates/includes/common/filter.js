@@ -33,8 +33,8 @@ frappe.ready(() => {
                 $('#range-sel').val(rng);
             }
             let sectors = localStorage.getItem('filter_sectors');
-            sectors = available_sectors.map(s => s.name);
-            sectors = JSON.stringify(sectors);
+            // sectors = available_sectors.map(s => s.name);
+            // sectors = JSON.stringify(sectors);
             console.log(sectors);
             if (!sectors) {
                 sectors = available_sectors.map(s => s.name);

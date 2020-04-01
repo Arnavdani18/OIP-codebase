@@ -194,11 +194,10 @@ def get_filtered_content(doctype):
         #     filter_sectors = ['all']
         # print('\n\n\n', filter_sectors, len(filter_sectors), '\n\n\n')
         if 'all' in filter_sectors:
-            filtered = frappe.get_list(doctype, filters={'is_published': True})
-            content_set = {f['name'] for f in filtered}
-        else:
-            filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', filter_sectors]})
-            content_set = {f['parent'] for f in filtered}
+            available_sectors = get_available_sectors()
+            filter_sectors = {a['name'] for a in available_sectors}
+        filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', filter_sectors]})
+        content_set = {f['parent'] for f in filtered}
         # TODO: Implement location filtering using Elasticsearch
         from geopy import distance
         for c in content_set:
@@ -750,7 +749,6 @@ def complete_linkedin_login(code, state):
     from frappe.integrations.oauth2_logins import decoder_compat
     from frappe.utils import oauth
     oauth2_providers = oauth.get_oauth2_providers()
-    print(oauth2_providers)
     provider = 'linkedin'
     flow = oauth.get_oauth2_flow(provider)
     args = {
