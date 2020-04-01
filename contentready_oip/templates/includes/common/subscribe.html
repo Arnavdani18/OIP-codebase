@@ -64,13 +64,6 @@
         const email = $('#subscriber-email').val();
         console.log(email);
         if (email && isEmail(email)){
-            // frappe.call({
-            //     method: 'contentready_oip.api.add_subscriber',
-            //     args: {email: email},
-            //     callback: (r) => {
-            //         frappe.msgprint('Thank you for subscribing!');
-            //     }
-            // });
             frappe.send_message({
                 subject: 'New Subscriber',
                 sender: email,
