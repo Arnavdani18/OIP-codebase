@@ -631,7 +631,8 @@ def get_content_recommended_for_user(doctype, sectors, limit_page_length=5):
         for c in content_set:
             try:
                 doc = frappe.get_doc(doctype, c)
-                if doc.is_published:
+                # don't show content that the user has already contributed to
+                if doc.is_published and not has_user_contributed('Like Table', doctype, c) and not has_user_contributed('Watch Table',doctype, c) and not has_user_contributed('Validation Table',doctype, c) and not has_user_contributed('Collaboration Table',doctype, c) and not has_user_contributed('Enrichment Table',doctype, c):
                     doc.photo = frappe.get_value('User Profile', doc.owner, 'photo')
                     content.append(doc)
             except Exception as e:
