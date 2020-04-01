@@ -9,7 +9,11 @@ def nudge_guests():
     if not frappe.session.user or frappe.session.user == 'Guest':
         frappe.throw('Please login to collaborate.')
 
-def create_user_profile_if_missing(doc, event_name):
+def create_user_profile_if_missing(doc=None, event_name=None, email=None):
+    if email == 'Guest':
+        return False
+    if email:
+        doc = frappe.get_doc('User', email)
     try:
         if not frappe.db.exists('User Profile', doc.email):
             profile = frappe.get_doc({
@@ -676,17 +680,6 @@ def get_dashboard_content(limit_page_length=5,content_list=None):
     if 'contributed_solutions' in content_list:
         payload['contributed_solutions'] = get_contributions_by_user('Solution', ['Validation Table', 'Collaboration Table', 'Discussion Table'], limit_page_length=limit_page_length)
     return payload
-    # return {
-    #     'recommended_problems': get_content_recommended_for_user('Problem', sectors, limit_page_length=limit_page_length),
-    #     'recommended_solutions': get_content_recommended_for_user('Solution', sectors, limit_page_length=limit_page_length),
-    #     'recommended_users': get_content_recommended_for_user('User Profile', sectors, limit_page_length=limit_page_length),
-    #     'user_problems': get_content_by_user('Problem', limit_page_length=limit_page_length),
-    #     'user_solutions': get_content_by_user('Solution', limit_page_length=limit_page_length),
-    #     'watched_problems': get_content_watched_by_user('Problem', limit_page_length=limit_page_length),
-    #     'watched_solutions': get_content_watched_by_user('Solution', limit_page_length=limit_page_length),
-    #     'contributed_problems': get_contributions_by_user('Problem', ['Enrichment Table', 'Validation Table', 'Collaboration Table', 'Discussion Table'], limit_page_length=limit_page_length),
-    #     'contributed_solutions': get_contributions_by_user('Solution', ['Validation Table', 'Collaboration Table', 'Discussion Table'], limit_page_length=limit_page_length),
-    # }
 
 @frappe.whitelist(allow_guest = False)
 def delete_contribution(child_doctype, name):

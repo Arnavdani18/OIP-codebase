@@ -678,7 +678,9 @@ frappe.ready(async () => {
   };
 
   insertSelectedProblem = function () {
-    $('div[data-fieldname="title"]').append(`<div id="selectedProblem"></div>`);
+    $('*[data-fieldname="problems_addressed"]*[data-fieldtype="Table"]')
+      .parent()
+      .after(`<div id="selectedProblem"></div>`);
   }
 
   // End Helpers

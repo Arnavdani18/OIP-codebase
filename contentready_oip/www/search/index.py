@@ -2,6 +2,7 @@ import frappe
 from contentready_oip import api
 
 def get_context(context):
+    api.create_user_profile_if_missing(None,None,frappe.session.user)
     context.matched_problems = []
     context.matched_solutions = []
     context.matched_contributors = []
