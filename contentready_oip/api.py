@@ -750,7 +750,8 @@ def complete_linkedin_login(code, state):
     from frappe.integrations.oauth2_logins import decoder_compat
     from frappe.utils import oauth
     oauth2_providers = oauth.get_oauth2_providers()
-    provider = 'LinkedIn'
+    print(oauth2_providers)
+    provider = 'linkedin'
     flow = oauth.get_oauth2_flow(provider)
     args = {
         "data": {
