@@ -1,4 +1,6 @@
-frappe.ready(async function() {
+frappe.provide('Vue');
+
+frappe.ready(async function () {
   // Start helpers
   // Simple sleep(ms) function from https://stackoverflow.com/a/48882182
   const sleep = m => new Promise(r => setTimeout(r, m));
@@ -7,7 +9,7 @@ frappe.ready(async function() {
 
   // Fix layout - without this, the entire form occupies col-2 due to custom CSS.
   moveDivs = () => {
-    $('.section-body > div').each(function() {
+    $('.section-body > div').each(function () {
       $(this)
         .parent()
         .before(this);
@@ -20,7 +22,7 @@ frappe.ready(async function() {
     frappe.call({
       method: 'contentready_oip.api.get_orgs_list',
       args: {},
-      callback: function(r) {
+      callback: function (r) {
         r.message.map(op => {
           $('#orgs').append(
             $('<option>', {
@@ -40,7 +42,7 @@ frappe.ready(async function() {
     frappe.call({
       method: 'contentready_oip.api.get_persona_list',
       args: {},
-      callback: function(r) {
+      callback: function (r) {
         let user_personas;
         if (frappe.web_form.doc.personas) {
           user_personas = frappe.web_form.doc.personas.map(p => p.persona);
@@ -70,19 +72,26 @@ frappe.ready(async function() {
     $('*[data-fieldname="sectors"]').before(
       '<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sector-options"></div>'
     );
+
     frappe.call({
       method: 'contentready_oip.api.get_sector_list',
       args: {},
-      callback: function(r) {
+      callback: function (r) {
         let user_sectors;
         if (frappe.web_form.doc.sectors) {
           user_sectors = frappe.web_form.doc.sectors.map(s => s.sector);
         }
+
+        sectorsComp.user_sectors = user_sectors;
+        sectorsComp.avail_sectors = r.message;
+
         r.message.map(op => {
+
           let has_sector = false;
           if (user_sectors) {
             has_sector = user_sectors.indexOf(op.value) !== -1;
           }
+
           const el = `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="sector-check-${op.value}" value="${op.value}"><label class="form-check-label" for="sector-check-${op.value}">${op.label}</label></div>`;
           $('#sector-options').append(el);
           $(`#sector-check-${op.value}`).attr('checked', has_sector);
@@ -126,7 +135,7 @@ frappe.ready(async function() {
         Accept: 'application/json',
         'X-Frappe-CSRF-Token': frappe.csrf_token
       },
-      init: function() {
+      init: function () {
         // use this event to add to child table
         this.on('complete', addFileToDoc);
         // use this event to remove from child table
@@ -154,7 +163,7 @@ frappe.ready(async function() {
     // geographical location types.
     autocomplete = new google.maps.places.Autocomplete(
       document.getElementById('autocomplete'),
-      { types: ['(cities)'], componentRestrictions: {country: 'in'} }
+      { types: ['(cities)'], componentRestrictions: { country: 'in' } }
       // { types: ['(cities)'] }
     );
     // Avoid paying for data that you don't need by restricting the set of
@@ -213,7 +222,7 @@ frappe.ready(async function() {
         doctype: 'User Profile',
         doc: frappe.web_form.doc
       },
-      callback: function(r) {
+      callback: function (r) {
         // console.log(r.message);
         if (r.message && r.message.route) {
           window.location.href = r.message.route;
@@ -251,6 +260,12 @@ frappe.ready(async function() {
     $('.input-with-feedback').addClass('field-styles');
   };
 
+  const addSection = function () {
+    $('label:contains("Sectors")').after(`<div id="sectorsComp"></div>`);
+  }
+
+
+
   // End Helpers
   // Delay until page is fully rendered
   await sleep(500);
@@ -267,6 +282,30 @@ frappe.ready(async function() {
   styleFormHeadings();
   styleFields();
   pageHeadingSection();
+  addSection();
+
+
+  const sectorsComp = new Vue({
+    el: '#sectorsComp',
+    data: {
+      avail_sectors: [],
+      user_sectors: []
+    },
+    methods: {
+
+    },
+    template: `
+    {% raw %}
+    <div class="row">
+      <div class="col d-flex justify-content-between flex-wrap">
+          <button v-for="sector in avail_sectors" class="btn btn-outline-primary btn-lg mb-3">
+            {{sector['label']}}
+          </button>
+      </div>
+    </div>
+    {% endraw %}
+    `
+  })
 
   // Start Google Maps Autocomplete
   const gScriptUrl =
