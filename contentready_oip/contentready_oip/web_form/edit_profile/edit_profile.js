@@ -68,11 +68,37 @@ frappe.ready(async function () {
     frappe.web_form.doc.personas.push({ persona: event.target.value });
   };
 
-  createSectorOptions = () => {
-    $('*[data-fieldname="sectors"]').before(
-      '<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sector-options"></div>'
-    );
+  // createSectorOptions = () => {
+  //   $('*[data-fieldname="sectors"]').before(
+  //     '<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sector-options"></div>'
+  //   );
 
+  //   frappe.call({
+  //     method: 'contentready_oip.api.get_sector_list',
+  //     args: {},
+  //     callback: function (r) {
+  //       let user_sectors;
+  //       if (frappe.web_form.doc.sectors) {
+  //         user_sectors = frappe.web_form.doc.sectors.map(s => s.sector);
+  //       }
+
+  //       r.message.map(op => {
+
+  //         let has_sector = false;
+  //         if (user_sectors) {
+  //           has_sector = user_sectors.indexOf(op.value) !== -1;
+  //         }
+
+  //         const el = `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="sector-check-${op.value}" value="${op.value}"><label class="form-check-label" for="sector-check-${op.value}">${op.label}</label></div>`;
+  //         $('#sector-options').append(el);
+  //         $(`#sector-check-${op.value}`).attr('checked', has_sector);
+  //       });
+  //       $('[id^=sector-check]').on('click', addSectorToDoc);
+  //     }
+  //   });
+  // };
+
+  const getAvailableSectors = function () {
     frappe.call({
       method: 'contentready_oip.api.get_sector_list',
       args: {},
@@ -82,31 +108,18 @@ frappe.ready(async function () {
           user_sectors = frappe.web_form.doc.sectors.map(s => s.sector);
         }
 
-        sectorsComp.user_sectors = user_sectors;
-        sectorsComp.avail_sectors = r.message;
-
-        r.message.map(op => {
-
-          let has_sector = false;
-          if (user_sectors) {
-            has_sector = user_sectors.indexOf(op.value) !== -1;
-          }
-
-          const el = `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="sector-check-${op.value}" value="${op.value}"><label class="form-check-label" for="sector-check-${op.value}">${op.label}</label></div>`;
-          $('#sector-options').append(el);
-          $(`#sector-check-${op.value}`).attr('checked', has_sector);
-        });
-        $('[id^=sector-check]').on('click', addSectorToDoc);
+        sectorsVueComp.user_sectors = user_sectors;
+        sectorsVueComp.avail_sectors = r.message;
       }
     });
-  };
+  }
 
-  addSectorToDoc = event => {
-    if (!frappe.web_form.doc.sectors) {
-      frappe.web_form.doc.sectors = [];
-    }
-    frappe.web_form.doc.sectors.push({ sector: event.target.value });
-  };
+  // addSectorToDoc = event => {
+  //   if (!frappe.web_form.doc.sectors) {
+  //     frappe.web_form.doc.sectors = [];
+  //   }
+  //   frappe.web_form.doc.sectors.push({ sector: event.target.value });
+  // };
 
   addFileToDoc = file => {
     if (file.xhr) {
@@ -261,7 +274,9 @@ frappe.ready(async function () {
   };
 
   const addSection = function () {
-    $('label:contains("Sectors")').after(`<div id="sectorsComp"></div>`);
+    $('*[data-fieldname="sectors"]').before(
+      '<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sectorsComp"></div>'
+    );
   }
 
 
@@ -277,28 +292,64 @@ frappe.ready(async function () {
   moveDivs();
   createOrgOptions();
   createPersonaOptions();
-  createSectorOptions();
+  // createSectorOptions();
+  addSection();
   controlLabels();
   styleFormHeadings();
   styleFields();
   pageHeadingSection();
-  addSection();
+
+  getAvailableSectors();
 
 
-  const sectorsComp = new Vue({
+  const sectorsVueComp = new Vue({
     el: '#sectorsComp',
     data: {
       avail_sectors: [],
       user_sectors: []
     },
     methods: {
+      toggleClass: function (sector) {
+        let is_present = this.user_sectors.find(s => sector === s);
+        if (is_present) {
+          return true
+        } else {
+          return false;
+        }
+      },
 
+      updateSectorToDoc: function (sectorClicked) {
+        if (!frappe.web_form.doc.sectors) {
+          frappe.web_form.doc.sectors = [];
+        }
+
+        let index = frappe.web_form.doc.sectors.findIndex(s => s.sector === sectorClicked);
+        console.log("you clicked: ", frappe.web_form.doc.sectors, index);
+        if (index > 0) {
+          frappe.web_form.doc.sectors.splice(index, 1)
+        } else {
+          frappe.web_form.doc.sectors.push({ sector: sectorClicked });
+        }
+
+
+        getAvailableSectors();
+      }
     },
     template: `
     {% raw %}
     <div class="row">
       <div class="col d-flex justify-content-between flex-wrap">
-          <button v-for="sector in avail_sectors" class="btn btn-outline-primary btn-lg mb-3">
+          <button 
+            v-for="sector in avail_sectors" 
+            class="btn btn-lg mb-3" 
+            v-bind:class="{
+              'btn-primary': toggleClass(sector['value']),
+              'text-white': toggleClass(sector['value']),
+              'btn-outline-primary' :!toggleClass(sector['value']) 
+            }"
+
+            v-on:click="updateSectorToDoc(sector['value'])"
+            >
             {{sector['label']}}
           </button>
       </div>
