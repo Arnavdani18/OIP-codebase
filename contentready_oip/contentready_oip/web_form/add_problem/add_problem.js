@@ -434,7 +434,9 @@ frappe.ready(async () => {
   // End Helpers
 
   // Delay until page is fully rendered
-  await sleep(500);
+  while (!frappe.web_form.fields) {
+		await sleep(1000);
+	}
 
   // Start UI Fixes
   $('*[data-doctype="Web Form"]').wrap('<div class="container pt-5"></div>');

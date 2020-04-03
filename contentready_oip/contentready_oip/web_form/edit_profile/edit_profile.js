@@ -311,7 +311,9 @@ frappe.ready(async function () {
 
   // End Helpers
   // Delay until page is fully rendered
-  await sleep(500);
+  while (!frappe.web_form.fields) {
+		await sleep(1000);
+	}
 
   // Start UI Fixes
   // We hide the default form buttons (using css) and add our own
