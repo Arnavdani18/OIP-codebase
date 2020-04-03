@@ -35,38 +35,38 @@ frappe.ready(async function () {
     });
   };
 
-  createPersonaOptions = () => {
-    $('*[data-fieldname="personas"]').before(
-      '<label class="form-group control-label">Personas</label><br/><div id="persona-options"></div>'
-    );
-    frappe.call({
-      method: 'contentready_oip.api.get_persona_list',
-      args: {},
-      callback: function (r) {
-        let user_personas;
-        if (frappe.web_form.doc.personas) {
-          user_personas = frappe.web_form.doc.personas.map(p => p.persona);
-        }
-        r.message.map(op => {
-          let has_persona;
-          if (user_personas) {
-            has_persona = user_personas.indexOf(op.value) !== -1;
-          }
-          const el = `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="persona-check-${op.value}" value="${op.value}"><label class="form-check-label" for="persona-check-${op.value}">${op.label}</label></div>`;
-          $('#persona-options').append(el);
-          $(`#persona-check-${op.value}`).attr('checked', has_persona);
-        });
-        $('[id^=persona-check]').on('click', addPersonaToDoc);
-      }
-    });
-  };
+  // createPersonaOptions = () => {
+  //   $('*[data-fieldname="personas"]').before(
+  //     '<label class="form-group control-label">Personas</label><br/><div id="persona-options"></div>'
+  //   );
+  //   frappe.call({
+  //     method: 'contentready_oip.api.get_persona_list',
+  //     args: {},
+  //     callback: function (r) {
+  //       let user_personas;
+  //       if (frappe.web_form.doc.personas) {
+  //         user_personas = frappe.web_form.doc.personas.map(p => p.persona);
+  //       }
+  //       r.message.map(op => {
+  //         let has_persona;
+  //         if (user_personas) {
+  //           has_persona = user_personas.indexOf(op.value) !== -1;
+  //         }
+  //         const el = `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="persona-check-${op.value}" value="${op.value}"><label class="form-check-label" for="persona-check-${op.value}">${op.label}</label></div>`;
+  //         $('#persona-options').append(el);
+  //         $(`#persona-check-${op.value}`).attr('checked', has_persona);
+  //       });
+  //       $('[id^=persona-check]').on('click', addPersonaToDoc);
+  //     }
+  //   });
+  // };
 
-  addPersonaToDoc = event => {
-    if (!frappe.web_form.doc.personas) {
-      frappe.web_form.doc.personas = [];
-    }
-    frappe.web_form.doc.personas.push({ persona: event.target.value });
-  };
+  // addPersonaToDoc = event => {
+  //   if (!frappe.web_form.doc.personas) {
+  //     frappe.web_form.doc.personas = [];
+  //   }
+  //   frappe.web_form.doc.personas.push({ persona: event.target.value });
+  // };
 
   // createSectorOptions = () => {
   //   $('*[data-fieldname="sectors"]').before(
@@ -110,6 +110,22 @@ frappe.ready(async function () {
 
         sectorsVueComp.user_sectors = user_sectors;
         sectorsVueComp.avail_sectors = r.message;
+      }
+    });
+  }
+
+  const getAvailablePersonas = function () {
+    frappe.call({
+      method: 'contentready_oip.api.get_persona_list',
+      args: {},
+      callback: function (r) {
+        let user_personas;
+        if (frappe.web_form.doc.personas) {
+          user_personas = frappe.web_form.doc.personas.map(p => p.persona);
+        }
+
+        personaVueComp.user_personas = user_personas;
+        personaVueComp.avail_personas = r.message;
       }
     });
   }
@@ -274,8 +290,14 @@ frappe.ready(async function () {
   };
 
   const addSection = function () {
+    // For Sectors
     $('*[data-fieldname="sectors"]').before(
       '<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sectorsComp"></div>'
+    );
+
+    // For Personas
+    $('*[data-fieldname="personas"]').before(
+      '<label class="form-group control-label">Personas</label><br/><div id="personasComp"></div>'
     );
   }
 
@@ -291,7 +313,7 @@ frappe.ready(async function () {
   addActionButtons();
   moveDivs();
   createOrgOptions();
-  createPersonaOptions();
+  // createPersonaOptions();
   // createSectorOptions();
   addSection();
   controlLabels();
@@ -299,14 +321,16 @@ frappe.ready(async function () {
   styleFields();
   pageHeadingSection();
 
-  getAvailableSectors();
-
 
   const sectorsVueComp = new Vue({
     el: '#sectorsComp',
     data: {
       avail_sectors: [],
       user_sectors: []
+    },
+    beforeCreate: function () {
+      // https://vuejs.org/v2/api/#beforeCreate
+      getAvailableSectors();
     },
     methods: {
       toggleClass: function (sector) {
@@ -324,7 +348,7 @@ frappe.ready(async function () {
         }
 
         let index = frappe.web_form.doc.sectors.findIndex(s => s.sector === sectorClicked);
-        console.log("you clicked: ", frappe.web_form.doc.sectors, index);
+
         if (index > 0) {
           frappe.web_form.doc.sectors.splice(index, 1)
         } else {
@@ -341,7 +365,7 @@ frappe.ready(async function () {
       <div class="col d-flex justify-content-between flex-wrap">
           <button 
             v-for="sector in avail_sectors" 
-            class="btn btn-lg mb-3" 
+            class="btn btn-lg mb-3 mr-2" 
             v-bind:class="{
               'btn-primary': toggleClass(sector['value']),
               'text-white': toggleClass(sector['value']),
@@ -357,6 +381,74 @@ frappe.ready(async function () {
     {% endraw %}
     `
   })
+
+  const personaVueComp = new Vue({
+    el: '#personasComp',
+    data: {
+      avail_personas: [],
+      user_personas: []
+    },
+    beforeCreate: function () {
+      // https://vuejs.org/v2/api/#beforeCreate
+      getAvailablePersonas();
+    },
+    methods: {
+      toggleClass: function (persona) {
+        let is_present = this.user_personas.find(p => persona === p);
+        if (is_present) {
+          return true
+        } else {
+          return false;
+        }
+      },
+
+      updatePersonaToDoc: function (personaClicked) {
+        if (!frappe.web_form.doc.personas) {
+          frappe.web_form.doc.personas = [];
+        }
+
+        let index = frappe.web_form.doc.personas.findIndex(s => s.persona === personaClicked);
+
+        if (index > 0) {
+          frappe.web_form.doc.personas.splice(index, 1)
+        } else {
+          frappe.web_form.doc.personas.push({ persona: personaClicked });
+        }
+
+        getAvailablePersonas();
+      }
+    },
+    template: `
+    {% raw %}
+    <div class="row">
+      <div class="col d-flex justify-content-between flex-wrap">
+          <button 
+            v-for="persona in avail_personas" 
+            class="btn btn-lg mb-3 mr-2" 
+            :title="persona['label']"
+            :class="{
+              'btn-primary': toggleClass(persona['value']),
+              'text-white': toggleClass(persona['value']),
+              'btn-outline-primary' :!toggleClass(persona['value']) 
+            }"
+            v-on:click="updatePersonaToDoc(persona['value'])"
+            >
+            {{persona['label']}}
+          </button>
+      </div>
+    </div>
+    {% endraw %}
+    `
+  })
+  //   const personaVueComp = new Vue({
+  //     el: '#personasComp',
+  //     template: `
+  //     {% raw %}
+  //     Hello world
+  //     {% endraw %}
+  //     `
+  //   })
+  // })
 
   // Start Google Maps Autocomplete
   const gScriptUrl =
