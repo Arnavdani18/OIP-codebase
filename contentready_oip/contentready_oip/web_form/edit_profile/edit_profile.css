@@ -69,3 +69,7 @@
 #persona-options > .form-check-inline {
   font-size: var(--f14);
 }
+
+input[type=text]{
+  background-color: transparent !important;
+}

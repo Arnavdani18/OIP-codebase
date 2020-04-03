@@ -16,6 +16,11 @@ frappe.ready(async function () {
     });
   };
 
+  arrangeDivs = function () {
+    $('.page_content').wrap('<div class="row justify-content-center"><div class="col-10"></div></div>');
+    $('.form-layout').addClass('bg-transparent');
+  }
+
   createOrgOptions = () => {
     $('*[data-fieldname="org_title"]').attr('list', 'orgs');
     $('*[data-fieldname="org_title"]').after('<datalist id="orgs"></datalist>');
@@ -280,6 +285,7 @@ frappe.ready(async function () {
       .addClass('btn-outline-primary outline-primary-btn');
 
     $('.page-header-actions-block').addClass('d-flex align-items-center');
+    $('.page-header').parent().wrap('<div class="row justify-content-center"><div class="col-10"></div></div>');
 
     $('.page-header h2').css({ 'margin-bottom': '0px' });
     $('#introduction').addClass('d-none');
@@ -312,6 +318,7 @@ frappe.ready(async function () {
   $('*[data-doctype="Web Form"]').wrap('<div class="container pt-5"></div>');
   addActionButtons();
   moveDivs();
+  arrangeDivs();
   createOrgOptions();
   // createPersonaOptions();
   // createSectorOptions();
