@@ -17,8 +17,8 @@ frappe.ready(async function () {
   };
 
   arrangeDivs = function () {
-    $('.page_content').wrap('<div class="row justify-content-center"><div class="col-10"></div></div>');
-    $('.form-layout').addClass('bg-transparent');
+    // $('.page_content').wrap('<div class="row justify-content-center"><div class="col-10"></div></div>');
+    $('.form-layout').addClass('bg-transparent px-0');
   }
 
   createOrgOptions = () => {
@@ -285,7 +285,7 @@ frappe.ready(async function () {
       .addClass('btn-outline-primary outline-primary-btn');
 
     $('.page-header-actions-block').addClass('d-flex align-items-center');
-    $('.page-header').parent().wrap('<div class="row justify-content-center"><div class="col-10"></div></div>');
+    // $('.page-header').parent().wrap('<div class="row justify-content-center"><div class="col-10"></div></div>');
 
     $('.page-header h2').css({ 'margin-bottom': '0px' });
     $('#introduction').addClass('d-none');
@@ -317,18 +317,22 @@ frappe.ready(async function () {
 
   // Start UI Fixes
   // We hide the default form buttons (using css) and add our own
-  $('*[data-doctype="Web Form"]').wrap('<div class="container pt-5"></div>');
-  addActionButtons();
-  moveDivs();
-  arrangeDivs();
-  createOrgOptions();
-  // createPersonaOptions();
-  // createSectorOptions();
-  addSection();
-  controlLabels();
-  styleFormHeadings();
-  styleFields();
-  pageHeadingSection();
+  $('*[data-doctype="Web Form"]').wrap(`<div class="container pt-5"><div class="row justify-content-center"><div class="col-10"></div></div></div>`);
+
+  $('div[role="form"]').ready(function () {
+    addActionButtons();
+    moveDivs();
+    arrangeDivs();
+    createOrgOptions();
+    // createPersonaOptions();
+    // createSectorOptions();
+    addSection();
+    controlLabels();
+    styleFormHeadings();
+    styleFields();
+    pageHeadingSection();
+  })
+
 
 
   const sectorsVueComp = new Vue({
@@ -371,10 +375,10 @@ frappe.ready(async function () {
     template: `
     {% raw %}
     <div class="row">
-      <div class="col d-flex justify-content-between flex-wrap">
+      <div class="col d-flex flex-wrap">
           <button 
             v-for="sector in avail_sectors" 
-            class="btn btn-lg mb-3 mr-2" 
+            class="btn btn-lg mb-3 mr-3" 
             v-bind:class="{
               'btn-primary': toggleClass(sector['value']),
               'text-white': toggleClass(sector['value']),
@@ -430,10 +434,10 @@ frappe.ready(async function () {
     template: `
     {% raw %}
     <div class="row">
-      <div class="col d-flex justify-content-between flex-wrap">
+      <div class="col d-flex flex-wrap">
           <button 
             v-for="persona in avail_personas" 
-            class="btn btn-lg mb-3 mr-2" 
+            class="btn btn-lg mb-3 mr-3" 
             :title="persona['label']"
             :class="{
               'btn-primary': toggleClass(persona['value']),
