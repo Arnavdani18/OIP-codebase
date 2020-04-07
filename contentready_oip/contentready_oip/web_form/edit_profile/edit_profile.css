@@ -72,4 +72,5 @@
 
 input[type=text]{
   background-color: transparent !important;
+  padding: 1.8rem 1rem;
 }

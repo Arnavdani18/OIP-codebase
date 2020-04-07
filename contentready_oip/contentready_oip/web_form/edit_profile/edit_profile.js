@@ -157,7 +157,7 @@ frappe.ready(async function () {
   addDropzone = () => {
     // disable autoDiscover as we are manually binding the dropzone to a form element
     Dropzone.autoDiscover = false;
-    const el = `<form class="dropzone dz-clickable" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
+    const el = `<form class="dropzone dz-clickable bg-transparent mb-5" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
     $('*[data-fieldname="photo"]').after(el);
     $('#dropzone').dropzone({
       url: '/api/method/upload_file',
@@ -312,12 +312,12 @@ frappe.ready(async function () {
   // End Helpers
   // Delay until page is fully rendered
   while (!frappe.web_form.fields) {
-		await sleep(1000);
-	}
+    await sleep(1000);
+  }
 
   // Start UI Fixes
   // We hide the default form buttons (using css) and add our own
-  $('*[data-doctype="Web Form"]').wrap(`<div class="container pt-5"><div class="row justify-content-center"><div class="col-10"></div></div></div>`);
+  $('*[data-doctype="Web Form"]').wrap(`<div class="container pt-5"><div class="row justify-content-center"><div class="col-9"></div></div></div>`);
 
   $('div[role="form"]').ready(function () {
     addActionButtons();
