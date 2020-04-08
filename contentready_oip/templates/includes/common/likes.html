@@ -23,7 +23,7 @@
     },
     methods: {
       toggleLike: function (doctype, name) {
-        if (!clickable) {
+        if (!this.clickable) {
           // disabling the click based on context
           return;
         }
