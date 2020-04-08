@@ -642,6 +642,28 @@ def get_content_recommended_for_user(doctype, sectors, limit_page_length=5):
     return content
 
 @frappe.whitelist(allow_guest = False)
+def get_drafts_by_user(doctypes=None, limit_page_length=5):
+    content = []
+    if not doctypes:
+        doctypes = ['Problem', 'Solution', 'Enrichment']
+    try:
+        for doctype in doctypes:
+            filtered = frappe.get_list(doctype, filters={'is_published': False, 'owner': frappe.session.user})
+            content_set = {f['name'] for f in filtered}
+            for c in content_set:
+                try:
+                    doc = frappe.get_doc(doctype, c)
+                    doc.photo = frappe.get_value('User Profile', doc.owner, 'photo')
+                    content.append(doc)
+                except Exception as e:
+                    print(str(e))
+    except Exception as e:
+        print(str(e))
+    print("\n\n\nDrafts",content)
+    return content
+
+
+@frappe.whitelist(allow_guest = False)
 def get_dashboard_content(limit_page_length=5,content_list=None):
     if not content_list:
         content_list = [
@@ -654,6 +676,7 @@ def get_dashboard_content(limit_page_length=5,content_list=None):
             'watched_solutions',
             'contributed_problems',
             'contributed_solutions',
+            'drafts'
         ]
     try:
         user = frappe.get_doc('User Profile', frappe.session.user)
@@ -680,6 +703,8 @@ def get_dashboard_content(limit_page_length=5,content_list=None):
         payload['contributed_problems'] = get_contributions_by_user('Problem', ['Enrichment Table', 'Validation Table', 'Collaboration Table', 'Discussion Table'], limit_page_length=limit_page_length)
     if 'contributed_solutions' in content_list:
         payload['contributed_solutions'] = get_contributions_by_user('Solution', ['Validation Table', 'Collaboration Table', 'Discussion Table'], limit_page_length=limit_page_length)
+    if 'drafts' in content_list:
+        payload['drafts'] = get_drafts_by_user(limit_page_length=limit_page_length)
     return payload
 
 @frappe.whitelist(allow_guest = False)
