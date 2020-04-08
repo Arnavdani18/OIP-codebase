@@ -37,10 +37,10 @@ frappe.ready(() => {
             // sectors = JSON.stringify(sectors);
             console.log(sectors);
             if (!sectors) {
-                sectors = available_sectors.map(s => s.name);
-                console.log(sectors);
-                sectors = JSON.stringify(sectors);
-                // sectors = JSON.stringify(['all']);
+                // sectors = available_sectors.map(s => s.name);
+                // console.log(sectors);
+                // sectors = JSON.stringify(sectors);
+                sectors = JSON.stringify(['all']);
             }
             if(sectors){
                 sectors = JSON.parse(sectors);// since we stringify while storing

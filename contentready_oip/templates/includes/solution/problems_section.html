@@ -5,9 +5,8 @@
 <div class="problem-section-container">
   {% for p in problems_addressed %}
   <div>
-    {% set problem = frappe.get_doc('Problem',
-      p.problem) %} {% include "templates/includes/problem/problem_card_small.html"
-      %}
+    {% set problem = frappe.get_doc('Problem', p.problem) %} 
+    {% include "templates/includes/problem/problem_card_small.html" %}
   </div>
   <hr>
   {% endfor %}

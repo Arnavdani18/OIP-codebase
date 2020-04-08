@@ -103,6 +103,10 @@
               aria-controls="watched-content" aria-selected="true">Your Watch List ({{ (watched_problems + watched_solutions) |
               length }})</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" id="draft-content-tab" data-toggle="tab" href="#draft-content" role="tab"
+              aria-controls="watched-content" aria-selected="true">Your Drafts ({{ drafts | length }})</a>
+          </li>
         </ul>
         <div id="rightTabGroup" class="pb-2">
           <div class="tab-content" id="leftTabContent">
@@ -134,6 +138,29 @@
               <div class="text-center py-3">
                 <a href="/dashboard?type=watch_list" class="viewAll">View All
                   ({{ (watched_problems + watched_solutions) | length }})</a>
+              </div>
+              {% endif %}
+            </div>
+            <div class="tab-pane fade show active" id="draft-content" role="tabpanel"
+              aria-labelledby="draft-content-tab">
+
+              {% if drafts | length < 1 %}
+              <div>
+                {% set msg = "No drafts yet" %}
+                {% set img_src = "" %}
+                {% include "templates/includes/common/empty_card.html" %}
+              </div>
+              {% endif %}
+
+              {% for content in drafts %}
+              {% include "templates/includes/common/draft_card.html" %}
+              <hr />
+              {% endfor %}
+
+              {% if drafts | length > 4 %}
+              <div class="text-center py-3">
+                <a href="/dashboard?type=drafts" class="viewAll">View All
+                  ({{ drafts | length }})</a>
               </div>
               {% endif %}
             </div>

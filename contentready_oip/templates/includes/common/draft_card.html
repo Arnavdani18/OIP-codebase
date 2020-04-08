@@ -1,0 +1,29 @@
+{% if content.doctype == 'Problem' %}
+    {% set label = "templates/includes/problem/problem_label.html" %}
+    {% set route = "/add-problem?name="+content.name %}
+{% elif content.doctype == 'Solution' %}
+    {% set label = "templates/includes/solution/solution_label.html" %}
+    {% set route = "/add-solution?name="+content.name %}
+{% elif content.doctype == 'Enrichment' %}
+    {% set label = "templates/includes/problem/enrichment_label.html" %}
+    {% set route = "/add-enrichment?name="+content.name %}
+{% endif %}
+<div class="draft-container mt-3" onclick="window.location.href = '{{route}}'"
+    style="cursor: pointer; background-color: white;">
+    <div class="left-side ">
+        {% include label %}
+        <div class="heading-container mt-3 text-capitalize ">
+            <h2 class="heading">
+                {{content.title}}
+            </h2>
+        </div>
+    </div>
+</div>
+<style>
+.draft-container {
+    display: grid;
+    grid-template-columns: 4fr 1fr;
+    padding: 2rem 2rem;
+    border-radius: 0.4rem;
+}
+</style>

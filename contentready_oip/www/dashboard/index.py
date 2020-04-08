@@ -13,10 +13,11 @@ def get_context(context):
     context.watched_solutions = []
     context.contributed_problems = []
     context.contributed_solutions = []
+    context.drafts = []
     context.show_default_view = False
     if frappe.session.user != 'Guest':
         parameters = frappe.form_dict
-        valid_types = ['recommended_areas', 'user_areas', 'watch_list', 'contributions', 'recommended_users']
+        valid_types = ['recommended_areas', 'user_areas', 'watch_list', 'contributions', 'recommended_users', 'drafts']
         content_type = parameters.get('type')
         context.content_type = content_type
         if not content_type or content_type not in valid_types:
@@ -42,6 +43,7 @@ def get_context(context):
             context.watched_solutions = dashboard_content['watched_solutions'][:2]
             context.contributed_problems = dashboard_content['contributed_problems'][:2]
             context.contributed_solutions = dashboard_content['contributed_solutions'][:2]
+            context.drafts = dashboard_content['drafts'][:4]
             return context
         if content_type == 'recommended_areas':
             content_list = ['recommended_problems', 'recommended_solutions']
@@ -77,6 +79,12 @@ def get_context(context):
             dashboard_content = api.get_dashboard_content(limit_page_length=20, content_list=content_list)
             context.content_title = 'Users With Similar Interests'
             context.recommended_users = dashboard_content['recommended_users']
+            return context
+        if content_type == 'drafts':
+            content_list = ['drafts']
+            dashboard_content = api.get_dashboard_content(limit_page_length=20, content_list=content_list)
+            context.content_title = 'Your Drafts'
+            context.recommended_users = dashboard_content['drafts']
             return context
     else:
         frappe.local.flags.redirect_location = '/'

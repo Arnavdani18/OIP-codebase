@@ -18,7 +18,7 @@
  "is_standard": 1,
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2020-03-19 18:16:52.502089",
+ "modified": "2020-04-08 11:42:06.748608",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "add-problem",
@@ -285,7 +285,7 @@
    "label": "Population Affected",
    "max_length": 0,
    "max_value": 0,
-   "options": "\n&lt;100\n&lt;1,000\n&lt;10,000\n&gt;100,000",
+   "options": "\n&lt;100\n&lt;1,000\n&lt;10,000\n&lt;100,000\n&gt;100,000",
    "read_only": 0,
    "reqd": 0,
    "show_in_filter": 0
