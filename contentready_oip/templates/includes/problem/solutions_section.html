@@ -3,11 +3,10 @@
 </h3>
 
 <div class="solution-section-container">
-  {% for s in solutions %} <div>
-    {% set solution = frappe.get_doc('Solution',
-  s.solution) %}
-    {% include
-  "templates/includes/solution/solution_card_small.html" %}
+  {% for s in solutions %} 
+  <div>
+    {% set solution = frappe.get_doc('Solution', s.solution) %}
+    {% include "templates/includes/solution/solution_card_small.html" %}
   </div>
   {% endfor %}
 </div>

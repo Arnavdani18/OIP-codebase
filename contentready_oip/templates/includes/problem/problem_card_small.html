@@ -14,7 +14,7 @@
 </style>
 
 <div
-  class="problem-container-small col-md-6"
+  class="problem-container-small"
   onclick="window.location.href = '/{{problem.route}}'"
   data-name="{{problem.name}}"
   id="problem-card-{{problem.name}}"
@@ -28,8 +28,8 @@
   </div>
 
   <div class="small-created-by mt-3">
-    {% set doc_owner = problem.owner %} {% set date = problem.creation %} {%
-    include "templates/includes/common/small_user_thumbnail.html" %}
+    {% set doc_owner = problem.owner %} {% set date = problem.creation %} 
+    {% include "templates/includes/common/small_user_thumbnail.html" %}
   </div>
 
     <hr>
