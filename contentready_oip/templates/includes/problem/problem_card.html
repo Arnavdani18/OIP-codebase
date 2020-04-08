@@ -1,10 +1,5 @@
-<div
-  class="problem-container mt-3"
-  onclick="window.location.href = '/{{problem.route}}'"
-  data-name="{{problem.name}}"
-  style="cursor: pointer; background-color: white;"
-  id="problem-card-{{problem.name}}"
->
+<div class="problem-container mt-3" onclick="window.location.href = '/{{problem.route}}'" data-name="{{problem.name}}"
+  style="cursor: pointer; background-color: white;" id="problem-card-{{problem.name}}">
   <div class="left-side ">
     {% include "templates/includes/problem/problem_label.html" %}
 
@@ -27,7 +22,9 @@
     <div class="interaction-container mt-3">
       {% set doctype = problem.doctype %} {% set name = problem.name %}
       <div class="likes-container">
-        {% set likes = problem.likes %} {% include
+        {% set likes = problem.likes %}
+        {% set isClickable = false %}
+        {% include
         "templates/includes/common/likes.html" %}
       </div>
       <div class="watchers-container">
