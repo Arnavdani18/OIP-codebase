@@ -10,8 +10,24 @@
             numOfWatchers: `{{watchers | length}}`,
             watched: false
         },
+        computed: {
+            clickable: function () {
+                const isClickable = `{{isClickable}}`
+                if (isClickable == false) {
+                    return false
+                } else {
+                    return true
+                }
+            }
+        },
         methods: {
             toggleWatcher: function (doctype, name) {
+
+                if (!this.clickable) {
+                    // disble the click on card
+                    return;
+                }
+
                 if (frappe.session.user === 'Guest') {
                     frappe.throw('Please login to participate.');
                 }
