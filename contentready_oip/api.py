@@ -317,8 +317,9 @@ def get_persona_list():
 
 @frappe.whitelist(allow_guest = True)
 def get_sector_list():
-    all_sectors = frappe.get_list('Sector', fields=['title', 'name'])
-    return [{'label': o['title'], 'value': o['name']} for o in all_sectors]
+    available_sectors = get_available_sectors()
+    # all_sectors = frappe.get_list('Sector', fields=['title', 'name'])
+    return [{'label': o['title'], 'value': o['name']} for o in available_sectors]
 
 @frappe.whitelist(allow_guest = True)
 def get_homepage_stats():
