@@ -5,9 +5,9 @@
   new Vue({
     el: '.likes',
     data: {
-      doctype: '',
-      name: '',
-      numOflikes: 0,
+      doctype: `{{doctype}}`,
+      name: `{{name}}`,
+      numOflikes: `{{likes | length}}`,
       isLiked: false
     },
     methods: {
@@ -23,7 +23,7 @@
             parent_name: name
           },
           callback: r => {
-            this.isLiked = r.message[0];
+            // this.isLiked = r.message[0];
             const is_owner = r.message[1];
             if (is_owner) {
               frappe.throw(`You cannot like your own ${doctype}`);
@@ -48,8 +48,6 @@
                   field_name: 'likes'
                 },
                 callback: r => {
-                  console.log("from cb: ", r);
-
                   // server is the source of truth so we change the UI to reflect that.
                   this.isLiked = r.message[0];
                   this.numOflikes = r.message[1].length;
@@ -72,9 +70,6 @@
             parent_name: '{{name}}'
           },
           callback: r => {
-            this.doctype = `{{doctype}}`;
-            this.name = `{{name}}`;
-            this.numOflikes = `{{likes | length}}`;
             this.isLiked = r.message;
           }
         });
