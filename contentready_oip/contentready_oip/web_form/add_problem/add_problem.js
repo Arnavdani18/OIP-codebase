@@ -480,7 +480,7 @@ frappe.ready(async () => {
     frappe.web_form.doc.org = e.target.value;
   });
 
-  setInterval(autoSaveDraft, 10000);
+  setInterval(autoSaveDraft, 5000);
 
   // End Events
 });

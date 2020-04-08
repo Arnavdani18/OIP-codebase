@@ -185,34 +185,36 @@ frappe.ready(async () => {
   };
 
   autoSaveDraft = () => {
-    frappe.web_form.doc.user = frappe.session.user;
-    frappe.call({
-      method: "contentready_oip.api.add_enrichment",
-      args: {
-        doc: frappe.web_form.doc,
-        is_draft: true
-      },
-      callback: function (r) {
-        // update local form technical fields so that they are up to date with server values
-        // Important: do no update fields on the UI as that will interfere with user experience.
-        const keysToCopy = [
-          "creation",
-          "modified",
-          "docstatus",
-          "doctype",
-          "idx",
-          "owner",
-          "modified_by",
-          "name",
-          "problem"
-        ];
-        keysToCopy.map(key => {
-          frappe.web_form.doc[key] = r.message[0][key];
-        });
-        showAutoSaveAlert();
-        setTimeout(hideAutoSaveAlert, 1000);
-      }
-    });
+    if (frappe.web_form.doc.title) {
+      frappe.web_form.doc.user = frappe.session.user;
+      frappe.call({
+        method: "contentready_oip.api.add_enrichment",
+        args: {
+          doc: frappe.web_form.doc,
+          is_draft: true
+        },
+        callback: function (r) {
+          // update local form technical fields so that they are up to date with server values
+          // Important: do no update fields on the UI as that will interfere with user experience.
+          const keysToCopy = [
+            "creation",
+            "modified",
+            "docstatus",
+            "doctype",
+            "idx",
+            "owner",
+            "modified_by",
+            "name",
+            "problem"
+          ];
+          keysToCopy.map(key => {
+            frappe.web_form.doc[key] = r.message[0][key];
+          });
+          showAutoSaveAlert();
+          setTimeout(hideAutoSaveAlert, 1000);
+        }
+      });
+    }
   };
 
   saveAsDraft = (event) => {
@@ -389,7 +391,7 @@ frappe.ready(async () => {
     frappe.web_form.doc.org = e.target.value;
   });
 
-  setInterval(autoSaveDraft, 10000);
+  setInterval(autoSaveDraft, 5000);
 
 
 

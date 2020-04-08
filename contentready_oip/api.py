@@ -662,7 +662,6 @@ def get_drafts_by_user(doctypes=None, limit_page_length=5):
     print("\n\n\nDrafts",content)
     return content
 
-
 @frappe.whitelist(allow_guest = False)
 def get_dashboard_content(limit_page_length=5,content_list=None):
     if not content_list:
@@ -834,3 +833,8 @@ def unpack_linkedin_response(info, profile=None):
             print(str(e))
             payload['picture'] = picture_url
     return payload
+
+@frappe.whitelist(allow_guest=True)
+def send_sms(recipients, message):
+    print(recipients, message)
+    
