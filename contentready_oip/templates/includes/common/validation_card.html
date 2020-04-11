@@ -10,27 +10,13 @@
     </div>
     <div class="agreedDisagreeDiv">
         {% if validation.agree %}
-        <!-- <i class="far fa-check agree" aria-hidden="true"></i> -->
         <i>{% include "public/svg/agree.svg" %}</i>
         <strong>Agreed</strong>
         {% else %}
-        <!-- <i
-                class="far fa-times disagree"
-                aria-hidden="true"
-            ></i> -->
         <i>{% include "public/svg/disagree.svg" %}</i>
         <strong>Disagreed</strong>
         {% endif %}
     </div>
-    <style>
-        .times-circle {}
-
-        .times-circle>svg {
-            height: 2rem;
-            width: 2rem;
-        }
-    </style>
-
     <div class="validate-comment">
         {{ validation.comment }}
     </div>
