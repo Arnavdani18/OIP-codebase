@@ -74,7 +74,7 @@ frappe.ready(async () => {
     // geographical location types.
     autocomplete = new google.maps.places.Autocomplete(
       document.getElementById('autocomplete'),
-      { types: ['(cities)'], componentRestrictions: {country: 'in'} }
+      { types: ['(cities)'], componentRestrictions: { country: 'in' } }
       // { types: ['(cities)'] }
     );
     // Avoid paying for data that you don't need by restricting the set of
@@ -435,8 +435,8 @@ frappe.ready(async () => {
 
   // Delay until page is fully rendered
   while (!frappe.web_form.fields) {
-		await sleep(1000);
-	}
+    await sleep(1000);
+  }
 
   // Start UI Fixes
   $('*[data-doctype="Web Form"]').wrap('<div class="container pt-5"></div>');
@@ -481,6 +481,10 @@ frappe.ready(async () => {
   });
 
   setInterval(autoSaveDraft, 5000);
+  $(window).on("beforeunload", function (e) {
+    autoSaveDraft();
+    return "Are you sure you want leave?";
+  });
 
   // End Events
 });
