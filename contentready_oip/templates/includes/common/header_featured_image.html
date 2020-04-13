@@ -1,26 +1,12 @@
 {% set id = 'header' %}
 <div class="img-wrapper">
     {% if (media|length) > 0 %}
-    <img
-        src="{{media[0].attachment}}"
-        alt="image"
-        class="rounded img-responsive"
-        style="object-fit: cover;"
-    />
+    <img src="{{media[0].attachment}}" alt="image" class="rounded img-responsive" style="object-fit: cover;" />
     {% else %}
-    <img
-        src="/files/image_placeholder.jpg"
-        alt="image"
-        class="rounded img-responsive"
-        style="object-fit: cover;"
-    />
+    <img src="/files/image_placeholder.jpg" alt="image" class="rounded img-responsive" style="object-fit: cover;" />
     {% endif %}
-    {% if (media | length) > 0 %}
-    <button
-        class="align-icon"
-        data-toggle="modal"
-        data-target="#attachment-modal-{{id}}"
-    >
+    {% if (media | length) > 1 %}
+    <button class="align-icon" data-toggle="modal" data-target="#attachment-modal-{{id}}">
         +{{(media | length) - 1}}
     </button>
     {% endif %}
