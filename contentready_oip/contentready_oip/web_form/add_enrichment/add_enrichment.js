@@ -210,6 +210,14 @@ frappe.ready(async () => {
           keysToCopy.map(key => {
             frappe.web_form.doc[key] = r.message[0][key];
           });
+
+          // Replace state if exists
+          const currQueryParam = window.location['search'];
+
+          if (currQueryParam.includes("new=1")) {
+            window.history.replaceState({}, null, `?name=${r.message['name']}`);
+          }
+
           showAutoSaveAlert();
           setTimeout(hideAutoSaveAlert, 1000);
         }
@@ -250,7 +258,14 @@ frappe.ready(async () => {
     $('#auto-save-alert').addClass('auto-saved');
     $('.page-header-actions-block').addClass('d-flex align-items-center');
 
-    $('.page-header h2').css({ 'margin-bottom': '0px' });
+    $('.page-header')
+      .css({ 'width': '70%' });
+
+    const problemTitle = $('.page-header h2').text();
+    $('.page-header h2')
+      .addClass('text-truncate')
+      .attr('title', problemTitle)
+      .css({ 'margin-bottom': '0px' });
   };
 
   const appendAttachLink = () => {

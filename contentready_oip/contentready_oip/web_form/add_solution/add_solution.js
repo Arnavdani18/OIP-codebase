@@ -438,7 +438,7 @@ frappe.ready(async () => {
 
   getSolversFromMultiselect = () => {
     const solvers = $('#solver-team-select').val();
-    console.log(solvers);
+    // console.log(solvers);
     if (solvers) {
       frappe.web_form.doc.solver_team = [];
       solvers.map(s => {
@@ -453,7 +453,7 @@ frappe.ready(async () => {
       frappe.web_form.doc.solver_team.map(s => {
         solvers.push(s.user);
       });
-      console.log(solvers);
+      // console.log(solvers);
       $('#solver-team-select').val(solvers);
       $('#solver-team-select').trigger('change');
     }
@@ -513,6 +513,14 @@ frappe.ready(async () => {
           keysToCopy.map(key => {
             frappe.web_form.doc[key] = r.message[key];
           });
+
+          // Replace state if exists
+          const currQueryParam = window.location['search'];
+
+          if (currQueryParam.includes("new=1")) {
+            window.history.replaceState({}, null, `?name=${r.message['name']}`);
+          }
+
           showAutoSaveAlert();
           setTimeout(hideAutoSaveAlert, 1000);
         }
@@ -570,11 +578,16 @@ frappe.ready(async () => {
     $('.page-header-actions-block').addClass('d-flex align-items-center');
     $('.page-header')
       .addClass('d-flex align-items-center')
+      .css({ 'width': '70%' })
       .prepend(
         '<img src="/files/solution_dark.svg" class="add-problem-icon" />'
       );
 
-    $('.page-header h2').css({ 'margin-bottom': '0px' });
+    const problemTitle = $('.page-header h2').text();
+    $('.page-header h2')
+      .addClass('text-truncate')
+      .attr('title', problemTitle)
+      .css({ 'margin-bottom': '0px' });
   };
 
   const appendAttachLink = () => {
