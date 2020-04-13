@@ -483,7 +483,7 @@ frappe.ready(async () => {
   setInterval(autoSaveDraft, 5000);
   $(window).on("beforeunload", function (e) {
     autoSaveDraft();
-    return "Are you sure you want leave?";
+    return;
   });
 
   // End Events
