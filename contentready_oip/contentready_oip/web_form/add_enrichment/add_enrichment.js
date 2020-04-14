@@ -408,6 +408,7 @@ frappe.ready(async () => {
 
   setInterval(autoSaveDraft, 5000);
   $(window).on("beforeunload", function (e) {
+    e.preventDefault();
     autoSaveDraft();
     return;
   });
