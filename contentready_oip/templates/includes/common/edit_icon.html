@@ -1,10 +1,15 @@
-<button
-    class="btn btn-circle margin-20"
-    onclick="editDocument('{{doctype}}','{{name}}', `{{data | safe}}`)"
-    aria-label="Edit {{doctype}} {{name}}"
->
-<i class="far fa-pen"></i>
+<button class="btn btn-circle margin-20" onclick="editDocument('{{doctype}}','{{name}}', `{{data | safe}}`)"
+    aria-label="Edit {{doctype}} {{name}}">
+    <!-- <i class="far fa-pen"></i> -->
+    <i class="edit-icon">{% include "public/svg/edit.svg" %}</i>
+
 </button>
+
+<style>
+    .edit-icon {
+        top: -.5rem;
+    }
+</style>
 
 <script>
     editDocument = (doctype, name, data) => {
@@ -16,13 +21,13 @@
             window.location.href = `/add-solution?name=${name}`;
         } else if (doctype === 'Collaboration Table') {
             data = JSON.parse(data.replace(/u\'/g, '"').replace(/\'/g, '"'));
-            $('#collaboration-modal-'+name).modal('toggle');
-            $("#persona-select-"+name).val(data[0]);
-            $("#collaboration-comment-"+name).val(data[1]);
+            $('#collaboration-modal-' + name).modal('toggle');
+            $("#persona-select-" + name).val(data[0]);
+            $("#collaboration-comment-" + name).val(data[1]);
         } else if (doctype === 'Validation Table') {
             data = JSON.parse(data.replace(/u\'/g, '"').replace(/\'/g, '"'));
-            $('#validation-modal-'+name).modal('toggle');
-            $("#validation-comment-"+name).val(data[0]);
+            $('#validation-modal-' + name).modal('toggle');
+            $("#validation-comment-" + name).val(data[0]);
         }
     }
 </script>

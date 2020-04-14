@@ -45,7 +45,8 @@
       </div>
       <p>{{reply.text}}</p>
       <button class="delete-btn">
-        <i class="fa fa-trash-o" aria-hidden="true"></i>
+        <!-- <i class="fa fa-trash-o" aria-hidden="true"></i> -->
+        <i class="trash">{% include "public/svg/trash-alt.svg" %}</i>
       </button>
     </div>
   </div>
@@ -54,12 +55,13 @@
   <div class="footer-container">
     <div class="rely-container">
       <button class="btn" onclick="replyToComment('{{comment.name}}')">
-        <i class="far fa-reply"></i>
+        <!-- <i class="far fa-reply"></i> -->
+        <i class="reply mr-2">{% include "public/svg/reply.svg" %}</i>
         Reply
       </button>
     </div>
 
-    <div style="display: flex;" class="social-btns">
+    <div style="display: flex;" class="">
       {% set doctype = comment.doctype %} {% set name = comment.name %} {%
       include "templates/includes/common/likes.html" %} {% include
       "templates/includes/common/share.html" %}
@@ -107,5 +109,17 @@
 
   .thumbsup-btn>i {
     font-size: var(--f14);
+  }
+
+  .trash {
+    color: var(--secondary2);
+  }
+
+  .trash>svg {
+    width: 1.2rem;
+  }
+
+  .reply {
+    transform: rotate(0deg) !important;
   }
 </style>
