@@ -1,47 +1,23 @@
 <div class="image-and-count-container d-none d-lg-block">
     {% if (media|length) > 0 %}
-    <img
-        src="{{media[0].attachment}}"
-        alt="image"
-        class="image"
-    />
+    <img src="{{media[0].attachment}}" alt="image" class="image" />
     {% else %}
-    <img
-        src="/files/image_placeholder.jpg"
-        alt="image"
-        class="image"
-    />
+    <img src="/files/image_placeholder.jpg" alt="image" class="image" />
     {% endif %}
-    {% if (media | length) > 0 %}
-    <button
-        class="align-icon"
-        data-toggle="modal"
-        data-target="#attachment-modal-{{id}}"
-    >
+    {% if (media | length) > 1 %}
+    <button class="align-icon" data-toggle="modal" data-target="#attachment-modal-{{id}}">
         +{{(media | length)-1}}
     </button>
     {% endif %}
 </div>
 <div class="image-and-count-container d-lg-none">
     {% if (media|length) > 0 %}
-    <img
-        src="{{media[0].attachment}}"
-        alt="image"
-        class="image-ipad"
-    />
+    <img src="{{media[0].attachment}}" alt="image" class="image-ipad" />
     {% else %}
-    <img
-        src="/files/image_placeholder.jpg"
-        alt="image"
-        class="image-ipad"
-    />
+    <img src="/files/image_placeholder.jpg" alt="image" class="image-ipad" />
     {% endif %}
-    {% if (media | length) > 0 %}
-    <button
-        class="align-icon"
-        data-toggle="modal"
-        data-target="#attachment-modal-{{id}}"
-    >
+    {% if (media | length) > 1 %}
+    <button class="align-icon" data-toggle="modal" data-target="#attachment-modal-{{id}}">
         +{{(media | length)-1}}
     </button>
     {% endif %}
