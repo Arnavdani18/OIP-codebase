@@ -5,17 +5,24 @@
 
   new Vue({
     el: '.likes',
+    delimiters: ['[[', ']]'],
     data: {
       doctype: `{{doctype}}`,
       name: `{{name}}`,
       numOflikes: `{{likes | length}}`,
-      isLiked: false
+      isLiked: false,
     },
     computed: {
       clickable: function () {
-        const isClickable = `{{isClickable}}`
-        if (isClickable == false) {
-          return false
+        let isClickable = `{{isClickable}}`
+        isClickable = isClickable.toLowerCase();
+
+        if (isClickable.includes('false')) {
+          const bool = JSON.parse(isClickable);
+
+          if (bool === false) {
+            return false
+          }
         } else {
           return true
         }
@@ -93,15 +100,47 @@
     },
     template: `
       <div class="d-flex align-items-center">
-        {% raw %}
-        <button class="btn social-icon-btn" :class="{
-                      'selected': isLiked
-                    }" v-on:click="toggleLike(doctype,name)" role="button">
-          <i class="far fa-thumbs-up"></i>
+        <button 
+          class="btn social-icon-btn" 
+          :class="{
+                      'selected': isLiked,
+                      'detail_like_btn': clickable,
+                      'card_like_btn': !clickable
+                    }" 
+          v-on:click="toggleLike(doctype,name)" 
+          role="button">
+          <i>{% include "public/svg/thumbs-up-regular.svg" %}</i>
         </button>
-        <span class="social-stats">{{numOflikes}}</span>
-        {% endraw %}
+        <span class="social-stats">[[numOflikes]]</span>
       </div>
       `
   })
 </script>
+
+<style>
+  .detail_like_btn {
+    width: 3.2rem;
+    height: 3.2rem;
+  }
+
+  .detail_like_btn>i>svg {
+    width: 1.6rem;
+  }
+
+  .detail_like_btn>i {
+    line-height: 0;
+  }
+
+  .card_like_btn {
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+
+  .card_like_btn>i>svg {
+    width: 1.36rem;
+  }
+
+  .card_like_btn>i {
+    line-height: 0;
+  }
+</style>
