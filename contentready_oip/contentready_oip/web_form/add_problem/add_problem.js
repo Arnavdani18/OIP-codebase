@@ -1,3 +1,5 @@
+frappe.provide('Vue');
+
 frappe.ready(async () => {
   // Start Helpers
   let autocomplete;
@@ -28,38 +30,38 @@ frappe.ready(async () => {
     });
   };
 
-  createSectorOptions = () => {
-    $('*[data-fieldname="sectors"]').before(
-      '<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sector-options"></div>'
-    );
-    frappe.call({
-      method: 'contentready_oip.api.get_sector_list',
-      args: {},
-      callback: function (r) {
-        let problem_sectors;
-        if (frappe.web_form.doc.sectors) {
-          problem_sectors = frappe.web_form.doc.sectors.map(s => s.sector);
-        }
-        r.message.map(op => {
-          let has_sector = false;
-          if (problem_sectors) {
-            has_sector = problem_sectors.indexOf(op.value) !== -1;
-          }
-          const el = `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="sector-check-${op.value}" value="${op.value}"><label class="form-check-label" for="sector-check-${op.value}">${op.label}</label></div>`;
-          $('#sector-options').append(el);
-          $(`#sector-check-${op.value}`).attr('checked', has_sector);
-        });
-        $('[id^=sector-check]').on('click', addSectorToDoc);
-      }
-    });
-  };
+  // createSectorOptions = () => {
+  //   $('*[data-fieldname="sectors"]').before(
+  //     '<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sector-options"></div>'
+  //   );
+  //   frappe.call({
+  //     method: 'contentready_oip.api.get_sector_list',
+  //     args: {},
+  //     callback: function (r) {
+  //       let problem_sectors;
+  //       if (frappe.web_form.doc.sectors) {
+  //         problem_sectors = frappe.web_form.doc.sectors.map(s => s.sector);
+  //       }
+  //       r.message.map(op => {
+  //         let has_sector = false;
+  //         if (problem_sectors) {
+  //           has_sector = problem_sectors.indexOf(op.value) !== -1;
+  //         }
+  //         const el = `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="sector-check-${op.value}" value="${op.value}"><label class="form-check-label" for="sector-check-${op.value}">${op.label}</label></div>`;
+  //         $('#sector-options').append(el);
+  //         $(`#sector-check-${op.value}`).attr('checked', has_sector);
+  //       });
+  //       $('[id^=sector-check]').on('click', addSectorToDoc);
+  //     }
+  //   });
+  // };
 
-  addSectorToDoc = (event) => {
-    if (!frappe.web_form.doc.sectors) {
-      frappe.web_form.doc.sectors = [];
-    }
-    frappe.web_form.doc.sectors.push({ sector: event.target.value });
-  };
+  // addSectorToDoc = (event) => {
+  //   if (!frappe.web_form.doc.sectors) {
+  //     frappe.web_form.doc.sectors = [];
+  //   }
+  //   frappe.web_form.doc.sectors.push({ sector: event.target.value });
+  // };
 
   hideTables = () => {
     $('*[data-fieldtype="Table"]').hide();
@@ -74,7 +76,7 @@ frappe.ready(async () => {
     // geographical location types.
     autocomplete = new google.maps.places.Autocomplete(
       document.getElementById('autocomplete'),
-      { types: ['(cities)'], componentRestrictions: {country: 'in'} }
+      { types: ['(cities)'], componentRestrictions: { country: 'in' } }
       // { types: ['(cities)'] }
     );
     // Avoid paying for data that you don't need by restricting the set of
@@ -261,6 +263,14 @@ frappe.ready(async () => {
           keysToCopy.map(key => {
             frappe.web_form.doc[key] = r.message[key];
           });
+
+          // Replace state if exists
+          const currQueryParam = window.location['search'];
+
+          if (currQueryParam.includes("new=1")) {
+            window.history.replaceState({}, null, `?name=${r.message['name']}`);
+          }
+
           showAutoSaveAlert();
           setTimeout(hideAutoSaveAlert, 1000);
         }
@@ -286,7 +296,7 @@ frappe.ready(async () => {
     const alert = `<span class="alert alert-primary fade show hidden" role="alert" id="auto-save-alert">Saved</span>`;
     $('.page-header-actions-block').append(alert);
     $('.page-header-actions-block')
-      .append(saveAsDraftBtn)
+      // .append(saveAsDraftBtn)
       .append(publishBtn);
   };
 
@@ -322,11 +332,17 @@ frappe.ready(async () => {
     $('.page-header-actions-block').addClass('d-flex align-items-center');
     $('.page-header')
       .addClass('d-flex align-items-center')
+      .css({ 'width': '70%' })
       .prepend(
         '<img src="/files/problem_dark.svg" class="add-problem-icon" />'
       );
 
-    $('.page-header h2').css({ 'margin-bottom': '0px' });
+    const problemTitle = $('.page-header h2').text();
+    $('.page-header h2')
+      .addClass('text-truncate')
+      .attr('title', problemTitle)
+      .css({ 'margin-bottom': '0px' });
+
     $('#introduction').addClass('d-none');
   };
 
@@ -431,12 +447,19 @@ frappe.ready(async () => {
     }
   };
 
+  const addSection = function () {
+    // For Sectors
+    $('*[data-fieldname="sectors"]').before(
+      '<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sectorsComp"></div>'
+    );
+  }
+
   // End Helpers
 
   // Delay until page is fully rendered
   while (!frappe.web_form.fields) {
-		await sleep(1000);
-	}
+    await sleep(1000);
+  }
 
   // Start UI Fixes
   $('*[data-doctype="Web Form"]').wrap('<div class="container pt-5"></div>');
@@ -444,7 +467,8 @@ frappe.ready(async () => {
   addActionButtons();
   moveDivs();
   createOrgOptions();
-  createSectorOptions();
+  // createSectorOptions();
+  addSection();
   problemDetails();
   controlLabels();
   styleFields();
@@ -452,6 +476,83 @@ frappe.ready(async () => {
   pageHeadingSection();
   appendAttachLink();
   // End UI Fixes
+
+
+  const getAvailableSectors = function () {
+    frappe.call({
+      method: 'contentready_oip.api.get_sector_list',
+      args: {},
+      callback: function (r) {
+        let problem_sectors;
+        if (frappe.web_form && frappe.web_form.doc && frappe.web_form.doc.sectors) {
+          problem_sectors = frappe.web_form.doc.sectors.map(s => s.sector);
+        }
+
+        sectorsComp.problem_sectors = problem_sectors || [];
+        sectorsComp.avail_sectors = r.message
+      }
+    });
+  }
+
+  const sectorsComp = new Vue({
+    el: '#sectorsComp',
+    data: function () {
+      return {
+        avail_sectors: [],
+        problem_sectors: []
+      }
+    },
+    beforeCreate: function () {
+      // https://vuejs.org/v2/api/#created
+      getAvailableSectors();
+    },
+    methods: {
+      updateSectorToDoc: function (sectorClicked) {
+        if (!frappe.web_form.doc.sectors) {
+          frappe.web_form.doc.sectors = [];
+        }
+
+        let index = frappe.web_form.doc.sectors.findIndex(s => s.sector === sectorClicked);
+
+        if (index > 0) {
+          frappe.web_form.doc.sectors.splice(index, 1)
+        } else {
+          frappe.web_form.doc.sectors.push({ sector: sectorClicked });
+        }
+
+        getAvailableSectors();
+      },
+      toggleClass: function (sector) {
+        let is_present = this.problem_sectors.find(s => sector === s);
+        if (is_present) {
+          return true
+        } else {
+          return false;
+        }
+      }
+    },
+    template: `
+      {% raw %}
+        <div class="row">
+          <div class="col d-flex flex-wrap">
+            <button 
+              v-for="sector in avail_sectors"
+              class="btn btn-lg mb-3 mr-3" 
+              :title="sector['label']"
+              :class="{
+                'btn-primary': toggleClass(sector['value']),
+                'text-white': toggleClass(sector['value']),
+                'btn-outline-primary' :!toggleClass(sector['value']) 
+              }"
+              v-on:click="updateSectorToDoc(sector['value'])"
+            >
+            {{sector['label']}}
+            </button>
+          </div>
+        </div>
+      {% endraw %}
+    `
+  });
 
   // Start Google Maps Autocomplete
   const gScriptUrl =
@@ -480,7 +581,12 @@ frappe.ready(async () => {
     frappe.web_form.doc.org = e.target.value;
   });
 
-  setInterval(autoSaveDraft, 10000);
+  setInterval(autoSaveDraft, 5000);
+  $(window).on("beforeunload", function (e) {
+    e.preventDefault();
+    autoSaveDraft();
+    return;
+  });
 
   // End Events
 });

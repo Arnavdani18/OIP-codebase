@@ -52,7 +52,7 @@ frappe.ready(async () => {
     // geographical location types.
     autocomplete = new google.maps.places.Autocomplete(
       document.getElementById("autocomplete"),
-      { types: ['(cities)'], componentRestrictions: {country: 'in'} }
+      { types: ['(cities)'], componentRestrictions: { country: 'in' } }
       // { types: ["(cities)"] }
     );
     // Avoid paying for data that you don't need by restricting the set of
@@ -185,34 +185,44 @@ frappe.ready(async () => {
   };
 
   autoSaveDraft = () => {
-    frappe.web_form.doc.user = frappe.session.user;
-    frappe.call({
-      method: "contentready_oip.api.add_enrichment",
-      args: {
-        doc: frappe.web_form.doc,
-        is_draft: true
-      },
-      callback: function (r) {
-        // update local form technical fields so that they are up to date with server values
-        // Important: do no update fields on the UI as that will interfere with user experience.
-        const keysToCopy = [
-          "creation",
-          "modified",
-          "docstatus",
-          "doctype",
-          "idx",
-          "owner",
-          "modified_by",
-          "name",
-          "problem"
-        ];
-        keysToCopy.map(key => {
-          frappe.web_form.doc[key] = r.message[0][key];
-        });
-        showAutoSaveAlert();
-        setTimeout(hideAutoSaveAlert, 1000);
-      }
-    });
+    if (frappe.web_form.doc.title) {
+      frappe.web_form.doc.user = frappe.session.user;
+      frappe.call({
+        method: "contentready_oip.api.add_enrichment",
+        args: {
+          doc: frappe.web_form.doc,
+          is_draft: true
+        },
+        callback: function (r) {
+          // update local form technical fields so that they are up to date with server values
+          // Important: do no update fields on the UI as that will interfere with user experience.
+          const keysToCopy = [
+            "creation",
+            "modified",
+            "docstatus",
+            "doctype",
+            "idx",
+            "owner",
+            "modified_by",
+            "name",
+            "problem"
+          ];
+          keysToCopy.map(key => {
+            frappe.web_form.doc[key] = r.message[0][key];
+          });
+
+          // Replace state if exists
+          const currQueryParam = window.location['search'];
+
+          if (currQueryParam.includes("new=1")) {
+            window.history.replaceState({}, null, `?name=${r.message['name']}`);
+          }
+
+          showAutoSaveAlert();
+          setTimeout(hideAutoSaveAlert, 1000);
+        }
+      });
+    }
   };
 
   saveAsDraft = (event) => {
@@ -232,7 +242,7 @@ frappe.ready(async () => {
     const alert = `<span class="alert alert-primary fade show hidden" role="alert" id="auto-save-alert">Saved</span>`;
     $(".page-header-actions-block").append(alert);
     $(".page-header-actions-block")
-      .append(saveAsDraftBtn)
+      // .append(saveAsDraftBtn)
       .append(publishBtn);
   };
 
@@ -248,7 +258,14 @@ frappe.ready(async () => {
     $('#auto-save-alert').addClass('auto-saved');
     $('.page-header-actions-block').addClass('d-flex align-items-center');
 
-    $('.page-header h2').css({ 'margin-bottom': '0px' });
+    $('.page-header')
+      .css({ 'width': '70%' });
+
+    const problemTitle = $('.page-header h2').text();
+    $('.page-header h2')
+      .addClass('text-truncate')
+      .attr('title', problemTitle)
+      .css({ 'margin-bottom': '0px' });
   };
 
   const appendAttachLink = () => {
@@ -354,8 +371,8 @@ frappe.ready(async () => {
 
   // Delay until page is fully rendered
   while (!frappe.web_form.fields) {
-		await sleep(1000);
-	}
+    await sleep(1000);
+  }
 
   // Start UI Fixes
   $('*[data-doctype="Web Form"]').wrap('<div class="container pt-5"></div>');
@@ -389,9 +406,12 @@ frappe.ready(async () => {
     frappe.web_form.doc.org = e.target.value;
   });
 
-  setInterval(autoSaveDraft, 10000);
-
-
+  setInterval(autoSaveDraft, 5000);
+  $(window).on("beforeunload", function (e) {
+    e.preventDefault();
+    autoSaveDraft();
+    return;
+  });
 
   // End Events
 });

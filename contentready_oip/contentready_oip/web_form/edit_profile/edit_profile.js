@@ -113,7 +113,7 @@ frappe.ready(async function () {
           user_sectors = frappe.web_form.doc.sectors.map(s => s.sector);
         }
 
-        sectorsVueComp.user_sectors = user_sectors;
+        sectorsVueComp.user_sectors = user_sectors || [];
         sectorsVueComp.avail_sectors = r.message;
       }
     });
