@@ -14,9 +14,9 @@
                                 See Problem(s)
                             </a>
                             {% if frappe.session.user == owner %}
-                                {% set doctype = doctype %}
-                                {% set name = name %}
-                                {% include "templates/includes/common/edit_icon.html" %}
+                            {% set doctype = doctype %}
+                            {% set name = name %}
+                            {% include "templates/includes/common/edit_icon.html" %}
                             {% endif %}
                             {% include "templates/includes/common/validation_form.html" %}
                             {% include "templates/includes/common/collaboration_form.html" %}
@@ -62,10 +62,12 @@
 
                     <div class="col-xl-8 pr-0 action-btn-section mt-3">
                         <div class="d-flex justify-content-sm-start justify-content-lg-end flex-wrap">
-                            <button type="button" class="card-btn" onclick="openValidationForm('{{doctype}}', '{{name}}')">
+                            <button type="button" class="card-btn mr-4"
+                                onclick="openValidationForm('{{doctype}}', '{{name}}')">
                                 Validate
                             </button>
-                            <button type="button" class="card-btn" onclick="openCollaborationForm('{{doctype}}', '{{name}}')">
+                            <button type="button" class="card-btn"
+                                onclick="openCollaborationForm('{{doctype}}', '{{name}}')">
                                 Collaborate
                             </button>
                         </div>

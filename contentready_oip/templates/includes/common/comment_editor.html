@@ -7,50 +7,31 @@
     <div class="input-group col pl-0 mt-0">
       <!-- TODO: onblur="contractCommentArea(event.target.id)" -->
 
-      <textarea
-        class="form-control pattern1"
-        style="padding-top: .8rem;"
-        id="comment-area-{{doctype}}-{{name}}"
-        placeholder="Add a comment..."
-        rows="1"
-        onfocus="expandCommentArea('{{doctype}}','{{name}}')"
-      ></textarea>
+      <textarea class="form-control pattern1" style="padding-top: .8rem;" id="comment-area-{{doctype}}-{{name}}"
+        placeholder="Add a comment..." rows="1" onfocus="expandCommentArea('{{doctype}}','{{name}}')"></textarea>
       <div class="input-group-append mt-0">
-        <button
-          class="btn btn-outline-danger pattern1"
-          title="Clear"
-          type="button"
-          onclick="cancelComment(`{{doctype}}`,`{{name}}`, `{{parent_div|default('', true)}}`)"
-        >
-          <i class="far fa-backspace fa-horizontal"></i>
+        <button class="btn btn-outline-danger pattern1" title="Clear" type="button"
+          onclick="cancelComment(`{{doctype}}`,`{{name}}`, `{{parent_div|default('', true)}}`)">
+          <!-- <i class="far fa-backspace fa-horizontal"></i> -->
+          <i class="backspace">{% include "public/svg/backspace-solid.svg" %}</i>
         </button>
-        <button
-          class="btn btn-outline-primary attach-btn pattern1"
-          title="Attachment"
-          type="button"
-          onclick="showDropzone('{{doctype}}', '{{name}}')"
-        >
-          <i class="far fa-paperclip"></i>
+        <button class="btn btn-outline-primary attach-btn pattern1" title="Attachment" type="button"
+          onclick="showDropzone('{{doctype}}', '{{name}}')">
+          <!-- <i class="far fa-paperclip"></i> -->
+          <i class="paperclip">{% include "public/svg/paperclip-solid.svg" %}</i>
         </button>
       </div>
     </div>
   </div>
   <div class="row mt-3 comment-btn-row" hidden>
     <div class="col ">
-      <button
-        class="btn comment-btn"
-        type="button"
-        onclick="submitComment('{{doctype}}', '{{name}}')"
-      >
+      <button class="btn comment-btn" type="button" onclick="submitComment('{{doctype}}', '{{name}}')">
         Comment
       </button>
     </div>
   </div>
-  <form
-    class="dropzone dz-clickable hidden mt-3 pattern1"
-    data-file-urls="[]"
-    id="comment-dropzone-{{doctype}}-{{name}}"
-  >
+  <form class="dropzone dz-clickable hidden mt-3 pattern1" data-file-urls="[]"
+    id="comment-dropzone-{{doctype}}-{{name}}">
     <div class="dz-default dz-message">
       <button class="dz-button" type="button">
         Drop files here to upload
@@ -131,7 +112,7 @@
           Accept: 'application/json',
           'X-Frappe-CSRF-Token': frappe.csrf_token
         },
-        init: function() {
+        init: function () {
           // use this event to add to child table
           this.on('complete', file => {
             // console.log('{{name}}');
@@ -196,14 +177,21 @@
     justify-content: space-between;
     align-items: flex-start;
   }
+
   .attach-btn {
     color: var(--primary1);
     border: 1px solid var(--primary1);
     border-color: var(--primary1);
   }
+
   .attach-btn:hover {
     color: #ffffff;
     background-color: var(--primary1);
     border-color: var(--primary1);
+  }
+
+  .paperclip>svg,
+  .backspace>svg {
+    width: 1.4rem;
   }
 </style>
