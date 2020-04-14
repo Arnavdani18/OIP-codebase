@@ -9,3 +9,4 @@ def get_context(context):
     context.update(p)
     s = api.get_filtered_paginated_content(context, 'Solution', 'solutions', limit_page_length=5)
     context.update(s)
+    print(context)

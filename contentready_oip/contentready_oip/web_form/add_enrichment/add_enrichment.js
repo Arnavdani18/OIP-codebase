@@ -242,7 +242,7 @@ frappe.ready(async () => {
     const alert = `<span class="alert alert-primary fade show hidden" role="alert" id="auto-save-alert">Saved</span>`;
     $(".page-header-actions-block").append(alert);
     $(".page-header-actions-block")
-      .append(saveAsDraftBtn)
+      // .append(saveAsDraftBtn)
       .append(publishBtn);
   };
 
