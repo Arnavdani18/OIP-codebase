@@ -4,6 +4,7 @@
 <script>
     new Vue({
         el: '.views',
+        delimiters: ['[[', ']]'],
         data: {
             doctype: `{{doctype}}`,
             name: `{{name}}`,
@@ -12,9 +13,15 @@
         },
         computed: {
             clickable: function () {
-                const isClickable = `{{isClickable}}`
-                if (isClickable == false) {
-                    return false
+                let isClickable = `{{isClickable}}`
+                isClickable = isClickable.toLowerCase();
+
+                if (isClickable.includes('false')) {
+                    const bool = JSON.parse(isClickable);
+
+                    if (bool === false) {
+                        return false
+                    }
                 } else {
                     return true
                 }
@@ -81,19 +88,48 @@
         },
         template: `
         <div class="d-flex align-items-center">
-            {% raw %}
             <button 
                 class="btn social-icon-btn"
                 :class="{
-                'selected': watched
+                    'selected': watched,
+                    'detail_watch_btn': clickable,
+                    'card_watch_btn': !clickable
                 }"
                 v-on:click="toggleWatcher(doctype,name)"
                 role="button">
-                <i class="far fa-eye"></i>
+                <i>{% include "public/svg/eye-regular.svg" %}</i>
             </button>
-            <span class="social-stats">{{numOfWatchers}}</span>
-            {% endraw %}
+            <span class="social-stats">[[numOfWatchers]]</span>
         </div>
         `
     })
 </script>
+
+
+<style>
+    .detail_watch_btn {
+        width: 3.2rem;
+        height: 3.2rem;
+    }
+
+    .detail_watch_btn>i>svg {
+        width: 1.6rem;
+    }
+
+    .detail_watch_btn>i {
+        line-height: 0;
+    }
+
+    .card_watch_btn {
+        width: 2.6rem;
+        height: 2.6rem;
+    }
+
+    .card_watch_btn>i>svg {
+        width: 1.36rem;
+    }
+
+    .card_watch_btn>i {
+        line-height: 0;
+    }
+</style>
