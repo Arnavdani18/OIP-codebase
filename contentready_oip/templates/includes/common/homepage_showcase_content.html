@@ -4,12 +4,7 @@
             <div class="col p-0">
                 <div class="problem-listed-title text-white">
                     <div class="d-flex align-items-center header">
-                        <img
-                            src="/files/problem_icon.svg"
-                            alt=""
-                            height="20px"
-                            width="24px"
-                        />
+                        <img src="/files/problem_icon.svg" alt="" height="20px" width="24px" />
                         <h2 class="heading">Problems Listed</h2>
                         <div class="view-all">
                             <a href="/problems">
@@ -20,34 +15,29 @@
                 </div>
 
                 {% for problem in problems %}
-                    {% include "templates/includes/problem/problem_card.html" %}
+                {% include "templates/includes/problem/problem_card.html" %}
                 {% endfor %}
-                
-                </div>
+
             </div>
-            <div class="col-lg-6 margin-sm-md-30">
-                <div class="col p-0">
-                    <div class="problem-listed-title text-white">
-                        <div class="d-flex align-items-center header">
-                            <img
-                                src="/files/problem_icon.svg"
-                                alt=""
-                                height="20px"
-                                width="24px"
-                            />
-                            <h2 class="heading">Solutions Listed</h2>
-                            <div class="view-all">
-                                <a href="/solutions">
-                                    View All
-                                </a>
-                            </div>
+        </div>
+        <div class="col-lg-6 margin-sm-md-30">
+            <div class="col p-0">
+                <div class="problem-listed-title text-white">
+                    <div class="d-flex align-items-center header">
+                        <img src="/files/problem_icon.svg" alt="" height="20px" width="24px" />
+                        <h2 class="heading">Solutions Listed</h2>
+                        <div class="view-all">
+                            <a href="/solutions">
+                                View All
+                            </a>
                         </div>
                     </div>
-                    {% for solution in solutions %}
-                        {% include "templates/includes/solution/solution_card.html" %}
-                    {% endfor %}
                 </div>
+                {% for solution in solutions %}
+                {% include "templates/includes/solution/solution_card.html" %}
+                {% endfor %}
             </div>
         </div>
     </div>
+</div>
 </div>

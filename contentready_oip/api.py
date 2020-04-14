@@ -190,8 +190,8 @@ def get_filtered_content(doctype):
         except Exception as e:
             # filter_sectors = ['all']
             filter_sectors = []
-        # if not filter_sectors:
-        #     filter_sectors = ['all']
+        if not filter_sectors:
+            filter_sectors = ['all']
         # print('\n\n\n', filter_sectors, len(filter_sectors), '\n\n\n')
         if 'all' in filter_sectors:
             available_sectors = get_available_sectors()
