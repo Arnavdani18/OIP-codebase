@@ -10,11 +10,11 @@ def nudge_guests():
         frappe.throw('Please login to collaborate.')
 
 def create_user_profile_if_missing(doc=None, event_name=None, email=None):
-    if email == 'Guest':
-        return False
-    if email:
-        doc = frappe.get_doc('User', email)
     try:
+        if email == 'Guest':
+            return False
+        if email:
+            doc = frappe.get_doc('User', email)
         if not frappe.db.exists('User Profile', doc.email):
             profile = frappe.get_doc({
                 'doctype': 'User Profile',
