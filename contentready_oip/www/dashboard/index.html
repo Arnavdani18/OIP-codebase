@@ -110,9 +110,7 @@
         </ul>
         <div id="rightTabGroup" class="pb-2">
           <div class="tab-content" id="leftTabContent">
-            <div class="tab-pane fade show active" id="watched-content" role="tabpanel"
-              aria-labelledby="watched-content-tab">
-
+            <div class="tab-pane fade" id="watched-content" role="tabpanel" aria-labelledby="watched-content-tab">
               {% if (watched_problems + watched_solutions) | length < 1 %}
               <div>
                 {% set msg = "No watchlist yet" %}
