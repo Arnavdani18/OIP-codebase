@@ -14,7 +14,8 @@
   "website_theme",
   "theme_url",
   "section_break_6",
-  "sectors"
+  "sectors",
+  "partners"
  ],
  "fields": [
   {
@@ -72,9 +73,15 @@
    "fieldname": "favicon",
    "fieldtype": "Attach",
    "label": "Favicon"
+  },
+  {
+   "fieldname": "partners",
+   "fieldtype": "Table",
+   "label": "Partners",
+   "options": "Partner Table"
   }
  ],
- "modified": "2020-03-31 10:51:06.997017",
+ "modified": "2020-04-20 17:59:33.088711",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP White Label Domain",

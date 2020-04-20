@@ -1,0 +1,44 @@
+{
+ "creation": "2020-04-20 17:58:37.752541",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "brandmark",
+  "url"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title",
+   "reqd": 1
+  },
+  {
+   "fieldname": "brandmark",
+   "fieldtype": "Attach",
+   "in_list_view": 1,
+   "label": "Brandmark",
+   "reqd": 1
+  },
+  {
+   "fieldname": "url",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "URL"
+  }
+ ],
+ "istable": 1,
+ "modified": "2020-04-20 17:59:53.860668",
+ "modified_by": "Administrator",
+ "module": "ContentReady OIP",
+ "name": "Partner Table",
+ "owner": "tej@iotready.co",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
