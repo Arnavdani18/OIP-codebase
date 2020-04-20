@@ -22,7 +22,9 @@
     <div class="interaction-container mt-3">
       {% set doctype = problem.doctype %} {% set name = problem.name %}
       <div class="likes-container">
-        {% set likes = problem.likes %} {% include
+        {% set likes = problem.likes %}
+        {% set isClickable = false %}
+        {% include
         "templates/includes/common/likes.html" %}
       </div>
       <div class="watchers-container">

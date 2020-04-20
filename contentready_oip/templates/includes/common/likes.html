@@ -1,94 +1,146 @@
-<div class="likes">
-  <button data-has-user-liked="0" id="like-icon-{{doctype}}-{{name}}" onclick="toggle_like('{{doctype}}','{{name}}' )"
-    role="button" class="btn social-icon-btn">
-    <i class="far fa-thumbs-up"></i>
-  </button>
-  <span class="social-stats" data-num-likes="{{likes | length}}" id="like-count-{{doctype}}-{{name}}">
-    {{likes | length}}
-  </span>
-</div>
+<div class="likes"></div>
+<script type="text/javascript" src="/assets/frappe/node_modules/vue/dist/vue.js"></script>
 
 <script>
-  changeUI = (btnId, countId, hasUserLiked, numLikes) => {
-    $(btnId).data('has-user-liked', hasUserLiked);
 
-    hasUserLiked
-      ? $(btnId)
-        .addClass('selected')
-      : $(btnId)
-        .removeClass('selected');
-    $(countId).text(numLikes);
-    $(countId).data('num-likes', numLikes);
-  };
+  new Vue({
+    el: '.likes',
+    delimiters: ['[[', ']]'],
+    data: {
+      doctype: `{{doctype}}`,
+      name: `{{name}}`,
+      numOflikes: `{{likes | length}}`,
+      isLiked: false,
+    },
+    computed: {
+      clickable: function () {
+        let isClickable = `{{isClickable}}`
+        isClickable = isClickable.toLowerCase();
 
-  toggle_like = (doctype, name) => {
-    if (frappe.session.user === 'Guest') {
-      frappe.throw('Please login to participate.');
-    }
-    frappe.call({
-      method: 'contentready_oip.api.can_user_contribute',
-      args: {
-        child_doctype: 'Like Table',
-        parent_doctype: doctype,
-        parent_name: name
-      },
-      callback: r => {
-        const has_contributed = r.message[0];
-        const is_owner = r.message[1];
-        if (is_owner) {
-          frappe.throw(`You cannot like your own ${doctype}`);
-        } else {
-          const btnId = `#like-icon-${doctype}-${name}`;
-          const countId = `#like-count-${doctype}-${name}`;
-          // initial values
-          let hasUserLiked = $(btnId).data('has-user-liked');
-          let numLikes = $(countId).data('num-likes');
-          if (hasUserLiked) {
-            numLikes -= numLikes;
-          } else {
-            numLikes += numLikes;
+        if (isClickable.includes('false')) {
+          const bool = JSON.parse(isClickable);
+
+          if (bool === false) {
+            return false
           }
-          hasUserLiked = !hasUserLiked;
-          // TODO: Fix incorrect counts issue when making UI change before sending to server.
-          // change UI first, then send to server -
-          // changeUI(btnId, countId, hasUserLiked, numLikes);
-          frappe.call({
-            method: 'contentready_oip.api.toggle_contribution',
-            args: {
-              child_doctype: 'Like Table',
-              parent_doctype: doctype,
-              parent_name: name,
-              field_name: 'likes'
-            },
-            callback: r => {
-              // console.log(r);
-              // server is the source of truth so we change the UI to reflect that.
-              hasUserLiked = r.message[0];
-              numLikes = r.message[1].length;
-              changeUI(btnId, countId, hasUserLiked, numLikes);
-            }
-          });
+        } else {
+          return true
         }
       }
-    });
-  };
+    },
+    methods: {
+      toggleLike: function (doctype, name) {
+        if (!this.clickable) {
+          // disabling the click based on context
+          return;
+        }
 
+        if (frappe.session.user === 'Guest') {
+          frappe.throw('Please login to participate.');
+        }
+        frappe.call({
+          method: 'contentready_oip.api.can_user_contribute',
+          args: {
+            child_doctype: 'Like Table',
+            parent_doctype: doctype,
+            parent_name: name
+          },
+          callback: r => {
+            // this.isLiked = r.message[0];
+            const is_owner = r.message[1];
+            if (is_owner) {
+              frappe.throw(`You cannot like your own ${doctype}`);
+            } else {
+              // initial values
 
-  // TODO: Replace this call with a filter on the data-likes attribute.
-  // However, currently, frappe does not expand child tables within child tables into dicts.
-  frappe.ready(() => {
-    frappe.call({
-      method: 'contentready_oip.api.has_user_contributed',
-      args: {
-        child_doctype: 'Like Table',
-        parent_doctype: '{{doctype}}',
-        parent_name: '{{name}}'
-      },
-      callback: r => {
-        const btnId = `#like-icon-{{doctype}}-{{name}}`;
+              if (this.isLiked) {
+                this.numOflikes -= this.numOflikes;
+              } else {
+                this.numOflikes += this.numOflikes;
+              }
 
-        changeUI(btnId, null, r.message, null);
+              this.isLiked = !this.isLiked;
+              // TODO: Fix incorrect counts issue when making UI change before sending to server.
+              // change UI first, then send to server -
+              frappe.call({
+                method: 'contentready_oip.api.toggle_contribution',
+                args: {
+                  child_doctype: 'Like Table',
+                  parent_doctype: doctype,
+                  parent_name: name,
+                  field_name: 'likes'
+                },
+                callback: r => {
+                  // server is the source of truth so we change the UI to reflect that.
+                  this.isLiked = r.message[0];
+                  this.numOflikes = r.message[1].length;
+                }
+              });
+            }
+          }
+        });
       }
-    });
-  });
+    },
+    beforeCreate: function () {
+      // TODO: Replace this call with a filter on the data-likes attribute.
+      // However, currently, frappe does not expand child tables within child tables into dicts.
+      frappe.ready(() => {
+        frappe.call({
+          method: 'contentready_oip.api.has_user_contributed',
+          args: {
+            child_doctype: 'Like Table',
+            parent_doctype: '{{doctype}}',
+            parent_name: '{{name}}'
+          },
+          callback: r => {
+            this.isLiked = r.message;
+          }
+        });
+      });
+    },
+    template: `
+      <div class="d-flex align-items-center">
+        <button 
+          class="btn social-icon-btn" 
+          :class="{
+                      'selected': isLiked,
+                      'detail_like_btn': clickable,
+                      'card_like_btn': !clickable
+                    }" 
+          v-on:click="toggleLike(doctype,name)" 
+          role="button">
+          <i>{% include "public/svg/thumbs-up-regular.svg" %}</i>
+        </button>
+        <span class="social-stats">[[numOflikes]]</span>
+      </div>
+      `
+  })
 </script>
+
+<style>
+  .detail_like_btn {
+    width: 3.2rem;
+    height: 3.2rem;
+  }
+
+  .detail_like_btn>i>svg {
+    width: 1.6rem;
+  }
+
+  .detail_like_btn>i {
+    line-height: 0;
+  }
+
+  .card_like_btn {
+    width: 2.6rem;
+    height: 2.6rem;
+  }
+
+  .card_like_btn>i>svg {
+    width: 1.36rem;
+  }
+
+  .card_like_btn>i {
+    line-height: 0;
+  }
+</style>
