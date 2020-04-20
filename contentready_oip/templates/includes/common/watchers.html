@@ -1,73 +1,135 @@
-<div class="views">
-    <button onclick="toggle_watcher('{{doctype}}','{{name}}')" role="button" class="btn social-icon-btn"
-        data-has-user-watched=0 id="watcher-icon-{{doctype}}-{{name}}">
-        <i class="far fa-eye"></i>
-    </button>
-    <span class="social-stats" data-num-watchers="{{watchers | length}}" id="watcher-count-{{doctype}}-{{name}}">
-        {{watchers | length}}
-    </span>
-</div>
+<script type="text/javascript" src="/assets/frappe/node_modules/vue/dist/vue.js"></script>
+<div class="views"></div>
 
 <script>
-    changeUI = (btnId, countId, hasUserWatched, numWatchers) => {
-        $(btnId).data('has-user-watched', hasUserWatched);
-        hasUserWatched ? $(btnId).addClass('selected') : $(btnId).removeClass('selected');
-        $(countId).text(numWatchers);
-        $(countId).data('num-watchers', numWatchers);
-    }
+    new Vue({
+        el: '.views',
+        delimiters: ['[[', ']]'],
+        data: {
+            doctype: `{{doctype}}`,
+            name: `{{name}}`,
+            numOfWatchers: `{{watchers | length}}`,
+            watched: false
+        },
+        computed: {
+            clickable: function () {
+                let isClickable = `{{isClickable}}`
+                isClickable = isClickable.toLowerCase();
 
-    toggle_watcher = (doctype, name) => {
-        if (frappe.session.user === 'Guest') {
-            frappe.throw('Please login to participate.');
-        }
-        frappe.call({
-            method: 'contentready_oip.api.can_user_contribute',
-            args: { child_doctype: 'Watch Table', parent_doctype: doctype, parent_name: name },
-            callback: (r) => {
-                const has_contributed = r.message[0];
-                const is_owner = r.message[1];
-                if (is_owner) {
-                    frappe.throw(`You cannot watch your own ${doctype}`);
-                } else {
-                    const btnId = `#watcher-icon-${doctype}-${name}`;
-                    const countId = `#watcher-count-${doctype}-${name}`;
-                    // initial values
-                    let hasUserWatched = $(btnId).data('has-user-watched');
-                    let numWatchers = $(countId).data('num-watchers');
-                    if (hasUserWatched) {
-                        numWatchers -= numWatchers;
-                    } else {
-                        numWatchers += numWatchers;
+                if (isClickable.includes('false')) {
+                    const bool = JSON.parse(isClickable);
+
+                    if (bool === false) {
+                        return false
                     }
-                    hasUserWatched = !hasUserWatched;
-                    // change UI first, then send to server
-                    // changeUI(btnId, countId, hasUserWatched, numWatchers);
-                    frappe.call({
-                        method: 'contentready_oip.api.toggle_contribution',
-                        args: { child_doctype: 'Watch Table', parent_doctype: doctype, parent_name: name, field_name: 'watchers' },
-                        callback: (r) => {
-                            // console.log(r);
-                            // server is the source of truth so we change the UI to reflect that.
-                            hasUserWatched = r.message[0];
-                            numWatchers = r.message[1].length;
-                            changeUI(btnId, countId, hasUserWatched, numWatchers);
-                        }
-                    });
+                } else {
+                    return true
                 }
             }
-        });
-    }
+        },
+        methods: {
+            toggleWatcher: function (doctype, name) {
 
-    // TODO: Replace this call with a filter on the data-watchers attribute.
-    // However, currently, frappe does not expand child tables within child tables into dicts.
-    frappe.ready(() => {
-        frappe.call({
-            method: 'contentready_oip.api.has_user_contributed',
-            args: { child_doctype: 'Watch Table', parent_doctype: '{{doctype}}', parent_name: '{{name}}' },
-            callback: (r) => {
-                const btnId = `#watcher-icon-{{doctype}}-{{name}}`;
-                changeUI(btnId, null, r.message, null);
+                if (!this.clickable) {
+                    // disble the click on card
+                    return;
+                }
+
+                if (frappe.session.user === 'Guest') {
+                    frappe.throw('Please login to participate.');
+                }
+                frappe.call({
+                    method: 'contentready_oip.api.can_user_contribute',
+                    args: { child_doctype: 'Watch Table', parent_doctype: doctype, parent_name: name },
+                    callback: (r) => {
+                        // const has_contributed = r.message[0];
+                        const is_owner = r.message[1];
+                        if (is_owner) {
+                            frappe.throw(`You cannot watch your own ${doctype}`);
+                        } else {
+
+                            // initial values
+                            if (this.watched) {
+                                this.numOfWatchers -= this.numOfWatchers;
+                            } else {
+                                this.numOfWatchers += this.numOfWatchers;
+                            }
+
+                            this.watched = !this.watched;
+                            // change UI first, then send to server
+                            // changeUI(btnId, countId, hasUserWatched, numWatchers);
+                            frappe.call({
+                                method: 'contentready_oip.api.toggle_contribution',
+                                args: { child_doctype: 'Watch Table', parent_doctype: doctype, parent_name: name, field_name: 'watchers' },
+                                callback: (r) => {
+                                    // console.log(r);
+                                    // server is the source of truth so we change the UI to reflect that.
+                                    this.watched = r.message[0];
+                                    this.numOfWatchers = r.message[1].length;
+                                }
+                            });
+                        }
+                    }
+                });
             }
-        });
+        },
+        beforeCreate: function () {
+            // TODO: Replace this call with a filter on the data-watchers attribute.
+            // However, currently, frappe does not expand child tables within child tables into dicts.
+            frappe.ready(() => {
+                frappe.call({
+                    method: 'contentready_oip.api.has_user_contributed',
+                    args: { child_doctype: 'Watch Table', parent_doctype: '{{doctype}}', parent_name: '{{name}}' },
+                    callback: (r) => {
+                        this.watched = r.message;
+                    }
+                });
+            })
+        },
+        template: `
+        <div class="d-flex align-items-center">
+            <button 
+                class="btn social-icon-btn"
+                :class="{
+                    'selected': watched,
+                    'detail_watch_btn': clickable,
+                    'card_watch_btn': !clickable
+                }"
+                v-on:click="toggleWatcher(doctype,name)"
+                role="button">
+                <i>{% include "public/svg/eye-regular.svg" %}</i>
+            </button>
+            <span class="social-stats">[[numOfWatchers]]</span>
+        </div>
+        `
     })
 </script>
+
+
+<style>
+    .detail_watch_btn {
+        width: 3.2rem;
+        height: 3.2rem;
+    }
+
+    .detail_watch_btn>i>svg {
+        width: 1.6rem;
+    }
+
+    .detail_watch_btn>i {
+        line-height: 0;
+    }
+
+    .card_watch_btn {
+        width: 2.6rem;
+        height: 2.6rem;
+    }
+
+    .card_watch_btn>i>svg {
+        width: 1.36rem;
+    }
+
+    .card_watch_btn>i {
+        line-height: 0;
+    }
+</style>

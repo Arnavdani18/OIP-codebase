@@ -1,10 +1,5 @@
-<div
-  class="problem-container mt-3"
-  onclick="window.location.href = '/{{solution.route}}'"
-  data-name="{{solution.name}}"
-  style="cursor: pointer; background-color: white;"
-  id="solution-card-{{solution.name}}"
->
+<div class="problem-container mt-3" onclick="window.location.href = '/{{solution.route}}'" data-name="{{solution.name}}"
+  style="cursor: pointer; background-color: white;" id="solution-card-{{solution.name}}">
   <div class="left-side ">
     {% include "templates/includes/solution/solution_label.html" %}
 
@@ -31,7 +26,9 @@
         "templates/includes/common/likes.html" %}
       </div>
       <div class="watchers-container">
-        {% set watchers = solution.watchers %} {% include
+        {% set watchers = solution.watchers %}
+        {% set isClickable = false %}
+        {% include
         "templates/includes/common/watchers.html" %}
       </div>
       <div class="validations-container">
