@@ -69,6 +69,16 @@ def get_available_sectors():
         return frappe.get_list('Sector', ['name', 'title'])
 
 @frappe.whitelist(allow_guest = True)
+def get_partners():
+    hostname = get_url()
+    try:
+        domain = frappe.get_doc('OIP White Label Domain', hostname)
+        partners = [{'brandmark': p.brandmark,'url': p.url, 'title': p.title} for p in domain.partners]
+        return partners
+    except Exception as e:
+        print(str(e))
+
+@frappe.whitelist(allow_guest = True)
 def get_domain_theme():
     hostname = get_url()
     theme_url = ''
