@@ -1,8 +1,52 @@
-<div class="container my-2 d-flex">
-    <!-- <img
-        src="/files/partner_logo.svg"
-        alt="Partner Logo"
-        class="partner-image"
-    /> -->
-    <h4 class="ml-auto">Curated by Social Alpha</h4>
+<script type="text/javascript" src="/assets/frappe/node_modules/vue/dist/vue.js"></script>
+
+<div class="container">
+    <div class="row my-2">
+        <div id="associated_partners"></div>
+    </div>
 </div>
+
+<script>
+    new Vue({
+        el: '#associated_partners',
+        delimiters: ['[[', ']]'],
+        data: function () {
+            return {
+                partners_list: []
+            }
+        },
+        created: function () {
+            const self = this;
+            frappe.ready(() => {
+                frappe.call({
+                    method: 'contentready_oip.api.get_partners',
+                    args: {},
+                    callback: function (r) {
+                        self.partners_list = r.message;
+                    }
+                })
+            })
+
+        },
+        template: `
+            <div class="col-12">
+                <div class="col d-flex flex-wrap"
+                    v-for="partner in partners_list" >
+                    <a  
+                        target="_blank"
+                        :href="partner.url"
+                        :title="partner.title">
+                        <img
+                            v-bind:src="partner.brandmark"
+                            alt="Partner Logo"
+                            class="partner-image"
+                            style="max-width: 15rem;"
+                            height="123"
+                        />
+                    </a>
+                </div>
+                <h4 class="text-right">Curated by Social Alpha</h4> 
+            </div>
+        `
+    });
+</script>
