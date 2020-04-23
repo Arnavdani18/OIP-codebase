@@ -848,6 +848,17 @@ def unpack_linkedin_response(info, profile=None):
 def send_sms(recipients, message):
     print(recipients, message)
 
+
+@frappe.whitelist(allow_guest=True)
+def deploy_apps():
+    from frappe.utils.background_jobs import enqueue
+    try:
+        enqueue(update_apps_via_git)
+        return True
+    except Exception as e:
+        print(str(e))
+        raise
+
 @frappe.whitelist(allow_guest=True)
 def update_apps_via_git():
     import shlex, subprocess
