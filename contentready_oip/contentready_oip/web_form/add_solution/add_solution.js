@@ -6,6 +6,46 @@ frappe.ready(async () => {
   // Simple sleep(ms) function from https://stackoverflow.com/a/48882182
   const sleep = m => new Promise(r => setTimeout(r, m));
 
+  // $('.page-header-actions-block').append('<div id="showModal"></div>');
+  const show_problem_modal = new Vue({
+    el: '#showModal',
+    delimiters: ['[[', ']]'],
+    data: {
+      msg: 'hello world'
+    },
+    methods: {
+      showModal: function () {
+        $('#myModal').modal('show');
+      }
+    },
+    template: `
+      <div>
+        <!-- https://vuejs.org/2015/10/28/why-no-template-url/ -->
+        <button id="show-modal" @click="showModal">Show Modal</button>
+        <div class="modal" id="myModal" tabindex="-1" role="dialog">
+          <div class="modal-dialog modal-xl" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title">Modal title</h5>
+                      <button type="button" class="close" data-dismiss="modal" title="close" aria-label="Close">
+                          <span aria-hidden="true" style="font-size: 2rem;">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                      <p>Modal body text goes here.</p>
+                      <p>[[msg]]</p>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary btn-lg text-white">Select to Solve</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+      </div>
+    `
+  })
+
   // Fix layout - without this, the entire form occupies col-2 due to custom CSS.
   moveDivs = () => {
     $('.section-body > div').each(function () {
