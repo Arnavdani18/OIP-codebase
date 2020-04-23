@@ -1,3 +1,5 @@
+frappe.provide('Vue');
+
 frappe.ready(async () => {
   // Start Helpers
   let autocomplete;
@@ -211,11 +213,15 @@ frappe.ready(async () => {
             frappe.web_form.doc[key] = r.message[0][key];
           });
 
+          // update delete btn vue instance
+          // deleteBtnInstance.btnText = deleteBtnInstance.getBtnText();
+
           // Replace state if exists
           const currQueryParam = window.location['search'];
 
           if (currQueryParam.includes("new=1")) {
-            window.history.replaceState({}, null, `?name=${r.message['name']}`);
+            const attacted_problem = currQueryParam.split('&')[1];
+            window.history.replaceState({}, null, `?name=${frappe.web_form.doc.name}&${attacted_problem}`);
           }
 
           showAutoSaveAlert();
@@ -237,23 +243,32 @@ frappe.ready(async () => {
   };
 
   addActionButtons = () => {
-    const saveAsDraftBtn = `<button class="btn btn-sm ml-2" onclick="saveAsDraft()">Save as Draft</button>`;
-    const publishBtn = `<button class="btn btn-sm btn-primary ml-2" onclick="publishEnrichment()">Publish</button>`;
+    const saveAsDraftBtn = `<button class="btn ml-2 btn-outline-primary outline-primary-btn" onclick="saveAsDraft()">Save as Draft</button>`;
+    const publishBtn = `<button 
+      class="btn btn-primary ml-2 solid-primary-btn" 
+      onclick="publishEnrichment()">
+        Publish
+      </button>`;
+
+    const deleteBtnPlaceholder = `
+      <div id="deleteBtn"></div>
+    `
     const alert = `<span class="alert alert-primary fade show hidden" role="alert" id="auto-save-alert">Saved</span>`;
     $(".page-header-actions-block").append(alert);
     $(".page-header-actions-block")
       // .append(saveAsDraftBtn)
+      // .append(deleteBtnPlaceholder)
       .append(publishBtn);
   };
 
   const pageHeadingSection = () => {
-    $('button:contains("Save as Draft")')
-      .removeClass('btn-sm')
-      .addClass('btn-outline-primary outline-primary-btn');
+    // $('button:contains("Save as Draft")')
+    //   .removeClass('btn-sm')
+    //   .addClass('btn-outline-primary outline-primary-btn');
 
-    $('button:contains("Publish")')
-      .removeClass('')
-      .addClass('solid-primary-btn');
+    // $('button:contains("Publish")')
+    //   .removeClass('')
+    //   .addClass('solid-primary-btn');
 
     $('#auto-save-alert').addClass('auto-saved');
     $('.page-header-actions-block').addClass('d-flex align-items-center');
@@ -388,6 +403,52 @@ frappe.ready(async () => {
   pageHeadingSection();
   // End UI Fixes
 
+  const deleteBtnInstance = new Vue({
+    el: '#deleteBtn',
+    delimiters: ['[[', ']]'],
+    data: function () {
+      return {
+        btnText: this.getBtnText()
+      }
+    },
+    methods: {
+      deleteDocument: async function () {
+        if (frappe.web_form.doc.name) {
+          frappe.confirm('Are you sure you want to delete this enrichment?',
+            async function () {
+              // delete document
+              await frappe.web_form.delete(frappe.web_form.doc.name);
+              // clearInterval(autosave);
+              // window.history.back();
+              return true;
+            },
+            function () {
+              // do nothing
+              return false;
+            });
+        } else {
+          window.history.back();
+        }
+      },
+      getBtnText: function () {
+        if (frappe.web_form.doc.name) {
+          return 'Delete';
+        } else {
+          return 'Cancel';
+        }
+      }
+    },
+    template: `<button 
+      v-if="frappe.web_form.doc.is_published !== 1"
+      class="btn ml-2 solid-primary-btn btn-danger bg-danger" 
+      title="delete" 
+      style="border-color: var(--danger);" 
+      v-on:click="deleteDocument"
+      >
+        [[btnText]]
+      </button>`
+  });
+
   // Start Google Maps Autocomplete
   const gScriptUrl =
     "https://maps.googleapis.com/maps/api/js?key=AIzaSyAxSPvgric8Zn54pYneG9NondiINqdvb-w&libraries=places";
@@ -406,7 +467,7 @@ frappe.ready(async () => {
     frappe.web_form.doc.org = e.target.value;
   });
 
-  setInterval(autoSaveDraft, 5000);
+  const autosave = setInterval(autoSaveDraft, 5000);
   $(window).on("beforeunload", function (e) {
     e.preventDefault();
     autoSaveDraft();

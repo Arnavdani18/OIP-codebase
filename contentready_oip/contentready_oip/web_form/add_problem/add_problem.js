@@ -264,6 +264,9 @@ frappe.ready(async () => {
             frappe.web_form.doc[key] = r.message[key];
           });
 
+          // update delete btn vue instance
+          deleteBtnInstance.btnText = deleteBtnInstance.getBtnText();
+
           // Replace state if exists
           const currQueryParam = window.location['search'];
 
@@ -563,19 +566,12 @@ frappe.ready(async () => {
     `
   });
 
-  new Vue({
+  const deleteBtnInstance = new Vue({
     el: '#deleteBtn',
     delimiters: ['[[', ']]'],
     data: function () {
-      return {}
-    },
-    computed: {
-      btnText: function () {
-        if (frappe.web_form.doc.name) {
-          return 'Delete';
-        } else {
-          return 'Cancel';
-        }
+      return {
+        btnText: this.getBtnText()
       }
     },
     methods: {
@@ -585,7 +581,7 @@ frappe.ready(async () => {
             async function () {
               // delete document
               await frappe.web_form.delete(frappe.web_form.doc.name);
-              // clearInterval(autoSave);
+              clearInterval(autoSave);
               window.history.back();
               return true;
             },
@@ -597,9 +593,16 @@ frappe.ready(async () => {
           window.history.back();
         }
       },
-
+      getBtnText: function () {
+        if (frappe.web_form.doc.name) {
+          return 'Delete';
+        } else {
+          return 'Cancel';
+        }
+      }
     },
     template: `<button 
+      v-if="frappe.web_form.doc.is_published !== 1"
       class="btn ml-2 solid-primary-btn btn-danger bg-danger" 
       title="delete" 
       style="border-color: var(--danger);" 
