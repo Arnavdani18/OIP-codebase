@@ -868,6 +868,7 @@ frappe.ready(async () => {
               // delete document
               await frappe.web_form.delete(frappe.web_form.doc.name);
               clearInterval(autosave);
+              $(window).off("beforeunload");
               window.history.back();
               return true;
             },
