@@ -214,7 +214,7 @@ frappe.ready(async () => {
           });
 
           // update delete btn vue instance
-          // deleteBtnInstance.btnText = deleteBtnInstance.getBtnText();
+          deleteBtnInstance.btnText = deleteBtnInstance.getBtnText();
 
           // Replace state if exists
           const currQueryParam = window.location['search'];
@@ -257,7 +257,7 @@ frappe.ready(async () => {
     $(".page-header-actions-block").append(alert);
     $(".page-header-actions-block")
       // .append(saveAsDraftBtn)
-      // .append(deleteBtnPlaceholder)
+      .append(deleteBtnPlaceholder)
       .append(publishBtn);
   };
 
@@ -413,13 +413,26 @@ frappe.ready(async () => {
     },
     methods: {
       deleteDocument: async function () {
+
         if (frappe.web_form.doc.name) {
           frappe.confirm('Are you sure you want to delete this enrichment?',
             async function () {
               // delete document
-              await frappe.web_form.delete(frappe.web_form.doc.name);
-              // clearInterval(autosave);
-              // window.history.back();
+              const deleteStatus = await new Promise(function (resolve, reject) {
+                resolve(
+                  frappe.call({
+                    method: 'contentready_oip.api.delete_enrichment',
+                    args: { name: frappe.web_form.doc.name }
+                  })
+                )
+              });
+
+              console.log("delete status: ", deleteStatus);
+              if (deleteStatus.message === true) {
+                stopInterval();
+                $(window).off("beforeunload");
+                window.history.back();
+              }
               return true;
             },
             function () {
@@ -467,7 +480,11 @@ frappe.ready(async () => {
     frappe.web_form.doc.org = e.target.value;
   });
 
-  const autosave = setInterval(autoSaveDraft, 5000);
+  let autoSave = setInterval(autoSaveDraft, 5000);
+  function stopInterval() {
+    clearInterval(autoSave);
+  }
+
   $(window).on("beforeunload", function (e) {
     e.preventDefault();
     autoSaveDraft();
