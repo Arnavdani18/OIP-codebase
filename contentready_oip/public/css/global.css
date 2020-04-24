@@ -15,7 +15,7 @@
     font-size: 1.4rem;
 }
 
-button[data-dismiss="modal"] {
+.close[data-dismiss="modal"] {
   /* Attribute has this exact value */
   font-size: 2rem;
 }
