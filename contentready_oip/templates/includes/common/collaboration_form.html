@@ -1,3 +1,5 @@
+<script type="text/javascript" src="/assets/frappe/node_modules/vue/dist/vue.js"></script>
+
 <div class="modal" tabindex="-1" role="dialog" id="collaboration-modal-{{name}}">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content p-4">
@@ -24,6 +26,8 @@
                             <option value="{{persona.value}}">{{persona.label}}</option>
                             {% endfor %}
                         </select>
+
+                        <!-- <div id="personaVueComp"></div> -->
                     </div>
                 </form>
             </div>
@@ -58,6 +62,82 @@
             });
         }
         createPersonaOptions();
+
+        const getAvailablePersonas = function () {
+            frappe.call({
+                method: 'contentready_oip.api.get_persona_list',
+                args: {},
+                callback: function (r) {
+                    let user_personas;
+                    // if (frappe.web_form.doc.personas) {
+                    //     user_personas = frappe.web_form.doc.personas.map(p => p.persona);
+                    // }
+
+                    // it should be as per edit profile persona:
+                    // ["innovator"]
+                    // personaVueComp.user_personas = user_personas;
+                    personaVueComp.avail_personas = r.message;
+                }
+            });
+        }
+
+        const personaVueComp = new Vue({
+            el: '#personaVueComp',
+            delimiters: ['[{', '}]'],
+            data: {
+                avail_personas: [],
+                user_personas: []
+            },
+            beforeCreate: function () {
+                // https://vuejs.org/v2/api/#beforeCreate
+                getAvailablePersonas();
+            },
+            methods: {
+                toggleClass: function (persona) {
+                    let is_present = this.user_personas.find(p => persona === p);
+                    if (is_present) {
+                        return true
+                    } else {
+                        return false;
+                    }
+                },
+
+                updatePersonaToDoc: function (personaClicked) {
+                    if (!frappe.web_form.doc.personas) {
+                        frappe.web_form.doc.personas = [];
+                    }
+
+                    let index = frappe.web_form.doc.personas.findIndex(s => s.persona === personaClicked);
+
+                    if (index > 0) {
+                        frappe.web_form.doc.personas.splice(index, 1)
+                    } else {
+                        frappe.web_form.doc.personas.push({ persona: personaClicked });
+                    }
+
+                    getAvailablePersonas();
+                }
+            },
+            template: `
+                <div class="row">
+                <div class="col d-flex flex-wrap">
+                    <button 
+                        v-for="persona in avail_personas" 
+                        class="btn btn-lg mb-3 mr-3 persona-btn" 
+                        :title="persona['label']"
+                        :class="{
+                        'btn-primary': toggleClass(persona['value']),
+                        'text-white': toggleClass(persona['value']),
+                        'btn-outline-primary' :!toggleClass(persona['value']) 
+                        }"
+                        @click="updatePersonaToDoc(persona['value'])"
+                        >
+                        [{persona['label']}]
+                    </button>
+                </div>
+                </div>
+                `
+        })
     })
 
     deleteCollaboration = (doctype, name) => {
@@ -151,6 +231,10 @@
     }
 
     .collaboration-add-btn:hover {
+        color: white;
+    }
+
+    .persona-btn:hover {
         color: white;
     }
 </style>
