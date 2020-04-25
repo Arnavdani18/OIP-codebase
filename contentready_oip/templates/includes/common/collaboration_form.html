@@ -20,7 +20,7 @@
                                 required></textarea>
                         </div>
                         <label for="personaSelect" class="modal-label">Persona</label>
-                        <select class="form-control" id="persona-select-{{name}}" required>
+                        <select class="form-control" style="font-size: 1.4rem;" id="persona-select-{{name}}" required>
                             <option value="">Please Select a Persona</option>
                             {% for persona in personas %}
                             <option value="{{persona.value}}">{{persona.label}}</option>
@@ -82,7 +82,7 @@
         }
 
         const personaVueComp = new Vue({
-            el: '#personaVueComp',
+            // el: '#personaVueComp',
             delimiters: ['[{', '}]'],
             data: {
                 avail_personas: [],
