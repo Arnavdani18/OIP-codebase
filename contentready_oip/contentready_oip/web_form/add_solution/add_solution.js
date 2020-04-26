@@ -6,31 +6,70 @@ frappe.ready(async () => {
   // Simple sleep(ms) function from https://stackoverflow.com/a/48882182
   const sleep = m => new Promise(r => setTimeout(r, m));
 
-  // $('.page-header-actions-block').append('<div id="showModal"></div>');
-  const show_problem_modal = new Vue({
-    el: '#showModal',
+  Vue.component('problem-detail-modal', {
     delimiters: ['[[', ']]'],
-    data: {
-      msg: 'hello world'
-    },
+    props: ['msg', 'id'],
     methods: {
-      showModal: function () {
-        $('#myModal').modal('show');
-      }
+
     },
     template: `
       <div>
         <!-- https://vuejs.org/2015/10/28/why-no-template-url/ -->
-        <button id="show-modal" @click="showModal">Show Modal</button>
-        <div class="modal" id="myModal" tabindex="-1" role="dialog">
+        <!-- <button id="show-modal" @click="showModal">Show Modal</button> -->
+        <div class="modal" :id="id" tabindex="-1" role="dialog">
           <div class="modal-dialog modal-xl" role="document">
               <div class="modal-content">
-                  <div class="modal-header">
-                      <h5 class="modal-title">Modal title</h5>
-                      <button type="button" class="close" data-dismiss="modal" title="close" aria-label="Close">
-                          <span aria-hidden="true" style="font-size: 2rem;">&times;</span>
-                      </button>
-                  </div>
+                  <div class="modal-header pb-0 pl-0 pt-0">
+                  <!-- <h5 class="modal-title" id="enrichment-label-{{name}}" hidden>
+                    enrichment.title
+                  </h5> -->
+                  <ul
+                    class="nav nav-tabs nav-section nav-justified nav-tab-section"
+                    id="leftTab"
+                    role="tablist"
+                  >
+                    <li class="nav-item">
+                      <a
+                        class="nav-link active tab-width"
+                        href="#overview"
+                        aria-controls="overview"
+                        role="tab"
+                        data-toggle="tab"
+                        >Overview</a
+                      >
+                    </li>
+                    <li class="nav-item">
+                      <a
+                        class="nav-link tab-width"
+                        href="#enrichment"
+                        aria-controls="enrichment"
+                        role="tab"
+                        data-toggle="tab"
+                        >Enrichment</a
+                      >
+                    </li>
+                    <li class="nav-item">
+                      <a
+                        class="nav-link tab-width"
+                        href="#media"
+                        aria-controls="media"
+                        role="tab"
+                        data-toggle="tab"
+                        >Media</a
+                      >
+                    </li>
+                  </ul>
+
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="Close"
+                    style="font-size:2rem; line-height:4rem;"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
                   <div class="modal-body">
                       <p>Modal body text goes here.</p>
                       <p>[[msg]]</p>
@@ -42,6 +81,27 @@ frappe.ready(async () => {
               </div>
           </div>
       </div>
+      </div>
+    `
+  });
+
+  $('.page-header-actions-block').append('<div id="showModal"></div>');
+
+  new Vue({
+    el: '#showModal',
+    data: {
+      message: 'hello world',
+      name: 'problem001'
+    },
+    methods: {
+      showModal: function () {
+        $(`#${this.name}`).modal('show');
+      }
+    },
+    template: `
+      <div>
+        <button id="show-modal" @click="showModal">Show Modal</button>
+        <problem-detail-modal :msg="message" :id="name"></problem-detail-modal>
       </div>
     `
   })
