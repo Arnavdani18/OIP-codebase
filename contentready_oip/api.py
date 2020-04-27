@@ -408,9 +408,10 @@ def get_problem_card(name, html=True):
         }
         problem_card_template = "templates/includes/problem/problem_card.html"
         overview_tab_template = "templates/includes/problem/overview.html"
+
         problem_card = frappe.render_template(problem_card_template, context)
-        overview_tab = frappe.render_template(overview_tab_template,doc)
-        return problem_card, doc.name
+        overview_tab = frappe.render_template(overview_tab_template,doc.as_dict())
+        return problem_card, doc.name,overview_tab
     else:
         return doc
 

@@ -6,17 +6,13 @@ frappe.ready(async () => {
   // Simple sleep(ms) function from https://stackoverflow.com/a/48882182
   const sleep = m => new Promise(r => setTimeout(r, m));
 
-  Vue.component('problem-detail-modal', {
+  const problemModal = {
     delimiters: ['[[', ']]'],
-    props: ['msg', 'id'],
-    methods: {
-
-    },
+    props: ['modalId', 'payload'],
     template: `
       <div>
         <!-- https://vuejs.org/2015/10/28/why-no-template-url/ -->
-        <!-- <button id="show-modal" @click="showModal">Show Modal</button> -->
-        <div class="modal" :id="id" tabindex="-1" role="dialog">
+        <div class="modal" :id="modalId" tabindex="-1" role="dialog">
           <div class="modal-dialog modal-xl" role="document">
               <div class="modal-content">
                   <div class="modal-header pb-0 pl-0 pt-0">
@@ -71,8 +67,15 @@ frappe.ready(async () => {
                   </button>
                 </div>
                   <div class="modal-body">
-                      <p>Modal body text goes here.</p>
-                      <p>[[msg]]</p>
+                    <div class="tab-content">
+                      <div role="tabpanel" class="tab-pane active" id="overview" v-html="payload.overview_html"></div>
+                      <div role="tabpanel" class="tab-pane" id="enrichment">
+                        enrichment
+                      </div>
+                      <div role="tabpanel" class="tab-pane" id="media">
+                        media
+                      </div>
+                    </div>
                   </div>
                   <div class="modal-footer">
                       <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Close</button>
@@ -83,28 +86,7 @@ frappe.ready(async () => {
       </div>
       </div>
     `
-  });
-
-  $('.page-header-actions-block').append('<div id="showModal"></div>');
-
-  new Vue({
-    el: '#showModal',
-    data: {
-      message: 'hello world',
-      name: 'problem001'
-    },
-    methods: {
-      showModal: function () {
-        $(`#${this.name}`).modal('show');
-      }
-    },
-    template: `
-      <div>
-        <button id="show-modal" @click="showModal">Show Modal</button>
-        <problem-detail-modal :msg="message" :id="name"></problem-detail-modal>
-      </div>
-    `
-  })
+  }
 
   // Fix layout - without this, the entire form occupies col-2 due to custom CSS.
   moveDivs = () => {
@@ -184,39 +166,6 @@ frappe.ready(async () => {
     });
   };
 
-  // createSectorOptions = () => {
-  //   $('*[data-fieldname="sectors"]').before(
-  //     '<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sector-options"></div>'
-  //   );
-  //   frappe.call({
-  //     method: 'contentready_oip.api.get_sector_list',
-  //     args: {},
-  //     callback: function (r) {
-  //       let solution_sectors;
-  //       if (frappe.web_form.doc.sectors) {
-  //         solution_sectors = frappe.web_form.doc.sectors.map(s => s.sector);
-  //       }
-  //       r.message.map(op => {
-  //         let has_sector = false;
-  //         if (solution_sectors) {
-  //           has_sector = solution_sectors.indexOf(op.value) !== -1;
-  //         }
-  //         const el = `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="sector-check-${op.value}" value="${op.value}"><label class="form-check-label" for="sector-check-${op.value}">${op.label}</label></div>`;
-  //         $('#sector-options').append(el);
-  //         $(`#sector-check-${op.value}`).attr('checked', has_sector);
-  //       });
-  //       $('[id^=sector-check]').on('click', addSectorToDoc);
-  //     }
-  //   });
-  // };
-
-  // addSectorToDoc = (event) => {
-  //   if (!frappe.web_form.doc.sectors) {
-  //     frappe.web_form.doc.sectors = [];
-  //   }
-  //   frappe.web_form.doc.sectors.push({ sector: event.target.value });
-  // };
-
   const addSection = function () {
     // For Sectors
     $('*[data-fieldname="sectors"]').before(
@@ -247,11 +196,6 @@ frappe.ready(async () => {
           data: r.message
         });
         setSolversMultiselectFromDoc();
-        // r.message.map(op => {
-        //   if (!op.value.endsWith('example.com')){
-        //     $('#solver-team-select').append(`<option value="${op.value}"> ${op.label}</option>`);
-        //   }
-        // })
       }
     });
   };
@@ -352,6 +296,8 @@ frappe.ready(async () => {
       method: 'contentready_oip.api.get_problem_card',
       args: { name: name },
       callback: function (r) {
+        console.log("Get Problem Card: ", r);
+
         // r.message[0] is the html
         // r.message[1] is the doc_name in case we need to do any processing client side
         $('#matching-problems').append(r.message[0]);
@@ -363,6 +309,25 @@ frappe.ready(async () => {
           .removeAttr('data-toggle');
         selectProblemUI(r.message[1]);
         setupProblemsForSelection();
+
+        // mark for rendering vue component
+        $('.page-breadcrumbs').after(`<div id="${name}"></div>`);
+
+        new Vue({
+          el: `#${name}`,
+          data: {
+            name: name || 'problem001',
+            payload: { overview_html: r.message[2] },
+          },
+          components: {
+            problemModal
+          },
+          template: `
+        <div>
+          <problemModal :modalId="name" :payload="payload" />
+        </div>
+      `
+        })
       }
     });
   };
@@ -402,6 +367,8 @@ frappe.ready(async () => {
           text: text
         },
         callback: function (r) {
+          console.log("look problem by text: ", r);
+
           // Add matching problems to div
           $('#matching-problems').empty();
           $('#matchingProblemsCount').text('');
