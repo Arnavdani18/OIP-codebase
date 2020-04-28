@@ -863,7 +863,7 @@ def deploy_apps():
 def update_apps_via_git():
     import shlex, subprocess, os
     os.chdir('/home/cr/frappe-bench/apps/contentready_oip')
-    cmd = ['git pull', 'bench --site openinnovationplatform.org migrate', 'find . -iname *.pyc -delete', 'bench restart']
+    cmds = ['git pull', 'bench --site openinnovationplatform.org migrate', 'find . -iname *.pyc -delete', 'bench restart']
     try:
         for cmd in cmds:
             cmd = shlex.split(cmd)
