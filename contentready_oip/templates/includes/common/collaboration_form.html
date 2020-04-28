@@ -1,41 +1,46 @@
+<script type="text/javascript" src="/assets/frappe/node_modules/vue/dist/vue.js"></script>
+
 <div class="modal" tabindex="-1" role="dialog" id="collaboration-modal-{{name}}">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Fill in the details to collaborate</h4>
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content p-4">
+            <div class="modal-header collaboration-header">
+                <h3 class="modal-title">Fill in the details to collaborate</h3>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form class="was-validated">
+                <form class="">
                     <div class="form-group">
                         <div class="form-group">
-                            <label for="collaboration-comment" class="modal-label">Please state your intent</label>
-                            <textarea type="text" class="form-control is-invalid" id="collaboration-comment-{{name}}" rows="3"
-                                placeholder="Enter comment" required></textarea>
-                                <!-- <div class="invalid-feedback">
-                                    Please explain how you can contribute.
-                                  </div> -->
+                            <label for="collaboration-comment" class="modal-label">Please state your intent <span
+                                    class="text-primary">*</span></label>
+                            <textarea type="text" class="form-control collaboration-comment-area"
+                                id="collaboration-comment-{{name}}" rows="3" placeholder="Enter comment"
+                                required></textarea>
                         </div>
                         <label for="personaSelect" class="modal-label">Persona</label>
-                        <select class="form-control" id="persona-select-{{name}}" required>
+                        <select class="form-control" style="font-size: 1.4rem;" id="persona-select-{{name}}" required>
                             <option value="">Please Select a Persona</option>
                             {% for persona in personas %}
                             <option value="{{persona.value}}">{{persona.label}}</option>
                             {% endfor %}
                         </select>
-                        <!-- <div class="invalid-feedback">Please select a valid persona.</div> -->
+
+                        <!-- <div id="personaVueComp"></div> -->
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer collaboration-footer justify-content-start">
                 {% if doctype == 'Collaboration Table' %}
                 <!-- Edit mode -->
-                <button type="button" class="modal-btn btn-outline-danger" onclick="deleteCollaboration('{{doctype}}', '{{name}}')">Delete</button>
+                <button type="button" class="modal-btn btn-outline-danger"
+                    onclick="deleteCollaboration('{{doctype}}', '{{name}}')">Delete</button>
                 {% endif %}
-                <button type="button" class="card-btn mr-auto"
+                <button type="button" class="modal-btn btn-outline-primary collaboration-add-btn"
                     onclick="submitCollaboration('{{doctype}}', '{{name}}')">Add</button>
+                <button class="modal-btn btn-link text-dark" style="border: none; font-size: 1.4rem;"
+                    data-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>
@@ -57,14 +62,90 @@
             });
         }
         createPersonaOptions();
+
+        const getAvailablePersonas = function () {
+            frappe.call({
+                method: 'contentready_oip.api.get_persona_list',
+                args: {},
+                callback: function (r) {
+                    let user_personas;
+                    // if (frappe.web_form.doc.personas) {
+                    //     user_personas = frappe.web_form.doc.personas.map(p => p.persona);
+                    // }
+
+                    // it should be as per edit profile persona:
+                    // ["innovator"]
+                    // personaVueComp.user_personas = user_personas;
+                    personaVueComp.avail_personas = r.message;
+                }
+            });
+        }
+
+        const personaVueComp = new Vue({
+            // el: '#personaVueComp',
+            delimiters: ['[{', '}]'],
+            data: {
+                avail_personas: [],
+                user_personas: []
+            },
+            beforeCreate: function () {
+                // https://vuejs.org/v2/api/#beforeCreate
+                getAvailablePersonas();
+            },
+            methods: {
+                toggleClass: function (persona) {
+                    let is_present = this.user_personas.find(p => persona === p);
+                    if (is_present) {
+                        return true
+                    } else {
+                        return false;
+                    }
+                },
+
+                updatePersonaToDoc: function (personaClicked) {
+                    if (!frappe.web_form.doc.personas) {
+                        frappe.web_form.doc.personas = [];
+                    }
+
+                    let index = frappe.web_form.doc.personas.findIndex(s => s.persona === personaClicked);
+
+                    if (index > 0) {
+                        frappe.web_form.doc.personas.splice(index, 1)
+                    } else {
+                        frappe.web_form.doc.personas.push({ persona: personaClicked });
+                    }
+
+                    getAvailablePersonas();
+                }
+            },
+            template: `
+                <div class="row">
+                <div class="col d-flex flex-wrap">
+                    <button 
+                        v-for="persona in avail_personas" 
+                        class="btn btn-lg mb-3 mr-3 persona-btn" 
+                        :title="persona['label']"
+                        :class="{
+                        'btn-primary': toggleClass(persona['value']),
+                        'text-white': toggleClass(persona['value']),
+                        'btn-outline-primary' :!toggleClass(persona['value']) 
+                        }"
+                        @click="updatePersonaToDoc(persona['value'])"
+                        >
+                        [{persona['label']}]
+                    </button>
+                </div>
+                </div>
+                `
+        })
     })
-    
+
     deleteCollaboration = (doctype, name) => {
         frappe.call({
             method: 'contentready_oip.api.delete_contribution',
-            args: {child_doctype: doctype, name: name},
+            args: { child_doctype: doctype, name: name },
             callback: (r) => {
-                if (r.message){
+                if (r.message) {
                     window.location.reload();
                 }
             }
@@ -74,13 +155,13 @@
     submitCollaboration = (doctype, name) => {
         const collaboration = {
             user: frappe.session.user,
-            persona: $('#persona-select-'+name).val(),
-            comment: $('#collaboration-comment-'+name).val()
+            persona: $('#persona-select-' + name).val(),
+            comment: $('#collaboration-comment-' + name).val()
         }
-        if (!collaboration.comment){
+        if (!collaboration.comment) {
             frappe.throw('Please state your intent.');
         }
-        if (!collaboration.persona){
+        if (!collaboration.persona) {
             frappe.throw('Please select a persona.');
         }
         frappe.call({
@@ -95,14 +176,14 @@
                     // console.log(r.message);
                     if (doctype == 'Collaboration Table') {
                         // edit mode
-                        $('#collaboration-card-'+name).replaceWith(r.message[0]);
+                        $('#collaboration-card-' + name).replaceWith(r.message[0]);
                         // TODO: Toggles twice for some reason leaving an empty form on the screen.
                         // TEMP Fix: Reload.
                         window.location.reload();
                     } else {
                         $('#collaborations').prepend(r.message[0]);
                         $('#collaboration-count').text(r.message[1]);
-                        $('#collaboration-modal-'+name).modal('toggle');
+                        $('#collaboration-modal-' + name).modal('toggle');
                     }
                 }
             }
@@ -112,9 +193,9 @@
 
 <style>
     .modal-btn {
-        height: 4.2rem;
+        height: 4rem;
         box-sizing: border-box;
-        /* border: 0.2rem solid #d1811a; */
+        border: 0.2rem solid;
         border-radius: 0.4rem;
         background-color: #ffffff;
         /* color: #d98b26; */
@@ -126,8 +207,34 @@
         text-transform: capitalize;
         padding: 0 1.5rem;
     }
-    .modal-label, .dz-message {
+
+    .collaboration-comment-area {
+        color: var(--secondary1);
+        font-size: var(--f14);
+        letter-spacing: var(--space);
+        line-height: 2.2rem;
+    }
+
+    .modal-label,
+    .dz-message {
         font-size: 1.4rem;
-        font-weight: bold;
+        font-weight: 600;
+        color: var(--secondary1);
+    }
+
+    .collaboration-header {
+        border-bottom: unset;
+    }
+
+    .collaboration-footer {
+        border-top: unset;
+    }
+
+    .collaboration-add-btn:hover {
+        color: white;
+    }
+
+    .persona-btn:hover {
+        color: white;
     }
 </style>

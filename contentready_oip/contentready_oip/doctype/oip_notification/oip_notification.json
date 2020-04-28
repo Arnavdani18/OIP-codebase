@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "creation": "2020-03-19 16:28:05.293117",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -63,7 +64,8 @@
   {
    "fieldname": "route",
    "fieldtype": "Data",
-   "label": "Notification Route"
+   "label": "Notification Route",
+   "length": 300
   },
   {
    "default": "0",
@@ -72,7 +74,8 @@
    "label": "Is Read"
   }
  ],
- "modified": "2020-03-23 17:19:48.230300",
+ "links": [],
+ "modified": "2020-04-23 20:22:16.213666",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP Notification",

@@ -1,10 +1,10 @@
 <style>
-  .modal-header {
+  .enrichment-modal-header {
     align-items: center;
     padding: 0;
   }
 
-  .modal-header>.close {
+  .dismis-modal {
     margin-right: 1rem;
     font-size: 2rem;
   }
@@ -13,7 +13,7 @@
     width: 10rem;
   }
 
-  .modal-footer>.btn-text {
+  .enrichment-modal-footer>.btn-text {
     border-color: transparent;
     color: var(--tertiary1);
     font-size: 1.2rem;
@@ -22,12 +22,12 @@
     line-height: 2rem;
   }
 
-  .modal-footer>.btn-text:hover {
+  .enrichment-modal-footer>.btn-text:hover {
     border-color: none;
     color: var(--tertiary1);
   }
 
-  .modal-footer>.solid-btn {
+  .enrichment-modal-footer>.solid-btn {
     border-color: var(--primary2);
     background-color: var(--primary2);
     padding: 0.5rem 1rem;
@@ -43,7 +43,7 @@
   aria-labelledby="enrichment-label-{{name}}" aria-hidden="true">
   <div class="modal-dialog modal-full modal-dialog-centered" role="document">
     <div class="modal-content">
-      <div class="modal-header ">
+      <div class="modal-header enrichment-modal-header">
         <!-- <h5 class="modal-title" id="enrichment-label-{{name}}" hidden>
           enrichment.title
         </h5> -->
@@ -58,7 +58,7 @@
           </li>
         </ul>
 
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close dismis-modal">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -122,7 +122,7 @@
           {% endif %}
         </div>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer enrichment-modal-footer">
         <button type="button" class="btn btn-text" onclick="deleteEnrichment('{{name}}')">
           Delete
         </button>

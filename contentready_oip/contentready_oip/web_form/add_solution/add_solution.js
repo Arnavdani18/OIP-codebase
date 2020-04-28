@@ -511,6 +511,9 @@ frappe.ready(async () => {
             frappe.web_form.doc[key] = r.message[key];
           });
 
+          // update delete btn vue instance
+          deleteBtnInstance.btnText = deleteBtnInstance.getBtnText();
+
           // Replace state if exists
           const currQueryParam = window.location['search'];
 
@@ -538,12 +541,22 @@ frappe.ready(async () => {
   };
 
   addActionButtons = () => {
-    const saveAsDraftBtn = `<button class="btn btn-sm ml-2" onclick="saveAsDraft()">Save as Draft</button>`;
-    const publishBtn = `<button class="btn btn-sm btn-primary ml-2" onclick="publishSolution()">Publish</button>`;
+    const saveAsDraftBtn = `<button class="btn ml-2 btn-outline-primary outline-primary-btn" onclick="saveAsDraft()">Save as Draft</button>`;
+    const publishBtn = `<button 
+      class="btn btn-primary ml-2 solid-primary-btn" 
+      onclick="publishSolution()"
+      >
+        Publish
+      </button>`;
+
+    const deleteBtnPlaceholder = `
+      <div id="deleteBtn"></div>
+    `
     const alert = `<span class="alert alert-primary fade show hidden" role="alert" id="auto-save-alert">Saved</span>`;
     $('.page-header-actions-block').append(alert);
     $('.page-header-actions-block')
       // .append(saveAsDraftBtn)
+      .append(deleteBtnPlaceholder)
       .append(publishBtn);
   };
 
@@ -563,13 +576,13 @@ frappe.ready(async () => {
   };
 
   const pageHeadingSection = () => {
-    $('button:contains("Save as Draft")')
-      .removeClass('btn-sm')
-      .addClass('btn-outline-primary outline-primary-btn');
+    // $('button:contains("Save as Draft")')
+    //   .removeClass('btn-sm')
+    //   .addClass('btn-outline-primary outline-primary-btn');
 
-    $('button:contains("Publish")')
-      .removeClass('')
-      .addClass('solid-primary-btn');
+    // $('button:contains("Publish")')
+    //   .removeClass('')
+    //   .addClass('solid-primary-btn');
 
     $('#auto-save-alert').addClass('auto-saved');
     $('.page-header-actions-block').addClass('d-flex align-items-center');
@@ -829,6 +842,53 @@ frappe.ready(async () => {
     `
   });
 
+  const deleteBtnInstance = new Vue({
+    el: '#deleteBtn',
+    delimiters: ['[[', ']]'],
+    data: function () {
+      return {
+        btnText: this.getBtnText()
+      }
+    },
+    methods: {
+      deleteDocument: async function () {
+        if (frappe.web_form.doc.name) {
+          frappe.confirm('Are you sure you want to delete this solution?',
+            async function () {
+              // delete document
+              await frappe.web_form.delete(frappe.web_form.doc.name);
+              clearInterval(autosave);
+              $(window).off("beforeunload");
+              window.history.back();
+              return true;
+            },
+            function () {
+              // do nothing
+              return false;
+            });
+        } else {
+          window.history.back();
+        }
+      },
+      getBtnText: function () {
+        if (frappe.web_form.doc.name) {
+          return 'Delete';
+        } else {
+          return 'Cancel';
+        }
+      }
+    },
+    template: `<button 
+      v-if="frappe.web_form.doc.is_published !== 1"
+      class="btn ml-2 solid-primary-btn btn-danger bg-danger" 
+      title="delete" 
+      style="border-color: var(--danger);" 
+      v-on:click="deleteDocument"
+      >
+        [[btnText]]
+      </button>`
+  });
+
 
   // setSolversMultiselectFromDoc();
 
@@ -875,7 +935,7 @@ frappe.ready(async () => {
     frappe.web_form.doc.org = e.target.value;
   });
 
-  setInterval(autoSaveDraft, 5000);
+  const autosave = setInterval(autoSaveDraft, 5000);
   $(window).on("beforeunload", function (e) {
     e.preventDefault();
     console.log('auto saving');
