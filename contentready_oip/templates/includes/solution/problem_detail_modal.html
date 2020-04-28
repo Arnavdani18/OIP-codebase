@@ -1,4 +1,4 @@
-<div class="modal" id="{{name}}" tabindex="-1" role="dialog">
+<div class="modal" id="{{name}}" tabindex="-1" data-backdrop="static" role="dialog">
     <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header pb-0 pl-0 pt-0">
@@ -17,7 +17,7 @@
                     </li>
                 </ul>
 
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                <button type="button" class="close modal-dismiss-btn" aria-label="Close"
                     style="font-size:2rem; line-height:4rem;">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -59,7 +59,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary btn-lg text-white">Select to Solve</button>
+                <button type="button" class="btn btn-primary btn-lg text-white" data-type="select_to_solve">Select to
+                    Solve</button>
             </div>
         </div>
     </div>

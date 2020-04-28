@@ -270,25 +270,36 @@ frappe.ready(async () => {
         const selectedProblemName = $(selectedProblem).data('name');
         const alreadySelected = $(selectedProblem).data('selected');
 
-        console.log(selectedProblemName, alreadySelected);
         frappe.call({
           method: 'contentready_oip.api.get_problem_detail_modal',
           args: { name: selectedProblemName },
           callback: function (r) {
-            console.log(r);
             $('.page_content').after(r.message);
             $(`#${selectedProblemName}`).modal('show');
-            // $('#Problem004').modal('toggle')
+            $(`#${selectedProblemName} .modal-dismiss-btn`).on('click', function () {
+              $(`#${selectedProblemName}`).modal('hide');
+            });
+
+            const select_to_solve_btn = $(`#${selectedProblemName} button[data-type="select_to_solve"]`);
+            // Vary the button text
+            if (alreadySelected) {
+              select_to_solve_btn.text('Unselect Problem');
+            } else {
+              select_to_solve_btn.text('Select to solve');
+            }
+
+            // Add event listen to button
+            select_to_solve_btn.on('click', function () {
+              if (alreadySelected) {
+                deselectProblemUI(selectedProblemName);
+                removeProblemFromSolvedSet(selectedProblemName);
+              } else {
+                selectProblemUI(selectedProblemName);
+                addProblemToSolvedSet(selectedProblemName);
+              }
+            })
           }
         })
-        return;
-        if (alreadySelected) {
-          deselectProblemUI(selectedProblemName);
-          removeProblemFromSolvedSet(selectedProblemName);
-        } else {
-          selectProblemUI(selectedProblemName);
-          addProblemToSolvedSet(selectedProblemName);
-        }
       });
   };
 
