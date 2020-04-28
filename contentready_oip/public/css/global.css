@@ -1,1 +1,36 @@
+.page-card-body > div > a {
+    padding: 0.5rem 1rem;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    border-radius: 0.3rem;
+    color: white;
+}
 
+.page_content > p {
+    font-size: unset;
+    font-weight: unset;
+}
+
+.msgprint {
+    font-size: 1.4rem;
+}
+
+.close[data-dismiss="modal"] {
+  /* Attribute has this exact value */
+  font-size: 2rem;
+}
+
+.hidden {
+    display: none;
+}
+
+.btn-login {
+    padding: 0.5rem 1rem;
+    line-height: 1.5;
+    border-radius: 0.3rem;
+    color: white;
+}
+
+.toggle-password {
+    top: 1.2rem !important;
+}
