@@ -853,7 +853,7 @@ def send_sms(recipients, message):
 def deploy_apps():
     from frappe.utils.background_jobs import enqueue
     try:
-        enqueue(update_apps_via_git)
+        enqueue(update_apps_via_git, timeout=1200)
         return True
     except Exception as e:
         print(str(e))
@@ -861,10 +861,13 @@ def deploy_apps():
 
 @frappe.whitelist(allow_guest=True)
 def update_apps_via_git():
-    import shlex, subprocess
-    cmd = shlex.split('bench update')
+    import shlex, subprocess, os
+    os.chdir('/home/cr/frappe-bench/apps/contentready_oip')
+    cmd = ['git pull', 'bench --site dev.openinnovationplatform.org migrate', 'find . -iname *.pyc -delete', 'bench restart']
     try:
-        subprocess.check_output(cmd)
+        for cmd in cmds:
+            cmd = shlex.split(cmd)
+            subprocess.check_output(cmd)
         return True
     except Exception as e:
         print(str(e))
