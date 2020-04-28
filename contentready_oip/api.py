@@ -560,11 +560,11 @@ def add_or_edit_collaboration(doctype, name, collaboration, html=True):
 @frappe.whitelist(allow_guest = True)
 def add_subscriber(email, first_name=None):
     if not first_name:
-        first_name = email # the contact docytpe needs first_name. If the form doesn't give us this, use email instead. 
+        first_name = email # the contact docytpe needs first_name. If the form doesn't give us this, use email instead.
     frappe.set_user('Administrator')
     contact = frappe.get_doc({
         'doctype': 'Contact',
-        'first_name': email, 
+        'first_name': email,
         'email_ids': [{
             'email_id': email,
             'is_primary': True
@@ -794,7 +794,7 @@ def register(form=None):
 def set_notification_as_read(notification_name):
     frappe.set_value('OIP Notification', notification_name, 'is_read', True)
     return True
-    
+
 @frappe.whitelist(allow_guest=True)
 def complete_linkedin_login(code, state):
     from frappe.integrations.oauth2_logins import decoder_compat
@@ -863,4 +863,29 @@ def unpack_linkedin_response(info, profile=None):
 @frappe.whitelist(allow_guest=True)
 def send_sms(recipients, message):
     print(recipients, message)
-    
+
+
+@frappe.whitelist(allow_guest=True)
+def deploy_apps():
+    from frappe.utils.background_jobs import enqueue
+    try:
+        enqueue(update_apps_via_git, timeout=1200)
+        return True
+    except Exception as e:
+        print(str(e))
+        raise
+
+@frappe.whitelist(allow_guest=True)
+def update_apps_via_git():
+    import shlex, subprocess, os
+    os.chdir('/home/cr/frappe-bench/apps/contentready_oip')
+    cmds = ['git pull', 'bench --site dev.openinnovationplatform.org migrate', 'find . -iname *.pyc -delete', 'bench restart']
+    try:
+        for cmd in cmds:
+            cmd = shlex.split(cmd)
+            subprocess.check_output(cmd)
+        return True
+    except Exception as e:
+        print(str(e))
+        raise
+
