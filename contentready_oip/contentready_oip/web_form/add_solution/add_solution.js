@@ -67,7 +67,7 @@ frappe.ready(async () => {
       </div>
     </div>
 
-    
+
     </div></div>`
     );
     $('#add-solution-form').append($('.form-layout'));
@@ -278,7 +278,7 @@ frappe.ready(async () => {
       getProblemCard(qp.problem);
     }
     // When editing, show all the existing problems.
-    if (frappe.web_form.doc.problems_addressed) {
+    else if (frappe.web_form.doc.problems_addressed) {
       frappe.web_form.doc.problems_addressed.map(p => {
         getProblemCard(p.problem);
       });
@@ -552,8 +552,8 @@ frappe.ready(async () => {
 
   addActionButtons = () => {
     const saveAsDraftBtn = `<button class="btn ml-2 btn-outline-primary outline-primary-btn" onclick="saveAsDraft()">Save as Draft</button>`;
-    const publishBtn = `<button 
-      class="btn btn-primary ml-2 solid-primary-btn" 
+    const publishBtn = `<button
+      class="btn btn-primary ml-2 solid-primary-btn"
       onclick="publishSolution()"
       >
         Publish
@@ -765,7 +765,7 @@ frappe.ready(async () => {
     {% raw %}
     <ul class="list-group mb-3">
       <li v-for="(problem,i) in selectedProblems" class="list-group-item">
-        {{ problem['title'] }} 
+        {{ problem['title'] }}
         <button type="button" class="close" aria-label="Close" v-on:click="removeTitle(problem['name'])">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -833,14 +833,14 @@ frappe.ready(async () => {
       {% raw %}
         <div class="row">
           <div class="col d-flex flex-wrap">
-            <button 
+            <button
               v-for="sector in avail_sectors"
-              class="btn btn-lg mb-3 mr-3" 
+              class="btn btn-lg mb-3 mr-3"
               :title="sector['label']"
               :class="{
                 'btn-primary': toggleClass(sector['value']),
                 'text-white': toggleClass(sector['value']),
-                'btn-outline-primary' :!toggleClass(sector['value']) 
+                'btn-outline-primary' :!toggleClass(sector['value'])
               }"
               v-on:click="updateSectorToDoc(sector['value'])"
             >
@@ -888,11 +888,11 @@ frappe.ready(async () => {
         }
       }
     },
-    template: `<button 
+    template: `<button
       v-if="frappe.web_form.doc.is_published !== 1"
-      class="btn ml-2 solid-primary-btn btn-danger bg-danger" 
-      title="delete" 
-      style="border-color: var(--danger);" 
+      class="btn ml-2 solid-primary-btn btn-danger bg-danger"
+      title="delete"
+      style="border-color: var(--danger);"
       v-on:click="deleteDocument"
       >
         [[btnText]]
