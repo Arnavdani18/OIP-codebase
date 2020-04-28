@@ -208,6 +208,11 @@ def get_filtered_content(doctype):
             filter_sectors = {a['name'] for a in available_sectors}
         filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', filter_sectors]})
         content_set = {f['parent'] for f in filtered}
+        try:
+            user = frappe.get_doc('User Profile', frappe.session.user)
+            user_sectors = {sector.sector for sector in user.sectors}
+        except:
+            user_sectors = set()
         # TODO: Implement location filtering using Elasticsearch
         from geopy import distance
         for c in content_set:
@@ -219,11 +224,15 @@ def get_filtered_content(doctype):
                         if distance_km > filter_location_range:
                             # skip this document as it's outside our bounds
                             continue
+                    doc_sectors = {sector.sector for sector in doc.sectors}
+                    relevant_sectors = doc_sectors.intersection(user_sectors)
+                    doc.score = 0.3 * len(doc.validations) + 0.1 * len(doc.likes) + 0.1 * len(doc.enrichments) + 0.1 * len(doc.watchers) + 0.05 * len(doc.discussions) + 0.3 * len(relevant_sectors)
                     content.append(doc)
             except Exception as e:
                 print(str(e))
     except Exception as e:
         print(str(e))
+    content.sort(key=lambda x: x.score, reverse=True)
     return content
 
 @frappe.whitelist(allow_guest = True)
@@ -407,7 +416,7 @@ def get_problem_detail_modal(name, html=True):
     if html:
         detail_modal_template = "templates/includes/solution/problem_detail_modal.html"
         detail_modal = frappe.render_template(detail_modal_template,doc.as_dict())
-        
+
         return detail_modal
     else:
         return doc
