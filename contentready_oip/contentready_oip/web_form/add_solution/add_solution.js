@@ -6,88 +6,6 @@ frappe.ready(async () => {
   // Simple sleep(ms) function from https://stackoverflow.com/a/48882182
   const sleep = m => new Promise(r => setTimeout(r, m));
 
-  const problemModal = {
-    delimiters: ['[[', ']]'],
-    props: ['modalId', 'payload'],
-    template: `
-      <div>
-        <!-- https://vuejs.org/2015/10/28/why-no-template-url/ -->
-        <div class="modal" :id="modalId" tabindex="-1" role="dialog">
-          <div class="modal-dialog modal-xl" role="document">
-              <div class="modal-content">
-                  <div class="modal-header pb-0 pl-0 pt-0">
-                  <!-- <h5 class="modal-title" id="enrichment-label-{{name}}" hidden>
-                    enrichment.title
-                  </h5> -->
-                  <ul
-                    class="nav nav-tabs nav-section nav-justified nav-tab-section"
-                    id="leftTab"
-                    role="tablist"
-                  >
-                    <li class="nav-item">
-                      <a
-                        class="nav-link active tab-width"
-                        href="#overview"
-                        aria-controls="overview"
-                        role="tab"
-                        data-toggle="tab"
-                        >Overview</a
-                      >
-                    </li>
-                    <li class="nav-item">
-                      <a
-                        class="nav-link tab-width"
-                        href="#enrichment"
-                        aria-controls="enrichment"
-                        role="tab"
-                        data-toggle="tab"
-                        >Enrichment</a
-                      >
-                    </li>
-                    <li class="nav-item">
-                      <a
-                        class="nav-link tab-width"
-                        href="#media"
-                        aria-controls="media"
-                        role="tab"
-                        data-toggle="tab"
-                        >Media</a
-                      >
-                    </li>
-                  </ul>
-
-                  <button
-                    type="button"
-                    class="close"
-                    data-dismiss="modal"
-                    aria-label="Close"
-                    style="font-size:2rem; line-height:4rem;"
-                  >
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                  <div class="modal-body">
-                    <div class="tab-content">
-                      <div role="tabpanel" class="tab-pane active" id="overview" v-html="payload.overview_html"></div>
-                      <div role="tabpanel" class="tab-pane" id="enrichment">
-                        enrichment
-                      </div>
-                      <div role="tabpanel" class="tab-pane" id="media">
-                        media
-                      </div>
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary btn-lg" data-dismiss="modal">Close</button>
-                      <button type="button" class="btn btn-primary btn-lg text-white">Select to Solve</button>
-                  </div>
-              </div>
-          </div>
-      </div>
-      </div>
-    `
-  }
-
   // Fix layout - without this, the entire form occupies col-2 due to custom CSS.
   moveDivs = () => {
     $('.section-body > div').each(function () {
@@ -333,25 +251,6 @@ frappe.ready(async () => {
           .removeAttr('data-toggle');
         selectProblemUI(r.message[1]);
         setupProblemsForSelection();
-
-        //   // mark for rendering vue component
-        //   $('.page-breadcrumbs').after(`<div id="${name}"></div>`);
-
-        //   new Vue({
-        //     el: `#${name}`,
-        //     data: {
-        //       name: name || 'problem001',
-        //       payload: { overview_html: r.message[2] },
-        //     },
-        //     components: {
-        //       problemModal
-        //     },
-        //     template: `
-        //   <div>
-        //     <problemModal :modalId="name" :payload="payload" />
-        //   </div>
-        // `
-        //   })
       }
     });
   };

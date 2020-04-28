@@ -4,7 +4,7 @@
     padding: 0;
   }
 
-  .modal-header > .close {
+  .modal-header>.close {
     margin-right: 1rem;
     font-size: 2rem;
   }
@@ -13,7 +13,7 @@
     width: 10rem;
   }
 
-  .modal-footer > .btn-text {
+  .modal-footer>.btn-text {
     border-color: transparent;
     color: var(--tertiary1);
     font-size: 1.2rem;
@@ -22,12 +22,12 @@
     line-height: 2rem;
   }
 
-  .modal-footer > .btn-text:hover {
+  .modal-footer>.btn-text:hover {
     border-color: none;
     color: var(--tertiary1);
   }
 
-  .modal-footer > .solid-btn {
+  .modal-footer>.solid-btn {
     border-color: var(--primary2);
     background-color: var(--primary2);
     padding: 0.5rem 1rem;
@@ -39,54 +39,26 @@
   }
 </style>
 
-<div
-  class="modal fade"
-  id="enrichment-modal-{{ name }}"
-  tabindex="-1"
-  role="dialog"
-  aria-labelledby="enrichment-label-{{name}}"
-  aria-hidden="true"
->
+<div class="modal fade" id="enrichment-modal-{{ name }}" tabindex="-1" role="dialog"
+  aria-labelledby="enrichment-label-{{name}}" aria-hidden="true">
   <div class="modal-dialog modal-full modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header ">
         <!-- <h5 class="modal-title" id="enrichment-label-{{name}}" hidden>
           enrichment.title
         </h5> -->
-        <ul
-          class="nav nav-tabs nav-section nav-justified nav-tab-section"
-          id="leftTab"
-          role="tablist"
-        >
+        <ul class="nav nav-tabs nav-section nav-justified nav-tab-section" id="leftTab" role="tablist">
           <li class="nav-item">
-            <a
-              class="nav-link active tab-width"
-              href="#details"
-              aria-controls="details"
-              role="tab"
-              data-toggle="tab"
-              >Details</a
-            >
+            <a class="nav-link active tab-width" href="#details" aria-controls="details" role="tab"
+              data-toggle="tab">Details</a>
           </li>
           <li class="nav-item">
-            <a
-              class="nav-link tab-width"
-              href="#media"
-              aria-controls="media"
-              role="tab"
-              #media
-              data-toggle="tab"
-              >Media</a
-            >
+            <a class="nav-link tab-width" href="#media" aria-controls="media" role="tab" #media
+              data-toggle="tab">Media</a>
           </li>
         </ul>
 
-        <button
-          type="button"
-          class="close"
-          data-dismiss="modal"
-          aria-label="Close"
-        >
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -97,11 +69,7 @@
               <div class="col-8">
                 <div class="row" style="padding-bottom: 1rem;" hidden>
                   <div class="col">
-                    <h2
-                      class="modal-title"
-                      id="enrichment-label-{{name}}"
-                      hidden
-                    >
+                    <h2 class="modal-title" id="enrichment-label-{{name}}" hidden>
                       enrichment.title
                     </h2>
                   </div>
@@ -138,38 +106,13 @@
 
           <div role="tabpanel" class="tab-pane" id="media">
             <div class="container-fluid">
-              <div class="row attachment-container">
-                <!-- The image in focus -->
-                <div class="col text-center">
-                  <img
-                    src="{{media[0].attachment}}"
-                    class="img-fluid"
-                    alt="{{ media[0].description }}"
-                    id="image-in-focus-{{id}}"
-                  />
-                </div>
-              </div>
+              <div class="row attachment-modal-container">
 
-              <div class="row justify-content-center mt-3">
-                <h5>
-                  <span id="index-in-focus-{{id}}">1</span> of {{ media | length
-                  }}
-                </h5>
-              </div>
-
-              <div class="row thumbnail-container" id="available-images">
-                <!-- Grid of thumbnails -->
                 {% for m in media %}
                 <div class="m-2">
-                  <a onclick="moveToImage(event, '{{loop.index}}', '{{id}}')">
-                    <img
-                      src="{{
-                                        m.attachment
-                                    }}"
-                      class="thumb-img {{'active-thumbnail' if loop.index==1}}"
-                      alt="{{ m.description }}"
-                      id="{{id}}-{{loop.index}}"
-                    />
+                  <a data-fancybox="gallery" href="{{m.attachment}}">
+                    <img src="{{m.attachment or m.thumbnail }}" class="small-img-attachment-modal"
+                      alt="{{ m.description }}" id="{{id}}-{{loop.index}}" />
                   </a>
                 </div>
                 {% endfor %}
@@ -180,18 +123,10 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-text"
-          onclick="deleteEnrichment('{{name}}')"
-        >
+        <button type="button" class="btn btn-text" onclick="deleteEnrichment('{{name}}')">
           Delete
         </button>
-        <button
-          type="button"
-          class="btn solid-btn"
-          onclick="window.location.href = `/add-enrichment?name={{name}}`"
-        >
+        <button type="button" class="btn solid-btn" onclick="window.location.href = `/add-enrichment?name={{name}}`">
           Edit
         </button>
       </div>
@@ -200,13 +135,6 @@
 </div>
 
 <script>
-  moveToImage = (event, i, id) => {
-    $('#image-in-focus-' + id).attr('src', event.target.src);
-    $('.thumb-img').removeClass('active-thumbnail');
-    $('#' + event.target.id).addClass('active-thumbnail');
-    $('#index-in-focus-' + id).text(i);
-  };
-
   deleteEnrichment = name => {
     if (confirm('Are you sure you want to delete this enrichment?')) {
       frappe.call({
@@ -224,5 +152,12 @@
 <style>
   .active-thumbnail {
     outline: 0.5rem auto rgba(108, 108, 245, 0.918);
+  }
+
+  .attachment-modal-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 15rem);
+    grid-gap: 10px;
+    overflow: scroll;
   }
 </style>
