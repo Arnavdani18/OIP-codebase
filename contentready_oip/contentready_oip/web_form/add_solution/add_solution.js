@@ -269,6 +269,19 @@ frappe.ready(async () => {
         const selectedProblem = event.currentTarget;
         const selectedProblemName = $(selectedProblem).data('name');
         const alreadySelected = $(selectedProblem).data('selected');
+
+        console.log(selectedProblemName, alreadySelected);
+        frappe.call({
+          method: 'contentready_oip.api.get_problem_detail_modal',
+          args: { name: selectedProblemName },
+          callback: function (r) {
+            console.log(r);
+            $('.page_content').after(r.message);
+            $(`#${selectedProblemName}`).modal('show');
+            // $('#Problem004').modal('toggle')
+          }
+        })
+        return;
         if (alreadySelected) {
           deselectProblemUI(selectedProblemName);
           removeProblemFromSolvedSet(selectedProblemName);
@@ -310,24 +323,24 @@ frappe.ready(async () => {
         selectProblemUI(r.message[1]);
         setupProblemsForSelection();
 
-        // mark for rendering vue component
-        $('.page-breadcrumbs').after(`<div id="${name}"></div>`);
+        //   // mark for rendering vue component
+        //   $('.page-breadcrumbs').after(`<div id="${name}"></div>`);
 
-        new Vue({
-          el: `#${name}`,
-          data: {
-            name: name || 'problem001',
-            payload: { overview_html: r.message[2] },
-          },
-          components: {
-            problemModal
-          },
-          template: `
-        <div>
-          <problemModal :modalId="name" :payload="payload" />
-        </div>
-      `
-        })
+        //   new Vue({
+        //     el: `#${name}`,
+        //     data: {
+        //       name: name || 'problem001',
+        //       payload: { overview_html: r.message[2] },
+        //     },
+        //     components: {
+        //       problemModal
+        //     },
+        //     template: `
+        //   <div>
+        //     <problemModal :modalId="name" :payload="payload" />
+        //   </div>
+        // `
+        //   })
       }
     });
   };

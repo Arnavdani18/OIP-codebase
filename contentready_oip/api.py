@@ -400,6 +400,19 @@ def add_comment(doctype, name, text, media=None, html=True):
         return doc
 
 @frappe.whitelist(allow_guest = False)
+def get_problem_detail_modal(name, html=True):
+    # Get problem detail modal on add solution and edit solution.
+    # { param: string } eg. 'Problem001'
+    doc = frappe.get_doc('Problem',name)
+    if html:
+        detail_modal_template = "templates/includes/solution/problem_detail_modal.html"
+        detail_modal = frappe.render_template(detail_modal_template,doc.as_dict())
+        
+        return detail_modal
+    else:
+        return doc
+
+@frappe.whitelist(allow_guest = False)
 def get_problem_card(name, html=True):
     doc = frappe.get_doc('Problem', name)
     if html:
