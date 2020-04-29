@@ -115,14 +115,12 @@
           <div role="tabpanel" class="tab-pane" id="media">
             <div class="container-fluid">
               <div class="row attachment-modal-container">
-
                 {% for m in media %}
-                <div class="m-2">
-                  <a data-fancybox="gallery" href="{{m.attachment}}">
-                    <img src="{{m.attachment or m.thumbnail }}" class="small-img-attachment-modal"
-                      alt="{{ m.description }}" id="{{id}}-{{loop.index}}" />
-                  </a>
-                </div>
+                <a data-fancybox="enrichment-gallery" data-fancybox-trigger="enrichment-gallery"
+                  href="{{m.attachment}}">
+                  <img src="{{m.attachment or m.thumbnail }}" class="small-img-attachment-modal"
+                    alt="{{ m.description }}" id="{{id}}-{{loop.index}}" />
+                </a>
                 {% endfor %}
               </div>
             </div>
