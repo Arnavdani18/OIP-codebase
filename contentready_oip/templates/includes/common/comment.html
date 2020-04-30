@@ -16,7 +16,7 @@
           {{frappe.utils.pretty_date(comment.creation)}}
         </span>
       </div>
-      <p>{{comment.text}}</p>
+      <p style="text-transform: none; font-weight: normal;">{{comment.text}}</p>
       {% if (comment.media | length) > 0 %}
       <h6>Attachments</h6>
       {% for a in comment.media %} {% set file_name =
@@ -43,7 +43,7 @@
           {{frappe.utils.pretty_date(reply.creation)}}
         </span>
       </div>
-      <p>{{reply.text}}</p>
+      <p style="text-transform: none; font-weight: normal;">{{reply.text}}</p>
       <button class="delete-btn">
         <!-- <i class="fa fa-trash-o" aria-hidden="true"></i> -->
         <i class="trash">{% include "public/svg/trash-alt.svg" %}</i>

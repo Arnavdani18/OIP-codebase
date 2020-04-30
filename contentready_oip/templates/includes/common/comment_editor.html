@@ -61,9 +61,22 @@
     }
   };
 
+  function addAnchorToText(input) {
+    // https://alexcorvi.github.io/anchorme.js/#getting-started
+    return anchorme({
+      input,
+      options: {
+        attributes: {
+          target: "_blank",
+        },
+      },
+    })
+
+  }
+
   submitComment = (doctype, name) => {
     const id = `comment-area-${doctype}-${name}`; // for compatibility with cancelComment
-    const text = $(`#${id}`).val();
+    const text = addAnchorToText($(`#${id}`).val());
     const media = $(`#comment-dropzone-${doctype}-${name}`).data('file-urls');
     if (text.length) {
       // console.log(comment);
