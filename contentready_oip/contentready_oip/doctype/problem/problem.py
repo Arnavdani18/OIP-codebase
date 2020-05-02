@@ -123,6 +123,6 @@ class Problem(WebsiteGenerator):
         frappe.db.commit()
 
     def get_context(self, context):
-        published_enrichments = [e for e in self.enrichments if e.is_published]
-        context.enrichment_count = len(published_enrichments)
+        # published_enrichments = [e for e in self.enrichments if e.is_published]
+        context.enrichment_count = frappe.db.count("Enrichment", {'Problem': context.name ,'is_published': True})
         return context
