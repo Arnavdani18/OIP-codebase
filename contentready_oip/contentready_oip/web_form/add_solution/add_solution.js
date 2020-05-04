@@ -193,11 +193,19 @@ frappe.ready(async () => {
           method: 'contentready_oip.api.get_problem_detail_modal',
           args: { name: selectedProblemName },
           callback: function (r) {
-            $('.page_content').after(r.message);
+            $('.page_content').after(r.message[0]);
             $(`#${selectedProblemName}`).modal('show');
             $(`#${selectedProblemName} .modal-dismiss-btn`).on('click', function () {
               $(`#${selectedProblemName}`).modal('hide');
             });
+
+            // Remove enrichment modal from the view
+            const all_enrichments = r.message[1];
+            if (all_enrichments) {
+              all_enrichments.forEach(function (enrich) {
+                $(`#enrichment-modal-${enrich.enrichment}`).remove();
+              });
+            }
 
             const select_to_solve_btn = $(`#${selectedProblemName} button[data-type="select_to_solve"]`);
             toggleBtnText(selectedProblem);
@@ -302,8 +310,6 @@ frappe.ready(async () => {
           text: text
         },
         callback: function (r) {
-          console.log("look problem by text: ", r);
-
           // Add matching problems to div
           $('#matching-problems').empty();
           $('#matchingProblemsCount').text('');
