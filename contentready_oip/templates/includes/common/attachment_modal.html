@@ -1,15 +1,8 @@
-<!-- <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script> -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script> -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
-<script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
 <div class="modal fade" id="attachment-modal-{{ id }}" tabindex="-1" role="dialog" aria-labelledby="viewmediaLabel"
   aria-hidden="true">
   <div class="modal-dialog modal-full modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="viewmediaLabel" hidden>
-          Modal title
-        </h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -18,17 +11,11 @@
         <div class="container-fluid">
           <div class="row attachment-modal-container">
             {% for m in media %}
-            <div class="m-2">
-              <a data-fancybox="gallery" href="{{m.attachment}}">
-                <img src="{{m.attachment or m.thumbnail }}" class="small-img-attachment-modal" alt="{{ m.description }}"
-                  id="{{id}}-{{loop.index}}" />
-              </a>
-            </div>
+            <a data-fancybox="attachment-gallery" data-fancybox-trigger="attachment-gallery" href="{{m.attachment}}">
+              <img src="{{m.attachment or m.thumbnail }}" class="small-img-attachment-modal" alt="{{ m.description }}"
+                id="{{id}}-{{loop.index}}" />
+            </a>
             {% endfor %}
-          </div>
-
-          <div class="row thumbnail-container" id="available-images" data-images="{{media}}">
-            <!-- Grid of thumbnails -->
           </div>
         </div>
       </div>
@@ -37,12 +24,7 @@
 </div>
 
 <script>
-  moveToImage = (event, i, id) => {
-    $('#image-in-focus-' + id).attr('src', event.target.src)
-    $('.thumb-img').removeClass('active-thumbnail')
-    $('#' + event.target.id).addClass('active-thumbnail')
-    $('#index-in-focus-' + id).text(i)
-  }
+
 </script>
 
 <style>

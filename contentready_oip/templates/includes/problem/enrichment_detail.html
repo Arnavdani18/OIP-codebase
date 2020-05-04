@@ -4,8 +4,7 @@
     padding: 0;
   }
 
-  .dismis-modal {
-    margin-right: 1rem;
+  .dismiss-modal {
     font-size: 2rem;
   }
 
@@ -44,9 +43,6 @@
   <div class="modal-dialog modal-full modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header enrichment-modal-header">
-        <!-- <h5 class="modal-title" id="enrichment-label-{{name}}" hidden>
-          enrichment.title
-        </h5> -->
         <ul class="nav nav-tabs nav-section nav-justified nav-tab-section" id="leftTab" role="tablist">
           <li class="nav-item">
             <a class="nav-link active tab-width" href="#details" aria-controls="details" role="tab"
@@ -58,7 +54,8 @@
           </li>
         </ul>
 
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close dismis-modal">
+        <button type="button" class="close" data-dismiss="modal" style="margin: unset;"
+          aria-label="Close dismiss-modal">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -79,42 +76,51 @@
                     <h3 class="heading">
                       Description
                     </h3>
-                    {% set long_text = description %} {% set short_text =
-                    short_description %} {% set name = name %} {% include
-                    "templates/includes/common/read_more.html" %}
+                    {% set long_text = enrichment.description %}
+                    {% set short_text = enrichment.short_description %}
+                    {% set name = name %}
+                    {% include "templates/includes/common/read_more.html" %}
                   </div>
                 </div>
                 <div class="row">
-                  {% set fields = { 'Organization': org_title, 'Beneficiaries':
-                  beneficiaries, 'Resources Needed': resources_needed, 'Impact':
-                  impact, 'Extent': extent, 'Population Affected': population_affected,
-                  'Location(s)': city + ', ' + country, } %} {% for field in fields %} {% set label = field
-                  %} {% set value = fields[field] %} {% include
-                  "templates/includes/common/overview_field.html" %} {% endfor
-                  %}
+                  {% set fields = { 
+                    'Organization': enrichment.org_title, 
+                    'Beneficiaries': enrichment.beneficiaries, 
+                    'Resources Needed': enrichment.resources_needed, 
+                    'Impact': enrichment.impact, 
+                    'Extent': enrichment.extent, 
+                    'Population Affected': enrichment.population_affected,
+                    'Location(s)': enrichment.city + ', ' + enrichment.country, } %}
+
+                  {% for field in fields %} {% set label = field %}
+                  {% set value = fields[field] %}
+                  {% include "templates/includes/common/overview_field.html" %}
+                  {% endfor %}
                 </div>
               </div>
 
               <div class="col-4">
                 <!-- Media comes here -->
+                {% set media = enrichment.media %}
+                {% set id = 'card-'+enrichment.name %}
+                {% include "templates/includes/common/card_featured_image.html" %}
               </div>
             </div>
           </div>
 
-          {% if (enrichment.media | length) > 0 %} {% set media =
-          enrichment.media %} {% set id = enrichment.name %}
+          {% if (enrichment.media | length) > 0 %}
+          {% set media = enrichment.media %}
+          {% set id = enrichment.name %}
 
           <div role="tabpanel" class="tab-pane" id="media">
             <div class="container-fluid">
               <div class="row attachment-modal-container">
-
                 {% for m in media %}
-                <div class="m-2">
-                  <a data-fancybox="gallery" href="{{m.attachment}}">
-                    <img src="{{m.attachment or m.thumbnail }}" class="small-img-attachment-modal"
-                      alt="{{ m.description }}" id="{{id}}-{{loop.index}}" />
-                  </a>
-                </div>
+                <a data-fancybox="enrichment-gallery" data-fancybox-trigger="enrichment-gallery"
+                  href="{{m.attachment}}">
+                  <img src="{{m.attachment or m.thumbnail }}" class="small-img-attachment-modal"
+                    alt="{{ m.description }}" id="{{id}}-{{loop.index}}" />
+                </a>
                 {% endfor %}
               </div>
             </div>
@@ -147,6 +153,21 @@
       });
     }
   };
+
+  frappe.ready(async () => {
+    // Simple sleep(ms) function from https://stackoverflow.com/a/48882182
+    const sleep = m => new Promise(r => setTimeout(r, m));
+    await sleep(500);
+
+
+    const more_img_btn = document.querySelector(`#enrichment-modal-${`{{name}}`} button[data-target="#attachment-modal-card-${`{{name}}`}"]`);
+    more_img_btn.removeAttribute(`data-target`);
+    more_img_btn.addEventListener('click', function () {
+      document.querySelector('a[href="#media"]').click();
+    })
+  });
+
+
 </script>
 
 <style>
