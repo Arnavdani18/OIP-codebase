@@ -226,7 +226,10 @@ def get_filtered_content(doctype):
                             continue
                     doc_sectors = {sector.sector for sector in doc.sectors}
                     relevant_sectors = doc_sectors.intersection(user_sectors)
-                    doc.score = 0.3 * len(doc.validations) + 0.1 * len(doc.likes) + 0.1 * len(doc.enrichments) + 0.1 * len(doc.watchers) + 0.05 * len(doc.discussions) + 0.3 * len(relevant_sectors)
+                    if doctype == 'Problem':
+                        doc.score = 0.3 * len(doc.validations) + 0.1 * len(doc.likes) + 0.1 * len(doc.enrichments) + 0.1 * len(doc.watchers) + 0.05 * len(doc.discussions) + 0.3 * len(relevant_sectors)
+                    else:
+                        doc.score = 0.3 * len(doc.validations) + 0.1 * len(doc.likes) + 0.1 * len(doc.watchers) + 0.05 * len(doc.discussions) + 0.3 * len(relevant_sectors)
                     content.append(doc)
             except Exception as e:
                 print(str(e))
