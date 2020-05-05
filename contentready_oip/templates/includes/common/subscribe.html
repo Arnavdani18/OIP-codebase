@@ -64,20 +64,29 @@
         const email = $('#subscriber-email').val();
         console.log(email);
         if (email && isEmail(email)){
-            frappe.send_message({
-                subject: 'New Subscriber',
-                sender: email,
-                message: 'Subscribe me!',
-                callback: function(r) {
-                    if(r.message==="okay") {
-                        frappe.msgprint("{{ _("Thank you for your message") }}");
-                    } else {
-                        frappe.msgprint("{{ _("There were errors") }}");
-                        console.log(r.exc);
-                    }
-                    $(':input').val('');
-                }
-            }, this);
+	    frappe.call({
+           	method: 'contentready_oip.api.add_subscriber',
+           	args: {
+             		email: email 
+           	},
+           	callback: r => {
+                        frappe.msgprint("{{ _("Thank you for subscribing to updates from the Open Innovation Platform") }}");
+           	}
+         });
+            //frappe.send_message({
+            //    subject: 'New Subscriber',
+            //    sender: email,
+            //    message: 'Subscribe me!',
+            //    callback: function(r) {
+            //        if(r.message==="okay") {
+            //            frappe.msgprint("{{ _("Thank you for subscribing to updates from the Open Innovation Platform") }}");
+            //        } else {
+            //            frappe.msgprint("{{ _("There were errors") }}");
+            //            console.log(r.exc);
+            //        }
+            //        $(':input').val('');
+            //    }
+            //}, this);
         } else {
             frappe.throw('Please enter a valid email address.');
         }

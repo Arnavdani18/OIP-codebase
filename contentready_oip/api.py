@@ -2,6 +2,7 @@ import frappe
 import json
 from frappe import _
 import platform
+from frappe.email.doctype.email_template.email_template import get_email_template
 
 python_version_2 = platform.python_version().startswith('2')
 
@@ -570,21 +571,39 @@ def add_or_edit_collaboration(doctype, name, collaboration, html=True):
         return doc
 
 @frappe.whitelist(allow_guest = True)
-def add_subscriber(email, first_name=None):
-    if not first_name:
-        first_name = email # the contact docytpe needs first_name. If the form doesn't give us this, use email instead.
-    frappe.set_user('Administrator')
+def add_subscriber(email, first_name='', last_name=''):
     contact = frappe.get_doc({
-        'doctype': 'Contact',
-        'first_name': email,
-        'email_ids': [{
-            'email_id': email,
-            'is_primary': True
-        }]
+        'doctype': 'OIP Contact',
+        'email': email,
+        'first_name': first_name,
+        'last_name': last_name
     })
     contact.insert()
     frappe.db.commit()
-    return contact
+    r = get_email_template('New Subscriber', {})
+    frappe.sendmail([email], subject=r['subject'], message=r['message'], delayed=True)
+    return True
+
+@frappe.whitelist(allow_guest = True)
+def unsubscribe_email(email):
+    try:
+        contact = frappe.get_doc('OIP Contact', {'email':email})
+        contact.is_unsubscribed = True
+        contact.save()
+        frappe.db.commit()
+        success_msg = 'You have been unsubscribed from our emails.'
+        frappe.respond_as_web_page(_("Unsubscribe Successful"),
+                                    _(success_msg),                 
+                                    http_status_code=200, indicator_color='green', fullpage=True, primary_action='/')
+        return frappe.website.render.render("message", http_status_code=200)
+    except Exception as e:
+        print(str(e))
+        error_msg = 'Error while unsubscribing. {}'.format(str(e))
+        frappe.respond_as_web_page(_("Unsubscribe Unsuccessful"),
+                                    _(error_msg),                 
+                                    http_status_code=503, indicator_color='red', fullpage=True, primary_action='/')
+        return frappe.website.render.render("message", http_status_code=503)
+
 
 @frappe.whitelist(allow_guest = False)
 def get_content_by_user(doctype, limit_page_length=5):
@@ -661,10 +680,13 @@ def get_content_watched_by_user(doctype, limit_page_length=5):
     return content
 
 @frappe.whitelist(allow_guest = False)
-def get_content_recommended_for_user(doctype, sectors, limit_page_length=5):
+def get_content_recommended_for_user(doctype, sectors, limit_page_length=5,creation=None,html=False):
     content = []
     try:
-        filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', sectors], 'owner': ['!=', frappe.session.user]}, limit_page_length=limit_page_length)
+        if creation:
+            filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', sectors], 'owner': ['!=', frappe.session.user], 'creation': ['>=',creation]}, limit_page_length=limit_page_length)
+        else:
+            filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', sectors], 'owner': ['!=', frappe.session.user]}, limit_page_length=limit_page_length)
         content_set = {f['parent'] for f in filtered}
         for c in content_set:
             try:
@@ -672,7 +694,21 @@ def get_content_recommended_for_user(doctype, sectors, limit_page_length=5):
                 # don't show content that the user has already contributed to
                 if doc.is_published and not has_user_contributed('Like Table', doctype, c) and not has_user_contributed('Watch Table',doctype, c) and not has_user_contributed('Validation Table',doctype, c) and not has_user_contributed('Collaboration Table',doctype, c) and not has_user_contributed('Enrichment Table',doctype, c):
                     doc.photo = frappe.get_value('User Profile', doc.owner, 'photo')
-                    content.append(doc)
+                    if html:
+                        if doctype == 'Problem':
+                            context = {
+                                'problem': doc
+                            }
+                            template = "templates/includes/problem/problem_card.html"
+                        elif doctype == 'Solution':
+                            context = {
+                                'solution': doc
+                            }
+                            template = "templates/includes/solution/solution_card.html"
+                        html = frappe.render_template(template, context)
+                        content.append(html)
+                    else:
+                        content.append(doc)
             except Exception as e:
                 print(str(e))
     except Exception as e:
@@ -903,14 +939,43 @@ def update_apps_via_git():
 
 @frappe.whitelist(allow_guest=True)
 def share_doctype(recipients,doctype,docname,mode='email'):
-    if frappe.session.user != 'Guest':
-        user = frappe.get_doc('User Profile', frappe.session.user).as_dict()
-    else:
-        user = {'first_name': 'An OIP contributor'}
-    context = {}
-    context.update(user)
-    context['doctype'] = doctype
-    context['url'] = get_url() + frappe.get_value(doctype, docname, 'route')
-    r = get_email_template('Share Content', context)
-    subject = r['subject'].replace('doctype', doctype.lower())
-    frappe.sendmail(recipients, subject=subject, message=r['message'], delayed=False, bcc=bcc)
+    try:
+        if isinstance(recipients,str):
+            recipients = json.loads(recipients)
+        if frappe.session.user != 'Guest':
+            user = frappe.get_doc('User Profile', frappe.session.user).as_dict()
+        else:
+            user = {'first_name': 'An OIP contributor'}
+        context = {}
+        context.update(user)
+        context['doctype'] = doctype.lower()
+        hostname = get_url()
+        if not hostname:
+            hostname = 'https://openinnovationplatform.org'
+        context['url'] = hostname + '/' + frappe.get_value(doctype, docname, 'route')
+        r = get_email_template('Share Content', context)
+        subject = r['subject'].replace('doctype', doctype.lower())
+        frappe.sendmail(recipients, subject=subject, message=r['message'], delayed=True)
+        return True
+    except Exception as e:
+        print(str(e))
+        return False
+
+def send_weekly_updates():
+    from datetime import datetime, timedelta
+    #r = get_email_template('Weekly Updates', context)
+    profiles = frappe.get_all('User Profile')
+    for p in profiles:
+        try:
+            user = frappe.get_doc('User Profile', p['name'])
+            sectors = [sector.sector for sector in user.sectors]
+            today = datetime.now()
+            start = today - timedelta((today.weekday()) % 7)
+            midnight = datetime.combine(start, datetime.min.time())
+            problems = get_content_recommended_for_user('Problem', sectors, limit_page_length=5,creation=midnight,html=True)
+            solutions = get_content_recommended_for_user('Solution', sectors, limit_page_length=5,creation=midnight,html=True)
+            print(problems, solutions)
+        except Exception as e:
+            print(str(e))
+
+
