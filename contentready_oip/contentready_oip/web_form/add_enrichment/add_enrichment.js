@@ -107,6 +107,8 @@ frappe.ready(async () => {
   };
 
   addFileToDoc = (file) => {
+    attachFeaturedBtn(file);
+
     if (file.xhr) {
       const response = JSON.parse(file.xhr.response);
       const file_url = response.message.file_url;
@@ -120,6 +122,52 @@ frappe.ready(async () => {
       });
     }
   };
+
+  attachFeaturedBtn = (file) => {
+    let found = frappe.web_form.doc.media.find(m => m.attachment.endsWith(file.name));
+
+    $(file['previewElement']).append(`
+    <div class="d-flex justify-content-center" data-feature="${file.name}">
+      <button class="close" title="featured photo">
+        <i class="fa ${found['is_featured'] === 0 ? 'fa-bookmark-o' : 'fa-bookmark'}" aria-hidden="true"></i>
+      </button>
+    </div>`);
+
+    $(`div[data-feature="${file.name}"]`).on('click', function (e) {
+      e.preventDefault();
+      let currentMediaName = $(this).data('feature');
+      let currentMediaIndex = frappe.web_form.doc.media.findIndex(m => m.attachment.endsWith(currentMediaName));
+
+      for (const section of $('div[data-feature]')) {
+        const mediaName = $(section).data('feature')
+        if (mediaName === currentMediaName) {
+          current_item = frappe.web_form.doc.media[currentMediaIndex];
+          if (current_item['is_featured']) {
+            current_item['is_featured'] = false;
+            $(section)
+              .find('i')
+              .addClass('fa-bookmark-o')
+              .removeClass('fa-bookmark');
+          } else {
+            current_item['is_featured'] = true;
+            $(section)
+              .find('i')
+              .addClass('fa-bookmark')
+              .removeClass('fa-bookmark-o');
+          }
+
+        } else {
+          let index = frappe.web_form.doc.media.findIndex(m => m.attachment.endsWith(mediaName));
+          frappe.web_form.doc.media[index]['is_featured'] = false;
+          $(section)
+            .find('i')
+            .addClass('fa-bookmark-o')
+            .removeClass('fa-bookmark');
+
+        }
+      }
+    })
+  }
 
   removeFileFromDoc = (file) => {
     frappe.web_form.doc.media = frappe.web_form.doc.media.filter(i => !i.attachment.endsWith(file.name));
