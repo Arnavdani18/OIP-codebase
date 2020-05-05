@@ -106,7 +106,8 @@
 
   showDropzone = (doctype, name) => {
     // set rows=5
-    $(`#comment-dropzone-${doctype}-${name}`).removeClass('hidden');
+    $(`#comment-dropzone-${doctype}-${name}`)
+      .toggleClass('hidden d-flex justify-content-center align-items-center');
   };
 
   frappe.ready(() => {

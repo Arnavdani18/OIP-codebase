@@ -181,7 +181,7 @@ frappe.ready(async () => {
     // TODO: Allow user to select an image as featured image
     // disable autoDiscover as we are manually binding the dropzone to a form element
     Dropzone.autoDiscover = false;
-    const el = `<form class="dropzone dz-clickable" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
+    const el = `<form class="dropzone dz-clickable d-flex align-items-center justify-content-center flex-wrap" style="font-size:var(--f14);" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
     $('*[data-fieldname="media"]*[data-fieldtype="Table"]')
       .parent()
       .after(el);

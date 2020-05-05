@@ -157,7 +157,7 @@ frappe.ready(async function () {
   addDropzone = () => {
     // disable autoDiscover as we are manually binding the dropzone to a form element
     Dropzone.autoDiscover = false;
-    const el = `<form class="dropzone dz-clickable bg-transparent mb-5" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
+    const el = `<form class="dropzone dz-clickable d-flex align-items-center justify-content-center flex-wrap" style="font-size:var(--f14);" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
     $('*[data-fieldname="photo"]').after(el);
     $('#dropzone').dropzone({
       url: '/api/method/upload_file',
