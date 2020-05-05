@@ -106,13 +106,13 @@
 
   showDropzone = (doctype, name) => {
     // set rows=5
-    $(`#comment-dropzone-${doctype}-${name}`).removeClass('hidden');
+    $(`#comment-dropzone-${doctype}-${name}`)
+      .toggleClass('hidden d-flex justify-content-center align-items-center');
   };
 
   frappe.ready(() => {
     // Start dropzone.js integration
-    // const scriptPath = "public/js/dropzone.js";
-    const dScriptUrl = '/files/dropzone.js';
+    const dScriptUrl = 'assets/contentready_oip/js/dropzone.js';
     $.getScript(dScriptUrl, () => {
       // disable autoDiscover as we are manually binding the dropzone to a form element
       Dropzone.autoDiscover = false;

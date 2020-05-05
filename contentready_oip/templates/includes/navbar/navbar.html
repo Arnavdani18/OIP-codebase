@@ -2,9 +2,9 @@
     <div class="container">
         <a class="navbar-brand" href="{{ url_prefix }}{{ home_page or "/" }}">
             {% if domain_settings.brandmark %}
-                <span><img style="width: 5rem;" src="{{ domain_settings.brandmark | abs_url }}"/></span>
+            <span><img style="width: 5rem;" src="{{ domain_settings.brandmark | abs_url }}" /></span>
             {% else %}
-                <span>{{ brand_html or (frappe.get_hooks("brand_html") or [_("Home")])[0] }}</span>
+            <span>{{ brand_html or (frappe.get_hooks("brand_html") or [_("Home")])[0] }}</span>
             {% endif %}
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -131,7 +131,7 @@
                     </a>
                     <div class="dropdown-menu mt-2 dropdown-menu-right dropdown-section">
                         <a class="dropdown-item" href="/add-problem?new=1">
-                            <img src="./files/problem_dark.svg" alt="" height="22" width="30" />
+                            <img src="/files/problem_dark.svg" alt="" height="22" width="30" />
                             <span> Add a Problem</span>
                         </a>
                         <a class="dropdown-item" href="/add-solution?new=1">

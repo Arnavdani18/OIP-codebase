@@ -15,7 +15,8 @@
                             id="validation-comment-{{name}}" rows="3" placeholder="Enter comment"></textarea>
                     </div>
                 </form>
-                <form class="dropzone dz-clickable" data-file-url='' id='validation-dropzone-{{name}}'>
+                <form class="dropzone dz-clickable d-flex align-items-center justify-content-center flex-wrap"
+                    style="font-size:var(--f14);" data-file-url='' id='validation-dropzone-{{name}}'>
                     <div class="dz-default dz-message "><button class="dz-button" type="button">Add your
                             attachment</button></div>
                 </form>
@@ -85,8 +86,7 @@
 
     frappe.ready(() => {
         // Start dropzone.js integration
-        // const scriptPath = "public/js/dropzone.js";
-        const dScriptUrl = '/files/dropzone.js';
+        const dScriptUrl = 'assets/contentready_oip/js/dropzone.js';
         $.getScript(dScriptUrl, () => {
             // disable autoDiscover as we are manually binding the dropzone to a form element
             Dropzone.autoDiscover = false;
