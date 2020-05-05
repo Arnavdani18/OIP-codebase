@@ -362,10 +362,12 @@ frappe.ready(async () => {
   };
 
   attachFeaturedBtn = (file) => {
+    let found = frappe.web_form.doc.media.find(m => m.attachment.endsWith(file.name));
+
     $(file['previewElement']).append(`
     <div class="d-flex justify-content-center" data-feature="${file.name}">
       <button class="close" title="featured photo">
-        <i class="fa fa-bookmark-o" aria-hidden="true"></i>
+        <i class="fa ${found['is_featured'] === 0 ? 'fa-bookmark-o' : 'fa-bookmark'}" aria-hidden="true"></i>
       </button>
     </div>`);
 
