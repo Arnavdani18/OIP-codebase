@@ -470,8 +470,7 @@ frappe.ready(async function () {
   // End Google Maps Autocomplete
 
   // Start dropzone.js integration
-  // const scriptPath = "public/js/dropzone.js";
-  const dScriptUrl = '/files/dropzone.js';
+  const dScriptUrl = 'assets/contentready_oip/js/dropzone.js';
   $.getScript(dScriptUrl, addDropzone);
   // End dropzone.js integration
 
