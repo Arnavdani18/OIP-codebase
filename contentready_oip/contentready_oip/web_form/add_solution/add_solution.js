@@ -100,6 +100,7 @@ frappe.ready(async () => {
     <h6 class="mt-3">Solver Team</h6>
     <select class="select2" name="solver_team[]" multiple="multiple" id="solver-team-select">
     </select>
+    <br /><br />
     `;
     $('*[data-fieldname="solver_team"]').before(el);
     // $('#solver-team-select').select2({
@@ -192,34 +193,53 @@ frappe.ready(async () => {
           method: 'contentready_oip.api.get_problem_detail_modal',
           args: { name: selectedProblemName },
           callback: function (r) {
-            $('.page_content').after(r.message);
+            $('.page_content').after(r.message[0]);
             $(`#${selectedProblemName}`).modal('show');
             $(`#${selectedProblemName} .modal-dismiss-btn`).on('click', function () {
               $(`#${selectedProblemName}`).modal('hide');
             });
 
-            const select_to_solve_btn = $(`#${selectedProblemName} button[data-type="select_to_solve"]`);
-            // Vary the button text
-            if (alreadySelected) {
-              select_to_solve_btn.text('Unselect Problem');
-            } else {
-              select_to_solve_btn.text('Select to solve');
+            // Remove enrichment modal from the view
+            const all_enrichments = r.message[1];
+            if (all_enrichments) {
+              all_enrichments.forEach(function (enrich) {
+                $(`#enrichment-modal-${enrich.enrichment}`).remove();
+              });
             }
+
+            const select_to_solve_btn = $(`#${selectedProblemName} button[data-type="select_to_solve"]`);
+            toggleBtnText(selectedProblem);
 
             // Add event listen to button
             select_to_solve_btn.on('click', function () {
               if (alreadySelected) {
                 deselectProblemUI(selectedProblemName);
                 removeProblemFromSolvedSet(selectedProblemName);
+                toggleBtnText(selectedProblem);
+                vm.removeTitle(selectedProblemName);
               } else {
                 selectProblemUI(selectedProblemName);
                 addProblemToSolvedSet(selectedProblemName);
+                toggleBtnText(selectedProblem);
               }
             })
           }
         })
       });
   };
+
+  toggleBtnText = (qSelector) => {
+    const alreadySelected = $(qSelector).data('selected');
+    const selectedProblemName = $(qSelector).data('name');
+    const btn = $(`#${selectedProblemName} button[data-type="select_to_solve"]`);
+
+    // Vary the button text
+    if (alreadySelected) {
+      btn.text('Unselect Problem');
+    } else {
+      btn.text('Select to solve');
+    }
+  }
 
   deselectProblemUI = (name) => {
     const id = '#problem-card-' + name;
@@ -290,8 +310,6 @@ frappe.ready(async () => {
           text: text
         },
         callback: function (r) {
-          console.log("look problem by text: ", r);
-
           // Add matching problems to div
           $('#matching-problems').empty();
           $('#matchingProblemsCount').text('');
@@ -754,7 +772,19 @@ frappe.ready(async () => {
     <div>
     {% raw %}
     <ul class="list-group mb-3">
-      <li v-for="(problem,i) in selectedProblems" class="list-group-item">
+      <li 
+        v-if="selectedProblems.length == 0"
+        class="list-group-item text-muted"
+        style="font-size:1.4rem"  
+        >
+        No problem selected yet
+      </li>
+
+      <li 
+        v-for="(problem,i) in selectedProblems" 
+        class="list-group-item"
+        style="font-size:1.4rem"
+        >
         {{ problem['title'] }}
         <button type="button" class="close" aria-label="Close" v-on:click="removeTitle(problem['name'])">
           <span aria-hidden="true">&times;</span>

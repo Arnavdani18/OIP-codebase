@@ -419,8 +419,9 @@ def get_problem_detail_modal(name, html=True):
     if html:
         detail_modal_template = "templates/includes/solution/problem_detail_modal.html"
         detail_modal = frappe.render_template(detail_modal_template,doc.as_dict())
-
-        return detail_modal
+        
+        enrichment_list = [e.as_dict() for e in doc.enrichments ]
+        return (detail_modal,enrichment_list)
     else:
         return doc
 
