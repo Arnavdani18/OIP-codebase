@@ -901,3 +901,16 @@ def update_apps_via_git():
         print(str(e))
         raise
 
+@frappe.whitelist(allow_guest=True)
+def share_doctype(recipients,doctype,docname,mode='email'):
+    if frappe.session.user != 'Guest':
+        user = frappe.get_doc('User Profile', frappe.session.user).as_dict()
+    else:
+        user = {'first_name': 'An OIP contributor'}
+    context = {}
+    context.update(user)
+    context['doctype'] = doctype
+    context['url'] = get_url() + frappe.get_value(doctype, docname, 'route')
+    r = get_email_template('Share Content', context)
+    subject = r['subject'].replace('doctype', doctype.lower())
+    frappe.sendmail(recipients, subject=subject, message=r['message'], delayed=False, bcc=bcc)
