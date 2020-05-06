@@ -112,8 +112,9 @@
 
   frappe.ready(() => {
     // Start dropzone.js integration
-    const dScriptUrl = 'assets/contentready_oip/js/dropzone.js';
+    const dScriptUrl = window.location.origin + '/assets/contentready_oip/js/dropzone.js';
     $.getScript(dScriptUrl, () => {
+
       // disable autoDiscover as we are manually binding the dropzone to a form element
       Dropzone.autoDiscover = false;
       $('#comment-dropzone-{{doctype}}-{{name}}').dropzone({
