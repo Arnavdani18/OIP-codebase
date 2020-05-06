@@ -61,10 +61,13 @@
       </button>
     </div>
 
-    <div style="display: flex;" class="">
-      {% set doctype = comment.doctype %} {% set name = comment.name %} {%
-      include "templates/includes/common/likes.html" %} {% include
-      "templates/includes/common/share.html" %}
+    <div class="d-flex">
+      {% set doctype = comment.doctype %}
+      {% set name = comment.name %}
+      {% set likes = comment.likes %}
+
+      {% include "templates/includes/common/likes.html" %}
+      {% include "templates/includes/common/share.html" %}
     </div>
   </div>
 
