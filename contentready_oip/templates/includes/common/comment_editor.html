@@ -59,6 +59,12 @@
     if (parent_div) {
       $(parent_div).addClass('hidden');
     }
+
+    const removeBtnArr = $(`#comment-dropzone-${doctype}-${name} [data-dz-remove]`);
+    for (const btn of removeBtnArr) {
+      btn.click();
+    }
+
   };
 
   function addAnchorToText(input) {
@@ -78,6 +84,7 @@
     const id = `comment-area-${doctype}-${name}`; // for compatibility with cancelComment
     const text = addAnchorToText($(`#${id}`).val());
     const media = $(`#comment-dropzone-${doctype}-${name}`).data('file-urls');
+
     if (text.length) {
       // console.log(comment);
       frappe.call({
@@ -105,9 +112,17 @@
   };
 
   showDropzone = (doctype, name) => {
-    // set rows=5
-    $(`#comment-dropzone-${doctype}-${name}`)
-      .toggleClass('hidden d-flex justify-content-center align-items-center');
+    const dz = $(`#comment-dropzone-${doctype}-${name}`);
+
+    if (dz.hasClass('hidden')) {
+      dz
+        .addClass('d-flex justify-content-center align-items-center')
+        .removeClass('hidden')
+    } else {
+      dz
+        .addClass('hidden')
+        .removeClass('d-flex justify-content-center align-items-center')
+    }
   };
 
   frappe.ready(() => {
