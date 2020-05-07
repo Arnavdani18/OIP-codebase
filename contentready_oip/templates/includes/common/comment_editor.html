@@ -52,7 +52,6 @@
   };
 
   cancelComment = (doctype, name, parent_div) => {
-    $(`#comment-dropzone-${doctype}-${name}`).addClass('hidden');
     $(`#comment-area-${doctype}-${name}`).val('');
     $('.comment-btn-row').attr('hidden', true);
     contractCommentArea(doctype, name);
@@ -60,11 +59,13 @@
       $(parent_div).addClass('hidden');
     }
 
+    // clear dropzone section
     const removeBtnArr = $(`#comment-dropzone-${doctype}-${name} [data-dz-remove]`);
     for (const btn of removeBtnArr) {
       btn.click();
     }
 
+    showDropzone(doctype, name);
   };
 
   function addAnchorToText(input) {
@@ -162,11 +163,19 @@
             let media = $('#comment-dropzone-{{doctype}}-{{name}}').data(
               'file-urls'
             );
-            media = media.filter(i => !i.endsWith(file.name));
-            $('#comment-dropzone-{{doctype}}-{{name}}').data(
-              'file-urls',
-              JSON.stringify(media)
-            );
+            try {
+              if (media) {
+                media = JSON.parse(media);
+                media = media.filter(i => !i.endsWith(file.name));
+                $('#comment-dropzone-{{doctype}}-{{name}}').data(
+                  'file-urls',
+                  JSON.stringify(media)
+                );
+              }
+            } catch (error) {
+              console.error(error)
+            }
+
           });
         }
       });
