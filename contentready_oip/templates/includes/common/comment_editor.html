@@ -52,13 +52,20 @@
   };
 
   cancelComment = (doctype, name, parent_div) => {
-    $(`#comment-dropzone-${doctype}-${name}`).addClass('hidden');
     $(`#comment-area-${doctype}-${name}`).val('');
     $('.comment-btn-row').attr('hidden', true);
     contractCommentArea(doctype, name);
     if (parent_div) {
       $(parent_div).addClass('hidden');
     }
+
+    // clear dropzone section
+    const removeBtnArr = $(`#comment-dropzone-${doctype}-${name} [data-dz-remove]`);
+    for (const btn of removeBtnArr) {
+      btn.click();
+    }
+
+    showDropzone(doctype, name);
   };
 
   function addAnchorToText(input) {
@@ -78,6 +85,7 @@
     const id = `comment-area-${doctype}-${name}`; // for compatibility with cancelComment
     const text = addAnchorToText($(`#${id}`).val());
     const media = $(`#comment-dropzone-${doctype}-${name}`).data('file-urls');
+
     if (text.length) {
       // console.log(comment);
       frappe.call({
@@ -105,15 +113,24 @@
   };
 
   showDropzone = (doctype, name) => {
-    // set rows=5
-    $(`#comment-dropzone-${doctype}-${name}`)
-      .toggleClass('hidden d-flex justify-content-center align-items-center');
+    const dz = $(`#comment-dropzone-${doctype}-${name}`);
+
+    if (dz.hasClass('hidden')) {
+      dz
+        .addClass('d-flex justify-content-center align-items-center')
+        .removeClass('hidden')
+    } else {
+      dz
+        .addClass('hidden')
+        .removeClass('d-flex justify-content-center align-items-center')
+    }
   };
 
   frappe.ready(() => {
     // Start dropzone.js integration
-    const dScriptUrl = 'assets/contentready_oip/js/dropzone.js';
+    const dScriptUrl = window.location.origin + '/assets/contentready_oip/js/dropzone.js';
     $.getScript(dScriptUrl, () => {
+
       // disable autoDiscover as we are manually binding the dropzone to a form element
       Dropzone.autoDiscover = false;
       $('#comment-dropzone-{{doctype}}-{{name}}').dropzone({
@@ -146,11 +163,19 @@
             let media = $('#comment-dropzone-{{doctype}}-{{name}}').data(
               'file-urls'
             );
-            media = media.filter(i => !i.endsWith(file.name));
-            $('#comment-dropzone-{{doctype}}-{{name}}').data(
-              'file-urls',
-              JSON.stringify(media)
-            );
+            try {
+              if (media) {
+                media = JSON.parse(media);
+                media = media.filter(i => !i.endsWith(file.name));
+                $('#comment-dropzone-{{doctype}}-{{name}}').data(
+                  'file-urls',
+                  JSON.stringify(media)
+                );
+              }
+            } catch (error) {
+              console.error(error)
+            }
+
           });
         }
       });
