@@ -1,0 +1,61 @@
+<form class="dropzone dz-clickable d-flex align-items-center justify-content-center flex-wrap"
+    style="font-size:var(--f14); position: relative;" id='dropzone'>
+    <button id="clear-dropzone" class="btn btn-outline-primary rounded-circle" title="Remove all">
+        <i class="redo-icon">{% include "public/svg/redo-solid.svg" %}</i>
+    </button>
+
+
+    <div class="dz-default dz-message">
+        <button class="dz-button" type="button">
+            Drop files here to upload
+        </button>
+    </div>
+
+    <div class="hidden">
+        <button class="add-more" id="add-multiple-files">
+            <i>{% include "public/svg/plus-circle-solid.svg" %}</i>
+            <p>Drop More</p>
+        </button>
+    </div>
+
+</form>
+
+<style>
+    #clear-dropzone {
+        position: absolute;
+        right: .5rem;
+        top: .5rem;
+        cursor: pointer;
+    }
+
+    #clear-dropzone:hover {
+        color: white;
+    }
+
+    .redo-icon>svg {
+        width: 1.2rem;
+    }
+
+    .add-more {
+        width: 12rem;
+        height: 12rem;
+        border-radius: 2rem;
+        background-color: var(--primary1);
+        color: white;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        padding-top: .8rem;
+    }
+
+    .add-more:focus {
+        outline: none;
+        box-shadow: none;
+    }
+
+    .add-more>i>svg {
+        width: 5rem;
+        text-align: center;
+    }
+</style>
