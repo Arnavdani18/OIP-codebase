@@ -439,7 +439,8 @@ frappe.ready(async () => {
     // TODO: Allow user to select an image as featured image
     // disable autoDiscover as we are manually binding the dropzone to a form element
     Dropzone.autoDiscover = false;
-    const el = `<form class="dropzone dz-clickable d-flex align-items-center justify-content-center flex-wrap" style="font-size:var(--f14);" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
+    const el = `{% include "public/custom_templates/dz.html" %}`;
+
     $('*[data-fieldname="media"]*[data-fieldtype="Table"]')
       .parent()
       .after(el);
@@ -448,6 +449,7 @@ frappe.ready(async () => {
       autoDiscover: false,
       addRemoveLinks: true,
       acceptedFiles: 'image/*,video/*',
+      clickable: ['#dropzone', '#add-multiple-files'],
       headers: {
         Accept: 'application/json',
         'X-Frappe-CSRF-Token': frappe.csrf_token
@@ -458,15 +460,45 @@ frappe.ready(async () => {
         // use this event to remove from child table
         this.on('removedfile', removeFileFromDoc);
         let myDropzone = this;
+
         if (frappe.web_form.doc.media) {
           frappe.web_form.doc.media.map(a => {
             let mockFile = { name: a.attachment, size: a.size };
             myDropzone.displayExistingFile(mockFile, a.attachment);
           });
         }
+
+        this.on('sending', function () {
+          toggleAddMore(myDropzone.files.length);
+        })
+
+        const addMutipleFilesBtn = document.querySelector("#add-multiple-files");
+        if (addMutipleFilesBtn) {
+          addMutipleFilesBtn.onclick = function (e) {
+            e.preventDefault();
+          };
+        }
+
+        const clearDzBtn = document.querySelector("button#clear-dropzone");
+        if (clearDzBtn) {
+          clearDzBtn.addEventListener("click", function (e) {
+            e.preventDefault();
+            myDropzone.removeAllFiles();
+            toggleAddMore(myDropzone.files.length);
+          });
+        }
       }
     });
   };
+
+  toggleAddMore = (len) => {
+    const addMore = $('#add-multiple-files').parent();
+    if (len) {
+      addMore.addClass('dz-preview').removeClass('hidden');
+    } else {
+      addMore.addClass('hidden').removeClass('dz-preview');
+    }
+  }
 
   addProblemToSolvedSet = (name) => {
     if (!frappe.web_form.doc.problems_addressed) {
