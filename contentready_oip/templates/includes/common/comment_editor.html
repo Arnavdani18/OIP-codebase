@@ -10,7 +10,7 @@
       <textarea class="form-control pattern1" style="padding-top: .8rem;" id="comment-area-{{doctype}}-{{name}}"
         placeholder="Add a comment..." rows="1" onfocus="expandCommentArea('{{doctype}}','{{name}}')"></textarea>
       <div class="input-group-append mt-0">
-        <button class="btn btn-outline-danger pattern1" title="Clear" type="button"
+        <button class="btn btn-outline-danger pattern1" title="Clear All" type="button"
           onclick="cancelComment(`{{doctype}}`,`{{name}}`, `{{parent_div|default('', true)}}`)">
           <!-- <i class="far fa-backspace fa-horizontal"></i> -->
           <i class="backspace">{% include "public/svg/backspace-solid.svg" %}</i>
@@ -30,15 +30,39 @@
       </button>
     </div>
   </div>
-  <form class="dropzone dz-clickable hidden mt-3 pattern1" data-file-urls="[]"
+  <!-- <form class="dropzone dz-clickable hidden mt-3 pattern1" data-file-urls="[]"
     id="comment-dropzone-{{doctype}}-{{name}}">
     <div class="dz-default dz-message">
       <button class="dz-button" type="button">
         Drop files here to upload
       </button>
     </div>
+  </form> -->
+  <form class="dropzone dz-clickable hidden mt-3 pattern1" style="font-size:var(--f14); position: relative;"
+    data-file-urls="[]" id="comment-dropzone-{{doctype}}-{{name}}">
+
+    <button id="clear-dropzone-{{doctype}}-{{name}}" class="btn btn-outline-primary rounded-circle clear-dropzone"
+      title="Remove all">
+      <i class="redo-icon">{% include "public/svg/redo-solid.svg" %}</i>
+    </button>
+
+
+    <div class="dz-default dz-message">
+      <button class="dz-button" type="button">
+        Drop files here to upload
+      </button>
+    </div>
+
+    <div class="hidden">
+      <button class="add-more" id="add-multiple-files-{{doctype}}-{{name}}">
+        <i>{% include "public/svg/plus-circle-solid.svg" %}</i>
+        <p>Drop More</p>
+      </button>
+    </div>
+
   </form>
 </div>
+
 <script>
   expandCommentArea = (doctype, name) => {
     // set rows=5
@@ -60,9 +84,9 @@
     }
 
     // clear dropzone section
-    const removeBtnArr = $(`#comment-dropzone-${doctype}-${name} [data-dz-remove]`);
-    for (const btn of removeBtnArr) {
-      btn.click();
+    const resetBtn = $(`button#clear-dropzone-{{doctype}}-{{name}}`);
+    if (resetBtn) {
+      resetBtn.click();
     }
 
     showDropzone(doctype, name);
@@ -157,6 +181,7 @@
               JSON.stringify(media)
             );
           });
+
           // use this event to remove from child table
           this.on('removedfile', file => {
             // console.log('removed', file);
@@ -177,6 +202,15 @@
             }
 
           });
+
+          const myDropzone = this;
+          const clearDzBtn = document.querySelector(`button#clear-dropzone-{{doctype}}-{{name}}`);
+          if (clearDzBtn) {
+            clearDzBtn.addEventListener("click", function (e) {
+              e.preventDefault();
+              myDropzone.removeAllFiles();
+            });
+          }
         }
       });
     });
@@ -231,5 +265,46 @@
   .paperclip>svg,
   .backspace>svg {
     width: 1.4rem;
+  }
+</style>
+
+<!-- dropzone style -->
+<style>
+  .clear-dropzone {
+    position: absolute;
+    right: .5rem;
+    top: .5rem;
+    cursor: pointer;
+  }
+
+  .clear-dropzone:hover {
+    color: white;
+  }
+
+  .redo-icon>svg {
+    width: 1.2rem;
+  }
+
+  .add-more {
+    width: 12rem;
+    height: 12rem;
+    border-radius: 2rem;
+    background-color: var(--primary1);
+    color: white;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: .8rem;
+  }
+
+  .add-more:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .add-more>i>svg {
+    width: 5rem;
+    text-align: center;
   }
 </style>
