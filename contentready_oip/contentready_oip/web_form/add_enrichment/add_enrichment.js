@@ -196,11 +196,14 @@ frappe.ready(async () => {
         "X-Frappe-CSRF-Token": frappe.csrf_token
       },
       init: function () {
+        let myDropzone = this;
         // use this event to add to child table
         this.on("complete", addFileToDoc);
         // use this event to remove from child table
-        this.on("removedfile", removeFileFromDoc);
-        let myDropzone = this;
+        this.on('removedfile', function(file){
+          toggleAddMore(myDropzone.files.length);
+          removeFileFromDoc(file);
+        });
 
         if (frappe.web_form.doc.media) {
           toggleAddMore(frappe.web_form.doc.media.length);
