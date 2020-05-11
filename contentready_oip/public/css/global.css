@@ -6,6 +6,10 @@
     color: white;
 }
 
+.page-card-body {
+    white-space: normal;
+}
+
 .page_content > p {
     font-size: unset;
     font-weight: unset;
