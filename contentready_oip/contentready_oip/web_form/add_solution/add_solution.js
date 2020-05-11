@@ -462,6 +462,8 @@ frappe.ready(async () => {
         let myDropzone = this;
 
         if (frappe.web_form.doc.media) {
+          toggleAddMore(frappe.web_form.doc.media.length);
+
           frappe.web_form.doc.media.map(a => {
             let mockFile = { name: a.attachment, size: a.size };
             myDropzone.displayExistingFile(mockFile, a.attachment);
