@@ -155,10 +155,10 @@
               <hr />
               {% endfor %}
 
-              {% if drafts | length > 4 %}
+              {% if actual.drafts > 4 %}
               <div class="text-center py-3">
                 <a href="/dashboard?type=drafts" class="viewAll">View All
-                  ({{ drafts | length }})</a>
+                  ({{ actual.drafts }})</a>
               </div>
               {% endif %}
             </div>
@@ -274,6 +274,16 @@
       {% include "templates/includes/common/user_card.html" %}
     </div>
     {% endfor %}
+
+    <!-- Drafts viewAll -->
+    {% elif content_type == 'drafts' %}
+    {% for content in recommended_users %}
+    <div class="col-6 mt-4">
+      {% include "templates/includes/common/draft_card.html" %}
+    </div>
+    {% endfor %}
+    <!-- Drafts viewAll -->
+
     {% else %}
     <div class="col-md-6 mt-4">
       {% for problem in problems %}
