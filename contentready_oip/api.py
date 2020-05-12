@@ -962,10 +962,16 @@ def share_doctype(recipients,doctype,docname,mode='email'):
         print(str(e))
         return False
 
-def send_weekly_updates():
+def send_weekly_updates(emails=[]):
     from datetime import datetime, timedelta
-    #r = get_email_template('Weekly Updates', context)
-    profiles = frappe.get_all('User Profile')
+    if emails:
+        profiles = frappe.get_all('User Profile', filters={'user': ['in', emails]})
+    else:
+        profiles = frappe.get_all('User Profile')
+    hostname = get_url()
+    if not hostname:
+        hostname = 'https://openinnovationplatform.org'
+    response = {}
     for p in profiles:
         try:
             user = frappe.get_doc('User Profile', p['name'])
@@ -973,10 +979,19 @@ def send_weekly_updates():
             today = datetime.now()
             start = today - timedelta((today.weekday()) % 7)
             midnight = datetime.combine(start, datetime.min.time())
-            problems = get_content_recommended_for_user('Problem', sectors, limit_page_length=5,creation=midnight,html=True)
-            solutions = get_content_recommended_for_user('Solution', sectors, limit_page_length=5,creation=midnight,html=True)
-            print(problems, solutions)
+            context = {}
+            context['problems'] = get_content_recommended_for_user('Problem', sectors, limit_page_length=5,creation=midnight)
+            context['solutions'] = get_content_recommended_for_user('Solution', sectors, limit_page_length=5,creation=midnight)
+            template = 'templates/includes/common/homepage_showcase_content.html'
+            context['content_html'] = frappe.render_template(template, context)
+            context['unsubscribe_link'] = '<a href="{}/api/method/contentready_oip.api.unsubscribe_email?email={}">Click here</a>'.format(hostname,user.user)
+            r = get_email_template('Weekly Updates', context)
+            print(r)
+            frappe.sendmail(user.user, subject=r['subject'], message=r['message'], delayed=True)
+            response[user.user] = r
         except Exception as e:
             print(str(e))
+            response[p['name']] = str(e)
+    return response 
 
 

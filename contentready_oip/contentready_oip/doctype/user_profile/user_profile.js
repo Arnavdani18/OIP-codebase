@@ -6,6 +6,3 @@ frappe.ui.form.on('User Profile', {
   // }
 });
 
-frappe.ready(async function() {
-  await sleep(500);
-});
