@@ -161,7 +161,7 @@
         if (!collaboration.comment) {
             frappe.throw('Please state your intent.');
         }
-        if (!collaboration.persona) {
+        if (!collaboration.personas) {
             frappe.throw('Please select a persona.');
         }
         frappe.call({
