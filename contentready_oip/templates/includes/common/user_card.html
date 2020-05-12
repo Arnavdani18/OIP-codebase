@@ -42,16 +42,8 @@
     <p class="company">
       {{ user.org_title }}
     </p>
-    <p>
-      Persona: {% for persona in user.personas[:2] %}
-      <span>{{persona.persona}}</span>
-      {% if not loop.last %}
-      ,&nbsp;
-      {% endif %}{% endfor %}
-      {% if (user.personas | length) > 2 %}
-        +{{ (user.personas | length) - 2 }}
-      {% endif %}
-    </p>
+    {% set personas = user.personas %} 
+    {% include "templates/includes/common/persona_labels.html" %}
   </div>
 
   <div class="">

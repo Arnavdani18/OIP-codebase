@@ -5,14 +5,15 @@
         {% if frappe.session.user == collaboration.user %}
             {% set doctype = collaboration.doctype %}
             {% set name = collaboration.name %}
-            {% set data = [collaboration.persona, collaboration.comment] %}
+            {% set data = [collaboration.personas, collaboration.comment] %}
             {% include "templates/includes/common/edit_icon.html" %}
             {% include "templates/includes/common/collaboration_form.html" %}
         {% endif %}
     </div>
     <div>
         <strong class="text-capitalize roles">
-            Role: {{collaboration.persona}}
+            {% set personas = collaboration.personas %} 
+    {% include "templates/includes/common/persona_labels.html" %}
         </strong>
     </div>
     <div class="collaborate-comment">
