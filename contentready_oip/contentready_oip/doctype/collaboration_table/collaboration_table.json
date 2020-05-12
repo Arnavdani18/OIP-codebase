@@ -4,20 +4,22 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "collaboration_intent",
   "user",
   "persona",
   "comment"
  ],
  "fields": [
   {
+   "fetch_from": "collaboration_intent.user",
    "fieldname": "user",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "User",
-   "options": "User",
-   "reqd": 1
+   "options": "User"
   },
   {
+   "fetch_from": "collaboration_intent.comment",
    "fieldname": "comment",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -28,12 +30,17 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Persona",
-   "options": "Persona",
-   "reqd": 1
+   "options": "Persona"
+  },
+  {
+   "fieldname": "collaboration_intent",
+   "fieldtype": "Link",
+   "label": "Collaboration Intent",
+   "options": "Collaboration Intent"
   }
  ],
  "istable": 1,
- "modified": "2020-03-06 08:31:43.517193",
+ "modified": "2020-05-12 11:27:39.902996",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Collaboration Table",
