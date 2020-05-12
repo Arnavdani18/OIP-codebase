@@ -10,7 +10,7 @@
       <textarea class="form-control pattern1" style="padding-top: .8rem;" id="comment-area-{{doctype}}-{{name}}"
         placeholder="Add a comment..." rows="1" onfocus="expandCommentArea('{{doctype}}','{{name}}')"></textarea>
       <div class="input-group-append mt-0">
-        <button class="btn btn-outline-danger pattern1" title="Clear" type="button"
+        <button class="btn btn-outline-danger pattern1" title="Clear All" type="button"
           onclick="cancelComment(`{{doctype}}`,`{{name}}`, `{{parent_div|default('', true)}}`)">
           <!-- <i class="far fa-backspace fa-horizontal"></i> -->
           <i class="backspace">{% include "public/svg/backspace-solid.svg" %}</i>
@@ -30,15 +30,39 @@
       </button>
     </div>
   </div>
-  <form class="dropzone dz-clickable hidden mt-3 pattern1" data-file-urls="[]"
+  <!-- <form class="dropzone dz-clickable hidden mt-3 pattern1" data-file-urls="[]"
     id="comment-dropzone-{{doctype}}-{{name}}">
     <div class="dz-default dz-message">
       <button class="dz-button" type="button">
         Drop files here to upload
       </button>
     </div>
+  </form> -->
+  <form class="dropzone dz-clickable hidden mt-3 pattern1" style="font-size:var(--f14); position: relative;"
+    data-file-urls="[]" id="comment-dropzone-{{doctype}}-{{name}}">
+
+    <button id="clear-dropzone-{{doctype}}-{{name}}" class="btn btn-outline-primary rounded-circle clear-dropzone"
+      title="Remove all">
+      <i class="redo-icon">{% include "public/svg/redo-solid.svg" %}</i>
+    </button>
+
+
+    <div class="dz-default dz-message">
+      <button class="dz-button" type="button">
+        Drop files here to upload
+      </button>
+    </div>
+
+    <div class="hidden">
+      <button class="add-more" id="add-multiple-files-{{doctype}}-{{name}}">
+        <i>{% include "public/svg/plus-circle-solid.svg" %}</i>
+        <p>Drop More</p>
+      </button>
+    </div>
+
   </form>
 </div>
+
 <script>
   expandCommentArea = (doctype, name) => {
     // set rows=5
@@ -52,13 +76,20 @@
   };
 
   cancelComment = (doctype, name, parent_div) => {
-    $(`#comment-dropzone-${doctype}-${name}`).addClass('hidden');
     $(`#comment-area-${doctype}-${name}`).val('');
     $('.comment-btn-row').attr('hidden', true);
     contractCommentArea(doctype, name);
     if (parent_div) {
       $(parent_div).addClass('hidden');
     }
+
+    // clear dropzone section
+    const resetBtn = $(`button#clear-dropzone-${doctype}-${name}`);
+    if (resetBtn) {
+      resetBtn.click();
+    }
+
+    showDropzone(doctype, name);
   };
 
   function addAnchorToText(input) {
@@ -78,6 +109,7 @@
     const id = `comment-area-${doctype}-${name}`; // for compatibility with cancelComment
     const text = addAnchorToText($(`#${id}`).val());
     const media = $(`#comment-dropzone-${doctype}-${name}`).data('file-urls');
+
     if (text.length) {
       // console.log(comment);
       frappe.call({
@@ -105,15 +137,24 @@
   };
 
   showDropzone = (doctype, name) => {
-    // set rows=5
-    $(`#comment-dropzone-${doctype}-${name}`)
-      .toggleClass('hidden d-flex justify-content-center align-items-center');
+    const dz = $(`#comment-dropzone-${doctype}-${name}`);
+
+    if (dz.hasClass('hidden')) {
+      dz
+        .addClass('d-flex justify-content-center align-items-center')
+        .removeClass('hidden')
+    } else {
+      dz
+        .addClass('hidden')
+        .removeClass('d-flex justify-content-center align-items-center')
+    }
   };
 
   frappe.ready(() => {
     // Start dropzone.js integration
-    const dScriptUrl = 'assets/contentready_oip/js/dropzone.js';
+    const dScriptUrl = window.location.origin + '/assets/contentready_oip/js/dropzone.js';
     $.getScript(dScriptUrl, () => {
+
       // disable autoDiscover as we are manually binding the dropzone to a form element
       Dropzone.autoDiscover = false;
       $('#comment-dropzone-{{doctype}}-{{name}}').dropzone({
@@ -121,6 +162,7 @@
         autoDiscover: false,
         // maxFiles: 1,
         addRemoveLinks: true,
+        clickable: ['#comment-dropzone-{{doctype}}-{{name}}', '#add-multiple-files-{{doctype}}-{{name}}'],
         headers: {
           Accept: 'application/json',
           'X-Frappe-CSRF-Token': frappe.csrf_token
@@ -140,22 +182,66 @@
               JSON.stringify(media)
             );
           });
+
           // use this event to remove from child table
           this.on('removedfile', file => {
             // console.log('removed', file);
+            toggleAddMore(myDropzone.files.length);
             let media = $('#comment-dropzone-{{doctype}}-{{name}}').data(
               'file-urls'
             );
-            media = media.filter(i => !i.endsWith(file.name));
-            $('#comment-dropzone-{{doctype}}-{{name}}').data(
-              'file-urls',
-              JSON.stringify(media)
-            );
+            try {
+              if (media) {
+                media = JSON.parse(media);
+                media = media.filter(i => !i.endsWith(file.name));
+                $('#comment-dropzone-{{doctype}}-{{name}}').data(
+                  'file-urls',
+                  JSON.stringify(media)
+                );
+              }
+            } catch (error) {
+              console.error(error)
+            }
+
           });
+
+          const myDropzone = this;
+
+          // Add more section
+          this.on('sending', function () {
+            toggleAddMore(myDropzone.files.length);
+          })
+
+          const addMutipleFilesBtn = document.querySelector("#add-multiple-files-{{doctype}}-{{name}}");
+          if (addMutipleFilesBtn) {
+            addMutipleFilesBtn.onclick = function (e) {
+              e.preventDefault();
+            };
+          }
+
+
+          // Reset Button
+          const clearDzBtn = document.querySelector(`button#clear-dropzone-{{doctype}}-{{name}}`);
+          if (clearDzBtn) {
+            clearDzBtn.addEventListener("click", function (e) {
+              e.preventDefault();
+              myDropzone.removeAllFiles();
+            });
+          }
         }
       });
+
+      function toggleAddMore(len) {
+        const addMore = $('#add-multiple-files-{{doctype}}-{{name}}').parent();
+        if (len) {
+          addMore.addClass('dz-preview').removeClass('hidden');
+        } else {
+          addMore.addClass('hidden').removeClass('dz-preview');
+        }
+      }
     });
     // End dropzone.js integration
+
   });
 </script>
 
@@ -206,5 +292,46 @@
   .paperclip>svg,
   .backspace>svg {
     width: 1.4rem;
+  }
+</style>
+
+<!-- dropzone style -->
+<style>
+  .clear-dropzone {
+    position: absolute;
+    right: .5rem;
+    top: .5rem;
+    cursor: pointer;
+  }
+
+  .clear-dropzone:hover {
+    color: white;
+  }
+
+  .redo-icon>svg {
+    width: 1.2rem;
+  }
+
+  .add-more {
+    width: 12rem;
+    height: 12rem;
+    border-radius: 2rem;
+    background-color: var(--primary1);
+    color: white;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: .8rem;
+  }
+
+  .add-more:focus {
+    outline: none;
+    box-shadow: none;
+  }
+
+  .add-more>i>svg {
+    width: 5rem;
+    text-align: center;
   }
 </style>
