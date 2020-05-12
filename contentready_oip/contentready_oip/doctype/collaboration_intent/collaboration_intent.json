@@ -6,7 +6,9 @@
  "field_order": [
   "user",
   "personas",
-  "comment"
+  "comment",
+  "parent_doctype",
+  "parent_name"
  ],
  "fields": [
   {
@@ -29,9 +31,20 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Comment"
+  },
+  {
+   "fieldname": "parent_doctype",
+   "fieldtype": "Link",
+   "label": "Parent Doctype",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "parent_name",
+   "fieldtype": "Data",
+   "label": "Parent Name"
   }
  ],
- "modified": "2020-05-12 11:24:41.378526",
+ "modified": "2020-05-12 12:22:22.918428",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Collaboration Intent",
