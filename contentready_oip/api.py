@@ -1026,3 +1026,22 @@ def send_weekly_updates(emails=[]):
     return response 
 
 
+# @frappe.whitelist(allow_guest=False)
+# def add_custom_domain():
+#     import shlex, subprocess, os, json
+#     site = 'dev.openinnovationplatform.org'
+#     site_path = frappe.get_site_path(site)
+#     config_file_path = os.path.join(site_path, 'site_config.json')
+#     print(config_file_path)
+#     with open(config_file_path, 'r') as f:
+#         config = json.load(f)
+#         print(config)
+    # cmds = ['git pull', 'bench --site openinnovationplatform.org migrate', 'find . -iname *.pyc -delete', 'bench restart']
+    # try:
+    #     for cmd in cmds:
+    #         cmd = shlex.split(cmd)
+    #         subprocess.check_output(cmd)
+    #     return True
+    # except Exception as e:
+    #     print(str(e))
+    #     raise
