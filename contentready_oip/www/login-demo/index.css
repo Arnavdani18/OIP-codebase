@@ -1,0 +1,135 @@
+.display-size{
+    min-height: 50rem;
+}
+
+.login h2 {
+    font-weight: var(--wgt600);
+    font-size: 3.5rem;
+}
+
+.login-description {
+    font-weight: var(--wgt600);
+    font-size: var(--f14);
+}
+
+.login-description > a {
+    color: var(--secondary1);
+}
+
+.social-login {
+    display: flex;
+}
+
+.linkedin-button:hover,
+.google-button:hover {
+    color: var(--primary2);
+}
+
+.linkedin-button,
+.google-button {
+    text-align: center;
+    padding: 0.6rem;
+    border: 0.2rem solid var(--primary2);
+    border-radius: var(--round4);
+    font-size: var(--f20);
+    color: var(--primary2);
+    background-color: var(--secondary5);
+    flex-grow: 1;
+}
+
+.google-button {
+    margin-left: 1%;
+}
+
+.linkedin-button {
+    margin-right: 1%;
+}
+
+.email-input {
+    display: flex;
+    flex-direction: column;
+}
+
+.email-input label,
+.password-input label {
+    color: var(--secondary1);
+    font-weight: var(--wgt500);
+    font-size: var(--f16);
+    margin-bottom: 1rem;
+}
+
+.email-input input,
+.password-input input {
+    border: 0.1rem solid var(--secondary3);
+    border-radius: var(--round4);
+    background-color: transparent;
+    width: 100%;
+    font-size: var(--f14);
+    padding: 1rem;
+}
+
+.password-show > div > span {
+    font-weight: 500;
+    color: var(--primary2);
+    font-size: var(--f12);
+}
+
+.password-show > div > i {
+    color: var(--primary2);
+    font-size: var(--f12);
+}
+
+.password-input-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.password-show {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+}
+.password-show:focus {
+    outline: none;
+    border: none;
+}
+
+input[type='text']:focus,
+input[type='password']:focus {
+    border-color: var(--secondary1);
+}
+
+.keep-me-logged-in label {
+    color: var(--secondary1);
+    letter-spacing: 0.035rem;
+}
+
+.keep-me-logged-in input[type='checkbox'] {
+    display: inline-block;
+    margin-right: 1rem;
+}
+
+.login-button {
+    padding: 0.6rem;
+    border: 0.2rem solid var(--primary2);
+    border-radius: var(--round4);
+    font-size: var(--f16);
+    font-weight: 700;
+    color: var(--secondary6);
+    background-color: var(--primary2);
+    cursor: pointer;
+    margin-top: 3rem;
+}
+
+.login-button:hover{
+    color: white;
+}
+
+.forgot-password > a {
+    text-decoration: underline;
+    font-size: var(--f14);
+    font-weight: 400;
+    color: var(--secondary1);
+    margin-top: 3rem;
+}
