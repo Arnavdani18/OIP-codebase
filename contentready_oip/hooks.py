@@ -21,7 +21,7 @@ app_license = "MIT"
 # include js, css files in header of web template
 # web_include_css = "/assets/contentready_oip/css/contentready_oip.css"
 web_include_css = ["/assets/contentready_oip/css/global.css"]
-web_include_js = ["/assets/contentready_oip/js/anchorme.min.js"]
+web_include_js = ["/assets/contentready_oip/js/anchorme.min.js","/assets/frappe/node_modules/vue/dist/vue.js"]
 
 # include js in page
 # page_js = {"page" : "public/js/file.js"}
