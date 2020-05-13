@@ -7,4 +7,6 @@ from __future__ import unicode_literals
 from frappe.model.document import Document
 
 class CollaborationIntent(Document):
-	pass
+	def on_update(self):
+		personas_list = [p.persona for p in self.personas]
+		self.personas_list = ','.join(personas_list)

@@ -142,8 +142,8 @@
 
     deleteCollaboration = (doctype, name) => {
         frappe.call({
-            method: 'contentready_oip.api.delete_contribution',
-            args: { child_doctype: doctype, name: name },
+            method: 'contentready_oip.api.delete_collaboration',
+            args: { name: name },
             callback: (r) => {
                 if (r.message) {
                     window.location.reload();
@@ -155,13 +155,13 @@
     submitCollaboration = (doctype, name) => {
         const collaboration = {
             user: frappe.session.user,
-            persona: $('#persona-select-' + name).val(),
+            personas: [$('#persona-select-' + name).val()],
             comment: $('#collaboration-comment-' + name).val()
         }
         if (!collaboration.comment) {
             frappe.throw('Please state your intent.');
         }
-        if (!collaboration.persona) {
+        if (!collaboration.personas) {
             frappe.throw('Please select a persona.');
         }
         frappe.call({
@@ -174,7 +174,7 @@
             callback: (r) => {
                 if (r.message[1] > 0) {
                     // console.log(r.message);
-                    if (doctype == 'Collaboration Table') {
+                    if (doctype == 'Collaboration Intent') {
                         // edit mode
                         $('#collaboration-card-' + name).replaceWith(r.message[0]);
                         // TODO: Toggles twice for some reason leaving an empty form on the screen.

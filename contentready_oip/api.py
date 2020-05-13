@@ -545,24 +545,37 @@ def add_or_edit_validation(doctype, name, validation, html=True):
 @frappe.whitelist(allow_guest = False)
 def add_or_edit_collaboration(doctype, name, collaboration, html=True):
     collaboration = json.loads(collaboration)
-    if doctype == 'Collaboration Table':
+    if doctype == 'Collaboration Intent':
         # in edit mode
-        c = frappe.get_doc('Collaboration Table', name)
+        c = frappe.get_doc('Collaboration Intent', name)
         c.update(collaboration)
         c.save()
-        total_count = frappe.db.count('Collaboration Table', filters={'parenttype': c.parenttype, 'parent': c.parent})
+        total_count = frappe.db.count('Collaboration Table', filters={'parenttype': c.parent_doctype, 'parent': c.parent_name})
     else:
+        # creating new collaboration
         if has_user_contributed('Collaboration Table', doctype, name):
             frappe.throw('You have already added your collaboration intent on this {}.'.format(doctype).capitalize())
-        doc = frappe.get_doc(doctype, name)
-        c = doc.append('collaborations', {})
-        c.update(collaboration)
+        doc = frappe.get_doc({
+            'doctype': 'Collaboration Intent',
+            'comment': collaboration['comment'],
+            'user': frappe.session.user,
+            'parent_doctype': doctype,
+            'parent_name': name
+        })
+        for p in collaboration['personas']:
+            row = doc.append('personas', {})
+            row.persona = p
         doc.save()
+        parent_doc = frappe.get_doc(doctype, name)
+        child = parent_doc.append('collaborations', {})
+        child.collaboration_intent = doc.name
+        parent_doc.save()
+        frappe.db.commit()
         total_count = frappe.db.count('Collaboration Table', filters={'parenttype': doctype, 'parent': name})
     frappe.db.commit()
     if html:
         context = {
-            'collaboration': c,
+            'collaboration': doc,
             'personas': get_persona_list()
         }
         template = "templates/includes/common/collaboration_card.html"
@@ -788,6 +801,18 @@ def delete_contribution(child_doctype, name):
         return True
     except:
         frappe.throw('{} not found in {}.'.format(name, child_doctype))
+
+@frappe.whitelist(allow_guest = False)
+def delete_collaboration(name):
+    try:
+        e = frappe.get_doc('Collaboration Table', {'collaboration_intent': name})
+        # delete from the parent child table
+        frappe.delete_doc('Collaboration Table', e.name)
+        # delete the primary document
+        frappe.delete_doc('Collaboration Intent', name)
+        return True
+    except:
+        frappe.throw('Collaboration not found.')
 
 @frappe.whitelist(allow_guest = False)
 def delete_enrichment(name):

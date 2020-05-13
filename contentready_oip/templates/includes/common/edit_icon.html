@@ -13,16 +13,22 @@
 
 <script>
     editDocument = (doctype, name, data) => {
+        // console.log(doctype, name, data);
         if (doctype === 'Problem') {
             window.location.href = `/add-problem?name=${name}`;
         } else if (doctype === 'Enrichment') {
             window.location.href = `/add-enrichment?name=${name}`;
         } else if (doctype === 'Solution') {
             window.location.href = `/add-solution?name=${name}`;
-        } else if (doctype === 'Collaboration Table') {
+        } else if (doctype === 'Collaboration Intent') {
             data = JSON.parse(data.replace(/u\'/g, '"').replace(/\'/g, '"'));
+            // console.log(data);
+            // personas_list contains all personas
+            // For now, we use just the first element
+            // For multiselect we should use the complete list
+            const personas_list = data[0].split(',');
             $('#collaboration-modal-' + name).modal('toggle');
-            $("#persona-select-" + name).val(data[0]);
+            $("#persona-select-" + name).val(personas_list[0]);
             $("#collaboration-comment-" + name).val(data[1]);
         } else if (doctype === 'Validation Table') {
             data = JSON.parse(data.replace(/u\'/g, '"').replace(/\'/g, '"'));

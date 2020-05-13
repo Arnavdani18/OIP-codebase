@@ -44,7 +44,8 @@
             <div class="tab-pane fade" id="collaborations" role="tabpanel" aria-labelledby="collaborations-tab">
                 <div class="col pb-4">
                     <div class="row px-3 pt-3">
-                        {% for collaboration in collaborations | reverse %}
+                        {% for c in collaborations | reverse %}
+                        {% set collaboration = frappe.get_doc('Collaboration Intent', c.collaboration_intent) %}
                         {% include "templates/includes/common/collaboration_card.html" %}
                         {% endfor %}
                     </div>
