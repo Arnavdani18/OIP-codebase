@@ -14,6 +14,7 @@ def get_context(context):
     context.contributed_problems = []
     context.contributed_solutions = []
     context.drafts = []
+    context.actual = {}
     context.show_default_view = False
     if frappe.session.user != 'Guest':
         parameters = frappe.form_dict
@@ -37,13 +38,28 @@ def get_context(context):
             # context.recommended_problems = dashboard_content['recommended_problems']
             # context.recommended_solutions = dashboard_content['recommended_solutions']
             context.recommended_users = dashboard_content['recommended_users'][:2]
+            context.actual['recommended_users'] = len(dashboard_content['recommended_users'])
+
             context.user_problems = dashboard_content['user_problems'][:2]
+            context.actual['user_problems'] = len(dashboard_content['user_problems'])
+
             context.user_solutions = dashboard_content['user_solutions'][:2]
+            context.actual['user_solutions'] = len(dashboard_content['user_solutions'])
+
             context.watched_problems = dashboard_content['watched_problems'][:2]
+            context.actual['watched_problems'] = len(dashboard_content['watched_problems'])
+
             context.watched_solutions = dashboard_content['watched_solutions'][:2]
+            context.actual['watched_solutions'] = len(dashboard_content['watched_solutions'])
+
             context.contributed_problems = dashboard_content['contributed_problems'][:2]
+            context.actual['contributed_problems'] = len(dashboard_content['contributed_problems'])
+
             context.contributed_solutions = dashboard_content['contributed_solutions'][:2]
+            context.actual['contributed_solutions'] = len(dashboard_content['contributed_solutions'])
+
             context.drafts = dashboard_content['drafts'][:4]
+            context.actual['drafts'] = len(dashboard_content['drafts'])
             return context
         if content_type == 'recommended_areas':
             content_list = ['recommended_problems', 'recommended_solutions']

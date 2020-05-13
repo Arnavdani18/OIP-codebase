@@ -18,8 +18,7 @@
           <li class="nav-item">
             <a class="nav-link" id="user-content-tab" data-toggle="tab" href="#user-content" role="tab"
               aria-controls="user-content" aria-selected="true">
-              Areas Added By You ({{ (user_problems + user_solutions) | length
-              }})
+              Areas Added By You ({{ actual.user_problems + actual.user_solutions }})
             </a>
           </li>
         </ul>
@@ -64,7 +63,7 @@
               {% endif %}
             </div>
             <div class="tab-pane fade" id="user-content" role="tabpanel" aria-labelledby="user-content-tab">
-              {% if (user_problems + user_solutions) | length < 1 %}
+              {% if (actual.user_problems + actual.user_solutions) < 1 %}
               <div class="w-100">
                 {% set msg = "No area added yet" %}
                 {% set img_src = "" %}
@@ -84,10 +83,10 @@
               <hr class="m-0" />
               {% endfor %}
 
-              {%  if (user_problems + user_solutions) | length > 4 %}
+              {%  if (actual.user_problems + actual.user_solutions) > 4 %}
               <div class="text-center py-3">
                 <a href="/dashboard?type=user_areas" class="viewAll">View All
-                  ({{ (user_problems + user_solutions) | length }})</a>
+                  ({{ actual.user_problems + actual.user_solutions }})</a>
               </div>
               {% endif %}
             </div>
@@ -100,19 +99,19 @@
         <ul class="nav nav-tabs nav-section nav-mob-section" id="rightTab" role="tablist">
           <li class="nav-item">
             <a class="nav-link active" id="watched-content-tab" data-toggle="tab" href="#watched-content" role="tab"
-              aria-controls="watched-content" aria-selected="true">Your Watch List ({{ (watched_problems + watched_solutions) |
-              length }})</a>
+              aria-controls="watched-content" aria-selected="true">Your Watch List
+              ({{ actual.watched_problems + actual.watched_solutions }})</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" id="draft-content-tab" data-toggle="tab" href="#draft-content" role="tab"
-              aria-controls="watched-content" aria-selected="true">Your Drafts ({{ drafts | length }})</a>
+              aria-controls="watched-content" aria-selected="true">Your Drafts ({{ actual.drafts }})</a>
           </li>
         </ul>
         <div id="rightTabGroup" class="pb-2">
           <div class="tab-content" id="leftTabContent">
             <div class="tab-pane fade active show" id="watched-content" role="tabpanel"
               aria-labelledby="watched-content-tab">
-              {% if (watched_problems + watched_solutions) | length < 1 %}
+              {% if (actual.watched_problems + actual.watched_solutions) < 1 %}
               <div>
                 {% set msg = "No watchlist yet" %}
                 {% set img_src = "" %}
@@ -133,10 +132,10 @@
               <hr>
               {% endfor %}
 
-              {% if (watched_problems + watched_solutions) | length > 2 %}
+              {% if actual.watched_problems + actual.watched_solutions > 2 %}
               <div class="text-center py-3">
                 <a href="/dashboard?type=watch_list" class="viewAll">View All
-                  ({{ (watched_problems + watched_solutions) | length }})</a>
+                  ({{ actual.watched_problems + actual.watched_solutions }})</a>
               </div>
               {% endif %}
             </div>
@@ -155,10 +154,10 @@
               <hr />
               {% endfor %}
 
-              {% if drafts | length > 4 %}
+              {% if actual.drafts > 4 %}
               <div class="text-center py-3">
                 <a href="/dashboard?type=drafts" class="viewAll">View All
-                  ({{ drafts | length }})</a>
+                  ({{ actual.drafts }})</a>
               </div>
               {% endif %}
             </div>
@@ -170,8 +169,8 @@
         <ul class="nav nav-tabs nav-section nav-mob-section" id="rightTab1" role="tablist">
           <li class="nav-item">
             <a class="nav-link active" id="contributions-tab" data-toggle="tab" href="#contributions" role="tab"
-              aria-controls="contributions" aria-selected="false">Your Contributions ({{ (contributed_problems +
-              contributed_solutions) | length }})</a>
+              aria-controls="contributions" aria-selected="false">Your Contributions ({{ (actual.contributed_problems +
+              actual.contributed_solutions) }})</a>
           </li>
         </ul>
         <div id="rightTabGroup1" class="pb-4" style="border-radius: var(--round4);">
@@ -179,7 +178,7 @@
             <div class="row p-0 m-0" id="users" role="tabpanel" aria-labelledby="users-tab">
               <div class="col m-0 p-0">
 
-                {% if (contributed_problems + contributed_solutions) | length < 1 %}
+                {% if (actual.contributed_problems + actual.contributed_solutions) < 1 %}
                 <div>
                   {% set msg = "No contributions yet" %}
                   {% set img_src = "" %}
@@ -203,10 +202,10 @@
                 <hr>
                 {% endfor %}
 
-                {% if (contributed_problems + contributed_solutions) | length > 2 %}
+                {% if (actual.contributed_problems + actual.contributed_solutions) > 2 %}
                 <div class="text-center py-2">
                   <a href="/dashboard?type=contributions" class="viewAll">View All
-                    ({{ (contributed_problems + contributed_solutions) | length }})</a>
+                    ({{ actual.contributed_problems + actual.contributed_solutions }})</a>
                 </div>
                 {% endif %}
               </div>
@@ -274,6 +273,16 @@
       {% include "templates/includes/common/user_card.html" %}
     </div>
     {% endfor %}
+
+    <!-- Drafts viewAll -->
+    {% elif content_type == 'drafts' %}
+    {% for content in recommended_users %}
+    <div class="col-6 mt-4">
+      {% include "templates/includes/common/draft_card.html" %}
+    </div>
+    {% endfor %}
+    <!-- Drafts viewAll -->
+
     {% else %}
     <div class="col-md-6 mt-4">
       {% for problem in problems %}

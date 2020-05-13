@@ -971,6 +971,7 @@ frappe.ready(async () => {
     },
     methods: {
       deleteDocument: async function () {
+        const vm = this;
         if (frappe.web_form.doc.name) {
           frappe.confirm('Are you sure you want to delete this solution?',
             async function () {
@@ -978,7 +979,8 @@ frappe.ready(async () => {
               await frappe.web_form.delete(frappe.web_form.doc.name);
               clearInterval(autosave);
               $(window).off("beforeunload");
-              window.history.back();
+              vm.show_progress_bar();
+              // window.history.back();
               return true;
             },
             function () {
@@ -995,7 +997,25 @@ frappe.ready(async () => {
         } else {
           return 'Cancel';
         }
-      }
+      },
+      show_progress_bar: function() {
+        let i = 0;
+        let loader;
+        const id = setInterval(frame, 20);
+
+        function frame() {
+          if (i >= 100) {
+            clearInterval(id);
+            i = 0;
+            loader.hide();
+            window.history.back();
+          } else {
+            i++;
+            loader = frappe.show_progress('Deleting..', i, 100, 'Please wait');
+            loader.$body.find('.description').css({"font-size": "1.6rem","padding-top":".5rem"});
+          }
+        }
+      } 
     },
     template: `<button
       v-if="frappe.web_form.doc.is_published !== 1"

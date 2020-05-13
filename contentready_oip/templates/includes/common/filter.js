@@ -35,7 +35,7 @@ frappe.ready(() => {
             let sectors = localStorage.getItem('filter_sectors');
             // sectors = available_sectors.map(s => s.name);
             // sectors = JSON.stringify(sectors);
-            console.log(sectors);
+            // console.log(sectors);
             if (!sectors) {
                 // sectors = available_sectors.map(s => s.name);
                 // console.log(sectors);
@@ -58,13 +58,16 @@ frappe.ready(() => {
         let qp;
         if (Object.keys(filter_query).length) {
             const combined_query = {...existing_query, ...filter_query };
-            console.log(combined_query, filter_query);
             qp = frappe.utils.make_query_string(combined_query);
-            console.log(qp);
         }
         if (qp) {
-            const clean_url = window.location.href.split('?')[0]; 
-            window.location.href = clean_url+qp;
+            const curr_route = window.location.pathname;
+            if (curr_route.includes('search')) {
+                window.history.replaceState({},null,qp)
+            } else {
+                const clean_url = window.location.href.split('?')[0]; 
+                window.location.href = clean_url+qp;
+            }
         }
     }
 
@@ -168,10 +171,13 @@ frappe.ready(() => {
     // Start Initialisation - Values are set from session into context if available
     // We can use Jinja2 templates with context here as the JS is compiled server-side.
 
-    const filter_query = loadFilters();
-    const window_qs = frappe.utils.get_query_string(window.location.href);
-    if (!window_qs && Object.keys(filter_query).length){
-        reloadWithParams();
+    const curr_route = window.location.pathname;
+    if (!curr_route.includes('search')) {
+        const filter_query = loadFilters();
+        const window_qs = frappe.utils.get_query_string(window.location.href);
+        if (!window_qs && Object.keys(filter_query).length){
+            reloadWithParams();
+        }
     }
     // End Inititialisation
     // Start location filter
