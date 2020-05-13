@@ -15,11 +15,11 @@
 
                     <div class="social-login mt-4">
                         <a class="linkedin-button" href="javascript:void(0);" title="Linkedin">
-                            <i class="fa fa-linkedin" aria-hidden="true"></i>
+                            <i>{% include "public/svg/linkedin-in-brands.svg" %}</i>
                         </a>
-
+                        
                         <a class="google-button" href="javascript:void(0);" title="Google">
-                            <i class="fa fa-google" aria-hidden="true"></i>
+                            <i>{% include "public/svg/google-brands.svg" %}</i>
                         </a>
                     </div>
 
@@ -32,12 +32,12 @@
                             <div class="password-input-labels">
                                 <label for="password">Password</label>
                                 <button class="password-show" @click="toggleEye" type="button">
-                                    <div v-if="show_eye">
-                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                    <div v-if="show_eye" class="eye">
+                                        <i>{% include "public/svg/eye-solid.svg" %}</i>
                                         <span> &nbsp;Show</span>
                                     </div>
-                                    <div v-if="!show_eye">
-                                        <i class="fa fa-eye-slash" aria-hidden="true"></i>
+                                    <div v-if="!show_eye" class="eye">
+                                        <i>{% include "public/svg/eye-slash-solid.svg" %}</i>
                                         <span> &nbsp;Hide</span>
                                     </div>
                                 </button>

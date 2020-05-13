@@ -31,7 +31,7 @@
     padding: 0.6rem;
     border: 0.2rem solid var(--primary2);
     border-radius: var(--round4);
-    font-size: var(--f20);
+    /* font-size: var(--f20); */
     color: var(--primary2);
     background-color: var(--secondary5);
     flex-grow: 1;
@@ -43,6 +43,11 @@
 
 .linkedin-button {
     margin-right: 1%;
+}
+
+.linkedin-button>i>svg,
+.google-button>i>svg{
+    width: var(--f20);
 }
 
 .email-input {
@@ -66,6 +71,10 @@
     width: 100%;
     font-size: var(--f14);
     padding: 1rem;
+}
+
+.eye>i>svg{
+    width: var(--f14);
 }
 
 .password-show > div > span {
