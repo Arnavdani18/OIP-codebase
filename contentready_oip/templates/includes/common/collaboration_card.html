@@ -5,7 +5,7 @@
         {% if frappe.session.user == collaboration.user %}
             {% set doctype = collaboration.doctype %}
             {% set name = collaboration.name %}
-            {% set data = [collaboration.personas, collaboration.comment] %}
+            {% set data = [collaboration.personas_list, collaboration.comment] %}
             {% include "templates/includes/common/edit_icon.html" %}
             {% include "templates/includes/common/collaboration_form.html" %}
         {% endif %}
