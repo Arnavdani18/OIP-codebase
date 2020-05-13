@@ -32,13 +32,16 @@
                 </form>
             </div>
             <div class="modal-footer collaboration-footer justify-content-start">
-                {% if doctype == 'Collaboration Table' %}
+                {% if doctype == 'Collaboration Intent' %}
                 <!-- Edit mode -->
                 <button type="button" class="modal-btn btn-outline-danger"
                     onclick="deleteCollaboration('{{doctype}}', '{{name}}')">Delete</button>
-                {% endif %}
+                <button type="button" class="modal-btn btn-outline-primary collaboration-add-btn"
+                    onclick="submitCollaboration('{{doctype}}', '{{name}}')">Update</button>
+                {% else %}
                 <button type="button" class="modal-btn btn-outline-primary collaboration-add-btn"
                     onclick="submitCollaboration('{{doctype}}', '{{name}}')">Add</button>
+                {% endif %}
                 <button class="modal-btn btn-link text-dark" style="border: none; font-size: 1.4rem;"
                     data-dismiss="modal">Cancel</button>
             </div>
@@ -158,6 +161,7 @@
             personas: [$('#persona-select-' + name).val()],
             comment: $('#collaboration-comment-' + name).val()
         }
+        console.log(collaboration);
         if (!collaboration.comment) {
             frappe.throw('Please state your intent.');
         }

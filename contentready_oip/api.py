@@ -545,12 +545,18 @@ def add_or_edit_validation(doctype, name, validation, html=True):
 @frappe.whitelist(allow_guest = False)
 def add_or_edit_collaboration(doctype, name, collaboration, html=True):
     collaboration = json.loads(collaboration)
+    print(collaboration)
     if doctype == 'Collaboration Intent':
         # in edit mode
-        c = frappe.get_doc('Collaboration Intent', name)
-        c.update(collaboration)
-        c.save()
-        total_count = frappe.db.count('Collaboration Table', filters={'parenttype': c.parent_doctype, 'parent': c.parent_name})
+        doc = frappe.get_doc('Collaboration Intent', name)
+        doc.comment = collaboration['comment']
+        doc.personas = []
+        doc.personas_list = ','.join(collaboration['personas'])
+        for p in collaboration['personas']:
+            row = doc.append('personas', {})
+            row.persona = p
+        doc.save()
+        total_count = frappe.db.count('Collaboration Table', filters={'parenttype': doc.parent_doctype, 'parent': doc.parent_name})
     else:
         # creating new collaboration
         if has_user_contributed('Collaboration Table', doctype, name):

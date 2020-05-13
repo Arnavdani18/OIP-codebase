@@ -13,7 +13,7 @@
 
 <script>
     editDocument = (doctype, name, data) => {
-        // console.log(doctype, name, data);
+        console.log(doctype, name, data);
         if (doctype === 'Problem') {
             window.location.href = `/add-problem?name=${name}`;
         } else if (doctype === 'Enrichment') {
