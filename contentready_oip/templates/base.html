@@ -9,7 +9,7 @@
 
     {% set hostname = frappe.get_url() %}
 
-    {% set domain_settings = frappe.get_doc('OIP White Label Domain', hostname) %}
+    {% set domain_settings = frappe.get_doc('OIP White Label Domain', {'url': hostname}) %}
 
     {% block meta_block %}
     {% include "templates/includes/meta_block.html" %}
