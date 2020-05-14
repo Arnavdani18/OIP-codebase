@@ -5,6 +5,8 @@
 from __future__ import unicode_literals
 # import frappe
 from frappe.model.document import Document
+from contentready_oip import api
 
 class OIPWhiteLabelDomain(Document):
-	pass
+	def after_insert(self):
+		api.add_custom_domain(self.url)

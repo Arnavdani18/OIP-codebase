@@ -1026,8 +1026,9 @@ def send_weekly_updates(emails=[]):
     return response 
 
 @frappe.whitelist(allow_guest=False)
-def add_custom_domain(domain_name, site='dev.openinnovationplatform.org'):
+def add_custom_domain(domain_name):
     import shlex, subprocess
+    site = frappe.get_site_path()
     cmds = ['bench setup add-domain {} --site {}'.format(domain_name, site), 'sudo -H bench setup lets-encrypt -n {} --custom-domain {}'.format(site, domain_name), 'sudo systemctl restart nginx']
     try:
         for cmd in cmds:
