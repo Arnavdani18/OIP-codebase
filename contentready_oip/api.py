@@ -1026,21 +1026,9 @@ def send_weekly_updates(emails=[]):
     return response 
 
 @frappe.whitelist(allow_guest=False)
-def add_custom_domain(domain_name):
-    import shlex, subprocess, os, json
-    # site = 'dev.openinnovationplatform.org'
-    site_path = frappe.get_site_path()
-    config_file_path = os.path.join(site_path, 'site_config.json')
-    with open(config_file_path, 'r') as f:
-        config = json.load(f)
-    if not 'domains' in config:
-        config['domains'] = []
-    if not domain_name in config['domains']:
-        config['domains'].append(domain_name)
-    # print(config)
-    with open(config_file_path, 'w') as f:
-        json.dump(config, f)
-    cmds = ['bench setup nginx --yes', 'sudo systemctl restart nginx', 'sudo -H bench setup lets-encrypt {}'.format(domain_name)]
+def add_custom_domain(domain_name, site='dev.openinnovationplatform.org'):
+    import shlex, subprocess
+    cmds = ['bench setup add-domain {} --site {}'.format(domain_name, site), 'sudo -H bench setup lets-encrypt -n {} --custom-domain {}'.format(site, domain_name), 'sudo systemctl restart nginx']
     try:
         for cmd in cmds:
             cmd = shlex.split(cmd)
