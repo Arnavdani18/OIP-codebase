@@ -1026,15 +1026,24 @@ def send_weekly_updates(emails=[]):
     return response 
 
 @frappe.whitelist(allow_guest=False)
-def add_custom_domain(domain_name):
+def add_custom_domain(domain):
     import shlex, subprocess
     site = frappe.get_site_path()
-    cmds = ['bench setup add-domain {} --site {}'.format(domain_name, site), 'sudo -H bench setup lets-encrypt -n {} --custom-domain {}'.format(site, domain_name), 'sudo systemctl restart nginx']
+    cmds = ['bench setup add-domain {} --site {}'.format(domain, site), 'sudo -H bench setup lets-encrypt -n {} --custom-domain {}'.format(site, domain), 'sudo systemctl restart nginx']
     try:
         for cmd in cmds:
             cmd = shlex.split(cmd)
             subprocess.check_output(cmd)
+        doc = frappe.get_doc('OIP White Label Domain', domain)
+        doc.url = 'https://{}'.format(domain)
+        doc.save()
         return True
     except Exception as e:
         print(str(e))
         raise
+
+def setup_domain_hook(doc=None, event_name=None):
+    try:
+        add_custom_domain(doc.domain)
+    except Exception as e:
+        print(str(e))

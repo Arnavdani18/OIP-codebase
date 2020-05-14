@@ -85,6 +85,11 @@ doc_events = {
 		"after_insert": "contentready_oip.api.create_user_profile_if_missing",
 		# "on_cancel": "method",
 		# "on_trash": "method"
+	},
+	"OIP White Label Domain": {
+		"after_insert": "contentready_oip.api.setup_domain_hook",
+		# "on_cancel": "method",
+		# "on_trash": "method"
 	}
 }
 

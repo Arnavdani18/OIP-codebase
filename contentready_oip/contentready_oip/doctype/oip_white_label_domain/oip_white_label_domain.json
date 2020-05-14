@@ -1,12 +1,13 @@
 {
  "allow_rename": 1,
- "autoname": "field:url",
+ "autoname": "field:domain",
  "creation": "2020-03-30 18:24:18.929832",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
   "title",
+  "domain",
   "url",
   "brandmark",
   "favicon",
@@ -32,15 +33,13 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "URL",
-   "reqd": 1,
    "unique": 1
   },
   {
    "fieldname": "brandmark",
    "fieldtype": "Attach",
    "in_list_view": 1,
-   "label": "Brandmark",
-   "reqd": 1
+   "label": "Brandmark"
   },
   {
    "fieldname": "website_theme",
@@ -79,9 +78,16 @@
    "fieldtype": "Table",
    "label": "Partners",
    "options": "Partner Table"
+  },
+  {
+   "fieldname": "domain",
+   "fieldtype": "Data",
+   "label": "Domain",
+   "reqd": 1,
+   "unique": 1
   }
  ],
- "modified": "2020-04-20 17:59:33.088711",
+ "modified": "2020-05-14 19:35:25.088109",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP White Label Domain",
