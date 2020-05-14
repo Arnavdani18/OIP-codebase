@@ -9,4 +9,5 @@ from contentready_oip import api
 
 class OIPWhiteLabelDomain(Document):
 	def after_insert(self):
+		domain_name = self.url.split('//')[1]
 		api.add_custom_domain(self.url)
