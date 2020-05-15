@@ -1,5 +1,3 @@
-<script type="text/javascript" src="/assets/frappe/node_modules/vue/dist/vue.js"></script>
-
 <div class="modal" tabindex="-1" role="dialog" id="collaboration-modal-{{name}}">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content p-4">
@@ -13,21 +11,22 @@
                 <form class="">
                     <div class="form-group">
                         <div class="form-group">
-                            <label for="collaboration-comment" class="modal-label">Please state your intent <span
-                                    class="text-primary">*</span></label>
+                            <label for="collaboration-comment" class="modal-label">Please state your intent
+                                <span class="text-primary">*</span>
+                            </label>
                             <textarea type="text" class="form-control collaboration-comment-area"
-                                id="collaboration-comment-{{name}}" rows="3" placeholder="Enter comment"
-                                required></textarea>
+                                id="collaboration-comment-{{name}}" rows="3" placeholder="Enter comment" required>
+                            </textarea>
                         </div>
                         <label for="personaSelect" class="modal-label">Persona</label>
-                        <select class="form-control" style="font-size: 1.4rem;" id="persona-select-{{name}}" required>
+                        {# <!-- <select class="form-control" style="font-size: 1.4rem;" id="persona-select-{{name}}" required>
                             <option value="">Please Select a Persona</option>
                             {% for persona in personas %}
                             <option value="{{persona.value}}">{{persona.label}}</option>
-                            {% endfor %}
-                        </select>
+                            {% endfor %} 
+                        </select> --> #}
 
-                        <!-- <div id="personaVueComp"></div> -->
+                        <div id="personaVueComp"></div>
                     </div>
                 </form>
             </div>
@@ -49,29 +48,54 @@
     </div>
 </div>
 
+<script type="text/x-template" id="persona-btns">
+    <div class="row">
+        <div class="col d-flex flex-wrap">
+            <button 
+                v-for="persona in avail_personas" 
+                class="btn btn-lg mb-3 mr-3 persona-btn" 
+                :title="persona['label']"
+                :class="{
+                'btn-primary': toggleClass(persona['value']),
+                'text-white': toggleClass(persona['value']),
+                'btn-outline-primary' :!toggleClass(persona['value']) 
+                }"
+                @click.prevent="updatePersonaToDoc(persona['value'])"
+                >
+                [{persona['label']}]
+            </button>
+        </div>
+    </div>
+</script>
+
 <script>
-    frappe.ready(() => {
+    const persona_in_collaboration = {};
+    frappe.ready( () => {
         createPersonaOptions = () => {
-            frappe.call({
+            frappe.call( {
                 method: 'contentready_oip.api.get_persona_list',
                 args: {},
-                callback: function (r) {
-                    r.message.map(op => {
-                        $('#persona-select-{{name}}').append(`<option value="${op.value}"> 
-                                       ${op.label} 
-                                  </option>`);
-                    })
+                callback: function ( r ) {
+                    r.message.map( op => {
+                        $( '#persona-select-{{name}}' )
+                            .append( `
+                            <option 
+                                value="${ op.value }"> 
+                                ${op.label } 
+                            </option>`);
+                    } )
                 }
-            });
+            } );
         }
         createPersonaOptions();
 
         const getAvailablePersonas = function () {
-            frappe.call({
+            frappe.call( {
                 method: 'contentready_oip.api.get_persona_list',
                 args: {},
-                callback: function (r) {
+                callback: function ( r ) {
                     let user_personas;
+
                     // if (frappe.web_form.doc.personas) {
                     //     user_personas = frappe.web_form.doc.personas.map(p => p.persona);
                     // }
@@ -79,119 +103,95 @@
                     // it should be as per edit profile persona:
                     // ["innovator"]
                     // personaVueComp.user_personas = user_personas;
-                    personaVueComp.avail_personas = r.message;
+                    persona_in_collaboration.vm.avail_personas = r.message;
                 }
-            });
+            } );
         }
 
-        const personaVueComp = new Vue({
-            // el: '#personaVueComp',
-            delimiters: ['[{', '}]'],
-            data: {
-                avail_personas: [],
-                user_personas: []
+        persona_in_collaboration.vm = new Vue( {
+            el: '#personaVueComp',
+            template: `#persona-btns`,
+            delimiters: [ '[{', '}]' ],
+            data: function () {
+                return {
+                    avail_personas: [],
+                    user_personas: []
+                }
             },
             beforeCreate: function () {
-                // https://vuejs.org/v2/api/#beforeCreate
                 getAvailablePersonas();
             },
             methods: {
-                toggleClass: function (persona) {
-                    let is_present = this.user_personas.find(p => persona === p);
-                    if (is_present) {
-                        return true
-                    } else {
-                        return false;
-                    }
+                toggleClass: function ( persona ) {
+                    return this.user_personas.find( p => persona === p );
                 },
 
-                updatePersonaToDoc: function (personaClicked) {
-                    if (!frappe.web_form.doc.personas) {
-                        frappe.web_form.doc.personas = [];
-                    }
-
-                    let index = frappe.web_form.doc.personas.findIndex(s => s.persona === personaClicked);
-
-                    if (index > 0) {
-                        frappe.web_form.doc.personas.splice(index, 1)
+                updatePersonaToDoc: function ( personaClicked ) {
+                    const persona = new Set( [ ...this.user_personas ] );
+                    if ( persona.has( personaClicked ) ) {
+                        persona.delete( personaClicked );
                     } else {
-                        frappe.web_form.doc.personas.push({ persona: personaClicked });
+                        persona.add( personaClicked );
                     }
 
-                    getAvailablePersonas();
+                    this.user_personas = [ ...persona ]
+                    // console.log( this.user_personas );
                 }
             },
-            template: `
-                <div class="row">
-                <div class="col d-flex flex-wrap">
-                    <button 
-                        v-for="persona in avail_personas" 
-                        class="btn btn-lg mb-3 mr-3 persona-btn" 
-                        :title="persona['label']"
-                        :class="{
-                        'btn-primary': toggleClass(persona['value']),
-                        'text-white': toggleClass(persona['value']),
-                        'btn-outline-primary' :!toggleClass(persona['value']) 
-                        }"
-                        @click="updatePersonaToDoc(persona['value'])"
-                        >
-                        [{persona['label']}]
-                    </button>
-                </div>
-                </div>
-                `
-        })
-    })
+        } )
+    } );
 
-    deleteCollaboration = (doctype, name) => {
-        frappe.call({
+    deleteCollaboration = ( doctype, name ) => {
+        frappe.call( {
             method: 'contentready_oip.api.delete_collaboration',
             args: { name: name },
-            callback: (r) => {
-                if (r.message) {
+            callback: ( r ) => {
+                if ( r.message ) {
                     window.location.reload();
                 }
             }
-        });
+        } );
     }
 
-    submitCollaboration = (doctype, name) => {
+    submitCollaboration = ( doctype, name ) => {
         const collaboration = {
             user: frappe.session.user,
-            personas: [$('#persona-select-' + name).val()],
-            comment: $('#collaboration-comment-' + name).val()
+            personas: persona_in_collaboration.vm.user_personas,
+            comment: $( '#collaboration-comment-' + name ).val()
         }
-        console.log(collaboration);
-        if (!collaboration.comment) {
-            frappe.throw('Please state your intent.');
+        console.log( collaboration );
+
+        if ( !collaboration.comment ) {
+            frappe.throw( 'Please state your intent.' );
         }
-        if (!collaboration.personas) {
-            frappe.throw('Please select a persona.');
+        if ( !collaboration.personas ) {
+            frappe.throw( 'Please select a persona.' );
         }
-        frappe.call({
+
+        frappe.call( {
             method: 'contentready_oip.api.add_or_edit_collaboration',
             args: {
                 doctype: doctype,
                 name: name,
                 collaboration: collaboration
             },
-            callback: (r) => {
-                if (r.message[1] > 0) {
+            callback: ( r ) => {
+                if ( r.message[ 1 ] > 0 ) {
                     // console.log(r.message);
-                    if (doctype == 'Collaboration Intent') {
+                    if ( doctype == 'Collaboration Intent' ) {
                         // edit mode
-                        $('#collaboration-card-' + name).replaceWith(r.message[0]);
+                        $( '#collaboration-card-' + name ).replaceWith( r.message[ 0 ] );
                         // TODO: Toggles twice for some reason leaving an empty form on the screen.
                         // TEMP Fix: Reload.
                         window.location.reload();
                     } else {
-                        $('#collaborations').prepend(r.message[0]);
-                        $('#collaboration-count').text(r.message[1]);
-                        $('#collaboration-modal-' + name).modal('toggle');
+                        $( '#collaborations' ).prepend( r.message[ 0 ] );
+                        $( '#collaboration-count' ).text( r.message[ 1 ] );
+                        $( '#collaboration-modal-' + name ).modal( 'toggle' );
                     }
                 }
             }
-        });
+        } );
     }
 </script>
 
