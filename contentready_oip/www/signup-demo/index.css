@@ -1,5 +1,6 @@
 body{
-    background-image: linear-gradient(to right,#fff 30.8%, #f7f7f7 10% );
+    /* background-image: linear-gradient(to right,#fff 30.8%, #f7f7f7 10% ); */
+    background-color: white;
 }
 
 .register-section {
@@ -15,7 +16,7 @@ body{
     background-color: var(--secondary5);
     padding-left: 5.6rem;
     font-size: 1.4rem;
-     font-weight: var(--wgt600);
+    font-weight: var(--wgt600);
     letter-spacing: var(--space);
     /* line-height: 2.2rem; */
 }
@@ -124,6 +125,13 @@ color: var(--primary3);
     letter-spacing: 0;
     line-height: 2.1rem;
 }
+
+.first-description>.heading>i>svg,
+.second-description>.heading>i>svg{
+    width: 4rem;
+    height: 3.8rem;
+}
+
 .first-description>.body,
 .second-description>.body {
     color: var(--secondary2);
@@ -132,12 +140,20 @@ color: var(--primary3);
     line-height: 2rem;
 }
 
-@media only screen and (max-width: 600px) {
-    body{
-        background-image: unset;
-        background-color: white;
-    }
+@media only screen and (max-width: 768px) {
+.first-description,
+.second-description {
+    display: flex;
+    flex-direction: column;
+    margin-top: 2rem;
+}
+.first-description>.body,
+.second-description>.body {
+    margin-top: 2rem;
+}
+}
 
+@media only screen and (max-width: 600px) {
     .register-section {
         min-height: 70vh;
     }
