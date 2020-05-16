@@ -69,57 +69,38 @@
 </script>
 
 <script>
-    const persona_in_collaboration = {};
     frappe.ready( () => {
-        createPersonaOptions = () => {
-            frappe.call( {
-                method: 'contentready_oip.api.get_persona_list',
-                args: {},
-                callback: function ( r ) {
-                    r.message.map( op => {
-                        $( '#persona-select-{{name}}' )
-                            .append( `
-                            <option 
-                                value="${ op.value }"> 
-                                ${op.label } 
-                            </option>`);
-                    } )
-                }
-            } );
-        }
-        createPersonaOptions();
-
-        const getAvailablePersonas = function () {
-            frappe.call( {
-                method: 'contentready_oip.api.get_persona_list',
-                args: {},
-                callback: function ( r ) {
-                    let user_personas;
-
-                    // if (frappe.web_form.doc.personas) {
-                    //     user_personas = frappe.web_form.doc.personas.map(p => p.persona);
-                    // }
-
-                    // it should be as per edit profile persona:
-                    // ["innovator"]
-                    // personaVueComp.user_personas = user_personas;
-                    persona_in_collaboration.vm.avail_personas = r.message;
-                }
-            } );
-        }
-
-        persona_in_collaboration.vm = new Vue( {
+        new Vue( {
             el: '#personaVueComp',
             template: `#persona-btns`,
             delimiters: [ '[{', '}]' ],
             data: function () {
                 return {
                     avail_personas: [],
+                    collaboration_data: `{{data | tojson if data}}`,
                     user_personas: []
                 }
             },
+            created: function () {
+                try {
+                    const parsed = JSON.parse( this.collaboration_data );
+                    this.user_personas = parsed[ 0 ].split( "," );
+                } catch ( error ) {
+                    this.user_personas = [];
+                }
+
+                frappe.collaboration_persona = [ ...this.user_personas ];
+
+            },
             beforeCreate: function () {
-                getAvailablePersonas();
+                const newThis = this;
+                frappe.call( {
+                    method: 'contentready_oip.api.get_persona_list',
+                    args: {},
+                    callback: function ( r ) {
+                        newThis.avail_personas = r.message;
+                    }
+                } );
             },
             methods: {
                 toggleClass: function ( persona ) {
@@ -135,7 +116,7 @@
                     }
 
                     this.user_personas = [ ...persona ]
-                    // console.log( this.user_personas );
+                    frappe.collaboration_persona = [ ...this.user_personas ];
                 }
             },
         } )
@@ -156,7 +137,7 @@
     submitCollaboration = ( doctype, name ) => {
         const collaboration = {
             user: frappe.session.user,
-            personas: persona_in_collaboration.vm.user_personas,
+            personas: frappe.collaboration_persona,
             comment: $( '#collaboration-comment-' + name ).val()
         }
         console.log( collaboration );
