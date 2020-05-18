@@ -138,7 +138,7 @@
         const collaboration = {
             user: frappe.session.user,
             personas: frappe.collaboration_persona,
-            comment: $( '#collaboration-comment-' + name ).val()
+            comment: $( '#collaboration-comment-' + name ).val().trim()
         }
         console.log( collaboration );
 
