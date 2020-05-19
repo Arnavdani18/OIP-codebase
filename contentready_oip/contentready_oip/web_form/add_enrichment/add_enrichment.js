@@ -257,6 +257,9 @@ frappe.ready( async () => {
         is_draft: is_draft
       },
       callback: function ( r ) {
+        $( window ).off( "beforeunload" );
+        clearInterval( autoSave );
+
         if ( r.message & r.message[ 1 ] ) {
           window.location.href = r.message[ 1 ];
         } else {

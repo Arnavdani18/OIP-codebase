@@ -308,7 +308,10 @@ frappe.ready( async () => {
         is_draft: is_draft
       },
       callback: function ( r ) {
-        // console.log(r);
+        // console.log( r );
+        $( window ).off( "beforeunload" );
+        clearInterval( autoSave );
+
         if ( r.message && r.message.is_published && r.message.route ) {
           window.location.href = r.message.route;
         } else {
@@ -327,6 +330,8 @@ frappe.ready( async () => {
   };
 
   autoSaveDraft = () => {
+    console.log( "auto save draft: " );
+
     if ( frappe.web_form.doc.title ) {
       frappe.call( {
         method: 'contentready_oip.api.add_primary_content',
