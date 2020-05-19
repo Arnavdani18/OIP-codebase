@@ -3,13 +3,13 @@
   <h3>Open Innovation Platform</h3>
   <form class="needs-validation" v-on:submit.prevent="login" id="login-form" novalidate>
     <div class="form-row align-items-center mb-3">
-        <div class="input-group mb-2">
-          <input type="email" class="form-control" name="usr" placeholder="Your email address" id="email" v-model="email"
-            required>
-          <div class="invalid-feedback">
-            Please provide your email address.
-          </div>
+      <div class="input-group mb-2">
+        <input type="email" class="form-control" name="usr" placeholder="Your email address" id="email" v-model="email"
+          required>
+        <div class="invalid-feedback">
+          Please provide your email address.
         </div>
+      </div>
     </div>
     <div class="form-row align-items-center mb-3">
       <div class="input-group mb-2">
@@ -19,11 +19,8 @@
           Please enter a password.
         </div>
       </div>
-  </div>
+    </div>
     <button class="btn btn-primary" type="submit" :disabled="!validateForm()">Login</button>
   </form>
 </div>
 {% endraw %}
-
-
-<script type="text/javascript" src="/assets/frappe/node_modules/vue/dist/vue.js"></script>
