@@ -1,6 +1,5 @@
 <button class="btn btn-circle margin-20" onclick="editDocument('{{doctype}}','{{name}}', `{{data | safe}}`)"
     aria-label="Edit {{doctype}} {{name}}">
-    <!-- <i class="far fa-pen"></i> -->
     <i class="edit-icon">{% include "public/svg/edit.svg" %}</i>
 
 </button>
@@ -22,8 +21,8 @@
             window.location.href = `/add-solution?name=${ name }`;
         } else if ( doctype === 'Collaboration Intent' ) {
             // data = JSON.parse(data.replace(/u\'/g, '"').replace(/\'/g, '"'));
-            data = JSON.parse( `{{data | tojson}}` )
-            // console.log(data);
+            data = JSON.parse( `{{data | tojson if data}}` )
+
             // personas_list contains all personas
             // For now, we use just the first element
             // For multiselect we should use the complete list
