@@ -704,9 +704,9 @@ def get_content_recommended_for_user(doctype, sectors, limit_page_length=5,creat
     content = []
     try:
         if creation:
-            filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', sectors], 'owner': ['!=', frappe.session.user], 'creation': ['>=',creation]}, limit_page_length=limit_page_length)
+            filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', sectors], 'owner': ['!=', frappe.session.user], 'creation': ['>=',creation]})
         else:
-            filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', sectors], 'owner': ['!=', frappe.session.user]}, limit_page_length=limit_page_length)
+            filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', sectors], 'owner': ['!=', frappe.session.user]})
         content_set = {f['parent'] for f in filtered}
         for c in content_set:
             try:
