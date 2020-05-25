@@ -35,10 +35,25 @@
   {% include "templates/includes/common/page_navigator.html" %}
   {% endif %}
   {% else %}
-  <div class="alert alert-primary mt-5" role="alert" style="font-size: 1.4rem;">
-    <img src="/assets/contentready_oip/images/loader.gif" alt="loader" height="30" width="30">
+  <script>
+    function timeoutLoader() {
+      frappe.ready(() => {
+        setTimeout(() => {
+          $('#loader').hide();
+          $('#noResultFound').toggle('d-flex hidden');
+        },4000);
+      })
+    }
+  </script>
+  <div class="alert alert-primary mt-5" role="alert" style="font-size: 1.4rem;" id="loader">
+    <img src="/assets/contentready_oip/images/loader.gif" alt="loader" onload="timeoutLoader()" height="30" width="30">
     &nbsp;&nbsp;
     Loading content. If no content appears within a few seconds, try changing the filters.
+  </div>
+
+  <div class="text-center flex-column hidden" id="noResultFound" style="margin-top: 5rem;">
+    <h2 class="text-muted">No Results Found</h2>
+    <p>Try changing the filters</p>
   </div>
   {% endif %}
 </div>
