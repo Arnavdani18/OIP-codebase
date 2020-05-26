@@ -89,7 +89,36 @@
         <h1>Signup</h1>
     </section>
     <section class='for-forgot'>
-        <h1>forgot</h1>
+        <div class="container">
+            <div class="row justify-content-center align-items-center display-size">
+                <div class="col-lg-4 col-md-3"></div>
+                <div class="col-lg-4 col-md-3">
+                    <div class="login-content" style="margin-top: 2rem;">
+                        <form class="form-signin form-forgot hide" role="form">
+                            <h2 class="login-heading" role="heading" aria-level="1">
+                                <span class="indicator blue" data-text="{{ _('Forgot Password') }}"></span>
+                            </h2>
+                            <p>
+                                Please enter your email to send OTP and continue.
+                            </p>
+                            <div class="email-input mt-4">
+                                <label for="email">Email</label>
+                                <input type="email" id="forgot_email" class="form-control"
+                                    placeholder="{{ _('Email Address') }}" required autofocus>
+                            </div>
+                            <button type="submit"
+                                class="btn btn-block text-capitalize font-weight-bold mt-5 btn-primary login-button">
+                                {{ _("Reset Password") }}
+                            </button>
+                        </form>
+                    </div>
+                    <div class='form-footer forgot-password mt-5'>
+                        <a href="#login">{{ _("Back to Login") }}</a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-3"></div>
+            </div>
+        </div>
     </section>
 </div>
 {% endblock %}
