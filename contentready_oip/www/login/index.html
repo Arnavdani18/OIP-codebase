@@ -1,0 +1,208 @@
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<div style='min-height: 36rem'>
+    <noscript>
+        <div class="text-center my-5">
+            <h4>{{ _("Javascript is disabled on your browser") }}</h4>
+            <p class="text-muted">
+                {{ _("You need to enable JavaScript for your app to work.") }}<br>{{ _("To enable it follow the instructions in the following link: {0}").format("<a href='https://enable-javascript.com/'>enable-javascript.com</a></p>") }}
+        </div>
+    </noscript>
+    <section class='for-login'>
+        <div class="container">
+            <div class="row justify-content-center align-items-center display-size">
+                <div class="col-lg-4 col-md-3"></div>
+                <div class="col-lg-4 col-md-3">
+                    <div class="login-content">
+                        <form class="form-signin form-login" role="form">
+                            <h2 class="login-heading" role="heading" aria-level="1">
+                                <span class="indicator blue" data-text="{{ _('Login') }}"></span>
+                            </h2>
+                            {%- if not disable_signup -%}
+                            <p class="sign-up-message login-description mt-2">
+                                Need a Social Alpha account? <a href="#signup">{{ _("Create an account") }}</a>
+                            </p>
+                            {%- endif -%}
+
+                            <div class="email-input mt-4">
+                                <label for="email">Email</label>
+                                <input type="text" id="login_email" class="form-control"
+                                    placeholder="{% if login_name_placeholder %}{{ login_name_placeholder  }}{% else %}{{ _('Email Address') }}{% endif %}"
+                                    required autofocus>
+                            </div>
+
+                            <div class="password-input mt-4">
+                                <div class="password-input-labels">
+                                    <label for="password">Password</label>
+                                    <div id="eye-container"></div>
+                                </div>
+
+                                <div class="password-field" style="position: relative;">
+                                    <input type="password" id="login_password" class="form-control"
+                                        placeholder="{{ _('Password') }}" required>
+                                </div>
+                            </div>
+
+                            <button type="submit"
+                                class="btn btn-block text-capitalize font-weight-bold mt-5 btn-primary login-button">
+                                {{ _("Login") }}
+                            </button>
+
+                            {% if ldap_settings and ldap_settings.enabled %}
+                            <button class="btn btn-sm btn-default btn-block btn-login btn-ldap-login">
+                                {{ _("Login with LDAP") }}</button>
+                            {% endif %}
+                        </form>
+                    </div>
+                    <div class='form-footer'>
+
+                        <div class='social-logins'>
+                            {%- if social_login -%}
+                            <h6>{{ _("Or login with") }}</h6>
+
+                            <p class="text-center" style="margin-top: 15px">
+                                {% for provider in provider_logins %}
+                                <a href="{{ provider.auth_url }}"
+                                    class="btn btn-default btn-sm btn-social btn-{{ provider.name }}">
+                                    {{ provider.icon }} {{ provider.provider_name }}</a>
+                                {% endfor %}
+                            </p>
+                            {%- endif -%}
+                        </div>
+
+                        <!-- {%- if not disable_signup -%}
+                        <p class="text-center sign-up-message">
+                            <a href="#signup" style="margin-top: -2px;">{{ _("Don't have an account? Sign up") }}</a>
+                        </p>
+                        {%- endif -%} -->
+
+                        <p class="forgot-password-message forgot-password mt-5">
+                            <a href="#forgot">{{ _("Forgot Password?") }}</a></p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-3"></div>
+            </div>
+        </div>
+    </section>
+    <section class='for-signup'>
+        <div class="container-fluid">
+            <div class="row d-flex align-items-start flex-column-reverse flex-md-row register-section">
+                <section class="col-md-3 left-section" style="min-height: inherit;">
+                    <h2 class="left-heading">What can you do?</h2>
+                    <div class="first-description">
+                        <div class="heading">
+                            <i>{% include "public/svg/problem_icon.svg" %}</i>
+                        </div>
+                        <div class="body">
+                            <h3>Add Problem</h3>
+                            <p>
+                                Add problems you want others to understand and
+                                solve.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="second-description">
+                        <div class="heading">
+                            <i>{% include "public/svg/solution_icon.svg" %}</i>
+                        </div>
+                        <div class="body">
+                            <h3>Provide Solution</h3>
+                            <p>Solve problems that others have identified.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="col-md right-section shadow" style="min-height: inherit;">
+                    <div class="login-content">
+                        <form class="form-signin form-signup hide signup-form" role="form">
+                            <h2><span class="indicator blue" data-text="{{ _('Sign Up') }}"></span></h2>
+                            <p>
+                                {{_("Already have a Social Alpha account?")}}
+                                <a href="#login">{{ _("Login") }}</a>
+                            </p>
+
+                            <div class="fullname mt-5">
+                                <label for="">Full Name</label>
+                                <input type="text" id="signup_fullname" class="form-control"
+                                    placeholder="{{ _('Full Name') }}" required autofocus>
+                            </div>
+
+                            <div class="email mt-5">
+                                <label for="email">Email</label>
+                                <input type="email" id="signup_email" class="form-control"
+                                    placeholder="{{ _('Email Address') }}" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block register-button">
+                                {{ _("Register") }}
+                            </button>
+                        </form>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </section>
+    <section class='for-forgot'>
+        <div class="container">
+            <div class="row justify-content-center align-items-center display-size">
+                <div class="col-lg-4 col-md-3"></div>
+                <div class="col-lg-4 col-md-3">
+                    <div class="login-content" style="margin-top: 2rem;">
+                        <form class="form-signin form-forgot hide" role="form">
+                            <h2 class="login-heading" role="heading" aria-level="1">
+                                <span class="indicator blue" data-text="{{ _('Forgot Password') }}"></span>
+                            </h2>
+                            <p>
+                                Please enter your email to send OTP and continue.
+                            </p>
+                            <div class="email-input mt-4">
+                                <label for="email">Email</label>
+                                <input type="email" id="forgot_email" class="form-control"
+                                    placeholder="{{ _('Email Address') }}" required autofocus>
+                            </div>
+                            <button type="submit"
+                                class="btn btn-block text-capitalize font-weight-bold mt-5 btn-primary login-button">
+                                {{ _("Reset Password") }}
+                            </button>
+                        </form>
+                    </div>
+                    <div class='form-footer forgot-password mt-5'>
+                        <a href="#login">{{ _("Back to Login") }}</a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-3"></div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block script %}
+<script>{% include "templates/includes/login/login.js" %}</script>
+
+<script>
+    // Eye for login
+    new Vue({
+        el: '#eye-container',
+        methods: {
+            isSlashed() {
+                const currentText = this.$refs['eye-text'].innerText;
+                if (currentText.includes('show')) {
+                    this.$refs['eye-text'].innerHTML = '&nbsp;Hide'
+                } else {
+                    this.$refs['eye-text'].innerHTML = '&nbsp;Show'
+                }
+            }
+        },
+        template: `
+        <button type="button" class="password-show" @click="isSlashed">
+            <span toggle="#login_password"
+                class="fa fa-fw fa-eye toggle-password text-muted d-flex">
+                <span ref='eye-text'>&nbsp;Show</span>
+            </span>
+        </button>
+    `
+    })    
+</script>
+{% endblock %}
