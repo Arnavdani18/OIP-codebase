@@ -83,10 +83,14 @@
     font-size: var(--f12);
 }
 
-.password-show > div > i {
-    color: var(--primary2);
+.password-show > span {
+    color: var(--primary2) !important;
     font-size: var(--f12);
 }
+/* .password-show > div > i {
+    color: var(--primary2);
+    font-size: var(--f12);
+} */
 
 .password-input-labels {
     display: flex;
@@ -98,6 +102,7 @@
     cursor: pointer;
     background-color: transparent;
     border: none;
+    margin-right: 3rem;
 }
 .password-show:focus {
     outline: none;
