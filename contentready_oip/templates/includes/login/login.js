@@ -182,7 +182,7 @@ login.login_handlers = (function() {
                 login.set_indicator('{{ _("Success") }}','green');
 
                 // custom modification based on requirement
-                let home_route = "/home";
+                let home_route = "/dashboard";
                 getUserProfile(data.full_name)
                     .then(v => {
                         if (v.message.is_published !== +1) {

@@ -232,7 +232,9 @@
                 {% include "templates/includes/common/empty_card.html" %}
               </div>
               {% endif %}
-
+              <script>
+                console.log(`{{ self_profile }}`);
+              </script>
               {% for user in users %}
               <div class="col-md-6 py-4 border">
                 {% include "templates/includes/common/user_card.html" %}
