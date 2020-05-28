@@ -52,6 +52,9 @@ home_page = "home"
 # automatically create page for each record of this doctype
 website_generators = ["Web Page", "Problem"]
 
+# Served when path provided by user cannot be resolved.
+website_catch_all = [ home_page ]
+
 # Installation
 # ------------
 
