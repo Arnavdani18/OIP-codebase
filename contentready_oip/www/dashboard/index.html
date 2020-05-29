@@ -1,6 +1,27 @@
 <!-- jinja -->
 <!-- no-breadcrumbs -->
 <!-- static -->
+<style>
+  .f-size {
+    font-size: 1.4rem;
+  }
+</style>
+<div class="jumbotron border shadow mb-5">
+  <h1 class="display-4">Hello, {{self_profile.full_name}}</h1>
+  <p class="lead f-size">Welcome to the Open Innovation Platform. Update your profile before you
+    proceed !</p>
+  <hr class="my-4">
+  <button class="btn btn-primary btn-lg text-white f-size" onclick="toggleWelcomeMsg('update_profile')"
+    role="button">Update profile</button>
+  <button class="btn btn-link f-size text-dark" onclick="toggleWelcomeMsg('skip')" role="button">Skip >></button>
+</div>
+
+<script>
+  function toggleWelcomeMsg(f_context) {
+    console.log("context: ",f_context);
+
+  }
+</script>
 
 <div class="mt-20 mb-5">
   {% if show_default_view %}
