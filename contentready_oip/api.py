@@ -769,7 +769,8 @@ def get_dashboard_content(limit_page_length=5,content_list=None):
             'watched_solutions',
             'contributed_problems',
             'contributed_solutions',
-            'drafts'
+            'drafts',
+            'self_profile'
         ]
     try:
         user = frappe.get_doc('User Profile', frappe.session.user)
@@ -788,6 +789,8 @@ def get_dashboard_content(limit_page_length=5,content_list=None):
         payload['user_problems'] = get_content_by_user('Problem', limit_page_length=limit_page_length)
     if 'user_solutions' in content_list:
         payload['user_solutions'] = get_content_by_user('Solution', limit_page_length=limit_page_length)
+    if 'self_profile' in content_list:
+        payload['self_profile'] = frappe.get_doc('User Profile', frappe.session.user).as_dict()
     if 'watched_problems' in content_list:
         payload['watched_problems'] = get_content_watched_by_user('Problem', limit_page_length=limit_page_length)
     if 'watched_solutions' in content_list:
@@ -1047,3 +1050,8 @@ def setup_domain_hook(doc=None, event_name=None):
         add_custom_domain(doc.domain)
     except Exception as e:
         print(str(e))
+
+@frappe.whitelist(allow_guest=False)
+def set_document_value(doctype, docname, fieldname, fieldvalue):
+    return frappe.set_value(doctype, docname, fieldname, fieldvalue)
+

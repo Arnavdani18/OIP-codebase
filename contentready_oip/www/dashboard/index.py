@@ -60,6 +60,8 @@ def get_context(context):
 
             context.drafts = dashboard_content['drafts'][:4]
             context.actual['drafts'] = len(dashboard_content['drafts'])
+
+            context.self_profile = dashboard_content['self_profile'];
             return context
         if content_type == 'recommended_areas':
             content_list = ['recommended_problems', 'recommended_solutions']
