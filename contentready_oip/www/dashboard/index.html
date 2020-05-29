@@ -1,6 +1,8 @@
 <!-- jinja -->
 <!-- no-breadcrumbs -->
 <!-- static -->
+
+{% if self_profile.is_first_login == 1 %}
 <style>
   .f-size {
     font-size: 1.4rem;
@@ -17,11 +19,31 @@
 </div>
 
 <script>
-  function toggleWelcomeMsg(f_context) {
-    console.log("context: ",f_context);
+  function toggleWelcomeMsg(btn_context) {
+    const args = {
+      doctype: 'User Profile',
+      docname: '{{self_profile.full_name}}',
+      fieldname: 'is_first_login',
+      fieldvalue: '0'
+    }
 
+    frappe.call({
+      method: 'contentready_oip.api.set_document_value',
+      args,
+      callback: function(r) {
+        if (btn_context.includes('update_profile')) {
+          window.location.href = "/update-profile";
+        } else {
+          window.location.href = "/home";
+        }
+
+        self_profile = {...r.message};
+      }
+    })
   }
 </script>
+
+{% endif %}
 
 <div class="mt-20 mb-5">
   {% if show_default_view %}
@@ -253,9 +275,7 @@
                 {% include "templates/includes/common/empty_card.html" %}
               </div>
               {% endif %}
-              <script>
-                console.log(`{{ self_profile }}`);
-              </script>
+
               {% for user in users %}
               <div class="col-md-6 py-4 border">
                 {% include "templates/includes/common/user_card.html" %}
