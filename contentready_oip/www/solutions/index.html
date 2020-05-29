@@ -40,8 +40,8 @@
       frappe.ready(() => {
         setTimeout(() => {
           $('#loader').hide();
-          $('#noResultFound').toggle('d-flex hidden');
-        },4000);
+          $('#noResultFound').toggleClass('d-flex hidden');
+        },10 * 1000);
       })
     }
   </script>
