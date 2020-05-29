@@ -1051,6 +1051,7 @@ def setup_domain_hook(doc=None, event_name=None):
     except Exception as e:
         print(str(e))
 
+@frappe.whitelist(allow_guest=False)
 def set_document_value(doctype, docname, fieldname, fieldvalue):
     return frappe.set_value(doctype, docname, fieldname, fieldvalue)
 
