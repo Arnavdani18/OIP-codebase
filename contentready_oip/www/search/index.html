@@ -116,21 +116,30 @@
 <script>
     frappe.ready(async () => {
         // Simple sleep(ms) function from https://stackoverflow.com/a/48882182
-        const sleep = m => new Promise(r => setTimeout(r, m));
+        const sleep = m => new Promise(r => setTimeout(r,m));
 
         // Look for similar problems and solutions when text is entered
         // $('#search-input').val('');
-        triggerSearch = () => {
+
+        $('#search-input').keypress(function(event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                triggerSearch();
+                return false;
+            }
+        });
+
+        function triggerSearch() {
             const key = $('#search-input').val().trim();
             if (key) {
-                const search_query = { key: key };
+                const search_query = {key: key};
                 const existing_query = frappe.utils.get_query_params();
-                const combined_query = { ...existing_query, ...search_query };
-		console.log(search_query, existing_query, combined_query);
+                const combined_query = {...existing_query,...search_query};
+                console.log(search_query,existing_query,combined_query);
                 let qp = frappe.utils.make_query_string(combined_query);
                 if (qp) {
                     const clean_url = window.location.href.split('?')[0];
-		    console.log(clean_url + qp);
+                    console.log(clean_url + qp);
                     window.location.href = clean_url + qp;
                 }
             }
