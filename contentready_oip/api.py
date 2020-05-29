@@ -1050,3 +1050,7 @@ def setup_domain_hook(doc=None, event_name=None):
         add_custom_domain(doc.domain)
     except Exception as e:
         print(str(e))
+
+def set_document_value(doctype, docname, fieldname, fieldvalue):
+    return frappe.set_value(doctype, docname, fieldname, fieldvalue)
+
