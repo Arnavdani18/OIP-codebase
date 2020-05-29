@@ -645,9 +645,13 @@ frappe.ready( async () => {
   };
 
   publishSolution = ( event ) => {
-    frappe.web_form.doc.is_published = true;
-    const is_draft = false;
-    submitSolutionForm( is_draft );
+    //if(frappe.web_form.doc.problems_addressed && frappe.web_form.doc.problems_addressed.length){
+        frappe.web_form.doc.is_published = true;
+        const is_draft = false;
+        submitSolutionForm( is_draft );
+    //} else {
+    //    frappe.throw('Please select at least one problem.');
+    //}
   };
 
   addActionButtons = () => {

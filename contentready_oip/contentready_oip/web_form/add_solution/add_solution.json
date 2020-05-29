@@ -17,7 +17,7 @@
  "is_standard": 1,
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2020-04-08 11:36:56.846083",
+ "modified": "2020-05-20 12:04:51.783711",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "add-solution",
@@ -116,7 +116,7 @@
    "max_length": 0,
    "max_value": 0,
    "read_only": 0,
-   "reqd": 0,
+   "reqd": 1,
    "show_in_filter": 0
   },
   {
@@ -198,7 +198,7 @@
    "max_length": 0,
    "max_value": 0,
    "read_only": 0,
-   "reqd": 0,
+   "reqd": 1,
    "show_in_filter": 0
   },
   {
@@ -406,7 +406,7 @@
    "max_value": 0,
    "options": "Problem Table",
    "read_only": 0,
-   "reqd": 0,
+   "reqd": 1,
    "show_in_filter": 0
   }
  ]
