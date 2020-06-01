@@ -50,11 +50,11 @@
     <script>
         window.frappe = {};
         frappe.ready_events = [];
-        frappe.ready = function (fn) {
+        frappe.ready = function(fn) {
             frappe.ready_events.push(fn);
         }
-        window.dev_server = {{ dev_server }};
-        window.socketio_port = {{ frappe.socketio_port }};
+        window.dev_server = {{dev_server}};
+        window.socketio_port = {{frappe.socketio_port}};
     </script>
 </head>
 
@@ -96,6 +96,14 @@
     {%- for link in web_include_js %}
     <script type="text/javascript" src="{{ link | abs_url }}"></script>
     {%- endfor -%}
+
+    <!-- Sentry integration -->
+    <script src="https://browser.sentry-cdn.com/5.15.5/bundle.min.js"
+        integrity="sha384-wF7Jc4ZlWVxe/L8Ji3hOIBeTgo/HwFuaeEfjGmS3EXAG7Y+7Kjjr91gJpJtr+PAT" crossorigin="anonymous">
+        </script>
+    <script>
+        Sentry.init({dsn: 'https://abd4540a227a4f00b797e2a27fe7bcf5@o238569.ingest.sentry.io/5247169'});
+    </script>
 
     {%- block script %}{%- endblock %}
     <!-- csrf_token -->
