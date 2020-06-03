@@ -1,6 +1,7 @@
 <div class="image-and-count-container d-none d-lg-block">
     {% if (media|length) > 0 %}
-    <img src="{{media[0].attachment}}" alt="image" class="image" />
+    <img src="{{media[0].attachment}}" alt="image" onerror="javascript:this.src='/files/image_placeholder.jpg'"
+        class="image" />
     {% else %}
     <img src="/files/image_placeholder.jpg" alt="image" class="image" />
     {% endif %}
@@ -12,7 +13,8 @@
 </div>
 <div class="image-and-count-container d-lg-none">
     {% if (media|length) > 0 %}
-    <img src="{{media[0].attachment}}" alt="image" class="image-ipad" />
+    <img src="{{media[0].attachment}}" alt="image" onerror="javascript:this.src='/files/image_placeholder.jpg'"
+        class="image-ipad" />
     {% else %}
     <img src="/files/image_placeholder.jpg" alt="image" class="image-ipad" />
     {% endif %}
