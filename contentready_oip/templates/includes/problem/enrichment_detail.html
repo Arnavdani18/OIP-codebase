@@ -132,6 +132,7 @@
           {% endif %}
         </div>
       </div>
+      {% if owner == enrichment.owner %}
       <div class="modal-footer enrichment-modal-footer">
         <button type="button" class="btn btn-text" onclick="deleteEnrichment('{{name}}')">
           Delete
@@ -140,6 +141,7 @@
           Edit
         </button>
       </div>
+      {% endif %}
     </div>
   </div>
 </div>
@@ -170,7 +172,6 @@
       document.querySelector( 'a[href="#media"]' ).click();
     } )
   } );
-
 
 </script>
 

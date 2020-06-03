@@ -36,7 +36,7 @@
             <ul class="navbar-nav mt-lg-0 nav-right-list pattern1">
                 <li class="nav-item ml-lg-3 search-icon-li d-flex align-items-center ">
                     <button onclick="onClickSearch()">
-                        <img src="assets/contentready_oip/svg/search-solid.svg" alt="" width="20" height="20" />
+                        <img src="../assets/contentready_oip/svg/search-solid.svg" alt="" width="20" height="20" />
                     </button>
                     <span class="d-block d-lg-none">Search</span>
                 </li>
@@ -45,7 +45,7 @@
                     {% set notifications = frappe.get_all('OIP Notification', fields=['text', 'route', 'name'], filters={'target_user': frappe.session.user, 'is_read': False}) %}
                     <button role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                         class="icon-btn">
-                        <img src="assets/contentready_oip/svg/envelope-regular.svg" alt="" width="24.06" />
+                        <img src="../assets/contentready_oip/svg/envelope-regular.svg" alt="" width="24.06" />
 
                         {% if notifications | length > 1 %}
                         <span class="notification-icon"></span>
