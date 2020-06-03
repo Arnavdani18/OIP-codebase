@@ -155,40 +155,43 @@
 
 <script>
     onClickLogin = () => {
-        window.location.href = ' /login#login';
-    } logout = () => {
+        window.location.href = ' /login';
+    };
+
+    logout = () => {
         var me = this;
         me.logged_out = true;
-        return frappe.call({
+        return frappe.call( {
             method: 'logout',
-            callback: function(r) {
-                if (r.exc) {
+            callback: function( r ) {
+                if ( r.exc ) {
                     return;
                 }
                 window.location.href = '/';
             }
-        });
-    }
+        } );
+    };
 
     onClickSearch = () => {
         location.href = '/search?sectors=%5B"all"%5D';
-    }
-    openNotification = (name,route) => {
+    };
+
+    openNotification = ( name, route ) => {
         // console.log(name, route);
         // set notification as read
-        frappe.call({
+        frappe.call( {
             method: 'contentready_oip.api.set_notification_as_read',
             args: {
                 'notification_name': name
             },
-            callback: (r) => {
-                if (!route.startsWith('/')) {
+            callback: ( r ) => {
+                if ( !route.startsWith( '/' ) ) {
                     route = '/' + route;
                 }
                 // console.log(r.message);
                 // then open the link
                 window.location.href = route;
             }
-        })
-    }
+        } )
+    };
 </script>
