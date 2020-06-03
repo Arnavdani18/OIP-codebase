@@ -116,10 +116,14 @@
             <div class="container-fluid">
               <div class="row attachment-modal-container">
                 {% for m in media %}
-                <a data-fancybox="enrichment-gallery" data-fancybox-trigger="enrichment-gallery"
-                  href="{{m.attachment}}">
-                  <img src="{{m.attachment or m.thumbnail }}" class="small-img-attachment-modal"
+                <a data-fancybox="enrichment-gallery-{{ name }}" href="{{m.attachment}}">
+                  {% if m.type and m.type.find('video') >= 0 %}
+                  <div class="video-thumbnail text-primary">{% include "public/svg/file-video-solid.svg" %}</div>
+                  {% else %}
+                  <img src="{{m.attachment or m.thumbnail }}"
+                    onerror="javascript:this.src='/files/image_placeholder.jpg'" class="small-img-attachment-modal"
                     alt="{{ m.description }}" id="{{id}}-{{loop.index}}" />
+                  {% endif %}
                 </a>
                 {% endfor %}
               </div>
@@ -128,6 +132,7 @@
           {% endif %}
         </div>
       </div>
+      {% if owner == enrichment.owner %}
       <div class="modal-footer enrichment-modal-footer">
         <button type="button" class="btn btn-text" onclick="deleteEnrichment('{{name}}')">
           Delete
@@ -136,37 +141,37 @@
           Edit
         </button>
       </div>
+      {% endif %}
     </div>
   </div>
 </div>
 
 <script>
   deleteEnrichment = name => {
-    if (confirm('Are you sure you want to delete this enrichment?')) {
-      frappe.call({
+    if ( confirm( 'Are you sure you want to delete this enrichment?' ) ) {
+      frappe.call( {
         method: 'contentready_oip.api.delete_enrichment',
-        args: { name: name },
+        args: {name: name},
         callback: r => {
           // console.log(r);
           window.location.reload();
         }
-      });
+      } );
     }
   };
 
-  frappe.ready(async () => {
+  frappe.ready( async () => {
     // Simple sleep(ms) function from https://stackoverflow.com/a/48882182
-    const sleep = m => new Promise(r => setTimeout(r, m));
-    await sleep(500);
+    const sleep = m => new Promise( r => setTimeout( r, m ) );
+    await sleep( 500 );
 
 
-    const more_img_btn = document.querySelector(`#enrichment-modal-${`{{name}}`} button[data-target="#attachment-modal-card-${`{{name}}`}"]`);
-    more_img_btn.removeAttribute(`data-target`);
-    more_img_btn.addEventListener('click', function () {
-      document.querySelector('a[href="#media"]').click();
-    })
-  });
-
+    const more_img_btn = document.querySelector( `#enrichment-modal-${`{{name}}`} button[data-target="#attachment-modal-card-${`{{name}}`}"]` );
+    more_img_btn.removeAttribute( `data-target` );
+    more_img_btn.addEventListener( 'click', function() {
+      document.querySelector( 'a[href="#media"]' ).click();
+    } )
+  } );
 
 </script>
 
