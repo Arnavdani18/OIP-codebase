@@ -1,12 +1,13 @@
 <div id="short-section-{{name}}" class="description-format">
     {% if long_text and (long_text | length) > 500 %}
     <p>
-        {{short_text}}
+        {{ frappe.utils.html2text(long_text)[:500] + '...' if not short_text else short_text }}
     </p>
     <a href="javascript:void(0);" class="orange-text" onclick="expandText('{{name}}')">Read more</a>
     {% else %}
-        {{long_text}}
+    {{long_text}}
     {% endif %}
+
 </div>
 
 <div class="hidden description-format" id="full-section-{{name}}">
@@ -14,27 +15,29 @@
     <a href="javascript:void(0);" class="orange-text" onclick="truncateText('{{name}}')">Read less</a>
 </div>
 
+
 <style>
-    .orange-text{
+    .orange-text {
         color: #d98b26 !important;
     }
-    .hidden{
+
+    .hidden {
         display: none;
     }
 </style>
 
 <script>
-    expandText = (name) => {
-        $('#short-section-'+name).addClass('hidden');
-        $('#full-section-'+name).removeClass('hidden');
+    expandText = ( name ) => {
+        $( '#short-section-' + name ).addClass( 'hidden' );
+        $( '#full-section-' + name ).removeClass( 'hidden' );
     }
-    truncateText = (name) => {
-        $('#short-section-'+name).removeClass('hidden');
-        $('#full-section-'+name).addClass('hidden');
+    truncateText = ( name ) => {
+        $( '#short-section-' + name ).removeClass( 'hidden' );
+        $( '#full-section-' + name ).addClass( 'hidden' );
     }
 </script>
 <style>
-    .description-format > * {
+    .description-format>* {
         font-size: 1.4rem !important;
         line-height: 2.2rem !important;
     }

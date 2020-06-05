@@ -132,7 +132,7 @@
           {% endif %}
         </div>
       </div>
-      {% if owner == enrichment.owner %}
+      {% if frappe.session.user == enrichment.owner %}
       <div class="modal-footer enrichment-modal-footer">
         <button type="button" class="btn btn-text" onclick="deleteEnrichment('{{name}}')">
           Delete

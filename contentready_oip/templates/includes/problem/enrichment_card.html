@@ -11,7 +11,8 @@
             </div>
 
             <div class="enrich-description">
-                {{enrichment.short_description}}
+                {{ frappe.utils.html2text(enrichment.description)[:180] + '...' if not enrichment.short_description else enrichment.short_description }}
+
             </div>
 
             <div class="created-by mt-5">
