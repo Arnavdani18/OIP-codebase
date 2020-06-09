@@ -35,8 +35,7 @@ def get_context(context):
             else:
                 num_to_show = recommended_areas_length - len(dashboard_content['recommended_problems'])
                 context.recommended_solutions = dashboard_content['recommended_solutions'][:num_to_show]
-            # context.recommended_problems = dashboard_content['recommended_problems']
-            # context.recommended_solutions = dashboard_content['recommended_solutions']
+            
             context.recommended_users = dashboard_content['recommended_users'][:2]
             context.actual['recommended_users'] = len(dashboard_content['recommended_users'])
 
@@ -45,11 +44,21 @@ def get_context(context):
 
             context.user_solutions = dashboard_content['user_solutions'][:2]
             context.actual['user_solutions'] = len(dashboard_content['user_solutions'])
-
-            context.watched_problems = dashboard_content['watched_problems'][:2]
+            watched_length = 2
+            if len(dashboard_content['watched_solutions']) >= 1:
+                context.watched_problems = dashboard_content['watched_problems'][:1]
+            else:
+                num_to_show = recommended_areas_length - len(dashboard_content['watched_solutions'])
+                context.watched_problems = dashboard_content['watched_problems'][:num_to_show]
+            if len(dashboard_content['watched_problems']) >= 1:
+                context.watched_solutions = dashboard_content['watched_solutions'][:1]
+            else:
+                num_to_show = recommended_areas_length - len(dashboard_content['watched_problems'])
+                context.watched_solutions = dashboard_content['watched_solutions'][:num_to_show]
+            
+            # context.watched_problems = dashboard_content['watched_problems'][:2]
+            # context.watched_solutions = dashboard_content['watched_solutions'][:2]
             context.actual['watched_problems'] = len(dashboard_content['watched_problems'])
-
-            context.watched_solutions = dashboard_content['watched_solutions'][:2]
             context.actual['watched_solutions'] = len(dashboard_content['watched_solutions'])
 
             context.contributed_problems = dashboard_content['contributed_problems'][:2]
@@ -61,7 +70,7 @@ def get_context(context):
             context.drafts = dashboard_content['drafts'][:4]
             context.actual['drafts'] = len(dashboard_content['drafts'])
 
-            context.self_profile = dashboard_content['self_profile'];
+            context.self_profile = dashboard_content['self_profile']
             return context
         if content_type == 'recommended_areas':
             content_list = ['recommended_problems', 'recommended_solutions']
