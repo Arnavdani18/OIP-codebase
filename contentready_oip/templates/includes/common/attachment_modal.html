@@ -11,9 +11,13 @@
         <div class="container-fluid">
           <div class="row attachment-modal-container">
             {% for m in media %}
-            <a data-fancybox="attachment-gallery" data-fancybox-trigger="attachment-gallery" href="{{m.attachment}}">
-              <img src="{{m.attachment or m.thumbnail }}" class="small-img-attachment-modal" alt="{{ m.description }}"
-                id="{{id}}-{{loop.index}}" />
+            <a data-fancybox="attachment-gallery-{{ id }}" href="{{m.attachment}}">
+              {% if m.type and m.type.find('video') >= 0 %}
+              <div class="video-thumbnail text-primary">{% include "public/svg/file-video-solid.svg" %}</div>
+              {% else %}
+              <img src="{{m.attachment or m.thumbnail }}" onerror="javascript:this.src='/files/image_placeholder.jpg'"
+                class="small-img-attachment-modal" alt="{{ m.description }}" id="{{id}}-{{loop.index}}" />
+              {% endif %}
             </a>
             {% endfor %}
           </div>
@@ -28,7 +32,8 @@
 </script>
 
 <style>
-  .small-img-attachment-modal {
+  .small-img-attachment-modal,
+  .video-thumbnail svg {
     width: 15rem !important;
     height: 15rem !important;
     object-fit: cover;

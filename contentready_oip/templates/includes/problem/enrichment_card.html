@@ -1,39 +1,39 @@
 {% set doctype = enrichment.doctype %}
 {% set name = enrichment.name %}
 <div class="enrich-card-container" id="enrichment-card-{{enrichment.name}}">
-    <div class="left-side">
-        <div class="heading-container text-capitalize ">
-            <a href="#enrichment-modal-{{ name }}" data-toggle="modal" data-target="#enrichment-modal-{{ name }}"
-                class="text-dark">
-                <h2 class="enrich-heading">
+    <a href="#enrichment-modal-{{ name }}" data-toggle="modal" data-target="#enrichment-modal-{{ name }}"
+        class="text-decoration-none">
+        <div class="left-side">
+            <div class="heading-container text-capitalize ">
+                <h2 class="enrich-heading text-dark">
                     {{ enrichment.title }}
                 </h2>
-            </a>
-        </div>
+            </div>
 
-        <div class="enrich-description">
-            <div class="">
-                {{enrichment.short_description}}
+            <div class="enrich-description">
+                {{ frappe.utils.html2text(enrichment.description)[:180] + '...' if not enrichment.short_description else enrichment.short_description }}
+
+            </div>
+
+            <div class="created-by mt-5">
+                {% set doc_owner = enrichment.user %}
+                {% set date = enrichment.modified %}
+                {% include "templates/includes/common/user_thumbnail.html" %}
+            </div>
+
+            <div class="stats-section my-4">
+                {% set likes = enrichment.likes %}
+                {% include "templates/includes/common/likes.html" %}
             </div>
         </div>
 
-        <div class="created-by mt-5">
-            {% set doc_owner = enrichment.user %}
-            {% set date = enrichment.modified %}
-            {% include "templates/includes/common/user_thumbnail.html" %}
+        <div class="right-side">
+            {% set media = enrichment.media %}
+            {% set id = 'card-'+enrichment.name %}
+            {% include "templates/includes/common/card_featured_image.html" %}
         </div>
+    </a>
 
-        <div class="stats-section my-4">
-            {% set likes = enrichment.likes %}
-            {% include "templates/includes/common/likes.html" %}
-        </div>
-    </div>
-
-    <div class="right-side">
-        {% set media = enrichment.media %}
-        {% set id = 'card-'+enrichment.name %}
-        {% include "templates/includes/common/card_featured_image.html" %}
-    </div>
 </div>
 
 {% include "templates/includes/problem/enrichment_detail.html" %}

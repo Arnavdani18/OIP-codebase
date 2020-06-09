@@ -1,8 +1,9 @@
 {% set id = 'header' %}
 <div class="img-wrapper">
     {% if (media|length) > 0 %}
-    <img src="{{media[0].attachment}}" alt="image" class="rounded img-responsive"
-        style="object-fit: cover; cursor: pointer;" data-toggle="modal" data-target="#attachment-modal-{{id}}" />
+    <img src="{{media[0].attachment}}" alt="image" onerror="javascript:this.src='/files/image_placeholder.jpg'"
+        class="rounded img-responsive" style="object-fit: cover; cursor: pointer;" data-toggle="modal"
+        data-target="#attachment-modal-{{id}}" />
     {% else %}
     <img src="/files/image_placeholder.jpg" alt="image" class="rounded img-responsive" style="object-fit: cover;" />
     {% endif %}

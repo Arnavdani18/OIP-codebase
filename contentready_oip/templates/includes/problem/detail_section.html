@@ -10,11 +10,13 @@
         </li>
         <li class="nav-item">
             <a class="nav-link" id="validations-tab" data-toggle="tab" href="#validations" role="tab"
-                aria-controls="validations" aria-selected="false">Validated (<span id="validation-count">{{ validations | length }}</span>)</a>
+                aria-controls="validations" aria-selected="false">Validated (<span
+                    id="validation-count">{{ validations | length }}</span>)</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" id="collaborations-tab" data-toggle="tab" href="#collaborations" role="tab"
-                aria-controls="collaborations" aria-selected="false">Collaborated (<span id="collaboration-count">{{ collaborations | length }}</span>)</a>
+                aria-controls="collaborations" aria-selected="false">Collaborated (<span
+                    id="collaboration-count">{{ collaborations | length }}</span>)</a>
         </li>
     </ul>
     <div id="leftTabGroup" class="pb-2">
@@ -25,9 +27,9 @@
             <div class="tab-pane fade" id="enrichments" role="tabpanel" aria-labelledby="enrichments-tab">
                 <div class="col pb-4">
                     {% for e in enrichments | reverse %}
-                    {% set enrichment = frappe.get_doc('Enrichment', e.enrichment) %}
+                    {% set enrichment = frappe.get_doc('Enrichment', e.enrichment).as_dict() %}
                     {% if enrichment.is_published %}
-                        {% include "templates/includes/problem/enrichment_card.html" %}
+                    {% include "templates/includes/problem/enrichment_card.html" %}
                     {% endif %}
                     {% endfor %}
                 </div>

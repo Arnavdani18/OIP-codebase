@@ -36,7 +36,7 @@
             <ul class="navbar-nav mt-lg-0 nav-right-list pattern1">
                 <li class="nav-item ml-lg-3 search-icon-li d-flex align-items-center ">
                     <button onclick="onClickSearch()">
-                        <img src="assets/contentready_oip/svg/search-solid.svg" alt="" width="20" height="20" />
+                        <img src="../assets/contentready_oip/svg/search-solid.svg" alt="" width="20" height="20" />
                     </button>
                     <span class="d-block d-lg-none">Search</span>
                 </li>
@@ -45,7 +45,7 @@
                     {% set notifications = frappe.get_all('OIP Notification', fields=['text', 'route', 'name'], filters={'target_user': frappe.session.user, 'is_read': False}) %}
                     <button role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                         class="icon-btn">
-                        <img src="assets/contentready_oip/svg/envelope-regular.svg" alt="" width="24.06" />
+                        <img src="../assets/contentready_oip/svg/envelope-regular.svg" alt="" width="24.06" />
 
                         {% if notifications | length > 1 %}
                         <span class="notification-icon"></span>
@@ -155,40 +155,43 @@
 
 <script>
     onClickLogin = () => {
-        window.location.href = ' /login#login';
-    } logout = () => {
+        window.location.href = ' /login';
+    };
+
+    logout = () => {
         var me = this;
         me.logged_out = true;
-        return frappe.call({
+        return frappe.call( {
             method: 'logout',
-            callback: function(r) {
-                if (r.exc) {
+            callback: function( r ) {
+                if ( r.exc ) {
                     return;
                 }
                 window.location.href = '/';
             }
-        });
-    }
+        } );
+    };
 
     onClickSearch = () => {
         location.href = '/search?sectors=%5B"all"%5D';
-    }
-    openNotification = (name,route) => {
+    };
+
+    openNotification = ( name, route ) => {
         // console.log(name, route);
         // set notification as read
-        frappe.call({
+        frappe.call( {
             method: 'contentready_oip.api.set_notification_as_read',
             args: {
                 'notification_name': name
             },
-            callback: (r) => {
-                if (!route.startsWith('/')) {
+            callback: ( r ) => {
+                if ( !route.startsWith( '/' ) ) {
                     route = '/' + route;
                 }
                 // console.log(r.message);
                 // then open the link
                 window.location.href = route;
             }
-        })
-    }
+        } )
+    };
 </script>

@@ -61,11 +61,24 @@ def get_context(context):
             context.actual['watched_problems'] = len(dashboard_content['watched_problems'])
             context.actual['watched_solutions'] = len(dashboard_content['watched_solutions'])
 
-            context.contributed_problems = dashboard_content['contributed_problems'][:2]
+            if context.actual['watched_problems'] > 2 or context.actual['watched_solutions'] > 2:
+                context.watched_problems = dashboard_content['watched_problems'][:1]
+                context.watched_solutions = dashboard_content['watched_solutions'][:1]
+            else:
+                context.watched_problems = dashboard_content['watched_problems'][:2]
+                context.watched_solutions = dashboard_content['watched_solutions'][:2]
+
+            context.actual['contributed_solutions'] = len(dashboard_content['contributed_solutions'])
             context.actual['contributed_problems'] = len(dashboard_content['contributed_problems'])
 
-            context.contributed_solutions = dashboard_content['contributed_solutions'][:2]
-            context.actual['contributed_solutions'] = len(dashboard_content['contributed_solutions'])
+            if context.actual['contributed_solutions'] > 2 or context.actual['contributed_problems'] > 2:
+                context.contributed_problems = dashboard_content['contributed_problems'][:1]
+                context.contributed_solutions = dashboard_content['contributed_solutions'][:1]
+            else:
+                context.contributed_problems = dashboard_content['contributed_problems'][:2]
+                context.contributed_solutions = dashboard_content['contributed_solutions'][:2]
+
+            
 
             context.drafts = dashboard_content['drafts'][:4]
             context.actual['drafts'] = len(dashboard_content['drafts'])
