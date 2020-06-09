@@ -1,8 +1,7 @@
 <div class="views"></div>
 
 <script>
-
-    frappe.ready( () => {
+    function appendWatchComp() {
         new Vue( {
             el: '.views',
             delimiters: [ '[[', ']]' ],
@@ -13,7 +12,7 @@
                 watched: false
             },
             computed: {
-                clickable: function () {
+                clickable: function() {
                     let isClickable = `{{isClickable}}`
                     isClickable = isClickable.toLowerCase();
 
@@ -29,7 +28,7 @@
                 }
             },
             methods: {
-                toggleWatcher: function ( doctype, name ) {
+                toggleWatcher: function( doctype, name ) {
 
                     if ( !this.clickable ) {
                         // disble the click on card
@@ -41,12 +40,12 @@
                     }
                     frappe.call( {
                         method: 'contentready_oip.api.can_user_contribute',
-                        args: { child_doctype: 'Watch Table', parent_doctype: doctype, parent_name: name },
+                        args: {child_doctype: 'Watch Table', parent_doctype: doctype, parent_name: name},
                         callback: ( r ) => {
                             // const has_contributed = r.message[0];
                             const is_owner = r.message[ 1 ];
                             if ( is_owner ) {
-                                frappe.throw( `You cannot watch your own ${ doctype }` );
+                                frappe.throw( `You cannot watch your own ${doctype}` );
                             } else {
 
                                 // initial values
@@ -61,7 +60,7 @@
                                 // changeUI(btnId, countId, hasUserWatched, numWatchers);
                                 frappe.call( {
                                     method: 'contentready_oip.api.toggle_contribution',
-                                    args: { child_doctype: 'Watch Table', parent_doctype: doctype, parent_name: name, field_name: 'watchers' },
+                                    args: {child_doctype: 'Watch Table', parent_doctype: doctype, parent_name: name, field_name: 'watchers'},
                                     callback: ( r ) => {
                                         // console.log(r);
                                         // server is the source of truth so we change the UI to reflect that.
@@ -74,13 +73,13 @@
                     } );
                 }
             },
-            beforeCreate: function () {
+            beforeCreate: function() {
                 // TODO: Replace this call with a filter on the data-watchers attribute.
                 // However, currently, frappe does not expand child tables within child tables into dicts.
                 frappe.ready( () => {
                     frappe.call( {
                         method: 'contentready_oip.api.has_user_contributed',
-                        args: { child_doctype: 'Watch Table', parent_doctype: '{{doctype}}', parent_name: '{{name}}' },
+                        args: {child_doctype: 'Watch Table', parent_doctype: '{{doctype}}', parent_name: '{{name}}'},
                         callback: ( r ) => {
                             this.watched = r.message;
                         }
@@ -104,7 +103,11 @@
           </div>
           `
         } );
-    } );
+    }
+
+    setTimeout( () => {
+        frappe.ready( appendWatchComp() );
+    }, 500 );
 
 </script>
 

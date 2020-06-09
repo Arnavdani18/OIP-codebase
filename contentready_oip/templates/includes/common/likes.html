@@ -1,8 +1,7 @@
 <div class="likes"></div>
 
 <script>
-
-  frappe.ready( () => {
+  function appendLikeComp() {
     new Vue( {
       el: '.likes',
       delimiters: [ '[[', ']]' ],
@@ -13,7 +12,7 @@
         isLiked: false,
       },
       computed: {
-        clickable: function () {
+        clickable: function() {
           let isClickable = `{{isClickable}}`
           isClickable = isClickable.toLowerCase();
 
@@ -29,7 +28,7 @@
         }
       },
       methods: {
-        toggleLike: function ( doctype, name ) {
+        toggleLike: function( doctype, name ) {
           if ( !this.clickable ) {
             // disabling the click based on context
             return;
@@ -49,7 +48,7 @@
               // this.isLiked = r.message[0];
               const is_owner = r.message[ 1 ];
               if ( is_owner ) {
-                frappe.throw( `You cannot like your own ${ doctype }` );
+                frappe.throw( `You cannot like your own ${doctype}` );
               } else {
                 // initial values
 
@@ -81,7 +80,7 @@
           } );
         }
       },
-      beforeCreate: function () {
+      beforeCreate: function() {
         // TODO: Replace this call with a filter on the data-likes attribute.
         // However, currently, frappe does not expand child tables within child tables into dicts.
         frappe.ready( () => {
@@ -115,8 +114,11 @@
       </div>
       `
     } );
-  } );
+  }
 
+  setTimeout( () => {
+    frappe.ready( appendLikeComp() );
+  }, 500 );
 </script>
 
 <style>
