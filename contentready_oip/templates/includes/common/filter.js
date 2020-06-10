@@ -8,7 +8,8 @@ frappe.ready(() => {
         selected_sector: "all",
         show_range_filter: true,
         selected_range: 25,
-        searched_location: "",
+        searched_location: localStorage.getItem("filter_location_name") || "",
+        found_location: null,
       };
     },
     created() {
@@ -25,8 +26,37 @@ frappe.ready(() => {
       if (!Object.keys(existing_sectors).length) {
         setTimeout(() => window.location.reload(), 500);
       }
+
+      this.showDistanceSelect();
+    },
+    async mounted() {
+      const inputBox = this.$refs.location;
+      this.found_location = new google.maps.places.Autocomplete(inputBox, {
+        types: ["(cities)"],
+        componentRestrictions: { country: "in" },
+      });
+
+      this.found_location.setFields(["address_component", "geometry"]);
+      this.found_location.addListener("place_changed", this.storeLocationFilter);
+    },
+    watch: {
+      searched_location(currentVal, oldVal) {
+        if (currentVal) {
+          this.show_range_filter = true;
+        } else {
+          this.show_range_filter = false;
+        }
+      },
     },
     methods: {
+      showDistanceSelect() {
+        if (this.searched_location) {
+          this.show_range_filter = true;
+        } else {
+          this.show_range_filter = false;
+        }
+      },
+
       storeSectorFilter() {
         const filter_sectors = [this.selected_sector];
         if (localStorage) {
@@ -40,11 +70,110 @@ frappe.ready(() => {
       },
 
       clearLocationIfEmpty() {
-        console.log(">>> ", this.searched_location);
+        if (this.searched_location) {
+          return false; // don't do anything
+        }
+        if (localStorage) {
+          localStorage.setItem("filter_location_name", "");
+          localStorage.setItem("filter_location_lat", "");
+          localStorage.setItem("filter_location_lng", "");
+          localStorage.setItem("filter_location_range", "");
+          this.setQueryParam();
+          window.location.reload();
+        }
       },
 
       storeRangeFilter() {
         console.log(this.selected_range);
+      },
+
+      setQueryParam() {
+        const filter_query = loadFilters();
+
+        let qp;
+        if (Object.keys(filter_query).length) {
+          qp = frappe.utils.make_query_string(filter_query);
+          window.history.replaceState({}, null, qp);
+        }
+      },
+
+      storeLocationFilter() {
+        let selectedLocation;
+        try {
+          selectedLocation = this.getLocation(); // Read location from the autocomplete field
+          if (!Object.keys(selectedLocation).length) {
+            return false;
+          }
+        } catch (e) {
+          console.trace(e);
+          return false;
+        }
+        console.log(selectedLocation);
+        let name_components = [
+          selectedLocation.city,
+          selectedLocation.state,
+          selectedLocation.country,
+        ];
+        name_components = name_components.filter((c) => c); // remove falsy values
+        const filter_location_name = name_components.join(", ");
+        const filter_location_lat = selectedLocation.latitude;
+        const filter_location_lng = selectedLocation.longitude;
+        const filter_location_range = Number($("#range-sel").val()); // Read range from the select dropdown
+        this.searched_location = filter_location_name;
+
+        if (localStorage) {
+          localStorage.setItem("filter_location_name", filter_location_name);
+          localStorage.setItem("filter_location_lat", filter_location_lat);
+          localStorage.setItem("filter_location_lng", filter_location_lng);
+          localStorage.setItem("filter_location_range", filter_location_range);
+          this.setQueryParam();
+          window.location.reload();
+        }
+      },
+
+      getLocation() {
+        const place = this.found_location.getPlace();
+        console.log("place: ", place);
+        
+        const addressMapping = {
+          locality: {
+            long_name: "city",
+          },
+          administrative_area_level_1: {
+            short_name: "state_code",
+            long_name: "state",
+          },
+          country: {
+            short_name: "country_code",
+            long_name: "country",
+          },
+        };
+        // Get each component of the address from the place details,
+        // and then fill-in the corresponding field on the form.
+        const selectedLocation = {};
+
+        if (place && !place.address_components) {
+          return selectedLocation;
+        }
+
+        for (let i = 0; i < place.address_components.length; i++) {
+          const address_type = place.address_components[i].types[0];
+          if (addressMapping[address_type]) {
+            if (addressMapping[address_type]["short_name"]) {
+              selectedLocation[addressMapping[address_type]["short_name"]] =
+                place.address_components[i]["short_name"];
+            }
+            if (addressMapping[address_type]["long_name"]) {
+              selectedLocation[addressMapping[address_type]["long_name"]] =
+                place.address_components[i]["long_name"];
+            }
+          }
+        }
+        // selectedLocation['name'] = place.name;
+        selectedLocation["latitude"] = place.geometry.location.lat();
+        selectedLocation["longitude"] = place.geometry.location.lng();
+        // showDistanceSelect();
+        return selectedLocation;
       },
     },
     computed: {
@@ -59,11 +188,6 @@ frappe.ready(() => {
       // guest user so we don't have filters stored on the server.
       // retrieve from localStorage and get our content
       let query_obj = {};
-      let lname = localStorage.getItem("filter_location_name");
-      if (lname) {
-        $("#autocomplete").val(lname);
-        showDistanceSelect();
-      }
       const lat = localStorage.getItem("filter_location_lat");
       if (lat) {
         query_obj["lat"] = Number(lat);
@@ -107,6 +231,7 @@ frappe.ready(() => {
       const combined_query = { ...existing_query, ...filter_query };
       qp = frappe.utils.make_query_string(combined_query);
     }
+
     if (qp) {
       window.history.replaceState({}, null, qp);
 
@@ -119,7 +244,28 @@ frappe.ready(() => {
       // }
     }
   }
+
+  // const autocomplete = new google.maps.places.Autocomplete(
+  //   document.getElementById("autocomplete"),
+  //   { types: ["(cities)"], componentRestrictions: { country: "in" } }
+  //   // { types: ['(cities)'] }
+  //   // TODO: Use domain settings to retrieve country list
+  // );
+  // Specify fields to retrieve from the Google Maps API - cost implications.
+  // autocomplete.setFields(["address_component", "geometry"]);
+  // Specify callback to run everytime location is changed by user.
+  // autocomplete.addListener("place_changed", storeLocationFilter);
+
+  // Select all text on click so that it's easier to edit.
+  // $( '#autocomplete' ).on( 'click', () => {
+  //     $( '#autocomplete' ).select();
+  // } );
+
+  // // Start Location Filter
 });
+
+
+
 
 
 
@@ -136,46 +282,7 @@ frappe.ready(() => {
     // }
     
 
-    // // Start Location Filter
-    // getLocation = () => {
-    //     const place = autocomplete.getPlace();
-    //     const addressMapping = {
-    //         locality: {
-    //             long_name: 'city',
-    //         },
-    //         administrative_area_level_1: {
-    //             short_name: 'state_code',
-    //             long_name: 'state',
-    //         },
-    //         country: {
-    //             short_name: 'country_code',
-    //             long_name: 'country',
-    //         },
-    //     };
-    //     // Get each component of the address from the place details,
-    //     // and then fill-in the corresponding field on the form.
-    //     const selectedLocation = {};
-    //     for ( let i = 0; i < place.address_components.length; i++ ) {
-    //         const address_type = place.address_components[ i ].types[ 0 ];
-    //         if ( addressMapping[ address_type ] ) {
-    //             if ( addressMapping[ address_type ][ 'short_name' ] ) {
-    //                 selectedLocation[
-    //                     addressMapping[ address_type ][ 'short_name' ]
-    //                 ] = place.address_components[ i ][ 'short_name' ];
-    //             }
-    //             if ( addressMapping[ address_type ][ 'long_name' ] ) {
-    //                 selectedLocation[
-    //                     addressMapping[ address_type ][ 'long_name' ]
-    //                 ] = place.address_components[ i ][ 'long_name' ];
-    //             }
-    //         }
-    //     }
-    //     // selectedLocation['name'] = place.name;
-    //     selectedLocation[ 'latitude' ] = place.geometry.location.lat();
-    //     selectedLocation[ 'longitude' ] = place.geometry.location.lng();
-    //     showDistanceSelect();
-    //     return selectedLocation;
-    // }
+   
 
     // clearLocationIfEmpty = () => {
     //     const location_name = $( '#autocomplete' ).val();
@@ -191,29 +298,7 @@ frappe.ready(() => {
     //     }
     // }
 
-    // storeLocationFilter = () => {
-    //     let selectedLocation;
-    //     try {
-    //         selectedLocation = getLocation(); // Read location from the autocomplete field
-    //     } catch ( e ) {
-    //         console.trace( e );
-    //         return false;
-    //     }
-    //     // console.log(selectedLocation);
-    //     let name_components = [ selectedLocation.city, selectedLocation.state, selectedLocation.country ];
-    //     name_components = name_components.filter( c => c ); // remove falsy values
-    //     const filter_location_name = name_components.join( ', ' );
-    //     const filter_location_lat = selectedLocation.latitude;
-    //     const filter_location_lng = selectedLocation.longitude;
-    //     const filter_location_range = Number( $( '#range-sel' ).val() ); // Read range from the select dropdown
-    //     if ( localStorage ) {
-    //         localStorage.setItem( 'filter_location_name', filter_location_name );
-    //         localStorage.setItem( 'filter_location_lat', filter_location_lat );
-    //         localStorage.setItem( 'filter_location_lng', filter_location_lng );
-    //         localStorage.setItem( 'filter_location_range', filter_location_range );
-    //         reloadWithParams();
-    //     }
-    // }
+    
 
     // storeRangeFilter = () => {
     //     const filter_location_range = Number( $( '#range-sel' ).val() ); // Read range from the select dropdown

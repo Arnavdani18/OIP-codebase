@@ -32,7 +32,7 @@
     </select>
   </div>
   <div class="in-mob" id="location-input-div">
-    <input class="pattern1 pl-2" type="text" v-model="searched_location" id="autocomplete" placeholder="Search for location..."
+    <input class="pattern1 pl-2" type="text" ref="location" v-model="searched_location" id="autocomplete" placeholder="Search for location..."
       @input="clearLocationIfEmpty" />
   </div>
   <div class="in-mob" id="range-sel-div" v-show="show_range_filter">
