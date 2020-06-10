@@ -6,21 +6,46 @@ frappe.ready(() => {
     data: function () {
       return {
         selected_sector: "all",
-        show_range_filter: false,
+        show_range_filter: true,
         selected_range: 25,
-        searched_location: ''
+        searched_location: "",
       };
+    },
+    created() {
+      const existing_sectors = frappe.utils.get_query_params();
+      let sectors = localStorage.getItem("filter_sectors");
+      [this.selected_sector] = JSON.parse(sectors) || "all";
+
+      const filter_sectors = [this.selected_sector];
+      if (localStorage) {
+        localStorage.setItem("filter_sectors", JSON.stringify(filter_sectors));
+        reloadWithParams();
+      }
+
+      if (!Object.keys(existing_sectors).length) {
+        setTimeout(() => window.location.reload(), 500);
+      }
     },
     methods: {
       storeSectorFilter() {
-        console.log(this.selected_sector);
+        const filter_sectors = [this.selected_sector];
+        if (localStorage) {
+          localStorage.setItem(
+            "filter_sectors",
+            JSON.stringify(filter_sectors)
+          );
+          reloadWithParams();
+        }
+        window.location.reload();
       },
-      clearLocationIfEmpty(){
-        console.log(">>> ",this.searched_location);
+
+      clearLocationIfEmpty() {
+        console.log(">>> ", this.searched_location);
       },
-      storeRangeFilter(){
+
+      storeRangeFilter() {
         console.log(this.selected_range);
-      }
+      },
     },
     computed: {
       available_sectors() {
@@ -28,7 +53,75 @@ frappe.ready(() => {
       },
     },
   });
+
+  function loadFilters() {
+    if (localStorage) {
+      // guest user so we don't have filters stored on the server.
+      // retrieve from localStorage and get our content
+      let query_obj = {};
+      let lname = localStorage.getItem("filter_location_name");
+      if (lname) {
+        $("#autocomplete").val(lname);
+        showDistanceSelect();
+      }
+      const lat = localStorage.getItem("filter_location_lat");
+      if (lat) {
+        query_obj["lat"] = Number(lat);
+      }
+      const lng = localStorage.getItem("filter_location_lng");
+      if (lng) {
+        query_obj["lng"] = Number(lng);
+      }
+      let rng = localStorage.getItem("filter_location_range");
+      if (rng) {
+        rng = Number(rng);
+        query_obj["rng"] = rng;
+        $("#range-sel").val(rng);
+      }
+      let sectors = localStorage.getItem("filter_sectors");
+      // sectors = available_sectors.map(s => s.name);
+      // sectors = JSON.stringify(sectors);
+      // console.log(sectors);
+      if (!sectors) {
+        // sectors = available_sectors.map(s => s.name);
+        // console.log(sectors);
+        // sectors = JSON.stringify(sectors);
+        sectors = JSON.stringify(["all"]);
+      }
+      if (sectors) {
+        sectors = JSON.parse(sectors); // since we stringify while storing
+        query_obj["sectors"] = sectors;
+        $("#sector-sel").val(`${sectors[0]}`);
+      }
+      // console.log(query_obj);
+      return query_obj;
+    }
+  }
+
+  function reloadWithParams() {
+    const filter_query = loadFilters();
+    const existing_query = frappe.utils.get_query_params();
+
+    let qp;
+    if (Object.keys(filter_query).length) {
+      const combined_query = { ...existing_query, ...filter_query };
+      qp = frappe.utils.make_query_string(combined_query);
+    }
+    if (qp) {
+      window.history.replaceState({}, null, qp);
+
+      // const curr_route = window.location.pathname;
+      // if ( curr_route.includes( 'search' ) ) {
+      //     window.history.replaceState( {}, null, qp )
+      // } else {
+      //     const clean_url = window.location.href.split( '?' )[ 0 ];
+      //     window.location.href = clean_url + qp;
+      // }
+    }
+  }
 });
+
+
 
 
 
@@ -41,68 +134,7 @@ frappe.ready(() => {
     // hideDistanceSelect = () => {
     //     $( '#range-sel-div' ).hide();
     // }
-    // loadFilters = () => {
-    //     if ( localStorage ) {
-    //         // guest user so we don't have filters stored on the server.
-    //         // retrieve from localStorage and get our content
-    //         let query_obj = {};
-    //         let lname = localStorage.getItem( 'filter_location_name' );
-    //         if ( lname ) {
-    //             $( '#autocomplete' ).val( lname );
-    //             showDistanceSelect();
-    //         }
-    //         const lat = localStorage.getItem( 'filter_location_lat' );
-    //         if ( lat ) {
-    //             query_obj[ 'lat' ] = Number( lat );
-    //         }
-    //         const lng = localStorage.getItem( 'filter_location_lng' );
-    //         if ( lng ) {
-    //             query_obj[ 'lng' ] = Number( lng );
-    //         }
-    //         let rng = localStorage.getItem( 'filter_location_range' );
-    //         if ( rng ) {
-    //             rng = Number( rng );
-    //             query_obj[ 'rng' ] = rng;
-    //             $( '#range-sel' ).val( rng );
-    //         }
-    //         let sectors = localStorage.getItem( 'filter_sectors' );
-    //         // sectors = available_sectors.map(s => s.name);
-    //         // sectors = JSON.stringify(sectors);
-    //         // console.log(sectors);
-    //         if ( !sectors ) {
-    //             // sectors = available_sectors.map(s => s.name);
-    //             // console.log(sectors);
-    //             // sectors = JSON.stringify(sectors);
-    //             sectors = JSON.stringify( [ 'all' ] );
-    //         }
-    //         if ( sectors ) {
-    //             sectors = JSON.parse( sectors );// since we stringify while storing
-    //             query_obj[ 'sectors' ] = sectors;
-    //             $( '#sector-sel' ).val( `${ sectors[ 0 ] }` );
-    //         }
-    //         // console.log(query_obj);
-    //         return query_obj;
-    //     }
-    // }
-
-    // reloadWithParams = () => {
-    //     const filter_query = loadFilters();
-    //     const existing_query = frappe.utils.get_query_params();
-    //     let qp;
-    //     if ( Object.keys( filter_query ).length ) {
-    //         const combined_query = { ...existing_query, ...filter_query };
-    //         qp = frappe.utils.make_query_string( combined_query );
-    //     }
-    //     if ( qp ) {
-    //         const curr_route = window.location.pathname;
-    //         if ( curr_route.includes( 'search' ) ) {
-    //             window.history.replaceState( {}, null, qp )
-    //         } else {
-    //             const clean_url = window.location.href.split( '?' )[ 0 ];
-    //             window.location.href = clean_url + qp;
-    //         }
-    //     }
-    // }
+    
 
     // // Start Location Filter
     // getLocation = () => {

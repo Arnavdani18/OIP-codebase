@@ -173,7 +173,10 @@
     };
 
     onClickSearch = () => {
-        location.href = '/search?sectors=%5B"all"%5D';
+        location.href = '/search';
+        if (localStorage) {
+            localStorage.setItem("filter_sectors", JSON.stringify(['all']));
+        }
     };
 
     openNotification = ( name, route ) => {
