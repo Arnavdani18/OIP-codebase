@@ -1,3 +1,7 @@
+<div id="filter-component">
+  <div class="linear-background" style="height: 4.2rem;"></div>
+</div>
+
 <style>
   #sector-sel-div>select,
   #range-sel-div>select,
@@ -20,31 +24,34 @@
   }
 </style>
 
+
+<script type="text/x-template" id="filter-script">
 <div class="row justify-content-sm-start justify-content-md-end flex-wrap" id="filter-section">
   <div class="" id="sector-sel-div">
-    <select class="pattern1" onChange="storeSectorFilter(event)" id="sector-sel">
+    <select class="pattern1" @change="storeSectorFilter" v-model="selected_sector" id="sector-sel">
       <option selected value="all">All Sectors</option>
-      {% for sector in available_sectors %}
-      <option value="{{sector.name}}">{{sector.title}}</option>
-      {% endfor %}
+      <option v-for="sector in available_sectors" :value="sector.name">[[sector.title]]</option>
     </select>
   </div>
   <div class="in-mob" id="location-input-div">
-    <input class="pattern1 pl-2" type="text" name="" id="autocomplete" placeholder="Search for location..."
-      onChange="clearLocationIfEmpty()" />
+    <input class="pattern1 pl-2" type="text" ref="location" v-model="searched_location" id="autocomplete" placeholder="Search for location..."
+      @input="clearLocationIfEmpty" />
   </div>
-  <div class="in-mob" id="range-sel-div" style="display: none;">
-    <select class="pattern1" onChange="storeRangeFilter()" id="range-sel">
+  <div class="in-mob" id="range-sel-div" v-show="show_range_filter">
+    <select class="pattern1" @change="storeRangeFilter" v-model="selected_range" id="range-sel">
       <option value="0">0 km</option>
-      <option selected value="25">25 km</option>
+      <option value="25">25 km</option>
       <option value="50">50 km</option>
       <option value="100">100 km</option>
       <option value="200">200 km</option>
     </select>
   </div>
 </div>
+</script>
+
 <script type="text/javascript"
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxSPvgric8Zn54pYneG9NondiINqdvb-w&libraries=places"></script>
+
 <script>
   {% include "templates/includes/common/filter.js" %}
 </script>

@@ -173,7 +173,14 @@
     };
 
     onClickSearch = () => {
-        location.href = '/search?sectors=%5B"all"%5D';
+        location.href = '/search';
+        if (localStorage) {
+            localStorage.setItem("filter_sectors", JSON.stringify(['all']));
+            localStorage.setItem("filter_location_name", "");
+            localStorage.setItem("filter_location_lat", "");
+            localStorage.setItem("filter_location_lng", "");
+            localStorage.setItem("filter_location_range", "");
+        }
     };
 
     openNotification = ( name, route ) => {
