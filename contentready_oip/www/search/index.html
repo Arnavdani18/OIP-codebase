@@ -133,6 +133,7 @@
             const key = $('#search-input').val().trim();
             if (key) {
                 const search_query = {key: key};
+                localStorage.setItem('search_query',key);
                 const existing_query = frappe.utils.get_query_params();
                 const combined_query = {...existing_query,...search_query};
                 console.log(search_query,existing_query,combined_query);

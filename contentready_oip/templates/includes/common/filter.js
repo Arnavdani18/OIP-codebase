@@ -210,6 +210,12 @@ frappe.ready(() => {
             query_obj["rng"] = rng;
             this.selected_range = rng;
           }
+
+          let search_str = localStorage.getItem('search_query');
+          if (search_str && window.location.pathname.includes('search')) {
+            query_obj['key'] = search_str;
+          }
+          
           let sectors = localStorage.getItem("filter_sectors");
           if (!sectors) {
             sectors = JSON.stringify(["all"]);
