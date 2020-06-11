@@ -15,12 +15,15 @@ frappe.ready(() => {
     created() {
       const existing_sectors = frappe.utils.get_query_params();
       let sectors = localStorage.getItem("filter_sectors");
+      let rng = localStorage.getItem("filter_location_range");
+
+      this.selected_range = rng;
       [this.selected_sector] = JSON.parse(sectors) || "all";
 
       const filter_sectors = [this.selected_sector];
       if (localStorage) {
         localStorage.setItem("filter_sectors", JSON.stringify(filter_sectors));
-        reloadWithParams();
+        this.setQueryParam();
       }
 
       if (!Object.keys(existing_sectors).length) {
@@ -37,7 +40,10 @@ frappe.ready(() => {
       });
 
       this.found_location.setFields(["address_component", "geometry"]);
-      this.found_location.addListener("place_changed", this.storeLocationFilter);
+      this.found_location.addListener(
+        "place_changed",
+        this.storeLocationFilter
+      );
     },
     watch: {
       searched_location(currentVal, oldVal) {
@@ -46,6 +52,11 @@ frappe.ready(() => {
         } else {
           this.show_range_filter = false;
         }
+      },
+    },
+    computed: {
+      available_sectors() {
+        return JSON.parse(`{{available_sectors | json}}`) || [];
       },
     },
     methods: {
@@ -64,7 +75,7 @@ frappe.ready(() => {
             "filter_sectors",
             JSON.stringify(filter_sectors)
           );
-          reloadWithParams();
+          this.setQueryParam();
         }
         window.location.reload();
       },
@@ -84,11 +95,17 @@ frappe.ready(() => {
       },
 
       storeRangeFilter() {
-        console.log(this.selected_range);
+        console.log(this.selected_range, typeof this.selected_range);
+        const filter_location_range = Number(this.selected_range); // Read range from the select dropdown
+        if (localStorage) {
+          localStorage.setItem("filter_location_range", filter_location_range);
+          this.setQueryParam();
+          window.location.reload();
+        }
       },
 
       setQueryParam() {
-        const filter_query = loadFilters();
+        const filter_query = this.loadFilters();
 
         let qp;
         if (Object.keys(filter_query).length) {
@@ -118,7 +135,7 @@ frappe.ready(() => {
         const filter_location_name = name_components.join(", ");
         const filter_location_lat = selectedLocation.latitude;
         const filter_location_lng = selectedLocation.longitude;
-        const filter_location_range = Number($("#range-sel").val()); // Read range from the select dropdown
+        const filter_location_range = Number(this.selected_range); // Read range from the select dropdown
         this.searched_location = filter_location_name;
 
         if (localStorage) {
@@ -134,7 +151,7 @@ frappe.ready(() => {
       getLocation() {
         const place = this.found_location.getPlace();
         console.log("place: ", place);
-        
+
         const addressMapping = {
           locality: {
             long_name: "city",
@@ -169,190 +186,42 @@ frappe.ready(() => {
             }
           }
         }
-        // selectedLocation['name'] = place.name;
         selectedLocation["latitude"] = place.geometry.location.lat();
         selectedLocation["longitude"] = place.geometry.location.lng();
-        // showDistanceSelect();
         return selectedLocation;
       },
-    },
-    computed: {
-      available_sectors() {
-        return JSON.parse(`{{available_sectors | json}}`) || [];
+
+      loadFilters() {
+        if (localStorage) {
+          // guest user so we don't have filters stored on the server.
+          // retrieve from localStorage and get our content
+          let query_obj = {};
+          const lat = localStorage.getItem("filter_location_lat");
+          if (lat) {
+            query_obj["lat"] = Number(lat);
+          }
+          const lng = localStorage.getItem("filter_location_lng");
+          if (lng) {
+            query_obj["lng"] = Number(lng);
+          }
+          let rng = localStorage.getItem("filter_location_range");
+          if (rng) {
+            rng = Number(rng);
+            query_obj["rng"] = rng;
+            this.selected_range = rng;
+          }
+          let sectors = localStorage.getItem("filter_sectors");
+          if (!sectors) {
+            sectors = JSON.stringify(["all"]);
+          }
+          if (sectors) {
+            sectors = JSON.parse(sectors); // since we stringify while storing
+            query_obj["sectors"] = sectors;
+            this.selected_sector = sectors[0]
+          }
+          return query_obj;
+        }
       },
     },
   });
-
-  function loadFilters() {
-    if (localStorage) {
-      // guest user so we don't have filters stored on the server.
-      // retrieve from localStorage and get our content
-      let query_obj = {};
-      const lat = localStorage.getItem("filter_location_lat");
-      if (lat) {
-        query_obj["lat"] = Number(lat);
-      }
-      const lng = localStorage.getItem("filter_location_lng");
-      if (lng) {
-        query_obj["lng"] = Number(lng);
-      }
-      let rng = localStorage.getItem("filter_location_range");
-      if (rng) {
-        rng = Number(rng);
-        query_obj["rng"] = rng;
-        $("#range-sel").val(rng);
-      }
-      let sectors = localStorage.getItem("filter_sectors");
-      // sectors = available_sectors.map(s => s.name);
-      // sectors = JSON.stringify(sectors);
-      // console.log(sectors);
-      if (!sectors) {
-        // sectors = available_sectors.map(s => s.name);
-        // console.log(sectors);
-        // sectors = JSON.stringify(sectors);
-        sectors = JSON.stringify(["all"]);
-      }
-      if (sectors) {
-        sectors = JSON.parse(sectors); // since we stringify while storing
-        query_obj["sectors"] = sectors;
-        $("#sector-sel").val(`${sectors[0]}`);
-      }
-      // console.log(query_obj);
-      return query_obj;
-    }
-  }
-
-  function reloadWithParams() {
-    const filter_query = loadFilters();
-    const existing_query = frappe.utils.get_query_params();
-
-    let qp;
-    if (Object.keys(filter_query).length) {
-      const combined_query = { ...existing_query, ...filter_query };
-      qp = frappe.utils.make_query_string(combined_query);
-    }
-
-    if (qp) {
-      window.history.replaceState({}, null, qp);
-
-      // const curr_route = window.location.pathname;
-      // if ( curr_route.includes( 'search' ) ) {
-      //     window.history.replaceState( {}, null, qp )
-      // } else {
-      //     const clean_url = window.location.href.split( '?' )[ 0 ];
-      //     window.location.href = clean_url + qp;
-      // }
-    }
-  }
-
-  // const autocomplete = new google.maps.places.Autocomplete(
-  //   document.getElementById("autocomplete"),
-  //   { types: ["(cities)"], componentRestrictions: { country: "in" } }
-  //   // { types: ['(cities)'] }
-  //   // TODO: Use domain settings to retrieve country list
-  // );
-  // Specify fields to retrieve from the Google Maps API - cost implications.
-  // autocomplete.setFields(["address_component", "geometry"]);
-  // Specify callback to run everytime location is changed by user.
-  // autocomplete.addListener("place_changed", storeLocationFilter);
-
-  // Select all text on click so that it's easier to edit.
-  // $( '#autocomplete' ).on( 'click', () => {
-  //     $( '#autocomplete' ).select();
-  // } );
-
-  // // Start Location Filter
 });
-
-
-
-
-
-
-
-
-    //{# Start helpers
-    // const available_sectors = JSON.parse( `{{available_sectors | json}}` );
-    // showDistanceSelect = () => {
-    //     $( '#range-sel-div' ).show();
-    //     // $('#sector-sel-div').removeClass('offset-md-8').addClass('offset-md-6');
-    // }
-    // hideDistanceSelect = () => {
-    //     $( '#range-sel-div' ).hide();
-    // }
-    
-
-   
-
-    // clearLocationIfEmpty = () => {
-    //     const location_name = $( '#autocomplete' ).val();
-    //     if ( location_name ) {
-    //         return false; // don't do anything
-    //     }
-    //     if ( localStorage ) {
-    //         localStorage.setItem( 'filter_location_name', '' );
-    //         localStorage.setItem( 'filter_location_lat', '' );
-    //         localStorage.setItem( 'filter_location_lng', '' );
-    //         localStorage.setItem( 'filter_location_range', '' );
-    //         reloadWithParams();
-    //     }
-    // }
-
-    
-
-    // storeRangeFilter = () => {
-    //     const filter_location_range = Number( $( '#range-sel' ).val() ); // Read range from the select dropdown
-    //     if ( localStorage ) {
-    //         localStorage.setItem( 'filter_location_range', filter_location_range );
-    //         reloadWithParams();
-    //     }
-    // }
-
-    // storeSectorFilter = ( evt ) => {
-    //     const filter_sectors = [ evt.target.value ];
-    //     if ( localStorage ) {
-    //         localStorage.setItem( 'filter_sectors', JSON.stringify( filter_sectors ) );
-    //         reloadWithParams();
-    //     }
-    // }
-
-    // // End helpers
-
-    // // Start Initialisation - Values are set from session into context if available
-    // // We can use Jinja2 templates with context here as the JS is compiled server-side.
-
-    // const curr_route = window.location.pathname;
-    // if ( curr_route.includes( 'search' ) ) {
-    //     localStorage.setItem( 'filter_sectors', JSON.stringify( [ "all" ] ) );
-    // }
-
-    // const filter_query = loadFilters();
-    // const window_qs = frappe.utils.get_query_string( window.location.href );
-    // if ( !window_qs && Object.keys( filter_query ).length ) {
-    //     reloadWithParams();
-    // }
-    // if ( !curr_route.includes( 'search' ) ) {
-    //     const filter_query = loadFilters();
-    //     const window_qs = frappe.utils.get_query_string( window.location.href );
-    //     if ( !window_qs && Object.keys( filter_query ).length ) {
-    //         reloadWithParams();
-    //     }
-    // }
-
-    // End Inititialisation
-    // Start location filter
-    // const autocomplete = new google.maps.places.Autocomplete(
-    //     document.getElementById( 'autocomplete' ),
-    //     { types: [ '(cities)' ], componentRestrictions: { country: 'in' } }
-    //     // { types: ['(cities)'] }
-    //     // TODO: Use domain settings to retrieve country list
-    // );
-    // // Specify fields to retrieve from the Google Maps API - cost implications.
-    // autocomplete.setFields( [ 'address_component', 'geometry' ] );
-    // // Specify callback to run everytime location is changed by user.
-    // autocomplete.addListener( 'place_changed', storeLocationFilter );
-    // // Select all text on click so that it's easier to edit.
-    // $( '#autocomplete' ).on( 'click', () => {
-    //     $( '#autocomplete' ).select();
-    // } );
-    // End Location Filter #}
