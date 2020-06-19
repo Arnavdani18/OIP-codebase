@@ -35,15 +35,6 @@
               ></textarea>
             </div>
             <label for="personaSelect" class="modal-label">Persona</label>
-            {#
-            <!-- <select class="form-control" style="font-size: 1.4rem;" id="persona-select-{{name}}" required>
-                            <option value="">Please Select a Persona</option>
-                            {% for persona in personas %}
-                            <option value="{{persona.value}}">{{persona.label}}</option>
-                            {% endfor %} 
-                        </select> -->
-            #}
-
             <div id="personaVueComp"></div>
           </div>
         </form>
@@ -179,7 +170,6 @@
         .val()
         .trim(),
     };
-    console.log(collaboration);
 
     if (!collaboration.comment) {
       frappe.throw('Please state your intent.');
@@ -197,7 +187,6 @@
       },
       callback: (r) => {
         if (r.message[1] > 0) {
-          // console.log(r.message);
           if (doctype == 'Collaboration Intent') {
             // edit mode
             $('#collaboration-card-' + name).replaceWith(r.message[0]);

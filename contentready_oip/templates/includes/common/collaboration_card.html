@@ -1,11 +1,17 @@
+<!-- prettier-ignore -->
 <div
-    class="col-sm-12 collaborateCard" id="collaboration-card-{{collaboration.name}}"
+class="col-sm-12 collaborateCard" id="collaboration-card-{{collaboration.name}}"
 >
     <div class="float-right">
         {% if frappe.session.user == collaboration.user %}
+            {% set existing_persona = [] %}
+            {% for p in collaboration.personas %}
+            {% set existing_persona = existing_persona.append(p.persona) %}
+            {% endfor%}
+            
             {% set doctype = collaboration.doctype %}
             {% set name = collaboration.name %}
-            {% set data = [collaboration.personas_list, collaboration.comment] %}
+            {% set data = [existing_persona | join(','), collaboration.comment] %}
             {% include "templates/includes/common/edit_icon.html" %}
             {% include "templates/includes/common/collaboration_form.html" %}
         {% endif %}
@@ -13,7 +19,7 @@
     <div>
         <strong class="text-capitalize roles">
             {% set personas = collaboration.personas %} 
-    {% include "templates/includes/common/persona_labels.html" %}
+            {% include "templates/includes/common/persona_labels.html" %}
         </strong>
     </div>
     <div class="collaborate-comment">
