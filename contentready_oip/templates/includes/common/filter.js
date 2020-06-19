@@ -1,5 +1,7 @@
+let copy_vue_filter;
+
 frappe.ready(() => {
-  new Vue({
+  const vue_filter = new Vue({
     el: '#filter-component',
     delimiters: ['[[', ']]'],
     template: '#filter-script',
@@ -10,6 +12,7 @@ frappe.ready(() => {
         selected_range: 25,
         searched_location: localStorage.getItem('filter_location_name') || '',
         found_location: null,
+        qp_page: '',
       };
     },
     created() {
@@ -23,6 +26,10 @@ frappe.ready(() => {
       // check if existing sector is from available_sectors
       if (!this.available_sectors.includes(this.selected_sector)) {
         this.selected_sector = 'all';
+      }
+
+      if (existing_sectors && existing_sectors['page']) {
+        this.qp_page = existing_sectors['page'];
       }
 
       const filter_sectors = [this.selected_sector];
@@ -111,10 +118,16 @@ frappe.ready(() => {
 
       setQueryParam() {
         const filter_query = this.loadFilters();
+        let page_query = {};
+        if (this.qp_page) {
+          page_query = { page: this.qp_page };
+        }
 
         let qp;
         if (Object.keys(filter_query).length) {
-          qp = frappe.utils.make_query_string(filter_query);
+          const combined_query = { ...filter_query, ...page_query };
+
+          qp = frappe.utils.make_query_string(combined_query);
           window.history.replaceState({}, null, qp);
         }
       },
@@ -235,4 +248,10 @@ frappe.ready(() => {
       },
     },
   });
+
+  function passFilterContext() {
+    copy_vue_filter = vue_filter;
+  }
+
+  passFilterContext();
 });
