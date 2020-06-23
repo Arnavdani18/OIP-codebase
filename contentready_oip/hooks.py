@@ -49,6 +49,10 @@ home_page = "home"
 # Generators
 # ----------
 
+on_session_creation = [
+   "contentready_oip.initialize_meilisearch.main_fn",
+]
+
 # automatically create page for each record of this doctype
 website_generators = ["Web Page", "Problem"]
 
