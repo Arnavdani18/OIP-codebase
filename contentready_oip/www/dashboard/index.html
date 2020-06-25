@@ -2,7 +2,7 @@
 <!-- no-breadcrumbs -->
 <!-- static -->
 
-{% if self_profile.is_first_login == 1 %}
+{% if self_profile and self_profile.is_first_login == 1 %}
 <style>
   .f-size {
     font-size: 1.4rem;
