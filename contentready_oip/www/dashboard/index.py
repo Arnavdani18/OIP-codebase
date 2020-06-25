@@ -31,6 +31,8 @@ def get_context(context):
     context.recommended_users = []
     context.user_problems = []
     context.user_solutions = []
+    context.user_problems_solutions_combo = []
+
     context.watched_problems = []
     context.watched_solutions = []
     context.watched_problems_solutions_combo = []
@@ -55,16 +57,16 @@ def get_context(context):
             context.recommended_problems_solutions_combo = mix_two_list(
                 context.recommended_problems, context.recommended_solutions)[:4]
             context.actual["recommended_combo"] = len(dashboard_content['recommended_problems']) + len(dashboard_content['recommended_solutions'])
-            recommended_areas_length = 4
             
             context.recommended_users = dashboard_content['recommended_users'][:2]
             context.actual['recommended_users'] = len(dashboard_content['recommended_users'])
 
-            context.user_problems = dashboard_content['user_problems'][:2]
+            context.user_problems = dashboard_content['user_problems'][:4]
+            context.user_solutions = dashboard_content['user_solutions'][:4]
             context.actual['user_problems'] = len(dashboard_content['user_problems'])
-
-            context.user_solutions = dashboard_content['user_solutions'][:2]
             context.actual['user_solutions'] = len(dashboard_content['user_solutions'])
+            context.user_problems_solutions_combo = mix_two_list(
+                context.user_problems, context.user_solutions)[:4]
             
             context.watched_problems = dashboard_content['watched_problems'][:2]
             context.watched_solutions = dashboard_content['watched_solutions'][:2]
@@ -77,7 +79,7 @@ def get_context(context):
             context.contributed_problems = dashboard_content['contributed_problems'][:2]
             context.contributed_solutions = dashboard_content['contributed_solutions'][:2]
             context.contributed_problems_solutions_combo = mix_two_list(
-                context.contributed_problems, context.contributed_solutions)
+                context.contributed_problems, context.contributed_solutions)[:2]
 
             context.drafts = dashboard_content['drafts'][:4]
             context.actual['drafts'] = len(dashboard_content['drafts'])

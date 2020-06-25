@@ -90,7 +90,7 @@
                   <div>
                     {% include "templates/includes/solution/solution_card.html" %}
                   </div>
-                  {% endif%}
+                  {% endif %}
               {% endfor %}
               {% else %}
               <br />
@@ -116,16 +116,20 @@
               </div>
               {% endif %}
 
-              {% for problem in user_problems %}
-              <div class="">
-                {% include "templates/includes/problem/problem_card.html" %}
-              </div>
-              <hr />
-              {% endfor %} {% for solution in user_solutions %}
-              <div class="">
-                {% include "templates/includes/solution/solution_card.html" %}
-              </div>
-              <hr class="m-0" />
+              {% for card in user_problems_solutions_combo %}
+                {% if card.name.lower().startswith('problem') %}
+                {% set problem = card %}
+                <div>
+                  {% include "templates/includes/problem/problem_card.html" %}
+                </div>
+                <hr />
+                {% else %}
+                {% set solution = card %}
+                <div>
+                  {% include "templates/includes/solution/solution_card.html" %}
+                </div>
+                <hr />
+                {% endif %}
               {% endfor %}
 
               {%  if (actual.user_problems + actual.user_solutions) > 4 %}
