@@ -92,18 +92,6 @@
                   </div>
                   {% endif%}
               {% endfor %}
-              <!-- {% for problem in recommended_problems %}
-              <div>
-                {% include "templates/includes/problem/problem_card.html" %}
-              </div>
-              <hr />
-              {% endfor %}
-              {% for solution in recommended_solutions %}
-              <div>
-                {% include "templates/includes/solution/solution_card.html" %}
-              </div>
-              <hr />
-              {% endfor %} -->
               {% else %}
               <br />
               <h6 style="padding-left: 2rem;">
@@ -176,17 +164,20 @@
               </div>
               {% endif %}
 
-              {% for problem in watched_problems %}
-              <div>
-                {% include "templates/includes/problem/problem_card.html" %}
-              </div>
-              <hr />
-              {% endfor %}
-              {% for solution in watched_solutions %}
-              <div>
-                {% include "templates/includes/solution/solution_card.html" %}
-              </div>
-              <hr>
+              {% for card in watched_problems_solutions_combo %}
+                {% if card.name.lower().startswith('problem') %}
+                {% set problem = card %}
+                <div>
+                  {% include "templates/includes/problem/problem_card.html" %}
+                </div>
+                <hr />
+                {% else %}
+                {% set solution = card %}
+                <div>
+                  {% include "templates/includes/solution/solution_card.html" %}
+                </div>
+                <hr />
+                {% endif%}
               {% endfor %}
 
               {% if actual.watched_problems + actual.watched_solutions > 2 %}
@@ -243,20 +234,20 @@
                 </div>
                 {% endif %}
 
-                {% for problem in contributed_problems %}
-                <div>
-                  {% include
-                  "templates/includes/problem/problem_contribution_card.html" %}
-                </div>
-                <hr />
-                {% endfor %}
-                {% for solution in contributed_solutions %}
-                <div>
-                  {% include
-                  "templates/includes/solution/solution_contribution_card.html"
-                  %}
-                </div>
-                <hr>
+                {% for card in contributed_problems_solutions_combo %}
+                  {% if card.name.lower().startswith('problem') %}
+                  {% set problem = card %}
+                  <div>
+                    {% include "templates/includes/problem/problem_contribution_card.html" %}
+                  </div>
+                  <hr />
+                  {% else %}
+                  {% set solution = card %}
+                  <div>
+                    {% include "templates/includes/solution/solution_contribution_card.html" %}
+                  </div>
+                  <hr />
+                  {% endif%}
                 {% endfor %}
 
                 {% if (actual.contributed_problems + actual.contributed_solutions) > 2 %}
