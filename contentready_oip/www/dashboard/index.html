@@ -19,19 +19,19 @@
 </div>
 
 <script>
-  function toggleWelcomeMsg(btn_context) {
+  function toggleWelcomeMsg( btn_context ) {
     const args = {
       doctype: 'User Profile',
-      docname: '{{self_profile.full_name}}',
+      docname: '{{self_profile.name}}',
       fieldname: 'is_first_login',
       fieldvalue: '0'
     }
 
-    frappe.call({
+    frappe.call( {
       method: 'contentready_oip.api.set_document_value',
       args,
-      callback: function(r) {
-        if (btn_context.includes('update_profile')) {
+      callback: function( r ) {
+        if ( btn_context.includes( 'update_profile' ) ) {
           window.location.href = "/update-profile";
         } else {
           window.location.href = "/home";
@@ -39,7 +39,7 @@
 
         self_profile = {...r.message};
       }
-    })
+    } )
   }
 </script>
 
