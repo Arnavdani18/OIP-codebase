@@ -2,6 +2,8 @@
 <!-- no-breadcrumbs -->
 <!-- static -->
 
+
+
 {% if self_profile and self_profile.is_first_login == 1 %}
 <style>
   .f-size {
@@ -54,8 +56,7 @@
           <li class="nav-item">
             <a class="nav-link active" id="recommended-content-tab" data-toggle="tab" href="#recommended-content"
               role="tab" aria-controls="recommended-content" aria-selected="true">
-              Areas That May Interest You ({{ (recommended_problems + recommended_solutions) | length
-              }})
+              Areas That May Interest You ({{ actual["recommended_combo"] }})
             </a>
           </li>
           <li class="nav-item">
@@ -69,7 +70,7 @@
           <div class="tab-content" id="leftTabContent">
             <div class="tab-pane fade show active" id="recommended-content" role="tabpanel"
               aria-labelledby="recommended-content-tab">
-              {% if (recommended_problems + recommended_solutions) | length < 1 %}
+              {% if actual["recommended_combo"] < 1 %}
               <div class="w-100">
                 {% set msg = "No recommendations yet" %}
                 {% set img_src = "" %}
@@ -77,8 +78,21 @@
               </div>
               {% endif %}
 
-              {% if recommended_problems or recommended_solutions %}
-              {% for problem in recommended_problems %}
+              {% if actual["recommended_combo"] >= 1 %}
+              {% for card in recommended_problems_solutions_combo %}
+                  {% if card.name.lower().startswith('problem') %}
+                  {% set problem = card %}
+                  <div>
+                    {% include "templates/includes/problem/problem_card.html" %}
+                  </div>
+                  {% else %}
+                  {% set solution = card %}
+                  <div>
+                    {% include "templates/includes/solution/solution_card.html" %}
+                  </div>
+                  {% endif%}
+              {% endfor %}
+              <!-- {% for problem in recommended_problems %}
               <div>
                 {% include "templates/includes/problem/problem_card.html" %}
               </div>
@@ -89,7 +103,7 @@
                 {% include "templates/includes/solution/solution_card.html" %}
               </div>
               <hr />
-              {% endfor %}
+              {% endfor %} -->
               {% else %}
               <br />
               <h6 style="padding-left: 2rem;">
@@ -98,10 +112,10 @@
               </h6>
               {% endif %}
 
-              {% if(recommended_problems + recommended_solutions) | length > 4 %}
+              {% if actual["recommended_combo"] > 4 %}
               <div class="text-center py-3">
                 <a href="/dashboard?type=recommended_areas" class="viewAll">View All
-                  ({{ (recommended_problems + recommended_solutions) | length }})</a>
+                  ({{ actual["recommended_combo"] }})</a>
               </div>
               {% endif %}
             </div>

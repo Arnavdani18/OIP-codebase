@@ -1,11 +1,32 @@
 import frappe
 from contentready_oip import api
 
+
+def mix_two_list(list1, list2):
+    mixed = []
+    grt_num = max(len(list1), len(list2))
+
+    if len(list1) == grt_num:
+        long = list1
+        short = list2
+    else:
+        long = list2
+        short = list1
+
+    for i in range(grt_num):
+        mixed.append(long[i])
+        if i < len(short):
+            mixed.append(short[i])
+
+    return mixed
+
+
 def get_context(context):
     api.create_user_profile_if_missing(None,None,frappe.session.user)
     # catch all
     context.recommended_problems = []
     context.recommended_solutions = []
+    context.recommended_problems_solutions_combo = []
     context.recommended_users = []
     context.user_problems = []
     context.user_solutions = []
@@ -24,17 +45,23 @@ def get_context(context):
         if not content_type or content_type not in valid_types:
             context.show_default_view = True 
             dashboard_content = api.get_dashboard_content(limit_page_length=4)
+            context.recommended_problems = dashboard_content['recommended_problems'][:2]
+            context.recommended_solutions = dashboard_content['recommended_solutions'][:2]
+            context.recommended_problems_solutions_combo = mix_two_list(
+                context.recommended_problems, context.recommended_solutions)
+
+            context.actual["recommended_combo"] = len(dashboard_content['recommended_problems']) + len(dashboard_content['recommended_solutions'])
             recommended_areas_length = 4
-            if len(dashboard_content['recommended_solutions']) >= 2:
-                context.recommended_problems = dashboard_content['recommended_problems'][:2]
-            else:
-                num_to_show = recommended_areas_length - len(dashboard_content['recommended_solutions'])
-                context.recommended_problems = dashboard_content['recommended_problems'][:num_to_show]
-            if len(dashboard_content['recommended_problems']) >= 2:
-                context.recommended_solutions = dashboard_content['recommended_solutions'][:2]
-            else:
-                num_to_show = recommended_areas_length - len(dashboard_content['recommended_problems'])
-                context.recommended_solutions = dashboard_content['recommended_solutions'][:num_to_show]
+            # if len(dashboard_content['recommended_solutions']) >= 2:
+            #     context.recommended_problems = dashboard_content['recommended_problems'][:2]
+            # else:
+            #     num_to_show = recommended_areas_length - len(dashboard_content['recommended_solutions'])
+            #     context.recommended_problems = dashboard_content['recommended_problems'][:num_to_show]
+            # if len(dashboard_content['recommended_problems']) >= 2:
+            #     context.recommended_solutions = dashboard_content['recommended_solutions'][:2]
+            # else:
+            #     num_to_show = recommended_areas_length - len(dashboard_content['recommended_problems'])
+            #     context.recommended_solutions = dashboard_content['recommended_solutions'][:num_to_show]
             
             context.recommended_users = dashboard_content['recommended_users'][:2]
             context.actual['recommended_users'] = len(dashboard_content['recommended_users'])
