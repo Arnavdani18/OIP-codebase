@@ -19,15 +19,18 @@ frappe.ready(() => {
       const existing_sectors = frappe.utils.get_query_params();
       let sectors = localStorage.getItem('filter_sectors');
       let rng = localStorage.getItem('filter_location_range');
-
+      
       this.selected_range = rng;
       [this.selected_sector] = JSON.parse(sectors) || 'all';
-
+      
       // check if existing sector is from available_sectors
-      if (!this.available_sectors.includes(this.selected_sector)) {
+      check_idx = this.available_sectors.findIndex(v => v['name'] === this.selected_sector);
+      if (check_idx < 0) {
         this.selected_sector = 'all';
       }
-
+      
+      // console.log(">>>>>>> ", this.selected_sector, this.available_sectors);
+      // return;
       if (existing_sectors && existing_sectors['page']) {
         this.qp_page = existing_sectors['page'];
       }
