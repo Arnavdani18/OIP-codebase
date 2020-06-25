@@ -85,11 +85,13 @@
                   <div>
                     {% include "templates/includes/problem/problem_card.html" %}
                   </div>
+                  <hr />
                   {% else %}
                   {% set solution = card %}
                   <div>
                     {% include "templates/includes/solution/solution_card.html" %}
                   </div>
+                  <hr />
                   {% endif %}
               {% endfor %}
               {% else %}
