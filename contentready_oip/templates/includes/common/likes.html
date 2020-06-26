@@ -1,7 +1,7 @@
 <div class="likes"></div>
 
 <script>
-  function appendLikeComp() {
+  frappe.ready(()=>{
     new Vue( {
       el: '.likes',
       delimiters: [ '[[', ']]' ],
@@ -114,11 +114,8 @@
       </div>
       `
     } );
-  }
-
-  setTimeout( () => {
-    frappe.ready( appendLikeComp() );
-  }, 500 );
+  })
+  
 </script>
 
 <style>

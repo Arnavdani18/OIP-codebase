@@ -183,7 +183,7 @@ login.login_handlers = (function() {
 
                 // custom modification based on requirement
                 let home_route = "/dashboard";
-                getUserProfile(data.full_name)
+                getUserProfile(data.name)
                     .then(v => {
                         if (v.message.is_published !== +1) {
                             home_route = `/update-profile`;

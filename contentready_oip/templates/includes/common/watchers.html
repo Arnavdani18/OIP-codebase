@@ -1,7 +1,7 @@
 <div class="views"></div>
 
 <script>
-    function appendWatchComp() {
+    frappe.ready(()=>{
         new Vue( {
             el: '.views',
             delimiters: [ '[[', ']]' ],
@@ -103,12 +103,7 @@
           </div>
           `
         } );
-    }
-
-    setTimeout( () => {
-        frappe.ready( appendWatchComp() );
-    }, 500 );
-
+    })
 </script>
 
 

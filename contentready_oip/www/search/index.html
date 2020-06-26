@@ -1,7 +1,7 @@
 <!-- jinja -->
 <!-- no-breadcrumbs -->
 <div class="p-0">
-    <form action="">
+    <form id="searchInput">
         <div class="input-group input-section">
             <div class="input-group-prepend style1">
                 <span class="input-group-text">
@@ -13,7 +13,7 @@
                 placeholder="Search for problems, solutions and contributors" name='key' value='{{key}}'
                 id="search-input">
             <div class="input-group-append style1">
-                <button type="button" data-enabled=1 class="btn active-btn" onclick="triggerSearch()"
+                <button type="submit" data-enabled=1 class="btn active-btn" 
                     id="search-btn"><img src="assets/contentready_oip/svg/search-solid.svg" style="opacity: .4;"
                         class="" width="30" height="20"></button>
                 <!-- <button type="button" data-enabled=1 class="btn active-btn rounded-right" onclick="toggleSolutions()" id="solution-selector">Solutions</button> -->
@@ -121,12 +121,12 @@
         // Look for similar problems and solutions when text is entered
         // $('#search-input').val('');
 
-        $('#search-input').keypress(function(event) {
-            if (event.keyCode === 13) {
+        $('#searchInput').submit(function(event) {
+            // if (event.keyCode === 13) {
                 event.preventDefault();
                 triggerSearch();
-                return false;
-            }
+                // return false;
+            // }
         });
 
         function triggerSearch() {

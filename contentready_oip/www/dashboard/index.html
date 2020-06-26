@@ -2,7 +2,9 @@
 <!-- no-breadcrumbs -->
 <!-- static -->
 
-{% if self_profile.is_first_login == 1 %}
+
+
+{% if self_profile and self_profile.is_first_login == 1 %}
 <style>
   .f-size {
     font-size: 1.4rem;
@@ -19,19 +21,19 @@
 </div>
 
 <script>
-  function toggleWelcomeMsg(btn_context) {
+  function toggleWelcomeMsg( btn_context ) {
     const args = {
       doctype: 'User Profile',
-      docname: '{{self_profile.full_name}}',
+      docname: '{{self_profile.name}}',
       fieldname: 'is_first_login',
       fieldvalue: '0'
     }
 
-    frappe.call({
+    frappe.call( {
       method: 'contentready_oip.api.set_document_value',
       args,
-      callback: function(r) {
-        if (btn_context.includes('update_profile')) {
+      callback: function( r ) {
+        if ( btn_context.includes( 'update_profile' ) ) {
           window.location.href = "/update-profile";
         } else {
           window.location.href = "/home";
@@ -39,7 +41,7 @@
 
         self_profile = {...r.message};
       }
-    })
+    } )
   }
 </script>
 
@@ -54,8 +56,7 @@
           <li class="nav-item">
             <a class="nav-link active" id="recommended-content-tab" data-toggle="tab" href="#recommended-content"
               role="tab" aria-controls="recommended-content" aria-selected="true">
-              Areas That May Interest You ({{ (recommended_problems + recommended_solutions) | length
-              }})
+              Areas That May Interest You ({{ actual["recommended_combo"] }})
             </a>
           </li>
           <li class="nav-item">
@@ -69,7 +70,7 @@
           <div class="tab-content" id="leftTabContent">
             <div class="tab-pane fade show active" id="recommended-content" role="tabpanel"
               aria-labelledby="recommended-content-tab">
-              {% if (recommended_problems + recommended_solutions) | length < 1 %}
+              {% if actual["recommended_combo"] < 1 %}
               <div class="w-100">
                 {% set msg = "No recommendations yet" %}
                 {% set img_src = "" %}
@@ -77,18 +78,21 @@
               </div>
               {% endif %}
 
-              {% if recommended_problems or recommended_solutions %}
-              {% for problem in recommended_problems %}
-              <div>
-                {% include "templates/includes/problem/problem_card.html" %}
-              </div>
-              <hr />
-              {% endfor %}
-              {% for solution in recommended_solutions %}
-              <div>
-                {% include "templates/includes/solution/solution_card.html" %}
-              </div>
-              <hr />
+              {% if actual["recommended_combo"] >= 1 %}
+              {% for card in recommended_problems_solutions_combo %}
+                  {% if card.name.lower().startswith('problem') %}
+                  {% set problem = card %}
+                  <div>
+                    {% include "templates/includes/problem/problem_card.html" %}
+                  </div>
+                  <hr />
+                  {% else %}
+                  {% set solution = card %}
+                  <div>
+                    {% include "templates/includes/solution/solution_card.html" %}
+                  </div>
+                  <hr />
+                  {% endif %}
               {% endfor %}
               {% else %}
               <br />
@@ -98,10 +102,10 @@
               </h6>
               {% endif %}
 
-              {% if(recommended_problems + recommended_solutions) | length > 4 %}
+              {% if actual["recommended_combo"] > 4 %}
               <div class="text-center py-3">
                 <a href="/dashboard?type=recommended_areas" class="viewAll">View All
-                  ({{ (recommended_problems + recommended_solutions) | length }})</a>
+                  ({{ actual["recommended_combo"] }})</a>
               </div>
               {% endif %}
             </div>
@@ -114,16 +118,20 @@
               </div>
               {% endif %}
 
-              {% for problem in user_problems %}
-              <div class="">
-                {% include "templates/includes/problem/problem_card.html" %}
-              </div>
-              <hr />
-              {% endfor %} {% for solution in user_solutions %}
-              <div class="">
-                {% include "templates/includes/solution/solution_card.html" %}
-              </div>
-              <hr class="m-0" />
+              {% for card in user_problems_solutions_combo %}
+                {% if card.name.lower().startswith('problem') %}
+                {% set problem = card %}
+                <div>
+                  {% include "templates/includes/problem/problem_card.html" %}
+                </div>
+                <hr />
+                {% else %}
+                {% set solution = card %}
+                <div>
+                  {% include "templates/includes/solution/solution_card.html" %}
+                </div>
+                <hr />
+                {% endif %}
               {% endfor %}
 
               {%  if (actual.user_problems + actual.user_solutions) > 4 %}
@@ -162,17 +170,20 @@
               </div>
               {% endif %}
 
-              {% for problem in watched_problems %}
-              <div>
-                {% include "templates/includes/problem/problem_card.html" %}
-              </div>
-              <hr />
-              {% endfor %}
-              {% for solution in watched_solutions %}
-              <div>
-                {% include "templates/includes/solution/solution_card.html" %}
-              </div>
-              <hr>
+              {% for card in watched_problems_solutions_combo %}
+                {% if card.name.lower().startswith('problem') %}
+                {% set problem = card %}
+                <div>
+                  {% include "templates/includes/problem/problem_card.html" %}
+                </div>
+                <hr />
+                {% else %}
+                {% set solution = card %}
+                <div>
+                  {% include "templates/includes/solution/solution_card.html" %}
+                </div>
+                <hr />
+                {% endif%}
               {% endfor %}
 
               {% if actual.watched_problems + actual.watched_solutions > 2 %}
@@ -229,20 +240,20 @@
                 </div>
                 {% endif %}
 
-                {% for problem in contributed_problems %}
-                <div>
-                  {% include
-                  "templates/includes/problem/problem_contribution_card.html" %}
-                </div>
-                <hr />
-                {% endfor %}
-                {% for solution in contributed_solutions %}
-                <div>
-                  {% include
-                  "templates/includes/solution/solution_contribution_card.html"
-                  %}
-                </div>
-                <hr>
+                {% for card in contributed_problems_solutions_combo %}
+                  {% if card.name.lower().startswith('problem') %}
+                  {% set problem = card %}
+                  <div>
+                    {% include "templates/includes/problem/problem_contribution_card.html" %}
+                  </div>
+                  <hr />
+                  {% else %}
+                  {% set solution = card %}
+                  <div>
+                    {% include "templates/includes/solution/solution_contribution_card.html" %}
+                  </div>
+                  <hr />
+                  {% endif%}
                 {% endfor %}
 
                 {% if (actual.contributed_problems + actual.contributed_solutions) > 2 %}
