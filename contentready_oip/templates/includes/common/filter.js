@@ -231,7 +231,11 @@ frappe.ready(() => {
             query_obj['rng'] = rng;
             this.selected_range = rng;
           }
-
+          let loc_name = localStorage.getItem('filter_location_name');
+          if (loc_name) {
+            query_obj['loc_name'] = loc_name;
+          }
+          
           let search_str = localStorage.getItem('search_query');
           if (search_str && window.location.pathname.includes('search')) {
             query_obj['key'] = search_str;
