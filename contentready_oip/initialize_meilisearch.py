@@ -6,7 +6,7 @@ import meilisearch
 import frappe
 
 INDEX_TO_ADD = ['Problem', 'Solution', 'User']
-CLIENT = meilisearch.Client('http://127.0.0.1:7700')
+CLIENT = meilisearch.Client('http://127.0.0.1:7700', 'test123')
 
 def refactor_sectors_list(problem_dict):
     """
