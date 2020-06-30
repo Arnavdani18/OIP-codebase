@@ -42,11 +42,12 @@ def get_context(context):
             'country'={})".format(*location_name)
 
     prepare_sector_filter = ''
-    filter_str = " AND meili_sectors=".join(sector_list)
+    filter_str = " AND meili_sectors=".join(sector_list) if not "all" in sector_list else ''
     if filter_str:
         prepare_sector_filter = "meili_sectors=" + filter_str
 
     combined_filter = prepare_sector_filter + prepare_loc_filter
+    print("\n\n\n>>>>> ",combined_filter)
     # problems
     _r = api.get_filtered_paginated_content(context, 'Problem', 'problems')
     context.update(_r)
