@@ -59,6 +59,7 @@
                 </div>
                 <div id="matching-problems">
                     {% for problem in matched_problems %}
+                    {% set problem = problem['_formatted'] %}
                     {% include "templates/includes/problem/problem_card.html" %}
                     {% endfor %}
                 </div>
@@ -100,11 +101,13 @@
                     </div>
                 </div>
                 <div id="matching-contributors" class="row">
-                    {% for user in matched_contributors %}
-                    <div class="col-md-3">
-                        {% include "templates/includes/common/user_card.html" %}
+                    <div class="col">
+                        {% for user in matched_contributors %}
+                        <div class="col-md-3 bg-white pt-4 rounded">
+                            {% include "templates/includes/common/user_card.html" %}
+                        </div>
+                        {% endfor %}
                     </div>
-                    {% endfor %}
                 </div>
             </div>
         </div>
@@ -149,6 +152,10 @@
 </script>
 
 <style>
+    em{
+        background-color: yellow;
+    }
+
     .style1 {
         font-size: 18px;
         font-weight: 500;

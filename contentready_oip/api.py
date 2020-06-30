@@ -2,9 +2,11 @@ import frappe
 import json
 from frappe import _
 import platform
+import meilisearch
 from frappe.email.doctype.email_template.email_template import get_email_template
 
 python_version_2 = platform.python_version().startswith('2')
+CLIENT = meilisearch.Client('http://127.0.0.1:7700')
 
 def nudge_guests():
     if not frappe.session.user or frappe.session.user == 'Guest':
@@ -1055,3 +1057,14 @@ def setup_domain_hook(doc=None, event_name=None):
 def set_document_value(doctype, docname, fieldname, fieldvalue):
     return frappe.set_value(doctype, docname, fieldname, fieldvalue)
 
+@frappe.whitelist(allow_guest=False)
+def get_searched_content(index_name,search_str,filters=None):
+    options = {
+        "attributesToHighlight" : ["*"]
+    }
+    if filters:
+        options["filters"] = filters
+    
+    index = CLIENT.get_index(index_name.lower())
+    result = index.search(search_str,options)
+    return result['hits']
