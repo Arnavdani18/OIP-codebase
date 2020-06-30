@@ -38,16 +38,21 @@ def get_context(context):
 
     prepare_loc_filter = ''
     if location_name:
-        prepare_loc_filter = " AND ('city'={} OR 'state'={} AND \
-            'country'={})".format(*location_name)
+        prepare_loc_filter = "('city'={} OR 'state'={} AND 'country'={})".format(*location_name)
 
     prepare_sector_filter = ''
     filter_str = " AND meili_sectors=".join(sector_list) if not "all" in sector_list else ''
     if filter_str:
         prepare_sector_filter = "meili_sectors=" + filter_str
 
-    combined_filter = prepare_sector_filter + prepare_loc_filter
-    print("\n\n\n>>>>> ",combined_filter)
+    concat_filter = []
+    if prepare_sector_filter:
+        concat_filter.append(prepare_sector_filter)
+    if prepare_loc_filter:
+        concat_filter.append(prepare_loc_filter)
+
+    combined_filter = " AND ".join(concat_filter)
+    # print("\n\n\n>>>>> ", combined_filter)
     # problems
     _r = api.get_filtered_paginated_content(context, 'Problem', 'problems')
     context.update(_r)

@@ -5,7 +5,7 @@ import json
 import meilisearch
 import frappe
 
-INDEX_TO_ADD = ['Problem', 'Solution', 'User']
+INDEX_TO_ADD = ['Problem', 'Solution', 'User Profile']
 CLIENT = meilisearch.Client('http://127.0.0.1:7700', 'test123')
 
 def refactor_sectors_list(problem_dict):
@@ -23,6 +23,16 @@ def refactor_sectors_list(problem_dict):
 
     return problem_dict
 
+def replace_space(name):
+    """
+    replace white space with _
+    """
+    name_list = name.split(" ")
+    if len(name_list) > 1:
+        name = "_".join(name_list)
+
+    return name.lower()
+
 
 def get_detailed_doctype(doc_name):
     """
@@ -38,7 +48,7 @@ def get_detailed_doctype(doc_name):
             doc_list.remove(guest_index)
 
     for doc in doc_list:
-        detail_doc = frappe.get_doc(doc_name.capitalize(), doc)
+        detail_doc = frappe.get_doc(doc_name, doc)
         try:
             doc_dict = detail_doc.as_dict()
             if doc_name.lower() == "problem" or "solution":
@@ -52,16 +62,17 @@ def get_detailed_doctype(doc_name):
 
 def add_index_if_not_exist(index_name):
     """
-    Create index if doesn't exist. 
+    Create index if doesn't exist.
     Set primaryKey as 'name'
     """
     index = CLIENT.get_indexes()
+    idx_name = replace_space(index_name)
     does_index_exist = next(
-        (item for item in index if item['name'] == index_name.lower()), False)
+        (item for item in index if item['name'] == idx_name), False)
 
     if not does_index_exist:
         index = CLIENT.create_index(
-            uid=index_name.lower(), options={
+            uid=idx_name, options={
                 'primaryKey': 'name'
             })
         add_documents_to_index(index_name)
@@ -71,16 +82,17 @@ def add_documents_to_index(idx_name):
     """
     Add list of dictionary to the index created
     """
-    document = get_detailed_doctype(idx_name.capitalize())
+    meili_name = replace_space(idx_name)
+    document = get_detailed_doctype(idx_name)
     json_doc = json.loads(document)
-    CLIENT.get_index(idx_name.lower()).add_documents(json_doc)
+    CLIENT.get_index(meili_name).add_documents(json_doc)
 
 
 def clear_all_data(idx_name):
     """
     Remove the provided index from meilisearch
     """
-    idx_name = idx_name.lower()
+    idx_name = replace_space(idx_name)
     CLIENT.get_index(idx_name).delete_all_documents()
     CLIENT.get_index(idx_name).delete()
 
