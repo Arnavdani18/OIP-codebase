@@ -6,7 +6,7 @@ import meilisearch
 from frappe.email.doctype.email_template.email_template import get_email_template
 
 python_version_2 = platform.python_version().startswith('2')
-CLIENT = meilisearch.Client('http://127.0.0.1:7700', 'test123')
+CLIENT = meilisearch.Client('https://meilisearch.onrender.com', 'test123')
 
 def nudge_guests():
     if not frappe.session.user or frappe.session.user == 'Guest':
