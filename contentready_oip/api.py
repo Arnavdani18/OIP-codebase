@@ -1067,12 +1067,63 @@ def get_searched_content(index_name,search_str,filters=None):
     
     index = CLIENT.get_index(index_name.lower())
     result = index.search(search_str,options)
-    return result['hits']
+    apply_range_filter = filter_content_by_range(result['hits'], index_name)
+    return apply_range_filter
 
-@frappe.whitelist(allow_guest=False)
-def clear_all_data(idx_name):
-    """
-    Remove the provided index from meilisearch
-    """
-    CLIENT.get_index(idx_name).delete_all_documents()
-    CLIENT.get_index(idx_name).delete()
+def filter_content_by_range(searched_content,doctype):
+    content = []
+    try:
+        parameters = frappe.form_dict
+        # filter_location_name
+        try:
+            filter_location_name = parameters['loc']
+        except:
+            filter_location_name = None
+        # filter_location_lat
+        try:
+            filter_location_lat = float(parameters['lat'])
+        except:
+            filter_location_lat = None
+        # filter_location_lng
+        try:
+            filter_location_lng = float(parameters['lng'])
+        except:
+            filter_location_lng = None
+        # filter_location_range
+        try:
+            filter_location_range = int(parameters['rng'])
+        except:
+            filter_location_range = None
+        try:
+            user = frappe.get_doc('User Profile', frappe.session.user)
+            user_sectors = {sector.sector for sector in user.sectors}
+        except:
+            user_sectors = set()
+
+        from geopy import distance
+        for doc in searched_content:    
+            try:
+                if doc["is_published"]:
+                    if (doc["latitude"] != None) and (doc["longitude"] != None) and (filter_location_lat != None) and (filter_location_lng != None) and (filter_location_range != None):
+                        distance_km = distance.distance((filter_location_lat, filter_location_lng), (float(doc["latitude"]), float(doc["longitude"]))).km
+                        if distance_km > filter_location_range:
+                            # skip this document as it's outside our bounds
+                            continue
+                    
+                    if user_sectors:
+                        doc_sectors = {sector["sector"] for sector in doc["sectors"]}
+                        relevant_sectors = doc_sectors.intersection(user_sectors)
+                        if doctype == 'Problem':
+                            doc["score"] = 0.3 * len(doc["validations"]) + 0.1 * len(doc["likes"]) + 0.1 * len(doc["enrichments"]) + 0.1 * len(doc["watchers"]) + 0.05 * len(doc["discussions"]) + 0.3 * len(relevant_sectors)
+                        else:
+                            doc["score"] = 0.3 * len(doc["validations"]) + 0.1 * len(doc["likes"]) + 0.1 * len(doc["watchers"]) + 0.05 * len(doc["discussions"]) + 0.3 * len(relevant_sectors)
+                    else:
+                        doc["score"] = 1
+                    content.append(doc)
+            except Exception as e:
+                print(str(e))    
+    except Exception as e:
+        print(str(e))
+    content.sort(key=lambda x: x["score"], reverse=True)
+    return content
+

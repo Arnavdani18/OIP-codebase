@@ -49,8 +49,9 @@ home_page = "home"
 # Generators
 # ----------
 
+# runs after login
 on_session_creation = [
-   "contentready_oip.initialize_meilisearch.main_fn",
+#    "contentready_oip.initialize_meilisearch.main_fn",
 ]
 
 # automatically create page for each record of this doctype
