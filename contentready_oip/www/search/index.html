@@ -1,5 +1,16 @@
 <!-- jinja -->
 <!-- no-breadcrumbs -->
+{% macro no_result(className) -%}
+    <div class="container">
+        <section class="row zeroResult-section {{className}}">
+            <div>
+                <img src="assets/contentready_oip/svg/empty_state_search_icon.svg" alt="" />
+            </div>
+            <h5 class="no-result-msg">It seems there are no search results as of now.</h5>
+        </section>
+    </div>
+{%- endmacro %}
+
 <div class="p-0">
     <form id="searchInput">
         <div class="input-group input-section">
@@ -16,13 +27,13 @@
                 <button type="submit" data-enabled=1 class="btn active-btn" 
                     id="search-btn"><img src="assets/contentready_oip/svg/search-solid.svg" style="opacity: .4;"
                         class="" width="30" height="20"></button>
-                <!-- <button type="button" data-enabled=1 class="btn active-btn rounded-right" onclick="toggleSolutions()" id="solution-selector">Solutions</button> -->
+                <!--{# <button type="button" data-enabled=1 class="btn active-btn rounded-right" onclick="toggleSolutions()" id="solution-selector">Solutions</button> -->
                 <!-- <select class="search-mode" id="">
                     <option selected value="all">All</option>
                     <option value="problem">Problem</option>
                     <option value="solution">Solution</option>
                     <option value="profile">Profile</option>
-                </select> -->
+                </select> #}-->
             </div>
         </div>
     </form>
@@ -33,16 +44,9 @@
 </div>
 
 {% if (matched_problems + matched_solutions + matched_contributors) | length == 0 %}
-<div class="container no-result">
-    <section class="row zeroResult-section">
-        <div>
-            <img src="assets/contentready_oip/svg/empty_state_search_icon.svg" alt="" />
-        </div>
-        <h5>It seems there are no search results as of now.</h5>
-    </section>
-</div>
+    {{ no_result('height75') }}
 {% else %}
-<div class="container mt-5" id="search-results-container">
+<div class=" mt-5" id="search-results-container">
     <div class="row">
         <div class="col-lg-6" id="problem-results-container">
             <div class="col p-0">
@@ -50,11 +54,14 @@
                     <div class="d-flex align-items-center header">
                         <img src="/files/problem_icon.svg" alt="" height="20px" width="24px" />
                         <h2 class="heading">Problems Matched</h2>
-                        <div class="view-all">
-                            <a href="/problems">
-                                View All
-                            </a>
-                        </div>
+
+                        {% if matched_problems | len > 5 %}
+                            <div class="view-all">
+                                <a href="/problems">
+                                    View All
+                                </a>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
                 <div id="matching-problems">
@@ -63,6 +70,9 @@
                     {% include "templates/includes/problem/problem_card.html" %}
                     {% endfor %}
                 </div>
+                {% if matched_problems | len == 0 %}
+                    {{ no_result('height50') }}
+                {% endif %}
             </div>
         </div>
         <div class="col-lg-6 margin-sm-md-30" id="solution-results-container">
@@ -71,11 +81,14 @@
                     <div class="d-flex align-items-center header">
                         <img src="/files/problem_icon.svg" alt="" height="20px" width="24px" />
                         <h2 class="heading">Solutions Matched</h2>
+
+                        {% if matched_solutions | len > 5 %}
                         <div class="view-all">
                             <a href="/solutions">
                                 View All
                             </a>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
                 <div id="matching-solutions">
@@ -84,6 +97,9 @@
                     {% include "templates/includes/solution/solution_card.html" %}
                     {% endfor %}
                 </div>
+                {% if matched_solutions | len == 0 %}
+                    {{ no_result('height50') }}
+                {% endif %}
             </div>
         </div>
     </div>
@@ -94,11 +110,13 @@
                     <div class="d-flex align-items-center header">
                         <img src="/files/problem_icon.svg" alt="" height="20px" width="24px" />
                         <h2 class="heading">Contributors</h2>
+                        {% if matched_contributors | len > 7 %}
                         <div class="view-all">
                             <a href="/contributors">
                                 View All
                             </a>
                         </div>
+                        {% endif %}
                     </div>
                 </div>
                 <div id="matching-contributors" class="row">
@@ -109,6 +127,10 @@
                             {% include "templates/includes/common/user_card.html" %}
                         </div>
                         {% endfor %}
+
+                        {% if matched_contributors | len == 0 %}
+                            {{ no_result('height50') }}
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -165,14 +187,21 @@
         line-height: 26px;
     }
 
+    .height75{
+        min-height: 75vh;
+    }
+    
+    .height50{
+        min-height: 50vh;
+    }
+
     .zeroResult-section {
         justify-content: center;
         flex-direction: column;
-        min-height: 75vh;
         text-align: center;
     }
 
-    .zeroResult-section>h5 {
+    .no-result-msg {
         margin-top: 2.7rem;
         font-weight: 500;
         color: var(--secondary1);
