@@ -51,5 +51,6 @@ def get_context(context):
     context.matched_solutions = api.get_searched_content('Solution', key, prepare_sector_filter)
 
     # User-Profile
-    context.matched_contributors = api.get_content_recommended_for_user('User Profile', sectors)
-    # print('\n\n\n', len(context.matched_problems), len(context.matched_solutions), '\n\n\n')
+    # context.matched_contributors = api.get_content_recommended_for_user('User Profile', sectors)
+    context.matched_contributors = api.get_searched_content('user_profile', key, prepare_sector_filter)
+    # print('\n\n\n>>>>>>>', len(context.matched_contributors), '\n\n\n')

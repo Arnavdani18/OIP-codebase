@@ -98,6 +98,15 @@ doc_events = {
 		"after_insert": "contentready_oip.api.setup_domain_hook",
 		# "on_cancel": "method",
 		# "on_trash": "method"
+	},
+	"Problem":{
+		"on_update": "contentready_oip.api.update_doc_to_meilisearch"
+	},
+	"Solution":{
+		"on_update": "contentready_oip.api.update_doc_to_meilisearch"
+	},
+	"User Profile":{
+		"on_update": "contentready_oip.api.update_user_profile_to_meilisearch"
 	}
 }
 
