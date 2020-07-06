@@ -1131,3 +1131,60 @@ def filter_content_by_range(searched_content,doctype):
     content.sort(key=lambda x: x["score"], reverse=True)
     return content
 
+def replace_space(name):
+    """
+    replace white space with _
+    """
+    name_list = name.split(" ")
+    if len(name_list) > 1:
+        name = "_".join(name_list)
+
+    return name.lower()
+
+def refactor_2_list_str(doc_dict, p_key, c_key):
+    """
+    Refactor sector or persona to list of strings.
+
+    Parameters: 
+    doc_dict (dict): Dictionary of doctype. \n
+    p_key (str): primary key of doctype.\n
+    c_key (str): child key of primary key's value.
+
+    Returns: 
+    doc_dict (dict): Updated dictionary of doctype.
+    """
+    try:
+        refactor_list = doc_dict[p_key]
+        new_key = "meili_{}".format(p_key)
+        doc_dict[new_key] = []
+
+        for item in refactor_list:
+            doc_dict[new_key].append(item[c_key])
+    except Exception as _e:
+        print(str(_e))
+
+    return doc_dict
+
+def update_doc_to_meilisearch(doc, hook_action):
+    try:
+        document = doc.as_dict()
+        if document['is_published']:
+            index_name = replace_space(document['doctype'])
+            document = refactor_2_list_str(document, 'sectors','sector')
+            index = CLIENT.get_index(index_name)
+            index.add_documents([document])
+    except Exception as _e:
+        print(str(_e))
+
+def update_user_profile_to_meilisearch(doc, hook_action):
+    try:
+        document = doc.as_dict()
+        index_name = replace_space(document['doctype'])
+        # https://docs.python.org/3/library/stdtypes.html#str.isalnum
+        document['meili_idx'] = "".join(v for v in document['name'] if v.isalnum())
+        document = refactor_2_list_str(document, 'sectors','sector')
+        document = refactor_2_list_str(document, 'personas', 'persona')
+        index = CLIENT.get_index(index_name)
+        index.add_documents([document])
+    except Exception as _e:
+        print(str(_e))
