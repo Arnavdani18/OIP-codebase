@@ -80,6 +80,7 @@
                 </div>
                 <div id="matching-solutions">
                     {% for solution in matched_solutions %}
+                    {% set solution = solution['_formatted'] %}
                     {% include "templates/includes/solution/solution_card.html" %}
                     {% endfor %}
                 </div>
@@ -103,6 +104,7 @@
                 <div id="matching-contributors" class="row">
                     <div class="col">
                         {% for user in matched_contributors %}
+                        {% set user = user['_formatted'] %}
                         <div class="col-md-3 bg-white pt-4 rounded">
                             {% include "templates/includes/common/user_card.html" %}
                         </div>

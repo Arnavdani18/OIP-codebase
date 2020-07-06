@@ -40,7 +40,7 @@
 
   <div class="profile-persona-and-company">
     <p class="company">
-      {{ user.org_title }}
+      {{ user.org_title if user.title else '' }}
     </p>
     {% set personas = user.personas %} 
     {% include "templates/includes/common/persona_labels.html" %}

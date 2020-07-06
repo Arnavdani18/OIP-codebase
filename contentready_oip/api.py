@@ -1067,8 +1067,12 @@ def get_searched_content(index_name,search_str,filters=None):
     
     index = CLIENT.get_index(index_name.lower())
     result = index.search(search_str,options)
-    apply_range_filter = filter_content_by_range(result['hits'], index_name)
-    return apply_range_filter
+    
+    if index_name == 'user_profile':
+        return result['hits']
+    else:
+        apply_range_filter = filter_content_by_range(result['hits'], index_name)
+        return apply_range_filter
 
 def filter_content_by_range(searched_content,doctype):
     content = []
