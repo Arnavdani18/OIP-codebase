@@ -1,5 +1,7 @@
+// prettier-ignore
 frappe.provide( 'Vue' );
 
+// prettier-ignore
 frappe.ready( async () => {
   // Start Helpers
   let autocomplete;
@@ -558,7 +560,8 @@ frappe.ready( async () => {
             clearInterval( id );
             i = 0;
             loader.hide();
-            window.history.back();
+            // window.history.back();
+            window.location.href = '/dashboard';
           } else {
             i++;
             loader = frappe.show_progress( 'Deleting..', i, 100, 'Please wait' );
@@ -610,16 +613,14 @@ frappe.ready( async () => {
 } );
 
 const styleFormHeadings = () => {
-  $( "h6" )
-    .not( ":first" )
-    .prepend( "<hr />" );
-  $( ".form-section-heading" ).addClass( "enrichment-details-page-subheadings" );
+  $('h6').not(':first').prepend('<hr />');
+  $('.form-section-heading').addClass('enrichment-details-page-subheadings');
 };
 
 const styleFields = () => {
-  $( ".input-with-feedback" ).addClass( "field-styles" );
+  $('.input-with-feedback').addClass('field-styles');
 };
 
 const controlLabels = () => {
-  $( ".control-label" ).addClass( "label-styles" );
+  $('.control-label').addClass('label-styles');
 };
