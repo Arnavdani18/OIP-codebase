@@ -29,7 +29,7 @@
 
 <div class="profile-container actions pb-1" role="group" onclick="window.location.href = '/{{user.route}}'">
   <div class="profile-image">
-    <img src="{{ user.photo }}" alt="profile photo" class="profile-image" />
+    <img src="{{ user.photo }}" alt="profile photo" class="profile-image" onerror="javascript:this.src='assets/contentready_oip/images/default-avatar.jpg'" />
   </div>
 
   <div class="profile-name">
