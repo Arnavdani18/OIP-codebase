@@ -1067,12 +1067,124 @@ def get_searched_content(index_name,search_str,filters=None):
     
     index = CLIENT.get_index(index_name.lower())
     result = index.search(search_str,options)
-    return result['hits']
+    
+    if index_name == 'user_profile':
+        return result['hits']
+    else:
+        apply_range_filter = filter_content_by_range(result['hits'], index_name)
+        return apply_range_filter
 
-@frappe.whitelist(allow_guest=False)
-def clear_all_data(idx_name):
+def filter_content_by_range(searched_content,doctype):
+    content = []
+    try:
+        parameters = frappe.form_dict
+        # filter_location_name
+        try:
+            filter_location_name = parameters['loc']
+        except:
+            filter_location_name = None
+        # filter_location_lat
+        try:
+            filter_location_lat = float(parameters['lat'])
+        except:
+            filter_location_lat = None
+        # filter_location_lng
+        try:
+            filter_location_lng = float(parameters['lng'])
+        except:
+            filter_location_lng = None
+        # filter_location_range
+        try:
+            filter_location_range = int(parameters['rng'])
+        except:
+            filter_location_range = None
+        try:
+            user = frappe.get_doc('User Profile', frappe.session.user)
+            user_sectors = {sector.sector for sector in user.sectors}
+        except:
+            user_sectors = set()
+
+        from geopy import distance
+        for doc in searched_content:    
+            try:
+                if doc["is_published"]:
+                    if (doc["latitude"] != None) and (doc["longitude"] != None) and (filter_location_lat != None) and (filter_location_lng != None) and (filter_location_range != None):
+                        distance_km = distance.distance((filter_location_lat, filter_location_lng), (float(doc["latitude"]), float(doc["longitude"]))).km
+                        if distance_km > filter_location_range:
+                            # skip this document as it's outside our bounds
+                            continue
+                    
+                    if user_sectors:
+                        doc_sectors = {sector["sector"] for sector in doc["sectors"]}
+                        relevant_sectors = doc_sectors.intersection(user_sectors)
+                        if doctype == 'Problem':
+                            doc["score"] = 0.3 * len(doc["validations"]) + 0.1 * len(doc["likes"]) + 0.1 * len(doc["enrichments"]) + 0.1 * len(doc["watchers"]) + 0.05 * len(doc["discussions"]) + 0.3 * len(relevant_sectors)
+                        else:
+                            doc["score"] = 0.3 * len(doc["validations"]) + 0.1 * len(doc["likes"]) + 0.1 * len(doc["watchers"]) + 0.05 * len(doc["discussions"]) + 0.3 * len(relevant_sectors)
+                    else:
+                        doc["score"] = 1
+                    content.append(doc)
+            except Exception as e:
+                print(str(e))    
+    except Exception as e:
+        print(str(e))
+    content.sort(key=lambda x: x["score"], reverse=True)
+    return content
+
+def replace_space(name):
     """
-    Remove the provided index from meilisearch
+    replace white space with _
     """
-    CLIENT.get_index(idx_name).delete_all_documents()
-    CLIENT.get_index(idx_name).delete()
+    name_list = name.split(" ")
+    if len(name_list) > 1:
+        name = "_".join(name_list)
+
+    return name.lower()
+
+def refactor_2_list_str(doc_dict, p_key, c_key):
+    """
+    Refactor sector or persona to list of strings.
+
+    Parameters: 
+    doc_dict (dict): Dictionary of doctype. \n
+    p_key (str): primary key of doctype.\n
+    c_key (str): child key of primary key's value.
+
+    Returns: 
+    doc_dict (dict): Updated dictionary of doctype.
+    """
+    try:
+        refactor_list = doc_dict[p_key]
+        new_key = "meili_{}".format(p_key)
+        doc_dict[new_key] = []
+
+        for item in refactor_list:
+            doc_dict[new_key].append(item[c_key])
+    except Exception as _e:
+        print(str(_e))
+
+    return doc_dict
+
+def update_doc_to_meilisearch(doc, hook_action):
+    try:
+        document = doc.as_dict()
+        if document['is_published']:
+            index_name = replace_space(document['doctype'])
+            document = refactor_2_list_str(document, 'sectors','sector')
+            index = CLIENT.get_index(index_name)
+            index.add_documents([document])
+    except Exception as _e:
+        print(str(_e))
+
+def update_user_profile_to_meilisearch(doc, hook_action):
+    try:
+        document = doc.as_dict()
+        index_name = replace_space(document['doctype'])
+        # https://docs.python.org/3/library/stdtypes.html#str.isalnum
+        document['meili_idx'] = "".join(v for v in document['name'] if v.isalnum())
+        document = refactor_2_list_str(document, 'sectors','sector')
+        document = refactor_2_list_str(document, 'personas', 'persona')
+        index = CLIENT.get_index(index_name)
+        index.add_documents([document])
+    except Exception as _e:
+        print(str(_e))

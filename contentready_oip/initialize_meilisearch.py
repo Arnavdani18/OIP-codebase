@@ -57,7 +57,7 @@ def get_detailed_doctype(doc_name):
         except Exception as _e:
             print(str(_e))
 
-    return json.dumps(detailed_doc_list, indent=4, sort_keys=True, default=str)
+    return json.dumps(detailed_doc_list, default=str)
 
 
 def add_index_if_not_exist(index_name):
@@ -108,4 +108,5 @@ def main_fn():
     Entry point for the file.
     """
     for doc_name in INDEX_TO_ADD:
+        clear_all_data(doc_name)
         add_index_if_not_exist(doc_name)
