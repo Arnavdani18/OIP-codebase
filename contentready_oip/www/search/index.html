@@ -158,7 +158,7 @@
 
         function triggerSearch() {
             const key = $('#search-input').val().trim();
-            if (key) {
+            // if (key) {
                 const search_query = {key: key};
                 localStorage.setItem('search_query',key);
                 const existing_query = frappe.utils.get_query_params();
@@ -170,7 +170,7 @@
                     console.log(clean_url + qp);
                     window.location.href = clean_url + qp;
                 }
-            }
+            // }
         }
     })
 </script>
