@@ -1,19 +1,21 @@
 <!-- prettier-ignore -->
 <button class="btn btn-circle margin-20 {{ 'comment-share-btn' if doctype == 'Discussion' else 'header-share-btn' }}"
     id="shareBtnDropdown" data-toggle="dropdown" aria-expanded="false" aria-label="share">
-    <!-- <i class="far fa-share-alt share-icon" aria-hidden="true"></i> -->
     <i class="share-icon">{% include "public/svg/share-alt-solid.svg" %}</i>
 </button>
 <!-- prettier-ignore -->
-<div class="dropdown-menu" aria-labelledby="shareBtnDropdown">
-    <a class="dropdown-item" href="javascript:void(0);" onclick="linkedInShare()">LinkedIn</a>
-    <a class="dropdown-item" href="javascript:void(0);" onclick="fbShare()">Facebook</a>
-    <a class="dropdown-item" href="javascript:void(0);" onclick="twitterShare()">Twitter</a>
-    <a class="dropdown-item" href="javascript:void(0);" onclick="mailShare('{{doctype}}', '{{name}}')">Email</a>
-    <a class="dropdown-item" href="javascript:void(0);" onclick="smsShare()">SMS</a>
+<div class="dropdown-menu share-dropdown-menu dropdown-menu-right mt-2 rounded shadow" aria-labelledby="shareBtnDropdown">
+    <a class="dropdown-item py-2" href="javascript:void(0);" onclick="linkedInShare()">LinkedIn</a>
+    <a class="dropdown-item py-2" href="javascript:void(0);" onclick="fbShare()">Facebook</a>
+    <a class="dropdown-item py-2" href="javascript:void(0);" onclick="twitterShare()">Twitter</a>
+    <a class="dropdown-item py-2" href="javascript:void(0);" onclick="mailShare('{{doctype}}', '{{name}}')">Email</a>
+    <a class="dropdown-item py-2" href="javascript:void(0);" onclick="smsShare()">SMS</a>
 </div>
 
 <style>
+  .share-dropdown-menu{
+    font-size: var(--f12);
+  }
   .comment-share-btn {
     width: 3.1rem;
     height: 3.1rem;
