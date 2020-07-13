@@ -36,7 +36,7 @@
         if ( btn_context.includes( 'update_profile' ) ) {
           window.location.href = "/update-profile";
         } else {
-          window.location.href = "/home";
+          window.location.reload();
         }
 
         self_profile = {...r.message};
