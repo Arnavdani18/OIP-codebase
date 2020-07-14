@@ -90,27 +90,26 @@
     };
 
     smsShare = () => {
-      const smsEndpoint = 'https://sa-sms-microservice.dev.jaagalabs.com/send';
-      const url = smsEndpoint;
       const data = {
-        text: `Can you help solve this problem? ${pageUrl}`,
-        numbers: prompt('Enter phone numbers separated by commas.').split(','),
+        message: `Can you help solve this problem? ${pageUrl}`,
+        recipients: prompt('Enter phone numbers separated by commas.').split(','),
       };
-      // Default options are marked with *
-      return fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': 'socialalpha',
+
+      data['recipients'] = data.recipients.map((phone)=>{
+        const re = /[-+.^:,@\s]/g;
+        if (re.test(phone)) {
+          phone = phone.replace(re, '');
+        }
+        return phone
+      });
+
+      frappe.call({
+        method: 'contentready_oip.api.send_sms_2_recipients',
+        args: data,
+        callback: (r) => {
+          console.log(r);
         },
-        body: JSON.stringify(data), // body data type must match "Content-Type" header
-      })
-        .then((response) => {
-          alert('Your message has been sent');
-        }) // parses JSON response into native Javascript objects
-        .catch((e) => {
-          console.error('SMS error', e);
-        });
+      });
     };
   });
 </script>
