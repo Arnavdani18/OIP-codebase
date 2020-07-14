@@ -3,7 +3,6 @@ import json
 from frappe import _
 import platform
 import meilisearch
-from frappe.core.doctype.sms_settings.sms_settings import send_sms
 from frappe.email.doctype.email_template.email_template import get_email_template
 
 python_version_2 = platform.python_version().startswith('2')
@@ -948,10 +947,11 @@ def unpack_linkedin_response(info, profile=None):
 
 @frappe.whitelist(allow_guest=True)
 def send_sms_2_recipients(recipients, message):
-    domain = frappe.get_value(
-            'ContentReady Srishti Settings', '', 'domain')
+    from frappe.core.doctype.sms_settings.sms_settings import send_sms
+    hostname = 'https://openinnovationplatform.org'
+    
     # Strip out + when sending SMS
-    send_sms(recipients, message, sender_name=domain)
+    send_sms(recipients, message,sender_name=hostname)
 
 
 @frappe.whitelist(allow_guest=True)
