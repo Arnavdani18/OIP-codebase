@@ -2,7 +2,7 @@ import frappe
 import json
 from frappe import _
 import platform
-from elasticsearch_dsl import Document, Date, Integer, Keyword, Text
+from elasticsearch_dsl import Document, Date, Integer, Keyword, Text, Object
 from elasticsearch_dsl.connections import connections
 from frappe.email.doctype.email_template.email_template import get_email_template
 import meilisearch
