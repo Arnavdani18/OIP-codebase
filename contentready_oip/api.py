@@ -5,6 +5,7 @@ import platform
 from elasticsearch_dsl import Document, Date, Integer, Keyword, Text
 from elasticsearch_dsl.connections import connections
 from frappe.email.doctype.email_template.email_template import get_email_template
+import meilisearch
 
 python_version_2 = platform.python_version().startswith('2')
 CLIENT = meilisearch.Client('https://meilisearch.onrender.com', 'test123')
