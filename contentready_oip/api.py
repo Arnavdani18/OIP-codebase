@@ -2,7 +2,8 @@ import frappe
 import json
 from frappe import _
 import platform
-import meilisearch
+from elasticsearch_dsl import Document, Date, Integer, Keyword, Text
+from elasticsearch_dsl.connections import connections
 from frappe.email.doctype.email_template.email_template import get_email_template
 
 python_version_2 = platform.python_version().startswith('2')
@@ -1186,5 +1187,24 @@ def update_user_profile_to_meilisearch(doc, hook_action):
         document = refactor_2_list_str(document, 'personas', 'persona')
         index = CLIENT.get_index(index_name)
         index.add_documents([document])
+    except Exception as _e:
+        print(str(_e))
+
+
+def add_doc_to_elasticsearch(doc, hook_action):
+    try:
+        connections.create_connection(hosts=['https://search-contentready-es-knpak5szkr5ljrj2kvgfu36qz4.ap-south-1.es.amazonaws.com'])
+        doctype = doc.doctype.replace(' ', '_').lower()
+        class Content(Document):
+            doc = Object()
+            class Index:
+                name = doctype
+        Content.init()
+        if doc.is_published:
+            content = Content(meta={'id': doc.name})
+            content.doc = refactor_2_list_str(doc.as_dict(), 'sectors','sector')
+            if doctype == 'User Profile':
+                content.doc = refactor_2_list_str(content.doc, 'personas','persona')
+            content.save()
     except Exception as _e:
         print(str(_e))

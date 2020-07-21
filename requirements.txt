@@ -1,3 +1,4 @@
 frappe
 geopy
 meilisearch
+elasticsearch_dsl
