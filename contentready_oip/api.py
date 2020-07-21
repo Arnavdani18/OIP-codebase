@@ -4,6 +4,9 @@ from frappe import _
 import platform
 from elasticsearch_dsl import Document, Date, Integer, Keyword, Text, Object
 from elasticsearch_dsl.connections import connections
+from elasticsearch import Elasticsearch
+from elasticsearch_dsl import Search
+from elasticsearch_dsl import Q
 from frappe.email.doctype.email_template.email_template import get_email_template
 import meilisearch
 
@@ -1076,6 +1079,24 @@ def get_searched_content(index_name,search_str,filters=None):
         apply_range_filter = filter_content_by_range(result['hits'], index_name)
         return apply_range_filter
 
+@frappe.whitelist(allow_guest=False)
+def get_searched_content_es(index_name,search_str,filters=None):
+    client = Elasticsearch('https://search-contentready-es-knpak5szkr5ljrj2kvgfu36qz4.ap-south-1.es.amazonaws.com')
+    search_str = '*{}*'.format(search_str)
+    q = Q("wildcard", doc__title=search_str) | Q("wildcard", doc__description=search_str)
+    s = Search(using=client, index=index_name).query(q)
+    response = s.execute()
+    results = []
+    for r in response:
+        doctype = r.doc.doctype
+        docname = r.doc.name
+        results.append(frappe.get_doc(doctype, docname).as_dict())
+    if index_name == 'user_profile':
+        return results
+    else:
+        return filter_content_by_range(results, doctype)
+         
+
 def filter_content_by_range(searched_content,doctype):
     content = []
     try:
@@ -1192,7 +1213,7 @@ def update_user_profile_to_meilisearch(doc, hook_action):
         print(str(_e))
 
 
-def add_doc_to_elasticsearch(doc, hook_action):
+def add_doc_to_elasticsearch(doc, hook_action='on_update'):
     try:
         connections.create_connection(hosts=['https://search-contentready-es-knpak5szkr5ljrj2kvgfu36qz4.ap-south-1.es.amazonaws.com'])
         doctype = doc.doctype.replace(' ', '_').lower()
