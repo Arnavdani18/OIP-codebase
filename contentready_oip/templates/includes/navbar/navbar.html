@@ -64,7 +64,7 @@
 
                         {% if notifications | length < 1 %}
                         <div class="dropdown-item p-4">
-                            <img src="/files/no_message.svg" alt="">
+                            <img src="../assets/contentready_oip/svg/no_message.svg" alt="">
                             <span class="pattern1 ml-2" style="font-weight: 500;">No new notifications. You are all
                                 caught up.</span>
                         </div>
@@ -78,15 +78,19 @@
                             onclick="openNotification(`{{n.name}}`, `{{n.route}}`)">
                             <section>
                                 {% if "enrich" in heading %}
-                                <img src="/files/enriched.svg" alt="">
+                                <img src="../assets/contentready_oip/svg/enriched.svg" alt="">
                                 {% elif "like" in heading %}
-                                <img src="/files/like_icon.svg" alt="">
+                                <img src="../assets/contentready_oip/svg/like_icon.svg" alt="">
                                 {% elif "comment" in heading %}
-                                <img src="/files/commented.svg" alt="">
+                                <img src="../assets/contentready_oip/svg/commented.svg" alt="">
                                 {% elif "collaborate" in heading %}
-                                <img src="/files/collaborated.svg" alt="">
+                                <img src="../assets/contentready_oip/svg/collaborated.svg" alt="">
                                 {% elif "validate" in heading %}
-                                <img src="/files/validated.svg" alt="">
+                                <img src="../assets/contentready_oip/svg/validated.svg" alt="">
+                                {% elif "solution" in heading %}
+                                <img src="../assets/contentready_oip/svg/solution_icon.svg" height="25" width="35" alt="">
+                                {% elif "problem" in heading %}
+                                <img src="../assets/contentready_oip/svg/problem_icon.svg" height="25" width="35" alt="">
                                 {% endif %}
                                 <span class="pattern1 ml-2" style="font-weight: 500;">{{heading}}</span>
                             </section>
@@ -101,24 +105,24 @@
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         {% set doc = frappe.get_doc('User Profile', frappe.session.user) %}
                         <img src="{{doc.photo|default('/files/default-avatar.jpg', true)}}" alt="profile photo"
-                            height="30" width="30" style="border-radius: .4rem; object-fit:cover;" />
+                            height="30" width="30" style="border-radius: .4rem; object-fit:cover;" onerror="javascript:this.src='assets/contentready_oip/images/default-avatar.jpg'" />
 
                         <span class="d-lg-none text-capitalize ml-3">Profile</span>
                     </a>
                     <div class="dropdown-menu mt-2 dropdown-menu-right dropdown-section">
                         <a class="dropdown-item" href="/update-profile">
-                            <img src="/files/profile.svg" alt="" width="16" height="16" />
+                            <img src="../assets/contentready_oip/svg/profile.svg" alt="" width="16" height="16" />
                             <span> Profile</span>
                         </a>
                         <a href="javascript:void(0);" class="dropdown-item d-none d-lg-block" onclick="logout()">
-                            <img src="/files/logout.svg" alt="" width="16" height="16" />
+                            <img src="../assets/contentready_oip/svg/logout.svg" alt="" width="16" height="16" />
                             <span>Log Out</span>
                         </a>
                     </div>
                 </li>
                 <li class="nav-item d-block d-lg-none">
                     <button (click)="logout()" class="">
-                        <img src="/files/logout.svg" alt="" width="20" height="20" />
+                        <img src="../assets/contentready_oip/svg/logout.svg" alt="" width="20" height="20" />
                     </button>
 
                     <span class="display-sm-md ">Log Out</span>
@@ -130,12 +134,12 @@
                         Add a Problem / Solution
                     </a>
                     <div class="dropdown-menu mt-2 dropdown-menu-right dropdown-section">
-                        <a class="dropdown-item" href="/add-problem?new=1">
-                            <img src="/files/problem_dark.svg" alt="" height="22" width="30" />
+                        <a class="dropdown-item py-2" href="/add-problem?new=1">
+                            <img src="../assets/contentready_oip/svg/problem_icon.svg" alt="" height="22" width="30" />
                             <span> Add a Problem</span>
                         </a>
-                        <a class="dropdown-item" href="/add-solution?new=1">
-                            <img src="/files/solution_dark.svg" alt="" height="22" width="30" />
+                        <a class="dropdown-item py-2" href="/add-solution?new=1">
+                            <img src="../assets/contentready_oip/svg/solution_icon.svg" alt="" height="22" width="30" />
                             <span> Add a Solution </span>
                         </a>
                     </div>

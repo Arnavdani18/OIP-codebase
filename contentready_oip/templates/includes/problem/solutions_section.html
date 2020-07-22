@@ -11,6 +11,13 @@
   {% endfor %}
 </div>
 
+<!-- {# if no solution found #} -->
+{% if solutions | len == 0 %}
+{% set msg = "No solution available yet" %}
+{% set img_src = "../assets/contentready_oip/svg/solution_icon.svg" %}
+{% include "templates/includes/common/empty_card.html" %}
+{% endif %}
+
 <style>
     .solution-section-container {
         display: grid;

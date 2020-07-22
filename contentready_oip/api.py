@@ -11,7 +11,7 @@ from frappe.email.doctype.email_template.email_template import get_email_templat
 import meilisearch
 
 python_version_2 = platform.python_version().startswith('2')
-CLIENT = meilisearch.Client('https://meilisearch.onrender.com', 'test123')
+CLIENT = meilisearch.Client('http://localhost:7700/', 'test123')
 
 def nudge_guests():
     if not frappe.session.user or frappe.session.user == 'Guest':
@@ -951,8 +951,12 @@ def unpack_linkedin_response(info, profile=None):
     return payload
 
 @frappe.whitelist(allow_guest=True)
-def send_sms(recipients, message):
-    print(recipients, message)
+def send_sms_2_recipients(recipients, message):
+    from frappe.core.doctype.sms_settings.sms_settings import send_sms
+    hostname = 'https://openinnovationplatform.org'
+    
+    # Strip out + when sending SMS
+    send_sms(recipients, message,sender_name=hostname)
 
 
 @frappe.whitelist(allow_guest=True)

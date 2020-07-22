@@ -25,6 +25,19 @@
                         {% include "templates/includes/common/validation_card.html" %}
                         {% endfor %}
                     </div>
+
+                    {% set img_src = "../assets/contentready_oip/svg/no_validation_yet.svg" %}
+                    {% if frappe.session.user != 'Guest' %}
+                        {% if (validations | length) == 0 %}
+                        {% set msg = "No validations yet" %}
+                        {% include "templates/includes/common/empty_card.html" %}
+                        {% endif %}
+                    {% else %}
+                        {% if (validations | length) == 0 %}
+                        {% set msg = "No validations yet. <br /> <span class='pre-login-text'><a href='/login'>Login</a></span> to validate this solution." %}
+                        {% include "templates/includes/common/empty_card.html" %}
+                        {% endif %}
+                    {% endif %}
                 </div>
             </div>
             <div class="tab-pane fade" id="collaborations" role="tabpanel" aria-labelledby="collaborations-tab">
@@ -34,6 +47,19 @@
                         {% include "templates/includes/common/collaboration_card.html" %}
                         {% endfor %}
                     </div>
+
+                    {% set img_src = "../assets/contentready_oip/svg/no_collaborator_yet.svg" %}
+                    {% if frappe.session.user != 'Guest' %}
+                        {% if (collaborations | length) == 0 %}
+                        {% set msg = "No collaborators yet" %}
+                        {% include "templates/includes/common/empty_card.html" %}
+                        {% endif %}
+                    {% else %}
+                        {% if (collaborations | length) == 0 %}
+                        {% set msg = "No collaborators yet. <br /> <span class='pre-login-text'><a href='/login'>Login</a></span> to collaborate on this solution." %}
+                        {% include "templates/includes/common/empty_card.html" %}
+                        {% endif %}
+                    {% endif %}
                 </div>
             </div>
         </div>
