@@ -1082,15 +1082,19 @@ def get_searched_content(index_name,search_str,filters=None):
 @frappe.whitelist(allow_guest=False)
 def get_searched_content_es(index_name,search_str,filters=None):
     client = Elasticsearch('https://search-contentready-es-knpak5szkr5ljrj2kvgfu36qz4.ap-south-1.es.amazonaws.com')
+    index_name = index_name.replace(' ', '_').lower()
     search_str = '*{}*'.format(search_str)
     q = Q("wildcard", doc__title=search_str) | Q("wildcard", doc__description=search_str)
     s = Search(using=client, index=index_name).query(q)
     response = s.execute()
     results = []
     for r in response:
-        doctype = r.doc.doctype
-        docname = r.doc.name
-        results.append(frappe.get_doc(doctype, docname).as_dict())
+        try:
+            doctype = r.doc.doctype
+            docname = r.doc.name
+            results.append(frappe.get_doc(doctype, docname).as_dict())
+        except:
+            pass
     if index_name == 'user_profile':
         return results
     else:
