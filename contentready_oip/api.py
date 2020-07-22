@@ -1096,7 +1096,8 @@ def get_searched_content_es(index_name,search_str,filters=None):
         try:
             doctype = r.doc.doctype
             docname = r.doc.name
-            results.append(frappe.get_doc(doctype, docname).as_dict())
+            doc = refactor_2_list_str(frappe.get_doc(doctype, docname).as_dict(), 'sectors','sector')
+            results.append(doc)
         except:
             pass
     if index_name == 'user_profile':
