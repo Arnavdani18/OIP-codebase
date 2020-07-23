@@ -1197,8 +1197,9 @@ def update_user_profile_to_meilisearch(doc, hook_action):
 def has_admin_role():
     roles = frappe.get_roles(frappe.session.user);
     allowed_roles = ["Administrator", "System Manager"]
+    is_allowed = False
     for role in allowed_roles:
         if role in roles:
-            return True
-        else:
-            return False
+            is_allowed = True
+    
+    return is_allowed
