@@ -1192,3 +1192,13 @@ def update_user_profile_to_meilisearch(doc, hook_action):
         index.add_documents([document])
     except Exception as _e:
         print(str(_e))
+
+@frappe.whitelist(allow_guest=True)
+def has_admin_role():
+    roles = frappe.get_roles(frappe.session.user);
+    allowed_roles = ["Administrator", "System Manager"]
+    for role in allowed_roles:
+        if role in roles:
+            return True
+        else:
+            return False
