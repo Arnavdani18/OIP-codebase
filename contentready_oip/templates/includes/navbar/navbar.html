@@ -110,6 +110,7 @@
                         <span class="d-lg-none text-capitalize ml-3">Profile</span>
                     </a>
                     <div class="dropdown-menu mt-2 dropdown-menu-right dropdown-section">
+                        <div id="deskRoute"></div>
                         <a class="dropdown-item" href="/update-profile">
                             <img src="../assets/contentready_oip/svg/profile.svg" alt="" width="16" height="16" />
                             <span> Profile</span>
@@ -158,6 +159,29 @@
 
 
 <script>
+    frappe.ready(()=>{
+        add_desk_route = () =>{
+            frappe.call( {
+                method: 'contentready_oip.api.has_admin_role',
+                callback: function( r ) {
+                    if (r.message) {
+                        new Vue({
+                            el: '#deskRoute',
+                            template:`
+                                <a class="dropdown-item" href="/desk">
+                                    <img src="../assets/contentready_oip/svg/user-tie-solid.svg" alt="" width="16" height="16" />
+                                    <span>Admin</span>
+                                </a>
+                            `
+                        }) 
+                    }
+                }
+            } );
+        }
+    
+        add_desk_route();
+    })
+
     onClickLogin = () => {
         window.location.href = ' /login';
     };

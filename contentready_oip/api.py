@@ -1239,3 +1239,14 @@ def add_doc_to_elasticsearch(doc, hook_action='on_update'):
             content.save()
     except Exception as _e:
         print(str(_e))
+
+@frappe.whitelist(allow_guest=True)
+def has_admin_role():
+    roles = frappe.get_roles(frappe.session.user);
+    allowed_roles = ["Administrator", "System Manager"]
+    is_allowed = False
+    for role in allowed_roles:
+        if role in roles:
+            is_allowed = True
+    
+    return is_allowed
