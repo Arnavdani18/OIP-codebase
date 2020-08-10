@@ -120,9 +120,9 @@
                     </div>
                 </div>
                 <div id="matching-contributors" class="row">
-                    <div class="col d-flex">
+                    <div class="row justify-content-around">
                         {% for user in matched_contributors %}
-                        <div class="col-md-3 bg-white pt-4 mr-3 rounded">
+                        <div class="col-md-3 bg-white pt-4 mr-3 mb-3 rounded">
                             {% include "templates/includes/common/user_card.html" %}
                         </div>
                         {% endfor %}

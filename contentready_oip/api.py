@@ -2,8 +2,13 @@ import frappe
 import json
 from frappe import _
 import platform
-import meilisearch
+from elasticsearch_dsl import Document, Date, Integer, Keyword, Text, Object
+from elasticsearch_dsl.connections import connections
+from elasticsearch import Elasticsearch
+from elasticsearch_dsl import Search
+from elasticsearch_dsl import Q
 from frappe.email.doctype.email_template.email_template import get_email_template
+import meilisearch
 
 python_version_2 = platform.python_version().startswith('2')
 CLIENT = meilisearch.Client('http://localhost:7700/', 'test123')
@@ -1078,6 +1083,29 @@ def get_searched_content(index_name,search_str,filters=None):
         apply_range_filter = filter_content_by_range(result['hits'], index_name)
         return apply_range_filter
 
+@frappe.whitelist(allow_guest=False)
+def get_searched_content_es(index_name,search_str,filters=None):
+    client = Elasticsearch('https://search-contentready-es-knpak5szkr5ljrj2kvgfu36qz4.ap-south-1.es.amazonaws.com')
+    index_name = index_name.replace(' ', '_').lower()
+    search_str = '*{}*'.format(search_str)
+    q = Q("wildcard", doc__title=search_str) | Q("wildcard", doc__description=search_str)
+    s = Search(using=client, index=index_name).query(q)
+    response = s.execute()
+    results = []
+    for r in response:
+        try:
+            doctype = r.doc.doctype
+            docname = r.doc.name
+            doc = refactor_2_list_str(frappe.get_doc(doctype, docname).as_dict(), 'sectors','sector')
+            results.append(doc)
+        except:
+            pass
+    if index_name == 'user_profile':
+        return results
+    else:
+        return filter_content_by_range(results, doctype)
+         
+
 def filter_content_by_range(searched_content,doctype):
     content = []
     try:
@@ -1190,6 +1218,25 @@ def update_user_profile_to_meilisearch(doc, hook_action):
         document = refactor_2_list_str(document, 'personas', 'persona')
         index = CLIENT.get_index(index_name)
         index.add_documents([document])
+    except Exception as _e:
+        print(str(_e))
+
+
+def add_doc_to_elasticsearch(doc, hook_action='on_update'):
+    try:
+        connections.create_connection(hosts=['https://search-contentready-es-knpak5szkr5ljrj2kvgfu36qz4.ap-south-1.es.amazonaws.com'])
+        doctype = doc.doctype.replace(' ', '_').lower()
+        class Content(Document):
+            doc = Object()
+            class Index:
+                name = doctype
+        Content.init()
+        if doc.is_published:
+            content = Content(meta={'id': doc.name})
+            content.doc = refactor_2_list_str(doc.as_dict(), 'sectors','sector')
+            if doctype == 'User Profile':
+                content.doc = refactor_2_list_str(content.doc, 'personas','persona')
+            content.save()
     except Exception as _e:
         print(str(_e))
 

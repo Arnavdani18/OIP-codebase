@@ -5,7 +5,6 @@ from frappe.utils.html_utils import get_icon_html
 
 
 def get_context(context):
-    print("\n\n\n\n>>>>>>>>>>>>>")
     context["provider_logins"] = []
     redirect_to = frappe.local.request.args.get("redirect-to")
     providers = [
