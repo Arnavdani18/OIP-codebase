@@ -100,13 +100,13 @@ doc_events = {
 		# "on_trash": "method"
 	},
 	"Problem":{
-		"on_update": "contentready_oip.api.update_doc_to_meilisearch"
+		"on_update": "contentready_oip.api.add_doc_to_elasticsearch"
 	},
 	"Solution":{
-		"on_update": "contentready_oip.api.update_doc_to_meilisearch"
+		"on_update": "contentready_oip.api.add_doc_to_elasticsearch"
 	},
 	"User Profile":{
-		"on_update": "contentready_oip.api.update_user_profile_to_meilisearch"
+		"on_update": "contentready_oip.api.add_doc_to_elasticsearch"
 	}
 }
 
