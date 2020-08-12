@@ -86,12 +86,12 @@
     {% block base_scripts %}
     <!-- js should be loaded in body! -->
     <script type="text/javascript" src="/assets/frappe/js/lib/jquery/jquery.min.js"></script>
-    <script type="text/javascript" src="/assets/js/frappe-web.min.js" async></script>
+    <script type="text/javascript" src="/assets/js/frappe-web.min.js"></script>
     <script type="text/javascript" src="/assets/js/bootstrap-4-web.min.js" defer></script>
     
-    <link as="script" rel="prefetch" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js" />
-    <link as="style" rel="prefetch"  href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css" />
-    <link as="script" rel="prefetch" href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js" async></script>
+    <link as="style" rel="stylesheet"  href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css" />
+    <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script>
     {% endblock %}
 
     {%- for link in web_include_js %}
