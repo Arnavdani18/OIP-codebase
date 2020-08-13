@@ -1,10 +1,24 @@
 <div class="image-and-count-container d-none d-lg-block">
-    {% if (media|length) > 0 %}
-    <img src="{{media[0].attachment}}" alt="image" onerror="javascript:this.src='/files/image_placeholder.jpg'"
-        class="image" />
-    {% else %}
-    <img src="/files/image_placeholder.jpg" alt="image" class="image" />
+    <!-- {# https://jinja.palletsprojects.com/en/2.11.x/templates/#assignments #} -->
+    {% set ns = namespace(found=False) %}
+    {% for item in media %}
+        {% if item['is_featured'] == 1 %}
+            <img src="{{item.attachment}}" alt="image" onerror="javascript:this.src='/files/image_placeholder.jpg'"
+            class="rounded img-responsive" style="object-fit: cover; cursor: pointer;" data-toggle="modal"
+            data-target="#attachment-modal-{{id}}" />
+        {% set ns.found = True %}
+        {% endif %}
+    {% endfor %}
+    
+    {% if not ns.found %} 
+        {% if (media|length) > 0 %}
+        <img src="{{media[0].attachment}}" alt="image" onerror="javascript:this.src='/files/image_placeholder.jpg'"
+            class="image" />
+        {% else %}
+        <img src="/files/image_placeholder.jpg" alt="image" class="image" />
+        {% endif %}
     {% endif %}
+
     {% if (media | length) > 1 %}
     <button class="align-icon" data-toggle="modal" data-target="#attachment-modal-{{id}}">
         +{{(media | length)-1}}
@@ -12,12 +26,26 @@
     {% endif %}
 </div>
 <div class="image-and-count-container d-lg-none">
-    {% if (media|length) > 0 %}
-    <img src="{{media[0].attachment}}" alt="image" onerror="javascript:this.src='/files/image_placeholder.jpg'"
-        class="image-ipad" />
-    {% else %}
-    <img src="/files/image_placeholder.jpg" alt="image" class="image-ipad" />
+    <!-- {# https://jinja.palletsprojects.com/en/2.11.x/templates/#assignments #} -->
+    {% set ns = namespace(found=False) %}
+    {% for item in media %}
+        {% if item['is_featured'] == 1 %}
+            <img src="{{item.attachment}}" alt="image" onerror="javascript:this.src='/files/image_placeholder.jpg'"
+            class="rounded img-responsive" style="object-fit: cover; cursor: pointer;" data-toggle="modal"
+            data-target="#attachment-modal-{{id}}" />
+        {% set ns.found = True %}
+        {% endif %}
+    {% endfor %}
+    
+    {% if not ns.found %} 
+        {% if (media|length) > 0 %}
+        <img src="{{media[0].attachment}}" alt="image" onerror="javascript:this.src='/files/image_placeholder.jpg'"
+            class="image-ipad" />
+        {% else %}
+        <img src="/files/image_placeholder.jpg" alt="image" class="image-ipad" />
+        {% endif %}
     {% endif %}
+    
     {% if (media | length) > 1 %}
     <button class="align-icon" data-toggle="modal" data-target="#attachment-modal-{{id}}">
         +{{(media | length)-1}}
