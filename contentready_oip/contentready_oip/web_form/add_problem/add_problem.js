@@ -292,7 +292,7 @@ frappe.ready(async () => {
           is_draft: true,
         },
         callback: function (r) {
-          // console.log(r);
+          console.log(r);
           // update local form technical fields so that they are up to date with server values
           // Important: do no update fields on the UI as that will interfere with user experience.
           const keysToCopy = [

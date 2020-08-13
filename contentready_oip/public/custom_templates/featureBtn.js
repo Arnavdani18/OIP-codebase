@@ -26,6 +26,7 @@ new Vue({
 
       if (!is_featured) {
         this.media[0]['is_featured'] = 1;
+        autoSaveDraft();
       }
     },
   },
