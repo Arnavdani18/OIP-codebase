@@ -4,8 +4,7 @@
     {% for item in media %}
         {% if item['is_featured'] == 1 %}
             <img src="{{item.attachment}}" alt="image" onerror="javascript:this.src='/files/image_placeholder.jpg'"
-            class="rounded img-responsive" style="object-fit: cover; cursor: pointer;" data-toggle="modal"
-            data-target="#attachment-modal-{{id}}" />
+            class="image" />
         {% set ns.found = True %}
         {% endif %}
     {% endfor %}
@@ -31,8 +30,7 @@
     {% for item in media %}
         {% if item['is_featured'] == 1 %}
             <img src="{{item.attachment}}" alt="image" onerror="javascript:this.src='/files/image_placeholder.jpg'"
-            class="rounded img-responsive" style="object-fit: cover; cursor: pointer;" data-toggle="modal"
-            data-target="#attachment-modal-{{id}}" />
+            class="image" />
         {% set ns.found = True %}
         {% endif %}
     {% endfor %}
