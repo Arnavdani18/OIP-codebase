@@ -1,3 +1,9 @@
+<script src="https://cdn.jsdelivr.net/npm/tributejs/dist/tribute.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/tributejs/dist/tribute.css"
+/>
+
 {% set doctype = comment.doctype %} {% set name = comment.name %}
 <div class="discussion-section">
   <div class="comment-section">
@@ -26,9 +32,6 @@
     </div>
   </div>
 
-  <script>
-    console.log(`{{comment | json}}`);
-  </script>
   {% for reply in comment.replies %}
   <div class="reply-section">
     <div class="">

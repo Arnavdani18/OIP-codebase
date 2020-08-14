@@ -7,17 +7,15 @@
     <div class="input-group col pl-0 mt-0">
       <!-- TODO: onblur="contractCommentArea(event.target.id)" -->
 
-      <textarea class="form-control pattern1" style="padding-top: .8rem;" id="comment-area-{{doctype}}-{{name}}"
-        placeholder="Add a comment..." rows="1" onfocus="expandCommentArea('{{doctype}}','{{name}}')"></textarea>
+      <div class="form-control pattern1 content-editable" contenteditable style="padding-top: .8rem;" id="comment-area-{{doctype}}-{{name}}"
+        placeholder="Add a comment..." rows="1" onfocus="expandCommentArea('{{doctype}}','{{name}}')"></div>
       <div class="input-group-append mt-0">
         <button class="btn btn-outline-danger pattern1" title="Clear All" type="button"
           onclick="cancelComment(`{{doctype}}`,`{{name}}`, `{{parent_div|default('', true)}}`)">
-          <!-- <i class="far fa-backspace fa-horizontal"></i> -->
           <i class="backspace">{% include "public/svg/backspace-solid.svg" %}</i>
         </button>
         <button class="btn btn-outline-primary attach-btn pattern1" title="Attachment" type="button"
-          onclick="showDropzone('{{doctype}}', '{{name}}')">
-          <!-- <i class="far fa-paperclip"></i> -->
+          onclick="showDropzone('{{doctype}}', '{{name}}','toggle')">
           <i class="paperclip">{% include "public/svg/paperclip-solid.svg" %}</i>
         </button>
       </div>
@@ -66,17 +64,17 @@
 <script>
   expandCommentArea = (doctype, name) => {
     // set rows=5
-    $(`#comment-area-${doctype}-${name}`).attr('rows', '3');
+    $(`#comment-area-${doctype}-${name}`).css({'height': '12rem', 'overflow-y': 'auto'});
     $('.comment-btn-row').attr('hidden', false);
   };
 
   contractCommentArea = (doctype, name) => {
     // set rows=1
-    $(`#comment-area-${doctype}-${name}`).attr('rows', '1');
+    $(`#comment-area-${doctype}-${name}`).css({'height': '4rem'});
   };
 
   cancelComment = (doctype, name, parent_div) => {
-    $(`#comment-area-${doctype}-${name}`).val('');
+    $(`#comment-area-${doctype}-${name}`).text('');
     $('.comment-btn-row').attr('hidden', true);
     contractCommentArea(doctype, name);
     if (parent_div) {
@@ -89,7 +87,7 @@
       resetBtn.click();
     }
 
-    showDropzone(doctype, name);
+    showDropzone(doctype, name,'hide');
   };
 
   function addAnchorToText(input) {
@@ -136,13 +134,12 @@
     }
   };
 
-  showDropzone = (doctype, name) => {
+  showDropzone = (doctype, name,state) => {
     const dz = $(`#comment-dropzone-${doctype}-${name}`);
 
-    if (dz.hasClass('hidden')) {
+    if (state === 'toggle') {
       dz
-        .addClass('d-flex justify-content-center align-items-center')
-        .removeClass('hidden')
+        .toggleClass('d-flex justify-content-center align-items-center hidden')
     } else {
       dz
         .addClass('hidden')
@@ -242,6 +239,37 @@
     });
     // End dropzone.js integration
 
+      frappe.call( {
+        method: "contentready_oip.api.get_user_list",
+        args: {},
+        callback: function ( r ) {
+
+          const user_list = new Set()
+          r.message.forEach( v => {
+            if (v.text) {
+              user_list.add({key: v.text, value: v.id });
+            }
+          });
+          console.log(user_list);
+          
+            let tribute = new Tribute({
+            values: [...user_list],
+            selectTemplate: function (item) {
+              return `<a href="#">@${item.original.key}</a>`;
+            },
+            noMatchTemplate: function () {
+              return 'not Found';
+            },
+            menuItemTemplate: function (item) {
+              return item.string;
+            },
+          });
+
+          tribute.attach(document.getElementById(`comment-area-{{doctype}}-{{name}}`))
+        }
+      } );
+      
+    $(`#comment-area-{{doctype}}-{{name}}`).addClass('hello')
   });
 </script>
 
@@ -259,6 +287,16 @@
 <style>
   .hidden {
     display: none;
+  }
+
+  .tribute-container ul{
+    font-size: 1.2rem;
+  }
+
+  .content-editable{
+    min-height: 4rem;
+    line-height: 2rem;
+
   }
 
   .editor-container {
