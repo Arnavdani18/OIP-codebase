@@ -26,6 +26,9 @@
     </div>
   </div>
 
+  <script>
+    console.log(`{{comment | json}}`);
+  </script>
   {% for reply in comment.replies %}
   <div class="reply-section">
     <div class="">
@@ -44,9 +47,9 @@
         </span>
       </div>
       <p style="text-transform: none; font-weight: normal;">{{reply.text}}</p>
-      <button class="delete-btn">
-        <!-- <i class="fa fa-trash-o" aria-hidden="true"></i> -->
-        <i class="trash">{% include "public/svg/trash-alt.svg" %}</i>
+      {% set parsed_reply = reply.as_dict() %}
+      <button class="delete-btn btn p-0" data-action="delete" data-reply='{{reply | json}}'>
+        <i class="trash badge">{% include "public/svg/trash-alt.svg" %}</i>
       </button>
     </div>
   </div>
@@ -83,6 +86,44 @@
     $(`#reply-${name}`).toggleClass('hidden');
     $('div.comment-user .created-by-section').attr('hidden', true);
   };
+
+  deleteReply = (reply)=>{
+    $('.modal[role=dialog]').modal('hide');
+    if (Object.keys(reply).length) {
+      frappe.call( {
+        method: "contentready_oip.api.delete_reply",
+        args: {reply},
+        callback: function ( r ) {
+          console.log(r);
+        }
+      } );
+    }
+  }
+
+  frappe.ready(()=>{
+    $('[data-action="delete"]').click(function(e){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      const btnContext = $(this).data().reply;
+      let warn_modal = frappe.msgprint({
+          title: __('Delete'),
+          message: __('Are you sure you want to proceed?'),
+          primary_action:{
+            'label': 'Delete',
+            'client_action': 'deleteReply',
+            'args': btnContext
+          }
+      });
+
+      $(warn_modal['$wrapper'])
+        .find('.btn.btn-sm.btn-primary')
+        .removeClass('btn-sm')
+        .addClass('btn-danger btn-lg')
+        
+    })
+
+  })
+
 </script>
 
 <script>
@@ -119,7 +160,7 @@
   }
 
   .trash>svg {
-    width: 1.2rem;
+    width: 1.3rem;
   }
 
   .reply {

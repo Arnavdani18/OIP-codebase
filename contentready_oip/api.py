@@ -831,6 +831,17 @@ def delete_collaboration(name):
         frappe.throw('Collaboration not found.')
 
 @frappe.whitelist(allow_guest = False)
+def delete_reply(reply):
+    try:
+        # delete from the parent child table
+        frappe.delete_doc(reply['doctype'], reply['discussion'])
+        # delete the primary document
+        frappe.delete_doc(reply['parenttype'], reply['discussion'])
+        return True
+    except:
+        frappe.throw('Discussion not found.')
+
+@frappe.whitelist(allow_guest = False)
 def delete_enrichment(name):
     try:
         e = frappe.get_doc('Enrichment Table', {'enrichment': name})
