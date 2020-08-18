@@ -63,7 +63,7 @@
           {{frappe.utils.pretty_date(reply.creation)}}
         </span>
       </div>
-      <p style="text-transform: none; font-weight: normal;">{{reply.text}}</p>
+      <div style="text-transform: none; font-weight: normal;">{{reply.text}}</div>
       {% set parsed_reply = reply.as_dict() %}
       <button
         class="delete-btn btn p-0"
