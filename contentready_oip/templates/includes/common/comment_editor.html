@@ -141,7 +141,7 @@
       // console.log(comment);
       frappe.call({
         method: 'contentready_oip.api.add_comment',
-        args: { doctype: doctype, name: name, text: text, media: media },
+        args: { doctype: doctype, name: name, text: JSON.stringify(text), media: media },
         callback: (r) => {
           // console.log(r);
           if (doctype == 'Discussion') {
