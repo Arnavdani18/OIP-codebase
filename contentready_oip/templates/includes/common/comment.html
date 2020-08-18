@@ -64,11 +64,12 @@
         </span>
       </div>
       <div style="text-transform: none; font-weight: normal;">{{reply.text}}</div>
-      {% set parsed_reply = reply.as_dict() %}
+      {% set parsed_reply = reply.as_json() %}
       <button
         class="delete-btn btn p-0"
         data-action="delete"
-        data-reply="{{reply | json}}"
+        data-name="{{reply.name }}"
+        data-discussion="{{reply.discussion }}"
       >
         <i class="trash badge">{% include "public/svg/trash-alt.svg" %}</i>
       </button>
@@ -113,6 +114,7 @@
         args: { reply },
         callback: function (r) {
           console.log(r);
+          window.location.reload();
         },
       });
     }
@@ -122,14 +124,16 @@
     $('[data-action="delete"]').click(function (e) {
       e.preventDefault();
       e.stopImmediatePropagation();
-      const btnContext = $(this).data().reply;
+      const name = $(this).data('name');
+      const discussion = $(this).data('discussion');
+      
       let warn_modal = frappe.msgprint({
         title: __('Delete'),
         message: __('Are you sure you want to proceed?'),
         primary_action: {
           label: 'Delete',
           client_action: 'deleteReply',
-          args: btnContext,
+          args: {name,discussion},
         },
       });
 
