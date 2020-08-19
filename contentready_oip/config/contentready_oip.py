@@ -7,16 +7,17 @@ def get_data():
 			"label": _("Users"),
 			"items": [
 				{
+					"label": "User List",
+					"type": "doctype",
+					"name": "User",
+				},
+				{
 					"type": "doctype",
 					"name": "User Profile",
 				},
 				{
 					"type": "doctype",
 					"name": "Organisation"
-				},
-				{
-					"type": "doctype",
-					"name": "Persona"
 				},
 			]
 		},
@@ -39,11 +40,11 @@ def get_data():
 					"type": "doctype",
 					"name": "Discussion",
 				},
-				{
-					"type": "doctype",
-					"name": "OIP Project",
-					"label": "Project",
-				}
+				# {
+				# 	"type": "doctype",
+				# 	"name": "OIP Project",
+				# 	"label": "Project",
+				# }
 			]
 		},
 		{
@@ -55,11 +56,20 @@ def get_data():
 				},
 				{
 					"type": "doctype",
-					"name": "Skill",
+					"name": "Persona"
 				},
+				# {
+				# 	"type": "doctype",
+				# 	"name": "Skill",
+				# },
+				# {
+				# 	"type": "doctype",
+				# 	"name": "Qualification",
+				# },
 				{
+					"label": "White Label Domains",
 					"type": "doctype",
-					"name": "Qualification",
+					"name": "OIP White Label Domain",
 				}
 			]
 		},

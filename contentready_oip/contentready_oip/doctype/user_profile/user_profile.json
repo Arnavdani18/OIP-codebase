@@ -1,6 +1,6 @@
 {
- "actions": [],
  "allow_guest_to_view": 1,
+ "allow_rename": 1,
  "autoname": "field:user",
  "creation": "2019-12-04 19:18:32.487148",
  "doctype": "DocType",
@@ -216,8 +216,7 @@
  "has_web_view": 1,
  "image_field": "photo",
  "is_published_field": "is_published",
- "links": [],
- "modified": "2020-05-28 18:44:19.581702",
+ "modified": "2020-08-19 08:11:34.953748",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "User Profile",
