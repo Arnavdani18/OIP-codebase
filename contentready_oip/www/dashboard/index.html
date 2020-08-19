@@ -2,8 +2,6 @@
 <!-- no-breadcrumbs -->
 <!-- static -->
 
-
-
 {% if self_profile and self_profile.is_first_login == 1 %}
 <style>
   .f-size {
@@ -12,36 +10,49 @@
 </style>
 <div class="jumbotron border shadow mb-5">
   <h1 class="display-4">Hello, {{self_profile.full_name}}</h1>
-  <p class="lead f-size">Welcome to the Open Innovation Platform. Update your profile before you
-    proceed !</p>
-  <hr class="my-4">
-  <button class="btn btn-primary btn-lg text-white f-size" onclick="toggleWelcomeMsg('update_profile')"
-    role="button">Update profile</button>
-  <button class="btn btn-link f-size text-dark" onclick="toggleWelcomeMsg('skip')" role="button">Skip >></button>
+  <p class="lead f-size">
+    Welcome to the Open Innovation Platform. Update your profile before you
+    proceed !
+  </p>
+  <hr class="my-4" />
+  <button
+    class="btn btn-primary btn-lg text-white f-size"
+    onclick="toggleWelcomeMsg('update_profile')"
+    role="button"
+  >
+    Update profile
+  </button>
+  <button
+    class="btn btn-link f-size text-dark"
+    onclick="toggleWelcomeMsg('skip')"
+    role="button"
+  >
+    Skip >>
+  </button>
 </div>
 
 <script>
-  function toggleWelcomeMsg( btn_context ) {
+  function toggleWelcomeMsg(btn_context) {
     const args = {
-      doctype: 'User Profile',
-      docname: '{{self_profile.name}}',
-      fieldname: 'is_first_login',
-      fieldvalue: '0'
-    }
+      doctype: "User Profile",
+      docname: "{{self_profile.name}}",
+      fieldname: "is_first_login",
+      fieldvalue: "0",
+    };
 
-    frappe.call( {
-      method: 'contentready_oip.api.set_document_value',
+    frappe.call({
+      method: "contentready_oip.api.set_document_value",
       args,
-      callback: function( r ) {
-        if ( btn_context.includes( 'update_profile' ) ) {
+      callback: function (r) {
+        if (btn_context.includes("update_profile")) {
           window.location.href = "/update-profile";
         } else {
           window.location.reload();
         }
 
-        self_profile = {...r.message};
-      }
-    } )
+        self_profile = { ...r.message };
+      },
+    });
   }
 </script>
 
@@ -52,92 +63,109 @@
   <div class="row">
     <div class="col-lg-6">
       <div class="bg-white">
-        <ul class="nav nav-tabs nav-section nav-mob-section" id="leftTab" role="tablist">
+        <ul
+          class="nav nav-tabs nav-section nav-mob-section"
+          id="leftTab"
+          role="tablist"
+        >
           <li class="nav-item">
-            <a class="nav-link active" id="recommended-content-tab" data-toggle="tab" href="#recommended-content"
-              role="tab" aria-controls="recommended-content" aria-selected="true">
+            <a
+              class="nav-link active"
+              id="recommended-content-tab"
+              data-toggle="tab"
+              href="#recommended-content"
+              role="tab"
+              aria-controls="recommended-content"
+              aria-selected="true"
+            >
               Areas That May Interest You ({{ actual["recommended_combo"] }})
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" id="user-content-tab" data-toggle="tab" href="#user-content" role="tab"
-              aria-controls="user-content" aria-selected="true">
-              Areas Added By You ({{ actual.user_problems + actual.user_solutions }})
+            <a
+              class="nav-link"
+              id="user-content-tab"
+              data-toggle="tab"
+              href="#user-content"
+              role="tab"
+              aria-controls="user-content"
+              aria-selected="true"
+            >
+              Areas Added By You ({{ actual.user_problems +
+              actual.user_solutions }})
             </a>
           </li>
         </ul>
         <div id="leftTabGroup" class="pb-2">
           <div class="tab-content" id="leftTabContent">
-            <div class="tab-pane fade show active" id="recommended-content" role="tabpanel"
-              aria-labelledby="recommended-content-tab">
+            <div
+              class="tab-pane fade show active"
+              id="recommended-content"
+              role="tabpanel"
+              aria-labelledby="recommended-content-tab"
+            >
               {% if actual["recommended_combo"] < 1 %}
               <div class="w-100">
-                {% set msg = "No recommendations yet" %}
-                {% set img_src = "" %}
+                {% set msg = "No recommendations yet" %} {% set img_src = "" %}
                 {% include "templates/includes/common/empty_card.html" %}
               </div>
-              {% endif %}
-
-              {% if actual["recommended_combo"] >= 1 %}
-              {% for card in recommended_problems_solutions_combo %}
-                  {% if card.name.lower().startswith('problem') %}
-                  {% set problem = card %}
-                  <div>
-                    {% include "templates/includes/problem/problem_card.html" %}
-                  </div>
-                  <hr />
-                  {% else %}
-                  {% set solution = card %}
-                  <div>
-                    {% include "templates/includes/solution/solution_card.html" %}
-                  </div>
-                  <hr />
-                  {% endif %}
-              {% endfor %}
-              {% else %}
+              {% endif %} {% if actual["recommended_combo"] >= 1 %} {% for card
+              in recommended_problems_solutions_combo %} {% if
+              card.name.lower().startswith('problem') %} {% set problem = card
+              %}
+              <div>
+                {% include "templates/includes/problem/problem_card.html" %}
+              </div>
+              <hr />
+              {% else %} {% set solution = card %}
+              <div>
+                {% include "templates/includes/solution/solution_card.html" %}
+              </div>
+              <hr />
+              {% endif %} {% endfor %} {% else %}
               <br />
               <h6 style="padding-left: 2rem;">
                 Please <a href="/update-profile">update your profile</a> to
                 receive recommendations.
               </h6>
-              {% endif %}
-
-              {% if actual["recommended_combo"] > 4 %}
+              {% endif %} {% if actual["recommended_combo"] > 4 %}
               <div class="text-center py-3">
-                <a href="/dashboard?type=recommended_areas" class="viewAll">View All
-                  ({{ actual["recommended_combo"] }})</a>
+                <a href="/dashboard?type=recommended_areas" class="viewAll"
+                  >View All ({{ actual["recommended_combo"] }})</a
+                >
               </div>
               {% endif %}
             </div>
-            <div class="tab-pane fade" id="user-content" role="tabpanel" aria-labelledby="user-content-tab">
+            <div
+              class="tab-pane fade"
+              id="user-content"
+              role="tabpanel"
+              aria-labelledby="user-content-tab"
+            >
               {% if (actual.user_problems + actual.user_solutions) < 1 %}
               <div class="w-100">
-                {% set msg = "No area added yet" %}
-                {% set img_src = "" %}
-                {% include "templates/includes/common/empty_card.html" %}
+                {% set msg = "No area added yet" %} {% set img_src = "" %} {%
+                include "templates/includes/common/empty_card.html" %}
               </div>
-              {% endif %}
-
-              {% for card in user_problems_solutions_combo %}
-                {% if card.name.lower().startswith('problem') %}
-                {% set problem = card %}
-                <div>
-                  {% include "templates/includes/problem/problem_card.html" %}
-                </div>
-                <hr />
-                {% else %}
-                {% set solution = card %}
-                <div>
-                  {% include "templates/includes/solution/solution_card.html" %}
-                </div>
-                <hr />
-                {% endif %}
-              {% endfor %}
-
-              {%  if (actual.user_problems + actual.user_solutions) > 4 %}
+              {% endif %} {% for card in user_problems_solutions_combo %} {% if
+              card.name.lower().startswith('problem') %} {% set problem = card
+              %}
+              <div>
+                {% include "templates/includes/problem/problem_card.html" %}
+              </div>
+              <hr />
+              {% else %} {% set solution = card %}
+              <div>
+                {% include "templates/includes/solution/solution_card.html" %}
+              </div>
+              <hr />
+              {% endif %} {% endfor %} {% if (actual.user_problems +
+              actual.user_solutions) > 4 %}
               <div class="text-center py-3">
-                <a href="/dashboard?type=user_areas" class="viewAll">View All
-                  ({{ actual.user_problems + actual.user_solutions }})</a>
+                <a href="/dashboard?type=user_areas" class="viewAll"
+                  >View All ({{ actual.user_problems + actual.user_solutions
+                  }})</a
+                >
               </div>
               {% endif %}
             </div>
@@ -147,71 +175,91 @@
     </div>
     <div class="col-lg-6 margin-top-20">
       <div class="bg-white">
-        <ul class="nav nav-tabs nav-section nav-mob-section" id="rightTab" role="tablist">
+        <ul
+          class="nav nav-tabs nav-section nav-mob-section"
+          id="rightTab"
+          role="tablist"
+        >
           <li class="nav-item">
-            <a class="nav-link active" id="watched-content-tab" data-toggle="tab" href="#watched-content" role="tab"
-              aria-controls="watched-content" aria-selected="true">Your Watch List
-              ({{ actual.watched_problems + actual.watched_solutions }})</a>
+            <a
+              class="nav-link active"
+              id="watched-content-tab"
+              data-toggle="tab"
+              href="#watched-content"
+              role="tab"
+              aria-controls="watched-content"
+              aria-selected="true"
+              >Your Watch List ({{ actual.watched_problems +
+              actual.watched_solutions }})</a
+            >
           </li>
           <li class="nav-item">
-            <a class="nav-link" id="draft-content-tab" data-toggle="tab" href="#draft-content" role="tab"
-              aria-controls="watched-content" aria-selected="true">Your Drafts ({{ actual.drafts }})</a>
+            <a
+              class="nav-link"
+              id="draft-content-tab"
+              data-toggle="tab"
+              href="#draft-content"
+              role="tab"
+              aria-controls="watched-content"
+              aria-selected="true"
+              >Your Drafts ({{ actual.drafts }})</a
+            >
           </li>
         </ul>
         <div id="rightTabGroup" class="pb-2">
           <div class="tab-content" id="leftTabContent">
-            <div class="tab-pane fade active show" id="watched-content" role="tabpanel"
-              aria-labelledby="watched-content-tab">
+            <div
+              class="tab-pane fade active show"
+              id="watched-content"
+              role="tabpanel"
+              aria-labelledby="watched-content-tab"
+            >
               {% if (actual.watched_problems + actual.watched_solutions) < 1 %}
               <div>
-                {% set msg = "No watchlist yet" %}
-                {% set img_src = "" %}
-                {% include "templates/includes/common/empty_card.html" %}
+                {% set msg = "No watchlist yet" %} {% set img_src = "" %} {%
+                include "templates/includes/common/empty_card.html" %}
               </div>
-              {% endif %}
-
-              {% for card in watched_problems_solutions_combo %}
-                {% if card.name.lower().startswith('problem') %}
-                {% set problem = card %}
-                <div>
-                  {% include "templates/includes/problem/problem_card.html" %}
-                </div>
-                <hr />
-                {% else %}
-                {% set solution = card %}
-                <div>
-                  {% include "templates/includes/solution/solution_card.html" %}
-                </div>
-                <hr />
-                {% endif%}
-              {% endfor %}
-
-              {% if actual.watched_problems + actual.watched_solutions > 2 %}
+              {% endif %} {% for card in watched_problems_solutions_combo %} {%
+              if card.name.lower().startswith('problem') %} {% set problem =
+              card %}
+              <div>
+                {% include "templates/includes/problem/problem_card.html" %}
+              </div>
+              <hr />
+              {% else %} {% set solution = card %}
+              <div>
+                {% include "templates/includes/solution/solution_card.html" %}
+              </div>
+              <hr />
+              {% endif%} {% endfor %} {% if actual.watched_problems +
+              actual.watched_solutions > 2 %}
               <div class="text-center py-3">
-                <a href="/dashboard?type=watch_list" class="viewAll">View All
-                  ({{ actual.watched_problems + actual.watched_solutions }})</a>
+                <a href="/dashboard?type=watch_list" class="viewAll"
+                  >View All ({{ actual.watched_problems +
+                  actual.watched_solutions }})</a
+                >
               </div>
               {% endif %}
             </div>
-            <div class="tab-pane fade" id="draft-content" role="tabpanel" aria-labelledby="draft-content-tab">
-
+            <div
+              class="tab-pane fade"
+              id="draft-content"
+              role="tabpanel"
+              aria-labelledby="draft-content-tab"
+            >
               {% if drafts | length < 1 %}
               <div>
-                {% set msg = "No drafts yet" %}
-                {% set img_src = "" %}
-                {% include "templates/includes/common/empty_card.html" %}
+                {% set msg = "No drafts yet" %} {% set img_src = "" %} {%
+                include "templates/includes/common/empty_card.html" %}
               </div>
-              {% endif %}
-
-              {% for content in drafts %}
-              {% include "templates/includes/common/draft_card.html" %}
+              {% endif %} {% for content in drafts %} {% include
+              "templates/includes/common/draft_card.html" %}
               <hr />
-              {% endfor %}
-
-              {% if actual.drafts > 4 %}
+              {% endfor %} {% if actual.drafts > 4 %}
               <div class="text-center py-3">
-                <a href="/dashboard?type=drafts" class="viewAll">View All
-                  ({{ actual.drafts }})</a>
+                <a href="/dashboard?type=drafts" class="viewAll"
+                  >View All ({{ actual.drafts }})</a
+                >
               </div>
               {% endif %}
             </div>
@@ -220,84 +268,122 @@
       </div>
       <br />
       <div class="bg-white">
-        <ul class="nav nav-tabs nav-section nav-mob-section" id="rightTab1" role="tablist">
+        <ul
+          class="nav nav-tabs nav-section nav-mob-section"
+          id="rightTab1"
+          role="tablist"
+        >
           <li class="nav-item">
-            <a class="nav-link active" id="contributions-tab" data-toggle="tab" href="#contributions" role="tab"
-              aria-controls="contributions" aria-selected="false">Your Contributions ({{ (actual.contributed_problems +
-              actual.contributed_solutions) }})</a>
+            <a
+              class="nav-link active"
+              id="contributions-tab"
+              data-toggle="tab"
+              href="#contributions"
+              role="tab"
+              aria-controls="contributions"
+              aria-selected="false"
+              >Your Contributions ({{ (actual.contributed_problems +
+              actual.contributed_solutions) }})</a
+            >
           </li>
         </ul>
-        <div id="rightTabGroup1" class="pb-4" style="border-radius: var(--round4);">
+        <div
+          id="rightTabGroup1"
+          class="pb-4"
+          style="border-radius: var(--round4);"
+        >
           <div class="tab-content" id="rightTabContent1">
-            <div class="row p-0 m-0" id="users" role="tabpanel" aria-labelledby="users-tab">
+            <div
+              class="row p-0 m-0"
+              id="users"
+              role="tabpanel"
+              aria-labelledby="users-tab"
+            >
               <div class="col m-0 p-0">
-
-                {% if (actual.contributed_problems + actual.contributed_solutions) < 1 %}
+                {% if (actual.contributed_problems +
+                actual.contributed_solutions) < 1 %}
                 <div>
-                  {% set msg = "No contributions yet" %}
-                  {% set img_src = "" %}
+                  {% set msg = "No contributions yet" %} {% set img_src = "" %}
                   {% include "templates/includes/common/empty_card.html" %}
                 </div>
-                {% endif %}
-
-                {% for card in contributed_problems_solutions_combo %}
-                  {% if card.name.lower().startswith('problem') %}
-                  {% set problem = card %}
-                  <div>
-                    {% include "templates/includes/problem/problem_contribution_card.html" %}
-                  </div>
-                  <hr />
-                  {% else %}
-                  {% set solution = card %}
-                  <div>
-                    {% include "templates/includes/solution/solution_contribution_card.html" %}
-                  </div>
-                  <hr />
-                  {% endif%}
-                {% endfor %}
-
-                {% if (actual.contributed_problems + actual.contributed_solutions) > 2 %}
+                {% endif %} {% for card in contributed_problems_solutions_combo
+                %} {% if card.name.lower().startswith('problem') %} {% set
+                problem = card %}
+                <div>
+                  {% include
+                  "templates/includes/problem/problem_contribution_card.html" %}
+                </div>
+                <hr />
+                {% else %} {% set solution = card %}
+                <div>
+                  {% include
+                  "templates/includes/solution/solution_contribution_card.html"
+                  %}
+                </div>
+                <hr />
+                {% endif%} {% endfor %} {% if (actual.contributed_problems +
+                actual.contributed_solutions) > 2 %}
                 <div class="text-center py-2">
-                  <a href="/dashboard?type=contributions" class="viewAll">View All
-                    ({{ actual.contributed_problems + actual.contributed_solutions }})</a>
+                  <a href="/dashboard?type=contributions" class="viewAll"
+                    >View All ({{ actual.contributed_problems +
+                    actual.contributed_solutions }})</a
+                  >
                 </div>
                 {% endif %}
               </div>
-
             </div>
           </div>
         </div>
       </div>
       <br />
       <div class="bg-white">
-        <ul class="nav nav-tabs nav-section nav-mob-section" id="rightTab1" role="tablist">
+        <ul
+          class="nav nav-tabs nav-section nav-mob-section"
+          id="rightTab1"
+          role="tablist"
+        >
           <li class="nav-item">
-            <a class="nav-link active" id="users-tab" data-toggle="tab" href="#users" role="tab" aria-controls="users"
-              aria-selected="false">Users With Similar Interests ({{ recommended_users | length }})</a>
+            <a
+              class="nav-link active"
+              id="users-tab"
+              data-toggle="tab"
+              href="#users"
+              role="tab"
+              aria-controls="users"
+              aria-selected="false"
+              >Users With Similar Interests ({{ recommended_users | length
+              }})</a
+            >
           </li>
         </ul>
-        <div id="rightTabGroup1" class="pb-4" style="border-radius: var(--round4);">
+        <div
+          id="rightTabGroup1"
+          class="pb-4"
+          style="border-radius: var(--round4);"
+        >
           <div class="tab-content" id="rightTabContent1">
-            <div class="row p-0 m-0" id="users" role="tabpanel" aria-labelledby="users-tab">
+            <div
+              class="row p-0 m-0"
+              id="users"
+              role="tabpanel"
+              aria-labelledby="users-tab"
+            >
               {% if recommended_users | length < 1 %}
               <div class="w-100">
-                {% set msg = "No user matched" %}
-                {% set img_src = "" %}
-                {% include "templates/includes/common/empty_card.html" %}
+                {% set msg = "No user matched" %} {% set img_src = "" %} {%
+                include "templates/includes/common/empty_card.html" %}
               </div>
-              {% endif %}
-
-              {% for user in recommended_users %}
+              {% endif %} {% for user in recommended_users %}
               <div class="col-md-6 py-4 border">
                 {% include "templates/includes/common/user_card.html" %}
               </div>
               {% endfor %}
-
             </div>
             {% if recommended_users | length > 2 %}
             <div class="text-center py-3">
-              <a href="/dashboard?type=recommended_users" class="viewAll">View All
-                ({{ recommended_users | length }})</a>
+              <a href="/dashboard?type=recommended_users" class="viewAll"
+                >View All ({{ recommended_users | length }})</a
+              >
             </div>
             {% endif %}
           </div>
@@ -321,16 +407,15 @@
     </div>
   </div>
   <div class="row" id="problems-container">
-    {% if content_type == 'recommended_users' %}
-    {% for user in recommended_users %}
+    {% if content_type == 'recommended_users' %} {% for user in
+    recommended_users %}
     <div class="col-md-3 mt-4 py-4 border">
       {% include "templates/includes/common/user_card.html" %}
     </div>
     {% endfor %}
 
     <!-- Drafts viewAll -->
-    {% elif content_type == 'drafts' %}
-    {% for content in recommended_users %}
+    {% elif content_type == 'drafts' %} {% for content in recommended_users %}
     <div class="col-6 mt-4">
       {% include "templates/includes/common/draft_card.html" %}
     </div>
@@ -339,14 +424,12 @@
 
     {% else %}
     <div class="col-md-6 mt-4">
-      {% for problem in problems %}
-      {% include "templates/includes/problem/problem_card.html" %}
-      {% endfor %}
+      {% for problem in problems %} {% include
+      "templates/includes/problem/problem_card.html" %} {% endfor %}
     </div>
     <div class="col-md-6 mt-4">
-      {% for solution in solutions %}
-      {% include "templates/includes/solution/solution_card.html" %}
-      {% endfor %}
+      {% for solution in solutions %} {% include
+      "templates/includes/solution/solution_card.html" %} {% endfor %}
     </div>
     {% endif %}
   </div>
