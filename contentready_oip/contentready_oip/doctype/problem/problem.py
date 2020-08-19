@@ -92,6 +92,7 @@ class Problem(WebsiteGenerator):
                 n_template['child_doctype'] = c.doctype
                 n_template['source_user'] = c.user
                 n_name = '{}-{}-{}'.format(n_template['target_user'], n_template['source_user'], n_template['child_name'])
+                # This prevents duplicates
                 if frappe.db.exists('OIP Notification', n_name):
                     continue
                 user = frappe.get_doc('User', c.user)
