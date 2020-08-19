@@ -100,7 +100,7 @@ frappe.ready(async () => {
     </select>
     <br /><br />
     `;
-    $('*[data-fieldname="solver_team"]').before(el);
+    $('[data-fieldname="solver_team"][data-fieldtype="Table"]').before(el);
     // $('#solver-team-select').select2({
     //   width: '100%'
     // });
