@@ -351,7 +351,8 @@
               role="tab"
               aria-controls="users"
               aria-selected="false"
-              >Users With Similar Interests ({{ users | length }})</a
+              >Users With Similar Interests ({{ recommended_users | length
+              }})</a
             >
           </li>
         </ul>
@@ -376,14 +377,15 @@
               <div class="col-md-6 py-4 border">
                 {% include "templates/includes/common/user_card.html" %}
               </div>
-              {% endfor %} {% if users | length > 2 %}
-              <div class="text-center py-3">
-                <a href="/dashboard?type=recommended_users" class="viewAll"
-                  >View All ({{ users | length }})</a
-                >
-              </div>
-              {% endif %}
+              {% endfor %}
             </div>
+            {% if recommended_users | length > 2 %}
+            <div class="text-center py-3">
+              <a href="/dashboard?type=recommended_users" class="viewAll"
+                >View All ({{ recommended_users | length }})</a
+              >
+            </div>
+            {% endif %}
           </div>
         </div>
       </div>

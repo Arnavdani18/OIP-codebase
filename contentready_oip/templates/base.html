@@ -27,7 +27,7 @@
     {% if head_html is defined -%}
     {{ head_html or "" }}
     {%- endif %}
-    <link as="style" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="prefetch" />
+    <link as="style" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet prefetch" />
     {% if domain_settings.theme_url %}
     <link type="text/css" rel="stylesheet" href="{{ domain_settings.theme_url }}">
     {% elif theme.theme_url %}
@@ -89,9 +89,9 @@
     <script type="text/javascript" src="/assets/js/frappe-web.min.js"></script>
     <script type="text/javascript" src="/assets/js/bootstrap-4-web.min.js" defer></script>
     
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js" async></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
     <link as="style" rel="stylesheet"  href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css" />
-    <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script>
+    <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js"></script>
     {% endblock %}
 
     {%- for link in web_include_js %}
