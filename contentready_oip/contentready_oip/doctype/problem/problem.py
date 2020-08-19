@@ -50,13 +50,15 @@ class Problem(WebsiteGenerator):
         solution_set = set()
         for s in self.solutions:
             solution_set.add(s.solution)
+        if new_solution:
+            solution_set.add(new_solution.name)
         self.solutions = []
         for s in solution_set:
             r = self.append('solutions', {})
             r.solution = s
-        if new_solution:
-            r = self.append('solutions', {})
-            r.solution = new_solution.name
+        # if new_solution:
+        #     r = self.append('solutions', {})
+        #     r.solution = new_solution.name
         self.save()
 
     def on_update(self):
