@@ -58,6 +58,6 @@ def get_context(context):
         sectors_4_contributors.update(document["meili_sectors"])
         
     # User-Profile
-    # context.matched_contributors = api.get_content_recommended_for_user('User Profile', sectors)
+    # context.matched_contributors = api.get_content_recommended_for_user('User Profile', sectors_4_contributors)
     context.matched_contributors = api.get_searched_content_es('User Profile', key, prepare_sector_filter)
     # print('\n\n\n>>>>>>>', len(context.matched_contributors), '\n\n\n')

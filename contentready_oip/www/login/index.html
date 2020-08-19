@@ -24,17 +24,24 @@
                                 Need a Social Alpha account? <a href="#signup">{{ _("Create an account") }}</a>
                             </p>
                             {%- endif -%}
-
-                            <!-- {# social logins #} -->
-                            <div class="social-login mt-4">
-                                <a class="linkedin-button" href="https://www.linkedin.com/oauth/v2/authorization?redirect_uri=https%3A%2F%2Fopeninnovationplatform.org%2Fapi%2Fmethod%2Fcontentready_oip.api.complete_linkedin_login&state=eyJzaXRlIjogImh0dHBzOi8vb3Blbmlubm92YXRpb25wbGF0Zm9ybS5vcmciLCAidG9rZW4iOiAiYmFjNjQ1MTU4ODI2ZmFhMjA0N2JkMWRkZjdjNjI1NTEyYTJiOGRjMjBkOWM5YzI0NWQ3ZWVkZDQiLCAicmVkaXJlY3RfdG8iOiBudWxsfQ%3D%3D&scope=r_liteprofile+r_emailaddress&response_type=code&client_id=77vjl3dhlk4gel" title="Linkedin">
-                                    <i>{% include "public/svg/linkedin-in-brands.svg" %}</i>
-                                </a>
-                                
-                                <a class="google-button" href="https://accounts.google.com/o/oauth2/auth?redirect_uri=https%3A%2F%2Fopeninnovationplatform.org%2Fapi%2Fmethod%2Ffrappe.www.login.login_via_google&state=eyJzaXRlIjogImh0dHBzOi8vb3Blbmlubm92YXRpb25wbGF0Zm9ybS5vcmciLCAidG9rZW4iOiAiZWNiNmRjNzZhOGI1ZDljM2M1OThkZWY1MmIwNjFlOGY1YWJjNzlmOTUwYWIzYTRjYTU3YmRmNzQiLCAicmVkaXJlY3RfdG8iOiBudWxsfQ%3D%3D&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&response_type=code&client_id=50587709297-4juna43ha67si4n6vu3nt7d80e12lpcj.apps.googleusercontent.com" title="Google">
-                                    <i>{% include "public/svg/google-brands.svg" %}</i>
-                                </a>
+                            
+                            <div class='social-login mt-4'>
+                                {%- if social_login -%}
+                                    {% for provider in provider_logins %}
+                                    <a href="{{ provider.auth_url }}"
+                                        class="btn btn-default btn-sm btn-social {{ provider.name }}-button">
+                                        {% if provider.name.lower() == 'google' %}
+                                            <i>{% include "public/svg/google-brands.svg" %}</i>
+                                        {% elif provider.name.lower() == 'linkedin' %}
+                                            <i>{% include "public/svg/linkedin-in-brands.svg" %}</i>
+                                        {% else %}
+                                            {{ provider.icon }}
+                                        {% endif %}
+                                    </a>
+                                    {% endfor %}
+                                {%- endif -%}
                             </div>
+                            
 
                             <div class="email-input mt-4">
                                 <label for="email">Email</label>
@@ -68,7 +75,7 @@
                     </div>
                     <div class='form-footer'>
 
-                        <div class='social-logins'>
+                        <!-- {# <div class='social-logins'>
                             {%- if social_login -%}
                             <h6>{{ _("Or login with") }}</h6>
 
@@ -80,7 +87,7 @@
                                 {% endfor %}
                             </p>
                             {%- endif -%}
-                        </div>
+                        </div> #} -->
 
                         <!-- {%- if not disable_signup -%}
                         <p class="text-center sign-up-message">

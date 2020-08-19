@@ -95,3 +95,7 @@
 .close{
   font-size: 2rem;
 }
+
+.bookmark>svg {
+  width: 2rem;
+}

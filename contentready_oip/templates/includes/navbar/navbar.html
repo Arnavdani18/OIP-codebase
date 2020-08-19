@@ -4,7 +4,7 @@
             {% if domain_settings.brandmark %}
             <span><img style="width: 5rem;" src="{{ domain_settings.brandmark | abs_url }}" /></span>
             {% else %}
-            <span>{{ brand_html or (frappe.get_hooks("brand_html") or [_("Home")])[0] }}</span>
+            <span class="brandmark">{{ brand_html or (frappe.get_hooks("brand_html") or [_("Home")])[0] }}</span>
             {% endif %}
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -110,7 +110,8 @@
                         <span class="d-lg-none text-capitalize ml-3">Profile</span>
                     </a>
                     <div class="dropdown-menu mt-2 dropdown-menu-right dropdown-section">
-                        <a class="dropdown-item" href="/update-profile">
+                        <div id="deskRoute"></div>
+                        <a class="dropdown-item nullActive" href="/update-profile">
                             <img src="../assets/contentready_oip/svg/profile.svg" alt="" width="16" height="16" />
                             <span> Profile</span>
                         </a>
@@ -156,8 +157,47 @@
     </div>
 </nav>
 
+<style>
+    .nullActive {
+    background-color: var(--secondary6) !important;
+    color: var(--secondary1) !important;
+    }
+    
+    .nullActive:hover {
+    background-color: var(--secondary5) !important;
+    
+    }
+
+    .brandmark>img{
+        width: 5rem;
+    }
+</style>
+
 
 <script>
+    frappe.ready(()=>{
+        add_desk_route = () =>{
+            frappe.call( {
+                method: 'contentready_oip.api.has_admin_role',
+                callback: function( r ) {
+                    if (r.message) {
+                        new Vue({
+                            el: '#deskRoute',
+                            template:`
+                                <a class="dropdown-item" href="/desk">
+                                    <img src="../assets/contentready_oip/svg/user-tie-solid.svg" alt="" width="16" height="16" />
+                                    <span>Admin</span>
+                                </a>
+                            `
+                        }) 
+                    }
+                }
+            } );
+        }
+    
+        add_desk_route();
+    })
+
     onClickLogin = () => {
         window.location.href = ' /login';
     };

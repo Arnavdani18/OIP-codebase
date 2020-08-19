@@ -7,25 +7,46 @@
     <div class="input-group col pl-0 mt-0">
       <!-- TODO: onblur="contractCommentArea(event.target.id)" -->
 
-      <textarea class="form-control pattern1" style="padding-top: .8rem;" id="comment-area-{{doctype}}-{{name}}"
-        placeholder="Add a comment..." rows="1" onfocus="expandCommentArea('{{doctype}}','{{name}}')"></textarea>
+      <div
+        class="form-control pattern1 content-editable"
+        contenteditable
+        style="padding-top: 0.8rem;"
+        id="comment-area-{{doctype}}-{{name}}"
+        placeholder="Add a comment..."
+        rows="1"
+        onfocus="expandCommentArea('{{doctype}}','{{name}}')"
+      ></div>
       <div class="input-group-append mt-0">
-        <button class="btn btn-outline-danger pattern1" title="Clear All" type="button"
-          onclick="cancelComment(`{{doctype}}`,`{{name}}`, `{{parent_div|default('', true)}}`)">
-          <!-- <i class="far fa-backspace fa-horizontal"></i> -->
-          <i class="backspace">{% include "public/svg/backspace-solid.svg" %}</i>
+        <button
+          class="btn btn-outline-danger pattern1"
+          title="Clear All"
+          type="button"
+          onclick="cancelComment(`{{doctype}}`,`{{name}}`, `{{parent_div|default('', true)}}`)"
+        >
+          <i class="backspace"
+            >{% include "public/svg/backspace-solid.svg" %}</i
+          >
         </button>
-        <button class="btn btn-outline-primary attach-btn pattern1" title="Attachment" type="button"
-          onclick="showDropzone('{{doctype}}', '{{name}}')">
-          <!-- <i class="far fa-paperclip"></i> -->
-          <i class="paperclip">{% include "public/svg/paperclip-solid.svg" %}</i>
+        <button
+          class="btn btn-outline-primary attach-btn pattern1"
+          title="Attachment"
+          type="button"
+          onclick="showDropzone('{{doctype}}', '{{name}}','toggle')"
+        >
+          <i class="paperclip"
+            >{% include "public/svg/paperclip-solid.svg" %}</i
+          >
         </button>
       </div>
     </div>
   </div>
   <div class="row mt-3 comment-btn-row" hidden>
-    <div class="col ">
-      <button class="btn comment-btn" type="button" onclick="submitComment('{{doctype}}', '{{name}}')">
+    <div class="col">
+      <button
+        class="btn comment-btn"
+        type="button"
+        onclick="submitComment('{{doctype}}', '{{name}}')"
+      >
         Comment
       </button>
     </div>
@@ -38,14 +59,19 @@
       </button>
     </div>
   </form> -->
-  <form class="dropzone dz-clickable hidden mt-3 pattern1" style="font-size:var(--f14); position: relative;"
-    data-file-urls="[]" id="comment-dropzone-{{doctype}}-{{name}}">
-
-    <button id="clear-dropzone-{{doctype}}-{{name}}" class="btn btn-outline-primary rounded-circle clear-dropzone"
-      title="Remove all">
+  <form
+    class="dropzone dz-clickable hidden mt-3 pattern1"
+    style="font-size: var(--f14); position: relative;"
+    data-file-urls="[]"
+    id="comment-dropzone-{{doctype}}-{{name}}"
+  >
+    <button
+      id="clear-dropzone-{{doctype}}-{{name}}"
+      class="btn btn-outline-primary rounded-circle clear-dropzone"
+      title="Remove all"
+    >
       <i class="redo-icon">{% include "public/svg/redo-solid.svg" %}</i>
     </button>
-
 
     <div class="dz-default dz-message">
       <button class="dz-button" type="button">
@@ -59,24 +85,26 @@
         <p>Drop More</p>
       </button>
     </div>
-
   </form>
 </div>
 
 <script>
   expandCommentArea = (doctype, name) => {
     // set rows=5
-    $(`#comment-area-${doctype}-${name}`).attr('rows', '3');
+    $(`#comment-area-${doctype}-${name}`).css({
+      height: '12rem',
+      'overflow-y': 'auto',
+    });
     $('.comment-btn-row').attr('hidden', false);
   };
 
   contractCommentArea = (doctype, name) => {
     // set rows=1
-    $(`#comment-area-${doctype}-${name}`).attr('rows', '1');
+    $(`#comment-area-${doctype}-${name}`).css({ height: '4rem' });
   };
 
   cancelComment = (doctype, name, parent_div) => {
-    $(`#comment-area-${doctype}-${name}`).val('');
+    $(`#comment-area-${doctype}-${name}`).text('');
     $('.comment-btn-row').attr('hidden', true);
     contractCommentArea(doctype, name);
     if (parent_div) {
@@ -89,7 +117,7 @@
       resetBtn.click();
     }
 
-    showDropzone(doctype, name);
+    showDropzone(doctype, name, 'hide');
   };
 
   function addAnchorToText(input) {
@@ -98,24 +126,23 @@
       input,
       options: {
         attributes: {
-          target: "_blank",
+          target: '_blank',
         },
       },
-    })
-
+    });
   }
 
   submitComment = (doctype, name) => {
     const id = `comment-area-${doctype}-${name}`; // for compatibility with cancelComment
-    const text = addAnchorToText($(`#${id}`).val());
+    const text = addAnchorToText($(`#${id}`).html());
     const media = $(`#comment-dropzone-${doctype}-${name}`).data('file-urls');
 
     if (text.length) {
       // console.log(comment);
       frappe.call({
         method: 'contentready_oip.api.add_comment',
-        args: { doctype: doctype, name: name, text: text, media: media },
-        callback: r => {
+        args: { doctype: doctype, name: name, text: JSON.stringify(text), media: media },
+        callback: (r) => {
           // console.log(r);
           if (doctype == 'Discussion') {
             cancelComment(doctype, name);
@@ -129,32 +156,30 @@
               window.location.reload();
             }
           }
-        }
+        },
       });
     } else {
       frappe.throw('Cannot submit an empty comment.');
     }
   };
 
-  showDropzone = (doctype, name) => {
+  showDropzone = (doctype, name, state) => {
     const dz = $(`#comment-dropzone-${doctype}-${name}`);
 
-    if (dz.hasClass('hidden')) {
-      dz
-        .addClass('d-flex justify-content-center align-items-center')
-        .removeClass('hidden')
+    if (state === 'toggle') {
+      dz.toggleClass('d-flex justify-content-center align-items-center hidden');
     } else {
-      dz
-        .addClass('hidden')
-        .removeClass('d-flex justify-content-center align-items-center')
+      dz.addClass('hidden').removeClass(
+        'd-flex justify-content-center align-items-center'
+      );
     }
   };
 
   frappe.ready(() => {
     // Start dropzone.js integration
-    const dScriptUrl = window.location.origin + '/assets/contentready_oip/js/dropzone.js';
+    const dScriptUrl =
+      window.location.origin + '/assets/contentready_oip/js/dropzone.js';
     $.getScript(dScriptUrl, () => {
-
       // disable autoDiscover as we are manually binding the dropzone to a form element
       Dropzone.autoDiscover = false;
       $('#comment-dropzone-{{doctype}}-{{name}}').dropzone({
@@ -162,14 +187,17 @@
         autoDiscover: false,
         // maxFiles: 1,
         addRemoveLinks: true,
-        clickable: ['#comment-dropzone-{{doctype}}-{{name}}', '#add-multiple-files-{{doctype}}-{{name}}'],
+        clickable: [
+          '#comment-dropzone-{{doctype}}-{{name}}',
+          '#add-multiple-files-{{doctype}}-{{name}}',
+        ],
         headers: {
           Accept: 'application/json',
-          'X-Frappe-CSRF-Token': frappe.csrf_token
+          'X-Frappe-CSRF-Token': frappe.csrf_token,
         },
         init: function () {
           // use this event to add to child table
-          this.on('complete', file => {
+          this.on('complete', (file) => {
             // console.log('{{name}}');
             const response = JSON.parse(file.xhr.response);
             const file_url = response.message.file_url;
@@ -184,7 +212,7 @@
           });
 
           // use this event to remove from child table
-          this.on('removedfile', file => {
+          this.on('removedfile', (file) => {
             // console.log('removed', file);
             toggleAddMore(myDropzone.files.length);
             let media = $('#comment-dropzone-{{doctype}}-{{name}}').data(
@@ -193,16 +221,15 @@
             try {
               if (media) {
                 media = JSON.parse(media);
-                media = media.filter(i => !i.endsWith(file.name));
+                media = media.filter((i) => !i.endsWith(file.name));
                 $('#comment-dropzone-{{doctype}}-{{name}}').data(
                   'file-urls',
                   JSON.stringify(media)
                 );
               }
             } catch (error) {
-              console.error(error)
+              console.error(error);
             }
-
           });
 
           const myDropzone = this;
@@ -210,25 +237,28 @@
           // Add more section
           this.on('sending', function () {
             toggleAddMore(myDropzone.files.length);
-          })
+          });
 
-          const addMutipleFilesBtn = document.querySelector("#add-multiple-files-{{doctype}}-{{name}}");
+          const addMutipleFilesBtn = document.querySelector(
+            '#add-multiple-files-{{doctype}}-{{name}}'
+          );
           if (addMutipleFilesBtn) {
             addMutipleFilesBtn.onclick = function (e) {
               e.preventDefault();
             };
           }
 
-
           // Reset Button
-          const clearDzBtn = document.querySelector(`button#clear-dropzone-{{doctype}}-{{name}}`);
+          const clearDzBtn = document.querySelector(
+            `button#clear-dropzone-{{doctype}}-{{name}}`
+          );
           if (clearDzBtn) {
-            clearDzBtn.addEventListener("click", function (e) {
+            clearDzBtn.addEventListener('click', function (e) {
               e.preventDefault();
               myDropzone.removeAllFiles();
             });
           }
-        }
+        },
       });
 
       function toggleAddMore(len) {
@@ -242,6 +272,40 @@
     });
     // End dropzone.js integration
 
+    frappe.call({
+      method: 'contentready_oip.api.get_user_list',
+      args: {},
+      callback: function (r) {
+        const user_list = new Set();
+        r.message.forEach((v) => {
+          if (v.text) {
+            user_list.add({ key: v.text, value: v.id });
+          }
+        });
+
+        let tribute = new Tribute({
+          values: [...user_list],
+          menuItemLimit: 10,
+          selectTemplate: function (item) {
+            const re = /[-+.^:,@]/g;
+            const route = `../contributors/${item.original.value.replace(re, '')}`;
+            return `<a href="${route}">@${item.original.key}</a>`;
+          },
+          noMatchTemplate: function () {
+            return 'not Found';
+          },
+          menuItemTemplate: function (item) {
+            return item.string;
+          },
+        });
+
+        tribute.attach(
+          document.getElementById(`comment-area-{{doctype}}-{{name}}`)
+        );
+      },
+    });
+
+    $(`#comment-area-{{doctype}}-{{name}}`).addClass('hello');
   });
 </script>
 
@@ -250,7 +314,7 @@
     $('.comment-user img').css({
       height: 40,
       width: 40,
-      'border-radius': '50%'
+      'border-radius': '50%',
     });
     $('div.comment-user .created-by-section').attr('hidden', true);
   });
@@ -259,6 +323,15 @@
 <style>
   .hidden {
     display: none;
+  }
+
+  .tribute-container ul {
+    font-size: 1.2rem;
+  }
+
+  .content-editable {
+    min-height: 4rem;
+    line-height: 2rem;
   }
 
   .editor-container {
@@ -289,8 +362,8 @@
     border-color: var(--primary1);
   }
 
-  .paperclip>svg,
-  .backspace>svg {
+  .paperclip > svg,
+  .backspace > svg {
     width: 1.4rem;
   }
 </style>
@@ -299,8 +372,8 @@
 <style>
   .clear-dropzone {
     position: absolute;
-    right: .5rem;
-    top: .5rem;
+    right: 0.5rem;
+    top: 0.5rem;
     cursor: pointer;
   }
 
@@ -308,7 +381,7 @@
     color: white;
   }
 
-  .redo-icon>svg {
+  .redo-icon > svg {
     width: 1.2rem;
   }
 
@@ -322,7 +395,7 @@
     align-items: center;
     flex-direction: column;
     justify-content: center;
-    padding-top: .8rem;
+    padding-top: 0.8rem;
   }
 
   .add-more:focus {
@@ -330,7 +403,7 @@
     box-shadow: none;
   }
 
-  .add-more>i>svg {
+  .add-more > i > svg {
     width: 5rem;
     text-align: center;
   }
