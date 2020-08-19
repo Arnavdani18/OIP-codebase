@@ -4,7 +4,7 @@
             {% if domain_settings.brandmark %}
             <span><img style="width: 5rem;" src="{{ domain_settings.brandmark | abs_url }}" /></span>
             {% else %}
-            <span>{{ brand_html or (frappe.get_hooks("brand_html") or [_("Home")])[0] }}</span>
+            <span class="brandmark">{{ brand_html or (frappe.get_hooks("brand_html") or [_("Home")])[0] }}</span>
             {% endif %}
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -166,6 +166,10 @@
     .nullActive:hover {
     background-color: var(--secondary5) !important;
     
+    }
+
+    .brandmark>img{
+        width: 5rem;
     }
 </style>
 

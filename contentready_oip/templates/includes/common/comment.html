@@ -1,10 +1,22 @@
+<script src="https://cdn.jsdelivr.net/npm/tributejs/dist/tribute.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/tributejs/dist/tribute.css"
+/>
+
 {% set doctype = comment.doctype %} {% set name = comment.name %}
 <div class="discussion-section">
   <div class="comment-section">
     <div class="">
       {% set doc = frappe.get_doc('User Profile', comment.user) %}
-      <img src="{{doc.photo|default('/files/default-avatar.jpg', true)}}" alt="profile photo" class=""
-        style="object-fit: cover;overflow: hidden; border-radius: 50%;" width="40" height="40" />
+      <img
+        src="{{doc.photo|default('/files/default-avatar.jpg', true)}}"
+        alt="profile photo"
+        class=""
+        style="object-fit: cover; overflow: hidden; border-radius: 50%;"
+        width="40"
+        height="40"
+      />
     </div>
     <div class="details-container">
       <div>
@@ -16,7 +28,9 @@
           {{frappe.utils.pretty_date(comment.creation)}}
         </span>
       </div>
-      <p style="text-transform: none; font-weight: normal;">{{comment.text}}</p>
+      <div style="text-transform: none; font-weight: normal;">
+        {{comment.text}}
+      </div>
       {% if (comment.media | length) > 0 %}
       <h6>Attachments</h6>
       {% for a in comment.media %} {% set file_name =
@@ -30,8 +44,14 @@
   <div class="reply-section">
     <div class="">
       {% set doc = frappe.get_doc('User Profile', comment.user) %}
-      <img src="{{doc.photo|default('/files/default-avatar.jpg', true)}}" alt="profile photo" class=""
-        style="object-fit: cover;overflow: hidden;border-radius: 50%;" width="40" height="40" />
+      <img
+        src="{{doc.photo|default('/files/default-avatar.jpg', true)}}"
+        alt="profile photo"
+        class=""
+        style="object-fit: cover; overflow: hidden; border-radius: 50%;"
+        width="40"
+        height="40"
+      />
     </div>
     <div class="reply-text-section">
       <div class="user-info">
@@ -43,10 +63,15 @@
           {{frappe.utils.pretty_date(reply.creation)}}
         </span>
       </div>
-      <p style="text-transform: none; font-weight: normal;">{{reply.text}}</p>
-      <button class="delete-btn">
-        <!-- <i class="fa fa-trash-o" aria-hidden="true"></i> -->
-        <i class="trash">{% include "public/svg/trash-alt.svg" %}</i>
+      <div style="text-transform: none; font-weight: normal;">{{reply.text}}</div>
+      {% set parsed_reply = reply.as_json() %}
+      <button
+        class="delete-btn btn p-0"
+        data-action="delete"
+        data-name="{{reply.name }}"
+        data-discussion="{{reply.discussion }}"
+      >
+        <i class="trash badge">{% include "public/svg/trash-alt.svg" %}</i>
       </button>
     </div>
   </div>
@@ -62,12 +87,9 @@
     </div>
 
     <div class="d-flex">
-      {% set doctype = comment.doctype %}
-      {% set name = comment.name %}
-      {% set likes = comment.likes %}
-
-      {% include "templates/includes/common/likes.html" %}
-      {% include "templates/includes/common/share.html" %}
+      {% set doctype = comment.doctype %} {% set name = comment.name %} {% set
+      likes = comment.likes %} {% include "templates/includes/common/likes.html"
+      %} {% include "templates/includes/common/share.html" %}
     </div>
   </div>
 
@@ -79,10 +101,48 @@
 </div>
 
 <script>
-  replyToComment = name => {
+  replyToComment = (name) => {
     $(`#reply-${name}`).toggleClass('hidden');
     $('div.comment-user .created-by-section').attr('hidden', true);
   };
+
+  deleteReply = (reply) => {
+    $('.modal[role=dialog]').modal('hide');
+    if (Object.keys(reply).length) {
+      frappe.call({
+        method: 'contentready_oip.api.delete_reply',
+        args: { reply },
+        callback: function (r) {
+          console.log(r);
+          window.location.reload();
+        },
+      });
+    }
+  };
+
+  frappe.ready(() => {
+    $('[data-action="delete"]').click(function (e) {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      const name = $(this).data('name');
+      const discussion = $(this).data('discussion');
+      
+      let warn_modal = frappe.msgprint({
+        title: __('Delete'),
+        message: __('Are you sure you want to proceed?'),
+        primary_action: {
+          label: 'Delete',
+          client_action: 'deleteReply',
+          args: {name,discussion},
+        },
+      });
+
+      $(warn_modal['$wrapper'])
+        .find('.btn.btn-sm.btn-primary')
+        .removeClass('btn-sm')
+        .addClass('btn-danger btn-lg');
+    });
+  });
 </script>
 
 <script>
@@ -110,7 +170,7 @@
     width: 3.1rem;
   }
 
-  .thumbsup-btn>i {
+  .thumbsup-btn > i {
     font-size: var(--f14);
   }
 
@@ -118,8 +178,8 @@
     color: var(--secondary2);
   }
 
-  .trash>svg {
-    width: 1.2rem;
+  .trash > svg {
+    width: 1.3rem;
   }
 
   .reply {
