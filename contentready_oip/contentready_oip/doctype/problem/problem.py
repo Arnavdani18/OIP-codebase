@@ -50,13 +50,15 @@ class Problem(WebsiteGenerator):
         solution_set = set()
         for s in self.solutions:
             solution_set.add(s.solution)
+        if new_solution:
+            solution_set.add(new_solution.name)
         self.solutions = []
         for s in solution_set:
             r = self.append('solutions', {})
             r.solution = s
-        if new_solution:
-            r = self.append('solutions', {})
-            r.solution = new_solution.name
+        # if new_solution:
+        #     r = self.append('solutions', {})
+        #     r.solution = new_solution.name
         self.save()
 
     def on_update(self):
@@ -90,6 +92,7 @@ class Problem(WebsiteGenerator):
                 n_template['child_doctype'] = c.doctype
                 n_template['source_user'] = c.user
                 n_name = '{}-{}-{}'.format(n_template['target_user'], n_template['source_user'], n_template['child_name'])
+                # This prevents duplicates
                 if frappe.db.exists('OIP Notification', n_name):
                     continue
                 user = frappe.get_doc('User', c.user)

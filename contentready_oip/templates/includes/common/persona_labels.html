@@ -1,4 +1,4 @@
-{% if (personas | length) > 0 %}
+{% if personas %} {% if (personas | length) > 0 %}
 <p>
   Persona: {% for persona in personas[:2] %}
   <span>{{persona.persona}}</span>
@@ -7,4 +7,4 @@
 </p>
 {% else %}
 <p></p>
-{% endif %}
+{% endif %} {% endif %}
