@@ -43,12 +43,12 @@ def get_context(context):
     # problems
     _r = api.get_filtered_paginated_content(context, 'Problem', 'problems')
     context.update(_r)
-    context.matched_problems = api.get_searched_content('Problem', key, prepare_sector_filter)
+    context.matched_problems = api.get_searched_content_es('Problem', key, prepare_sector_filter)
 
     # solutions
     _s = api.get_filtered_paginated_content(context, 'Solution', 'solutions')
     context.update(_s)
-    context.matched_solutions = api.get_searched_content('Solution', key, prepare_sector_filter)
+    context.matched_solutions = api.get_searched_content_es('Solution', key, prepare_sector_filter)
 
     sectors_4_contributors = set()
     for document in context.matched_problems:
@@ -58,6 +58,6 @@ def get_context(context):
         sectors_4_contributors.update(document["meili_sectors"])
         
     # User-Profile
-    context.matched_contributors = api.get_content_recommended_for_user('User Profile', sectors_4_contributors)
-    # context.matched_contributors = api.get_searched_content_es('User Profile', key, prepare_sector_filter)
+    # context.matched_contributors = api.get_content_recommended_for_user('User Profile', sectors_4_contributors)
+    context.matched_contributors = api.get_searched_content_es('User Profile', key, prepare_sector_filter)
     # print('\n\n\n>>>>>>>', len(context.matched_contributors), '\n\n\n')
