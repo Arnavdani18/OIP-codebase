@@ -119,10 +119,10 @@
                         {% endif %}
                     </div>
                 </div>
-                <div id="matching-contributors" class="row">
-                    <div class="row justify-content-around">
+                <div id="matching-contributors">
+                    <div class="row p-0 m-0">
                         {% for user in matched_contributors %}
-                        <div class="col-md-3 bg-white pt-4 mr-3 mb-3 rounded">
+                        <div class="col-md-3 bg-white py-4 border mb-3">
                             {% include "templates/includes/common/user_card.html" %}
                         </div>
                         {% endfor %}

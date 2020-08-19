@@ -273,13 +273,13 @@
         <ul class="nav nav-tabs nav-section nav-mob-section" id="rightTab1" role="tablist">
           <li class="nav-item">
             <a class="nav-link active" id="users-tab" data-toggle="tab" href="#users" role="tab" aria-controls="users"
-              aria-selected="false">Users With Similar Interests ({{ users | length }})</a>
+              aria-selected="false">Users With Similar Interests ({{ recommended_users | length }})</a>
           </li>
         </ul>
         <div id="rightTabGroup1" class="pb-4" style="border-radius: var(--round4);">
           <div class="tab-content" id="rightTabContent1">
             <div class="row p-0 m-0" id="users" role="tabpanel" aria-labelledby="users-tab">
-              {% if users | length < 1 %}
+              {% if recommended_users | length < 1 %}
               <div class="w-100">
                 {% set msg = "No user matched" %}
                 {% set img_src = "" %}
@@ -287,19 +287,19 @@
               </div>
               {% endif %}
 
-              {% for user in users %}
+              {% for user in recommended_users %}
               <div class="col-md-6 py-4 border">
                 {% include "templates/includes/common/user_card.html" %}
               </div>
               {% endfor %}
 
-              {% if users | length > 2 %}
-              <div class="text-center py-3">
-                <a href="/dashboard?type=recommended_users" class="viewAll">View All
-                  ({{ users | length }})</a>
-              </div>
-              {% endif %}
             </div>
+            {% if recommended_users | length > 0 %}
+            <div class="text-center py-3">
+              <a href="/dashboard?type=recommended_users" class="viewAll">View All
+                ({{ recommended_users | length }})</a>
+            </div>
+            {% endif %}
           </div>
         </div>
       </div>
