@@ -162,7 +162,17 @@ def get_filtered_paginated_content(context, doctype, key, limit_page_length=20):
             payload['page'] = 1
         limit_start = payload['page'] - 1
         # limit_page_length = 20
-        filtered_content = get_filtered_content(doctype)
+        if doctype == 'User Profile':
+            parameters = frappe.form_dict
+            try:
+                filter_sectors = json.loads(parameters['sectors'])
+            except Exception as e:
+                filter_sectors = ['all']
+                # filter_sectors = []
+            filtered_content = get_content_recommended_for_user('User Profile', filter_sectors, limit_page_length=limit_page_length)
+            # filtered_content = search_contributors_by_text('', limit_page_length=200, html=False)
+        else:
+            filtered_content = get_filtered_content(doctype)
         payload['start'] = limit_start*limit_page_length
         payload['end'] = payload['start'] + limit_page_length
         payload['total_count'] = len(filtered_content)
@@ -712,9 +722,14 @@ def get_content_recommended_for_user(doctype, sectors, limit_page_length=5,creat
     try:
         if creation:
             filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', sectors], 'owner': ['!=', frappe.session.user], 'creation': ['>=',creation]})
+            content_set = {f['parent'] for f in filtered}
         else:
-            filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', sectors], 'owner': ['!=', frappe.session.user]})
-        content_set = {f['parent'] for f in filtered}
+            if 'all' in sectors:
+                filtered = frappe.get_list(doctype, filters={'owner': ['!=', frappe.session.user]})
+                content_set = {f['name'] for f in filtered}
+            else:
+                filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', sectors], 'owner': ['!=', frappe.session.user]})
+                content_set = {f['parent'] for f in filtered}
         for c in content_set:
             try:
                 doc = frappe.get_doc(doctype, c)
@@ -732,6 +747,11 @@ def get_content_recommended_for_user(doctype, sectors, limit_page_length=5,creat
                                 'solution': doc
                             }
                             template = "templates/includes/solution/solution_card.html"
+                        elif doctype == 'User Profile':
+                            context = {
+                                'user': doc
+                            }
+                            template = "templates/includes/common/user_card.html"
                         html = frappe.render_template(template, context)
                         content.append(html)
                     else:
