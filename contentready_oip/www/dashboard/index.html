@@ -294,7 +294,7 @@
               {% endfor %}
 
             </div>
-            {% if recommended_users | length > 0 %}
+            {% if recommended_users | length > 2 %}
             <div class="text-center py-3">
               <a href="/dashboard?type=recommended_users" class="viewAll">View All
                 ({{ recommended_users | length }})</a>
