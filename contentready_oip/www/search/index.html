@@ -66,7 +66,6 @@
                 </div>
                 <div id="matching-problems">
                     {% for problem in matched_problems[:5] %}
-                    {% set problem = problem['_formatted'] %}
                     {% include "templates/includes/problem/problem_card.html" %}
                     {% endfor %}
                 </div>
@@ -93,7 +92,6 @@
                 </div>
                 <div id="matching-solutions">
                     {% for solution in matched_solutions[:5] %}
-                    {% set solution = solution['_formatted'] %}
                     {% include "templates/includes/solution/solution_card.html" %}
                     {% endfor %}
                 </div>
