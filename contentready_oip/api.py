@@ -135,6 +135,17 @@ def get_doc_by_type_name(doctype, name):
     return frappe.get_doc(doctype, name)
 
 @frappe.whitelist(allow_guest = True)
+def get_all_doc(doctype):
+    doc_list = frappe.get_list(doctype)
+    doc = []
+    for doc_name in doc_list:
+        d = frappe.get_doc(doctype,doc_name['name'])
+        if d.is_published:
+            doc.append(d)
+
+    return doc
+
+@frappe.whitelist(allow_guest = True)
 def get_doc_field(doctype, name, field):
     return frappe.get_value(doctype, name, field)
 
