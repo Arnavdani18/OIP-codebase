@@ -251,6 +251,20 @@ frappe.ready(async () => {
   };
 
   submitProblemForm = (is_draft) => {
+    const {title,description,city} = frappe.web_form.doc;
+    if (!title && !description && !city) {
+      const error_message = `
+      Please enter the required field to publish.
+      <ul>
+        <li>Title</li>
+        <li>City</li>
+        <li>Description</li>
+      </ul>
+      `
+      frappe.throw(error_message);
+      return;
+    }
+
     frappe.call({
       method: 'contentready_oip.api.add_primary_content',
       args: {
@@ -501,6 +515,13 @@ frappe.ready(async () => {
     }
   };
 
+  const addAsterisk = function (fieldnameArr) {
+    for (const field of fieldnameArr) {
+      $(`[data-fieldname="${field}"] label`)
+        .append(`<span class="text-danger">*</span>`);
+    }
+  }
+
   const addSection = function () {
     // For Sectors
     $('*[data-fieldname="sectors"]').before(
@@ -534,6 +555,7 @@ frappe.ready(async () => {
   pageHeadingSection();
   appendAttachLink();
   hideAttachmentsSection();
+  addAsterisk(['title','city','description'])
   // End UI Fixes
 
   const getAvailableSectors = function () {

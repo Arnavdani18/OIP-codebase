@@ -207,6 +207,21 @@ frappe.ready( async () => {
   submitEnrichmentForm = ( is_draft ) => {
     frappe.web_form.doc.doctype = "Enrichment";
     frappe.web_form.doc.user = frappe.session.user;
+
+    const {title,description,city,country} = frappe.web_form.doc;
+    if (!title && !description && !city) {
+      const error_message = `
+      Please enter the required field to publish.
+      <ul>
+        <li>Title</li>
+        <li>City</li>
+        <li>Country</li>
+        <li>Description</li>
+      </ul>
+      `
+      frappe.throw(error_message);
+      return;
+    }
     frappe.call( {
       // method: "frappe.website.doctype.web_form.web_form.accept",
       method: "contentready_oip.api.add_enrichment",
@@ -432,6 +447,13 @@ frappe.ready( async () => {
     }
   };
 
+  const addAsterisk = function (fieldnameArr) {
+    for (const field of fieldnameArr) {
+      $(`[data-fieldname="${field}"] label`)
+        .append(`<span class="text-danger">*</span>`);
+    }
+  }
+
   function hideAttachmentsSection () {
     $( '.attachments' ).hide();
   }
@@ -456,6 +478,7 @@ frappe.ready( async () => {
   appendAttachLink();
   pageHeadingSection();
   hideAttachmentsSection();
+  addAsterisk(['title','description','city','country']);
   // End UI Fixes
 
   const deleteBtnInstance = new Vue( {
