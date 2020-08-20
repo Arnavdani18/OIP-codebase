@@ -483,6 +483,7 @@ frappe.ready( async () => {
 
   const deleteBtnInstance = new Vue( {
     el: '#deleteBtn',
+    name: 'deleteORCancel',
     delimiters: [ '[[', ']]' ],
     data: function () {
       return {
