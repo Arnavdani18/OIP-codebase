@@ -2,7 +2,7 @@
     <div class="container">
         <a class="navbar-brand" href="{{ url_prefix }}{{ home_page or "/" }}">
             {% if domain_settings.brandmark %}
-            <span><img src="{{ domain_settings.brandmark | abs_url }}" /></span>
+            <span class="brandmark"><img src="{{ domain_settings.brandmark | abs_url }}" /></span>
             {% else %}
             <span class="brandmark">{{ brand_html or (frappe.get_hooks("brand_html") or [_("Home")])[0] }}</span>
             {% endif %}
@@ -166,6 +166,10 @@
     .nullActive:hover {
     background-color: var(--secondary5) !important;
     
+    }
+
+    .brandmark>img{
+        height: 3.4rem;
     }
 </style>
 
