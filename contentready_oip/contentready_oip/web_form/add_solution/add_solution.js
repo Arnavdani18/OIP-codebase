@@ -524,6 +524,21 @@ frappe.ready(async () => {
   };
 
   submitSolutionForm = (is_draft) => {
+    const {title,description,city,country} = frappe.web_form.doc;
+    if (!title && !description && !city) {
+      const error_message = `
+      Please enter the required field to publish.
+      <ul>
+        <li>Title</li>
+        <li>City</li>
+        <li>Country</li>
+        <li>Description</li>
+      </ul>
+      `
+      frappe.throw(error_message);
+      return;
+    }
+
     getSolversFromMultiselect();
     frappe.call({
       method: 'contentready_oip.api.add_primary_content',
@@ -769,6 +784,13 @@ frappe.ready(async () => {
     }
   };
 
+  const addAsterisk = function (fieldnameArr) {
+    for (const field of fieldnameArr) {
+      $(`[data-fieldname="${field}"] label`)
+        .append(`<span class="text-danger">*</span>`);
+    }
+  }
+
   insertSelectedProblem = function () {
     $('*[data-fieldname="problems_addressed"]*[data-fieldtype="Table"]')
       .parent()
@@ -803,6 +825,7 @@ frappe.ready(async () => {
   insertSelectedProblem();
   hideAttachmentsSection();
   // getAvailableSectors();
+  addAsterisk(['title','description','city','problems_addressed','country'])
 
   if (frappe.web_form.doc.problems_addressed) {
     getTitleByName(frappe.web_form.doc.problems_addressed);
