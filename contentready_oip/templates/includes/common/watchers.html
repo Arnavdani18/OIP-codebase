@@ -1,15 +1,18 @@
 <div class="views"></div>
 
 <script>
-    frappe.ready(()=>{
+    function initializeWatch() {
         new Vue( {
             el: '.views',
+            name:'watchBtn',
             delimiters: [ '[[', ']]' ],
-            data: {
-                doctype: `{{doctype}}`,
-                name: `{{name}}`,
-                numOfWatchers: `{{watchers | length}}`,
-                watched: false
+            data(){
+                return{
+                    doctype: `{{doctype}}`,
+                    name: `{{name}}`,
+                    numOfWatchers: `{{watchers | length}}`,
+                    watched: false
+                }
             },
             computed: {
                 clickable: function() {
@@ -28,7 +31,7 @@
                 }
             },
             methods: {
-                toggleWatcher: function( doctype, name ) {
+                toggleWatcher( doctype, name ) {
 
                     if ( !this.clickable ) {
                         // disble the click on card
@@ -73,10 +76,9 @@
                     } );
                 }
             },
-            beforeCreate: function() {
+            created() {
                 // TODO: Replace this call with a filter on the data-watchers attribute.
                 // However, currently, frappe does not expand child tables within child tables into dicts.
-                frappe.ready( () => {
                     frappe.call( {
                         method: 'contentready_oip.api.has_user_contributed',
                         args: {child_doctype: 'Watch Table', parent_doctype: '{{doctype}}', parent_name: '{{name}}'},
@@ -84,26 +86,32 @@
                             this.watched = r.message;
                         }
                     } );
-                } )
             },
             template: `
-          <div class="d-flex align-items-center">
-              <button 
-                  class="btn social-icon-btn"
-                  :class="{
-                      'selected': watched,
-                      'detail_watch_btn': clickable,
-                      'card_watch_btn': !clickable
-                  }"
-                  v-on:click="toggleWatcher(doctype,name)"
-                  role="button">
-                  <i>{% include "public/svg/eye-regular.svg" %}</i>
-              </button>
-              <span class="social-stats">[[numOfWatchers]]</span>
-          </div>
+                <div class="d-flex align-items-center">
+                    <button 
+                        class="btn social-icon-btn"
+                        :class="{
+                            'selected': watched,
+                            'detail_watch_btn': clickable,
+                            'card_watch_btn': !clickable
+                        }"
+                        v-on:click="toggleWatcher(doctype,name)"
+                        role="button">
+                        <i>{% include "public/svg/eye-regular.svg" %}</i>
+                    </button>
+                    <span class="social-stats">[[numOfWatchers]]</span>
+                </div>
           `
         } );
-    })
+    }
+    
+    try {
+        frappe.require(['/assets/frappe/node_modules/vue/dist/vue.js'],initializeWatch)
+    } catch (error) {
+        frappe.ready(initializeWatch)
+    }
+    
 </script>
 
 
