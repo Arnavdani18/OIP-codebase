@@ -7,7 +7,7 @@ frappe.ready(() => {
     template: '#filter-script',
     data: function () {
       return {
-        selected_sector: 'all',
+        selected_sector: ['all'],
         show_range_filter: true,
         selected_range: 25,
         searched_location: localStorage.getItem('filter_location_name') || '',
@@ -16,26 +16,35 @@ frappe.ready(() => {
       };
     },
     created() {
+      const newThis = this;
+      $(document).ready(function () {
+        $('#sector-sel')
+          .select2({ width: '100%' })
+          .trigger('change')
+          .on('change', newThis.storeSectorFilter);
+
+        $('.selection>span').addClass('sector-filter');
+      });
       const existing_sectors = frappe.utils.get_query_params();
       let sectors = localStorage.getItem('filter_sectors');
       let rng = localStorage.getItem('filter_location_range');
-      
+
       this.selected_range = rng;
-      [this.selected_sector] = JSON.parse(sectors) || 'all';
-      
+      this.selected_sector = JSON.parse(sectors) || ['all'];
+
       // check if existing sector is from available_sectors
-      check_idx = this.available_sectors.findIndex(v => v['name'] === this.selected_sector);
+      check_idx = this.available_sectors.findIndex((v) =>
+        this.selected_sector.includes(v['name'])
+      );
       if (check_idx < 0) {
-        this.selected_sector = 'all';
+        this.selected_sector = ['all'];
       }
-      
-      // console.log(">>>>>>> ", this.selected_sector, this.available_sectors);
-      // return;
+
       if (existing_sectors && existing_sectors['page']) {
         this.qp_page = existing_sectors['page'];
       }
 
-      const filter_sectors = [this.selected_sector];
+      const filter_sectors = this.selected_sector;
       if (localStorage) {
         localStorage.setItem('filter_sectors', JSON.stringify(filter_sectors));
         this.setQueryParam();
@@ -84,12 +93,11 @@ frappe.ready(() => {
       },
 
       storeSectorFilter() {
-        const filter_sectors = [this.selected_sector];
+        this.selected_sector = $('#sector-sel').val();
+        const filter_sectors = JSON.stringify(this.selected_sector);
+
         if (localStorage) {
-          localStorage.setItem(
-            'filter_sectors',
-            JSON.stringify(filter_sectors)
-          );
+          localStorage.setItem('filter_sectors', filter_sectors);
           this.setQueryParam();
         }
         window.location.reload();
@@ -235,7 +243,7 @@ frappe.ready(() => {
           if (loc_name) {
             query_obj['loc_name'] = loc_name;
           }
-          
+
           let search_str = localStorage.getItem('search_query');
           if (search_str && window.location.pathname.includes('search')) {
             query_obj['key'] = search_str;
@@ -248,7 +256,7 @@ frappe.ready(() => {
           if (sectors) {
             sectors = JSON.parse(sectors); // since we stringify while storing
             query_obj['sectors'] = sectors;
-            this.selected_sector = sectors[0];
+            this.selected_sector = sectors;
           }
           return query_obj;
         }
