@@ -15,7 +15,7 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
-            <ul class="navbar-nav mt-lg-0 tab-bar nav-left-list">
+            <ul class="navbar-nav mt-lg-0 tab-bar nav-left-list nav-left-mob">
                 {% if frappe.session.user != 'Guest' %}
                 <li class="nav-item">
                     <a class="nav-item nav-link" href="/dashboard">
@@ -36,30 +36,32 @@
             <ul class="navbar-nav mt-lg-0 nav-right-list pattern1">
                 <li class="nav-item ml-lg-3 search-icon-li d-flex align-items-center ">
                     <button onclick="onClickSearch()">
-                        <img src="../assets/contentready_oip/svg/search-solid.svg" alt="" width="20" height="20" />
+                        <span class="nav-icon">
+                            {% include "public/svg/search-solid.svg" %}
+                        </span>
                     </button>
-                    <span class="d-block d-lg-none">Search</span>
+                    <span class="d-block d-lg-none ml-1">Search</span>
                 </li>
                 {% if frappe.session.user != 'Guest' %}
                 <li class="nav-item dropdown ml-lg-3 mr-lg-4 message-icon-li d-flex align-items-center">
                     {% set notifications = frappe.get_all('OIP Notification', fields=['text', 'route', 'name'], filters={'target_user': frappe.session.user, 'is_read': False}) %}
                     <button role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                         class="icon-btn">
-                        <img src="../assets/contentready_oip/svg/envelope-regular.svg" alt="" width="24.06" />
+                        <span class="nav-icon envelopeIcon">
+                            {% include "public/svg/envelope-regular.svg" %}
+                        </span>
 
                         {% if notifications | length > 1 %}
                         <span class="notification-icon"></span>
                         {% endif %}
                     </button>
+                    <span class="d-block d-lg-none">Messages</span>
                     <div class="dropdown-menu dropdown-menu-right p-0 mt-2 pattern1"
                         style="width: 47rem; max-height: 70vh; overflow: auto;">
 
                         <div class=" clearfix pattern1" style="background-color: #E1E1E1;">
                             <p class="float-left dropdown-header" style="font-size: 1.4rem;">Notifications
                                 ({{notifications | length}})</p>
-                            <!-- <button type="button" class="btn btn-link float-right pattern1">
-                                View All
-                            </button> -->
                         </div>
 
                         {% if notifications | length < 1 %}
@@ -104,10 +106,10 @@
                     <a class="nav-link profile-icon dropdown-toggle" href="#" id="profileDropdown" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         {% set doc = frappe.get_doc('User Profile', frappe.session.user) %}
-                        <img src="{{doc.photo|default('/files/default-avatar.jpg', true)}}" alt="profile photo"
-                            height="30" width="30" style="border-radius: .4rem; object-fit:cover;" onerror="javascript:this.src='assets/contentready_oip/images/default-avatar.jpg'" />
+                        <img src="{{doc.photo|default('/files/default-avatar.jpg', true)}}" alt="profile photo" class="profile-photo"
+                             onerror="javascript:this.src='assets/contentready_oip/images/default-avatar.jpg'" />
 
-                        <span class="d-lg-none text-capitalize ml-3">Profile</span>
+                        <span class="d-lg-none text-capitalize ml-3" style="color: var(--secondary1);">Profile</span>
                     </a>
                     <div class="dropdown-menu mt-2 dropdown-menu-right dropdown-section">
                         <div id="deskRoute"></div>
@@ -123,13 +125,15 @@
                 </li>
                 <li class="nav-item d-block d-lg-none">
                     <button (click)="logout()" class="">
-                        <img src="../assets/contentready_oip/svg/logout.svg" alt="" width="20" height="20" />
+                        <span class="nav-icon">
+                            {% include "public/svg/logout.svg" %}
+                        </span>
                     </button>
 
                     <span class="display-sm-md ">Log Out</span>
                 </li>
 
-                <li class="nav-item dropdown ml-lg-5 d-none d-md-block add-problem-li">
+                <li class="nav-item dropdown ml-lg-5 add-problem-li">
                     <a class="nav-link dropdown-toggle add-problem-btn" href="javascript:void(0);" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Add a Problem / Solution
@@ -147,9 +151,16 @@
                 </li>
                 {% else %}
                 <li class="nav-item">
-                    <button class="pr-0 text-primary" onclick="onClickLogin()">
+                    <!-- <button class="pr-0 text-primary" onclick="onClickLogin()">
                         Login
+                    </button> -->
+                    <button (click)="onClickLogin()" class="loginIconBtn">
+                        <span class="nav-icon loginIcon d-block d-lg-none">
+                            {% include "public/svg/log-in.svg" %}
+                        </span>
+                        <span class="display-sm-md text-primary">Login</span>
                     </button>
+
                 </li>
                 {% endif %}
             </ul>
@@ -170,6 +181,72 @@
 
     .brandmark>img{
         height: 3.4rem;
+    }
+
+    .profile-photo{
+        height: 30px;
+        width: 30px;
+        border-radius: .4rem; 
+        object-fit:cover;
+    }
+
+    .nav-icon{
+        margin-right: 1rem;
+    }
+
+    .nav-icon svg{
+        width: 2rem;
+        height: 2rem;
+        color: var(--secondary1);
+    }
+    
+    .loginIcon svg{
+        color: var(--primary3);
+    }
+
+    .envelopeIcon svg{
+        width: 2.4rem;
+        height: 2.4rem;
+    }
+    
+    @media screen and (max-width: 768px) {
+        .loginIconBtn{
+            display: flex;
+        }
+
+        .loginIcon{
+            margin-right: 2rem;
+        }
+    }
+
+    @media screen and (max-width: 600px) {
+        .profile-photo{
+            height: 24px;
+            width: 24px;
+            margin-left: .9rem;
+        }
+
+        .nav-left-mob {
+            margin-left: 1rem;
+        }
+
+        .brandmark>img{
+            margin-left: 1rem;
+        }
+        
+        .add-problem-li{
+            margin-left: 1rem;
+            margin-bottom: .5rem;
+        }
+
+        .loginIcon{
+            margin-right: 2rem;
+        }
+
+        .loginIconBtn{
+            display: flex;
+        }
+
     }
 </style>
 
