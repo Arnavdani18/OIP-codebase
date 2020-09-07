@@ -94,6 +94,12 @@ frappe.ready(() => {
 
       storeSectorFilter() {
         this.selected_sector = $('#sector-sel').val();
+
+        // sectors filter cannot be null, set to default
+        if (!this.selected_sector) {
+          $('#sector-sel').val(['all']).trigger('change');
+        }
+
         const filter_sectors = JSON.stringify(this.selected_sector);
 
         if (localStorage) {
