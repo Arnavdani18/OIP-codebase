@@ -17,6 +17,19 @@
     padding-left: 2rem;
   }
 
+  .select2-results ul, .selection ul{
+    font-size: var(--f12);
+  } 
+
+  .sector-filter {
+    font-weight: var(--wgt500);
+    height: 4.2rem;
+    line-height: 2.5rem;
+    border: 0.2rem solid var(--secondary1) !important;
+    border-radius: var(--round4) !important;
+    background-color: transparent !important;
+  }
+
   @media only screen and (max-width: 600px) {
     .in-mob {
       padding-top: 1rem;
@@ -27,7 +40,7 @@
 <script type="text/x-template" id="filter-script">
   <div class="row justify-content-sm-start justify-content-md-end flex-wrap" id="filter-section">
     <div class="" id="sector-sel-div">
-      <select class="pattern1" @change="storeSectorFilter" v-model="selected_sector" id="sector-sel">
+      <select class="pattern1" @change="storeSectorFilter" v-model="selected_sector" multiple id="sector-sel">
         <option selected value="all">All Sectors</option>
         <option v-for="sector in available_sectors" :value="sector.name">[[sector.title]]</option>
       </select>
