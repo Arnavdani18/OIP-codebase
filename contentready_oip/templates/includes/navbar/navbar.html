@@ -154,7 +154,7 @@
                     <!-- <button class="pr-0 text-primary" onclick="onClickLogin()">
                         Login
                     </button> -->
-                    <button (click)="onClickLogin()" class="loginIconBtn">
+                    <button onclick="onClickLogin()" class="loginIconBtn">
                         <span class="nav-icon loginIcon d-block d-lg-none">
                             {% include "public/svg/log-in.svg" %}
                         </span>
@@ -276,6 +276,7 @@
     })
 
     onClickLogin = () => {
+        console.log(".>>>>");
         window.location.href = ' /login';
     };
 
