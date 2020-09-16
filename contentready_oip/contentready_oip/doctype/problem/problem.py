@@ -6,7 +6,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe.website.website_generator import WebsiteGenerator
 from frappe.utils.html_utils import clean_html
-
+from contentready_oip import api
 
 class Problem(WebsiteGenerator):
     def make_route(self):
@@ -64,6 +64,7 @@ class Problem(WebsiteGenerator):
     def on_update(self):
         # read all child tables and add notifications
         self.create_notifications()
+        #api.update_doc_to_meilisearch(self, 'on_update')
     
     def create_notifications(self):
         # notify owner when someone enriches
