@@ -1244,10 +1244,10 @@ def refactor_2_list_str(doc_dict, p_key, c_key):
 
 def update_doc_to_meilisearch(doc, hook_action):
     try:
-        document = doc.as_dict()
-        if document['is_published']:
-            index_name = replace_space(document['doctype'])
-            document = refactor_2_list_str(document, 'sectors','sector')
+        if doc.is_published:
+            index_name = replace_space(doc.doctype)
+            j = doc.as_json()
+            document = refactor_2_list_str(json.loads(j), 'sectors','sector')
             index = CLIENT.get_index(index_name)
             index.add_documents([document])
     except Exception as _e:

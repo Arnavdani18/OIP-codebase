@@ -64,7 +64,7 @@ class Problem(WebsiteGenerator):
     def on_update(self):
         # read all child tables and add notifications
         self.create_notifications()
-        api.update_doc_to_meilisearch(self, 'on_update')
+        #api.update_doc_to_meilisearch(self, 'on_update')
     
     def create_notifications(self):
         # notify owner when someone enriches
