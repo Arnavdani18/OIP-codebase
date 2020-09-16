@@ -100,14 +100,14 @@ doc_events = {
 		# "on_trash": "method"
 	},
 	"Problem":{
-		"on_update": "contentready_oip.api.add_doc_to_elasticsearch"
+		"on_update": "contentready_oip.api.update_doc_to_meilisearch"
 	},
 	"Solution":{
-		"on_update": "contentready_oip.api.add_doc_to_elasticsearch"
+		"on_update": "contentready_oip.api.update_doc_to_meilisearch"
 	},
-	"User Profile":{
-		"on_update": "contentready_oip.api.add_doc_to_elasticsearch"
-	}
+	# "User Profile":{
+		# "on_update": "contentready_oip.api.add_doc_to_elasticsearch"
+	# }
 }
 
 # Scheduled Tasks
