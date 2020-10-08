@@ -54,20 +54,37 @@
 
       <div class="row my-4">
         <div class="col">
-          <p class="heading">Personas</p>
+          <h5 class="heading">Personas</h5>
           <!-- Here comes Personas -->
+          {% if personas | length == 0 %}
+            <h5>No persona available</h5>
+          {% endif %}
+
           {% for persona in personas %}
-          {{ persona.persona }}{% if not loop.last %}, {% endif %}
+          <button class="tag actions text-capitalize over_tag">
+            {{ persona.persona }}
+          </button>
+          <!-- {# {% if not loop.last %}, {% endif %} #} -->
           {% endfor %}
         </div>
       </div>
 
       <div class="row my-4">
         <div class="col">
-          <p class="heading">Interests</p>
-          {% set sectors = sectors %}
-          {% set show_all = True %}
-          {% include "templates/includes/common/sector_labels.html" %}
+          <h5 class="heading">Interests</h5>
+          {% set sectors = sectors%}
+          <!-- {# {% set show_all = True %}
+          {% include "templates/includes/common/sector_labels.html" %} #} -->
+
+          {% for sector in sectors %}
+          <button class="tag actions text-capitalize over_tag">
+            {{ sector.sector_title }}
+          </button>
+          {% endfor %}
+          
+          {% if sectors | length == 0 %}
+            <h5>No sectors available</h5>
+          {% endif %}
         </div>
       </div>
     </div>
@@ -99,6 +116,12 @@
 
   .black-local {
     color: var(--secondary1);
+  }
+
+  .over_tag{
+    padding: 0.5rem 0.7rem; 
+    font-size: 1.4rem;
+    outline: none;
   }
 </style>
 
