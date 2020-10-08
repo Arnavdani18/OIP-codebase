@@ -20,9 +20,18 @@
                                 <span class="indicator blue" data-text="{{ _('Login') }}"></span>
                             </h2>
                             {%- if not disable_signup -%}
+                            <style>
+                                a[href="#signup"]:hover {
+                                    color: var(--primary2);
+                                }
+                                a[href="#signup"] {
+                                    text-decoration: underline;
+                                }
+                            </style>
                             <p class="sign-up-message login-description mt-2">
                                 Need a Social Alpha account? <a href="#signup">{{ _("Create an account") }}</a>
                             </p>
+                            
                             {%- endif -%}
                             
                             <div class='social-login mt-4'>
