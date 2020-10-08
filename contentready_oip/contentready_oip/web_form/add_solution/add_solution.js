@@ -357,7 +357,7 @@ frappe.ready(async () => {
     if (!text) {
       text = frappe.web_form.doc.title;
     }
-    if (text && text.length > 3) {
+    if (text && text.length > 2) {
       frappe.call({
         method: 'contentready_oip.api.search_content_by_text',
         args: {
