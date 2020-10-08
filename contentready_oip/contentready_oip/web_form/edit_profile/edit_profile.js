@@ -331,39 +331,40 @@ frappe.ready(async function () {
   const personaVueComp = new Vue({
     name: 'Personas',
     el: '#personasComp',
-    data: {
-      avail_personas: [],
-      user_personas: [],
+    data() {
+      return {
+        avail_personas: [],
+        user_personas: [],
+      };
     },
-    beforeCreate: function () {
-      // https://vuejs.org/v2/api/#beforeCreate
+    created() {
       getAvailablePersonas();
     },
     methods: {
-      toggleClass: function (persona) {
+      toggleClass(persona) {
         let is_present = this.user_personas.find((p) => persona === p);
         if (is_present) {
           return true;
-        } else {
-          return false;
         }
+        return false;
       },
-
-      updatePersonaToDoc: function (personaClicked) {
+      updatePersonaToDoc(personaClicked) {
         if (!frappe.web_form.doc.personas) {
           frappe.web_form.doc.personas = [];
         }
+        const updatedPersonas = [...frappe.web_form.doc.personas];
 
-        let index = frappe.web_form.doc.personas.findIndex(
+        let index = updatedPersonas.findIndex(
           (s) => s.persona === personaClicked
         );
 
-        if (index > 0) {
-          frappe.web_form.doc.personas.splice(index, 1);
+        if (index > -1) {
+          updatedPersonas.splice(index, 1);
         } else {
-          frappe.web_form.doc.personas.push({ persona: personaClicked });
+          updatedPersonas.push({ persona: personaClicked });
         }
 
+        frappe.web_form.doc.personas = updatedPersonas;
         getAvailablePersonas();
       },
     },
