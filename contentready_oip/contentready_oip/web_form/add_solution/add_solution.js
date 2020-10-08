@@ -847,6 +847,7 @@ frappe.ready(async () => {
   }
 
   const vm = new Vue({
+    name: 'SelectedProblem',
     el: '#selectedProblem',
     data: function () {
       return {
@@ -907,12 +908,13 @@ frappe.ready(async () => {
         }
 
         sectorsComp.solution_sectors = solution_sectors || [];
-        sectorsComp.avail_sectors = r.message;
+        sectorsComp.avail_sectors = [...r.message.sort(sortAlphabetically)];
       },
     });
   };
 
   const sectorsComp = new Vue({
+    name: 'Sectors',
     el: '#sectorsComp',
     data: function () {
       return {
@@ -934,7 +936,7 @@ frappe.ready(async () => {
           (s) => s.sector === sectorClicked
         );
 
-        if (index > 0) {
+        if (index > -1) {
           frappe.web_form.doc.sectors.splice(index, 1);
         } else {
           frappe.web_form.doc.sectors.push({ sector: sectorClicked });
@@ -975,6 +977,7 @@ frappe.ready(async () => {
   });
 
   const deleteBtnInstance = new Vue({
+    name: 'DeleteBtn',
     el: '#deleteBtn',
     delimiters: ['[[', ']]'],
     data: function () {

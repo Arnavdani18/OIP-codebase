@@ -497,6 +497,7 @@ frappe.ready( async () => {
   // End UI Fixes
 
   const deleteBtnInstance = new Vue( {
+    name: 'DeleteBtn',
     el: '#deleteBtn',
     name: 'deleteORCancel',
     delimiters: [ '[[', ']]' ],
