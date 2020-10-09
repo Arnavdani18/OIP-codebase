@@ -51,6 +51,15 @@
     {% endif %}
 </div>
 
+<style>
+    @media only screen and (max-width: 600px){
+        .align-icon {
+            right: .2rem;
+            bottom: 1.2rem;
+        }
+    }
+</style>
+
 {% if (media | length) > 0%}
 {% set media = media %}
 {% set id = id %}
