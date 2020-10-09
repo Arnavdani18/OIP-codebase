@@ -6,24 +6,27 @@
     </div>
     <div class="col-md-8 card-detail-section">
       <div>
-        <div class="row ">
-          <div
-            class="col d-flex justify-content-between pr-0 problem-on-mobile left-section"
-          >
+        <div class="row align-items-center pb-2">
+          <div class="col-sm-12 col-md-4 px-0 px-md-4">
             {% include "templates/includes/problem/problem_label.html" %}
-            <div>
-              <a href="#solutions-section" class="see-solutions">
-                See Solution(s)
-              </a>
-              {% if frappe.session.user == owner %} {% set doctype = doctype %}
-              {% set name = name %} {% include
-              "templates/includes/common/edit_icon.html" %} {% endif %} {%
-              include "templates/includes/common/validation_form.html" %} {%
-              include "templates/includes/common/collaboration_form.html" %} {%
-              include "templates/includes/common/share.html" %}
-            </div>
+          </div>
+          <div class="col-sm-12 col-md text-left text-md-right px-0">
+            <a href="#solutions-section" class="see-solutions">
+              See Solution(s)
+            </a>
+            <span class="ml-5 ml-md-2">
+              {% if frappe.session.user == owner %} 
+              {% set doctype = doctype %}
+              {% set name = name %} 
+              {% include "templates/includes/common/edit_icon.html" %} 
+              {% endif %} 
+              {% include "templates/includes/common/share.html" %}
+            </span>
           </div>
         </div>
+
+        {% include "templates/includes/common/validation_form.html" %} 
+        {% include "templates/includes/common/collaboration_form.html" %} 
 
         <div class="row title-container">
           <div class="col pr-0 problem-on-mobile">
@@ -43,9 +46,8 @@
           </div>
         </div>
 
-        <div class="row d-flex justify-content-between">
-          <div class="col-xl-4 mt-3 action-btn-section">
-            <div class="stats-section pl-0">
+        <div class="row">
+          <div class="col-sm-12 col-md-4 mt-3 action-btn-section">
               {% set doctype = doctype %} {% set name = name %}
               <div class="header-stats-container">
                 <div class="header-likes">
@@ -55,35 +57,34 @@
                   {% include "templates/includes/common/watchers.html" %}
                 </div>
               </div>
-            </div>
           </div>
 
-          <div class="col-xl-8 pr-0 action-btn-section mt-3">
+          <div class="col-sm-12 col-md-8 pr-0 action-btn-section mt-3">
             <div class="d-flex justify-content-between flex-wrap">
               <button
                 type="button"
-                class="card-btn"
+                class="card-btn mt-2 mt-lg-0"
                 onclick="openEnrichmentForm('{{doctype}}', '{{name}}')"
               >
                 Enrich
               </button>
               <button
                 type="button"
-                class="card-btn"
+                class="card-btn mt-2 mt-lg-0"
                 onclick="openValidationForm('{{doctype}}', '{{name}}')"
               >
                 Validate
               </button>
               <button
                 type="button"
-                class="card-btn"
+                class="card-btn mt-2 mt-lg-0"
                 onclick="openCollaborationForm('{{doctype}}', '{{name}}')"
               >
                 Collaborate
               </button>
               <button
                 type="button"
-                class="card-btn add-solution-btn"
+                class="card-btn mt-2 mt-lg-0 add-solution-btn"
                 onclick="openSolutionForm('{{name}}')"
               >
                 Add Solution
@@ -95,6 +96,19 @@
     </div>
   </div>
 </div>
+
+<style>
+  .header-stats-container{
+    height: 100%;
+    align-items: center;
+  }
+
+  @media only screen and (max-width: 768px) and (min-width: 600px){
+    .header-stats-container{
+      grid-template-columns: 45% 45%;
+    }
+  }
+</style>
 
 <script>
   {% include "public/js/header_section.js" %}
