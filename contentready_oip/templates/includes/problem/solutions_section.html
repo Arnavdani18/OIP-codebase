@@ -2,9 +2,9 @@
   This problem has the following solutions.
 </h3>
 
-<div class="solution-section-container">
+<div class="row">
   {% for s in solutions %} 
-  <div>
+  <div class="col-sm-12 col-md-6">
     {% set solution = frappe.get_doc('Solution', s.solution) %}
     {% include "templates/includes/solution/solution_card_small.html" %}
   </div>
