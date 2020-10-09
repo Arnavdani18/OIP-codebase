@@ -14,6 +14,10 @@ frappe.ready(async function () {
     });
   };
 
+  const fixOuterDivForMobile = () => {
+    $('.col-9').removeClass('col-9').addClass('col-sm-12 col-md-10');
+  };
+
   arrangeDivs = function () {
     // $('.page_content').wrap('<div class="row justify-content-center"><div class="col-10"></div></div>');
     $('.form-layout').addClass('bg-transparent px-0');
@@ -92,7 +96,7 @@ frappe.ready(async function () {
   addDropzone = () => {
     // disable autoDiscover as we are manually binding the dropzone to a form element
     Dropzone.autoDiscover = false;
-    const el = `<form class="dropzone dz-clickable d-flex align-items-center justify-content-center flex-wrap" style="font-size:var(--f14);" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
+    const el = `<form class="dropzone dz-clickable d-flex align-items-center justify-content-center flex-wrap mb-4" style="font-size:var(--f14);" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
     $('*[data-fieldname="photo"]').after(el);
     $('#dropzone').dropzone({
       url: '/api/method/upload_file',
@@ -257,6 +261,7 @@ frappe.ready(async function () {
     moveDivs();
     arrangeDivs();
     createOrgOptions();
+    fixOuterDivForMobile();
     // createPersonaOptions();
     // createSectorOptions();
     addSection();
