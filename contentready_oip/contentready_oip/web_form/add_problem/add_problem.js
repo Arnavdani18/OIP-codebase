@@ -18,48 +18,30 @@ frappe.ready(async () => {
     $('#similar-problems').append('<div></div>');
   };
 
+  const sortAlphabetically = (a, b) => {
+    var labelA = a.label.toUpperCase(); // ignore upper and lowercase
+    var labelB = b.label.toUpperCase(); // ignore upper and lowercase
+    if (labelA < labelB) {
+      return -1;
+    }
+    if (labelA > labelB) {
+      return 1;
+    }
+
+    // for equal case
+    return 0;
+  }
+
   createOrgOptions = () => {
     frappe.call({
       method: 'contentready_oip.api.get_orgs_list',
       args: {},
       callback: function (r) {
-        frappe.web_form.set_df_property('org', 'options', r.message);
+        const options = [...r.message].sort(sortAlphabetically);
+        frappe.web_form.set_df_property('org', 'options', options);
       },
     });
   };
-
-  // createSectorOptions = () => {
-  //   $('*[data-fieldname="sectors"]').before(
-  //     '<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sector-options"></div>'
-  //   );
-  //   frappe.call({
-  //     method: 'contentready_oip.api.get_sector_list',
-  //     args: {},
-  //     callback: function (r) {
-  //       let problem_sectors;
-  //       if (frappe.web_form.doc.sectors) {
-  //         problem_sectors = frappe.web_form.doc.sectors.map(s => s.sector);
-  //       }
-  //       r.message.map(op => {
-  //         let has_sector = false;
-  //         if (problem_sectors) {
-  //           has_sector = problem_sectors.indexOf(op.value) !== -1;
-  //         }
-  //         const el = `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="sector-check-${op.value}" value="${op.value}"><label class="form-check-label" for="sector-check-${op.value}">${op.label}</label></div>`;
-  //         $('#sector-options').append(el);
-  //         $(`#sector-check-${op.value}`).attr('checked', has_sector);
-  //       });
-  //       $('[id^=sector-check]').on('click', addSectorToDoc);
-  //     }
-  //   });
-  // };
-
-  // addSectorToDoc = (event) => {
-  //   if (!frappe.web_form.doc.sectors) {
-  //     frappe.web_form.doc.sectors = [];
-  //   }
-  //   frappe.web_form.doc.sectors.push({ sector: event.target.value });
-  // };
 
   hideTables = () => {
     $('*[data-fieldtype="Table"]').hide();
@@ -131,7 +113,7 @@ frappe.ready(async () => {
     await sleep(500);
     // Look up title again - user could have typed something since the event was triggered.
     const text = $('*[data-fieldname="title"]:text').val().trim();
-    if (text.length > 3) {
+    if (text.length > 2) {
       frappe.call({
         method: 'contentready_oip.api.search_content_by_text',
         args: {
@@ -573,12 +555,13 @@ frappe.ready(async () => {
         }
 
         sectorsComp.problem_sectors = problem_sectors || [];
-        sectorsComp.avail_sectors = r.message;
+        sectorsComp.avail_sectors = [...r.message.sort(sortAlphabetically)];
       },
     });
   };
 
   const sectorsComp = new Vue({
+    name: 'Sectors',
     el: '#sectorsComp',
     data: function () {
       return {
@@ -600,7 +583,7 @@ frappe.ready(async () => {
           (s) => s.sector === sectorClicked
         );
 
-        if (index > 0) {
+        if (index > -1) {
           frappe.web_form.doc.sectors.splice(index, 1);
         } else {
           frappe.web_form.doc.sectors.push({ sector: sectorClicked });
@@ -641,6 +624,7 @@ frappe.ready(async () => {
   });
 
   const deleteBtnInstance = new Vue({
+    name: 'DeleteBtn',
     el: '#deleteBtn',
     delimiters: ['[[', ']]'],
     data: function () {

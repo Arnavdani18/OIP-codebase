@@ -3,7 +3,7 @@
     {% set ns = namespace(found=False) %}
     {% for item in media %}
         {% if item['is_featured'] == 1 %}
-            <img src="{{item.attachment}}" alt="image" onerror="javascript:this.src='/files/image_placeholder.jpg'"
+            <img src="{{item.attachment}}" alt="image" onerror="javascript:this.src='../assets/contentready_oip/images/image_placeholder.jpg'"
             class="image" />
         {% set ns.found = True %}
         {% endif %}
@@ -11,10 +11,10 @@
     
     {% if not ns.found %} 
         {% if (media|length) > 0 %}
-        <img src="{{media[0].attachment}}" alt="image" onerror="javascript:this.src='/files/image_placeholder.jpg'"
+        <img src="{{media[0].attachment}}" alt="image" onerror="javascript:this.src='../assets/contentready_oip/images/image_placeholder.jpg'"
             class="image" />
         {% else %}
-        <img src="/files/image_placeholder.jpg" alt="image" class="image" />
+        <img src="../assets/contentready_oip/images/image_placeholder.jpg" alt="image" class="image" />
         {% endif %}
     {% endif %}
 
@@ -29,7 +29,7 @@
     {% set ns = namespace(found=False) %}
     {% for item in media %}
         {% if item['is_featured'] == 1 %}
-            <img src="{{item.attachment}}" alt="image" onerror="javascript:this.src='/files/image_placeholder.jpg'"
+            <img src="{{item.attachment}}" alt="image" onerror="javascript:this.src='../assets/contentready_oip/images/image_placeholder.jpg'"
             class="image" />
         {% set ns.found = True %}
         {% endif %}
@@ -37,10 +37,10 @@
     
     {% if not ns.found %} 
         {% if (media|length) > 0 %}
-        <img src="{{media[0].attachment}}" alt="image" onerror="javascript:this.src='/files/image_placeholder.jpg'"
+        <img src="{{media[0].attachment}}" alt="image" onerror="javascript:this.src='../assets/contentready_oip/images/image_placeholder.jpg'"
             class="image-ipad" />
         {% else %}
-        <img src="/files/image_placeholder.jpg" alt="image" class="image-ipad" />
+        <img src="../assets/contentready_oip/images/image_placeholder.jpg" alt="image" class="image-ipad" />
         {% endif %}
     {% endif %}
     
@@ -50,6 +50,15 @@
     </button>
     {% endif %}
 </div>
+
+<style>
+    @media only screen and (max-width: 600px){
+        .align-icon {
+            right: .2rem;
+            bottom: 1.2rem;
+        }
+    }
+</style>
 
 {% if (media | length) > 0%}
 {% set media = media %}

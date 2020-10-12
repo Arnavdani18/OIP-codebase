@@ -6,24 +6,27 @@
         </div>
         <div class="col-md-8 card-detail-section">
             <div>
-                <div class="row ">
-                    <div class="col d-flex justify-content-between pr-0 problem-on-mobile left-section">
+                <div class="row align-items-center pb-2">
+                    <div class="col-sm-12 col-md-4 px-0 px-md-4">
                         {% include "templates/includes/solution/solution_label.html" %}
-                        <div>
-                            <a href="#problems-section" class="see-solutions">
-                                See Problem(s)
-                            </a>
+                    </div>
+                    <div class="col-sm-12 col-md text-left text-md-right px-0">
+                        <a href="#problems-section" class="see-solutions">
+                            See Problem(s)
+                        </a>
+                        <span>
                             {% if frappe.session.user == owner %}
                             {% set doctype = doctype %}
                             {% set name = name %}
                             {% include "templates/includes/common/edit_icon.html" %}
                             {% endif %}
-                            {% include "templates/includes/common/validation_form.html" %}
-                            {% include "templates/includes/common/collaboration_form.html" %}
                             {% include "templates/includes/common/share.html" %}
-                        </div>
+                        </span>
                     </div>
                 </div>
+
+                {% include "templates/includes/common/validation_form.html" %}
+                {% include "templates/includes/common/collaboration_form.html" %}
 
                 <div class="row title-container">
                     <div class="col pr-0 problem-on-mobile">
@@ -45,8 +48,8 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-xl-4 action-btn-section align-self-center mt-3">
-                        <div class="stats-section">
+                    <div class="col-md-12 col-lg-4 action-btn-section mt-3">
+                        <!-- <div class="stats-section"> -->
                             {% set doctype = doctype %}
                             {% set name = name %}
                             <div class="header-stats-container">
@@ -57,10 +60,10 @@
                                     {% include "templates/includes/common/watchers.html" %}
                                 </div>
                             </div>
-                        </div>
+                        <!-- </div> -->
                     </div>
 
-                    <div class="col-xl-8 pr-0 action-btn-section mt-3">
+                    <div class="col-md-12 col-lg-8 pr-0 action-btn-section mt-3">
                         <div class="d-flex justify-content-sm-start justify-content-lg-end flex-wrap">
                             <button type="button" class="card-btn mr-4"
                                 onclick="openValidationForm('{{doctype}}', '{{name}}')">
@@ -77,6 +80,20 @@
         </div>
     </div>
 </div>
+
+<style>
+  .header-stats-container{
+    height: 100%;
+    align-items: center;
+    grid-template-columns: 30% 30%;
+  }
+
+  @media only screen and (max-width: 768px) and (min-width: 600px){
+    .header-stats-container{
+      grid-template-columns: 20% 20%;
+    }
+  }
+</style>
 
 <script>
     {% include "public/js/header_section.js" %}

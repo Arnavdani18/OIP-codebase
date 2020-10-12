@@ -10,15 +10,15 @@
   <div class="row">
     <div class="col">
       <div class="col-sm-12 problem-listed-container">
-        <div class="d-flex justify-content-between align-items-center">
-          <div class="d-flex align-items-center">
-            <img src="../assets/contentready_oip/svg/problem_icon_white.svg" alt="" height="24" width="20" />
-            <h3>
+        <div class="d-flex align-items-center">
+          <img src="../assets/contentready_oip/svg/problem_icon_white.svg" alt="" height="24" width="20" />
+          <div class="clearfix w-100" style="font-size: 2rem;">
+            <span  class="ml-2" role="heading">
               Problems Listed (<span id="problems-count">{{ problems | length }} of {{ total_count }}</span>)
-            </h3>
+            </span>
+            <span id="problems-count" class="ml-2 ml-md-0 float-left float-md-right">Page {{page}}</span>
           </div>
-
-          <h3 id="problems-count">Page {{page}}</h3>
+          
         </div>
       </div>
     </div>
@@ -57,3 +57,11 @@
 
   {% endif %}
 </div>
+
+<style>
+  @media only screen and (max-width: 600px){
+    .problem-listed-container{
+      height: 6.5rem;
+    }
+  }
+</style>

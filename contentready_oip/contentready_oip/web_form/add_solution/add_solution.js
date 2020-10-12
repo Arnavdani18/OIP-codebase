@@ -72,12 +72,27 @@ frappe.ready(async () => {
     $('#matching-problems').append('<div></div>');
   };
 
+  const sortAlphabetically = (a, b) => {
+    var labelA = a.label.toUpperCase(); // ignore upper and lowercase
+    var labelB = b.label.toUpperCase(); // ignore upper and lowercase
+    if (labelA < labelB) {
+      return -1;
+    }
+    if (labelA > labelB) {
+      return 1;
+    }
+
+    // for equal case
+    return 0;
+  }
+
   createOrgOptions = () => {
     frappe.call({
       method: 'contentready_oip.api.get_orgs_list',
       args: {},
       callback: function (r) {
-        frappe.web_form.set_df_property('org', 'options', r.message);
+        const options = [...r.message].sort(sortAlphabetically);
+        frappe.web_form.set_df_property('org', 'options', options);
       },
     });
   };
@@ -342,7 +357,7 @@ frappe.ready(async () => {
     if (!text) {
       text = frappe.web_form.doc.title;
     }
-    if (text && text.length > 3) {
+    if (text && text.length > 2) {
       frappe.call({
         method: 'contentready_oip.api.search_content_by_text',
         args: {
@@ -832,6 +847,7 @@ frappe.ready(async () => {
   }
 
   const vm = new Vue({
+    name: 'SelectedProblem',
     el: '#selectedProblem',
     data: function () {
       return {
@@ -892,12 +908,13 @@ frappe.ready(async () => {
         }
 
         sectorsComp.solution_sectors = solution_sectors || [];
-        sectorsComp.avail_sectors = r.message;
+        sectorsComp.avail_sectors = [...r.message.sort(sortAlphabetically)];
       },
     });
   };
 
   const sectorsComp = new Vue({
+    name: 'Sectors',
     el: '#sectorsComp',
     data: function () {
       return {
@@ -919,7 +936,7 @@ frappe.ready(async () => {
           (s) => s.sector === sectorClicked
         );
 
-        if (index > 0) {
+        if (index > -1) {
           frappe.web_form.doc.sectors.splice(index, 1);
         } else {
           frappe.web_form.doc.sectors.push({ sector: sectorClicked });
@@ -960,6 +977,7 @@ frappe.ready(async () => {
   });
 
   const deleteBtnInstance = new Vue({
+    name: 'DeleteBtn',
     el: '#deleteBtn',
     delimiters: ['[[', ']]'],
     data: function () {

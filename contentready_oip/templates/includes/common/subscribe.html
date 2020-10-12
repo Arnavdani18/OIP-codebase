@@ -24,9 +24,9 @@
                                 name="subscriber-email"
                                 id="subscriber-email"
                                 placeholder="Email Address"
-                                class="form"
+                                class="form email_input"
                             />
-                            <div class="input-group-append">
+                            <div class="input-group-append mt-2 mt-md-0">
                               <button class="btn subscribe-button" type="button" onclick="addSubscriber()">Subscribe</button>
                             </div>
                           </div>
@@ -49,6 +49,15 @@
         </div>
     </div>
 </div>
+
+<style>
+    @media only screen and (max-width: 600px){
+        .email_input {
+            max-width: unset !important;
+            width: 100% !important;
+        }
+    }
+</style>
 
 <script>
     isEmail = (email) => {

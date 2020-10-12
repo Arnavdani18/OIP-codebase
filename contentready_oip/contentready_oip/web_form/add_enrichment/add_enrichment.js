@@ -21,12 +21,27 @@ frappe.ready( async () => {
     $( "#add-problem-form" ).append( $( ".form-layout" ) );
   };
 
+  const sortAlphabetically = (a, b) => {
+    var labelA = a.label.toUpperCase(); // ignore upper and lowercase
+    var labelB = b.label.toUpperCase(); // ignore upper and lowercase
+    if (labelA < labelB) {
+      return -1;
+    }
+    if (labelA > labelB) {
+      return 1;
+    }
+
+    // for equal case
+    return 0;
+  }
+
   createOrgOptions = () => {
     frappe.call( {
       method: "contentready_oip.api.get_orgs_list",
       args: {},
       callback: function ( r ) {
-        frappe.web_form.set_df_property( "org", "options", r.message );
+        const options = [...r.message].sort(sortAlphabetically);
+        frappe.web_form.set_df_property( "org", "options", options );
       }
     } );
   };
@@ -482,6 +497,7 @@ frappe.ready( async () => {
   // End UI Fixes
 
   const deleteBtnInstance = new Vue( {
+    name: 'DeleteBtn',
     el: '#deleteBtn',
     name: 'deleteORCancel',
     delimiters: [ '[[', ']]' ],

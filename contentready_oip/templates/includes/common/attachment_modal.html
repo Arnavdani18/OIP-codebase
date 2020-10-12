@@ -11,11 +11,13 @@
         <div class="container-fluid">
           <div class="row attachment-modal-container">
             {% for m in media %}
-            <a data-fancybox="attachment-gallery-{{ id }}" href="{{m.attachment}}">
+            <a data-fancybox="attachment-gallery-{{ id }}" href="{{m.attachment}}" title="{{m.attachment}}">
               {% if m.type and m.type.find('video') >= 0 %}
               <div class="video-thumbnail text-primary">{% include "public/svg/file-video-solid.svg" %}</div>
+              {% elif m.type and m.type.find('link') >= 0 %}
+              <div class="link-thumbnail text-primary">{% include "public/svg/link-2.svg" %}</div>
               {% else %}
-              <img src="{{m.attachment or m.thumbnail }}" onerror="javascript:this.src='/files/image_placeholder.jpg'"
+              <img src="{{m.attachment or m.thumbnail }}" onerror="javascript:this.src='../assets/contentready_oip/images/image_placeholder.jpg'"
                 class="small-img-attachment-modal" alt="{{ m.description }}" id="{{id}}-{{loop.index}}" />
               {% endif %}
             </a>
@@ -44,5 +46,17 @@
     grid-template-columns: repeat(auto-fill, 15rem);
     grid-gap: 10px;
     overflow: scroll;
+  }
+
+  .link-thumbnail{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 15rem;
+    background-color: darkslategray;
+  }
+
+  .link-thumbnail>svg{
+    width: 5rem;
   }
 </style>

@@ -122,7 +122,7 @@
                   <div class="video-thumbnail text-primary">{% include "public/svg/file-video-solid.svg" %}</div>
                   {% else %}
                   <img src="{{m.attachment or m.thumbnail }}"
-                    onerror="javascript:this.src='/files/image_placeholder.jpg'" class="small-img-attachment-modal"
+                    onerror="javascript:this.src='../assets/contentready_oip/images/image_placeholder.jpg'" class="small-img-attachment-modal"
                     alt="{{ m.description }}" id="{{id}}-{{loop.index}}" />
                   {% endif %}
                 </a>

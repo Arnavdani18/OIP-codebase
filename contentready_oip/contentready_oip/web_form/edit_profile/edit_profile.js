@@ -3,23 +3,25 @@ frappe.provide('Vue');
 frappe.ready(async function () {
   // Start helpers
   // Simple sleep(ms) function from https://stackoverflow.com/a/48882182
-  const sleep = m => new Promise(r => setTimeout(r, m));
+  const sleep = (m) => new Promise((r) => setTimeout(r, m));
 
   let orgs = {};
 
   // Fix layout - without this, the entire form occupies col-2 due to custom CSS.
   moveDivs = () => {
     $('.section-body > div').each(function () {
-      $(this)
-        .parent()
-        .before(this);
+      $(this).parent().before(this);
     });
+  };
+
+  const fixOuterDivForMobile = () => {
+    $('.col-9').removeClass('col-9').addClass('col-sm-12 col-md-10');
   };
 
   arrangeDivs = function () {
     // $('.page_content').wrap('<div class="row justify-content-center"><div class="col-10"></div></div>');
     $('.form-layout').addClass('bg-transparent px-0');
-  }
+  };
 
   createOrgOptions = () => {
     $('*[data-fieldname="org_title"]').attr('list', 'orgs');
@@ -28,80 +30,17 @@ frappe.ready(async function () {
       method: 'contentready_oip.api.get_orgs_list',
       args: {},
       callback: function (r) {
-        r.message.map(op => {
+        r.message.map((op) => {
           $('#orgs').append(
             $('<option>', {
-              value: op.label
+              value: op.label,
             })
           );
           orgs[op.label] = op.value;
         });
-      }
+      },
     });
   };
-
-  // createPersonaOptions = () => {
-  //   $('*[data-fieldname="personas"]').before(
-  //     '<label class="form-group control-label">Personas</label><br/><div id="persona-options"></div>'
-  //   );
-  //   frappe.call({
-  //     method: 'contentready_oip.api.get_persona_list',
-  //     args: {},
-  //     callback: function (r) {
-  //       let user_personas;
-  //       if (frappe.web_form.doc.personas) {
-  //         user_personas = frappe.web_form.doc.personas.map(p => p.persona);
-  //       }
-  //       r.message.map(op => {
-  //         let has_persona;
-  //         if (user_personas) {
-  //           has_persona = user_personas.indexOf(op.value) !== -1;
-  //         }
-  //         const el = `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="persona-check-${op.value}" value="${op.value}"><label class="form-check-label" for="persona-check-${op.value}">${op.label}</label></div>`;
-  //         $('#persona-options').append(el);
-  //         $(`#persona-check-${op.value}`).attr('checked', has_persona);
-  //       });
-  //       $('[id^=persona-check]').on('click', addPersonaToDoc);
-  //     }
-  //   });
-  // };
-
-  // addPersonaToDoc = event => {
-  //   if (!frappe.web_form.doc.personas) {
-  //     frappe.web_form.doc.personas = [];
-  //   }
-  //   frappe.web_form.doc.personas.push({ persona: event.target.value });
-  // };
-
-  // createSectorOptions = () => {
-  //   $('*[data-fieldname="sectors"]').before(
-  //     '<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sector-options"></div>'
-  //   );
-
-  //   frappe.call({
-  //     method: 'contentready_oip.api.get_sector_list',
-  //     args: {},
-  //     callback: function (r) {
-  //       let user_sectors;
-  //       if (frappe.web_form.doc.sectors) {
-  //         user_sectors = frappe.web_form.doc.sectors.map(s => s.sector);
-  //       }
-
-  //       r.message.map(op => {
-
-  //         let has_sector = false;
-  //         if (user_sectors) {
-  //           has_sector = user_sectors.indexOf(op.value) !== -1;
-  //         }
-
-  //         const el = `<div class="form-check form-check-inline"><input class="form-check-input" type="checkbox" id="sector-check-${op.value}" value="${op.value}"><label class="form-check-label" for="sector-check-${op.value}">${op.label}</label></div>`;
-  //         $('#sector-options').append(el);
-  //         $(`#sector-check-${op.value}`).attr('checked', has_sector);
-  //       });
-  //       $('[id^=sector-check]').on('click', addSectorToDoc);
-  //     }
-  //   });
-  // };
 
   const getAvailableSectors = function () {
     frappe.call({
@@ -110,14 +49,14 @@ frappe.ready(async function () {
       callback: function (r) {
         let user_sectors;
         if (frappe.web_form.doc.sectors) {
-          user_sectors = frappe.web_form.doc.sectors.map(s => s.sector);
+          user_sectors = frappe.web_form.doc.sectors.map((s) => s.sector);
         }
 
         sectorsVueComp.user_sectors = user_sectors || [];
         sectorsVueComp.avail_sectors = r.message;
-      }
+      },
     });
-  }
+  };
 
   const getAvailablePersonas = function () {
     frappe.call({
@@ -126,14 +65,14 @@ frappe.ready(async function () {
       callback: function (r) {
         let user_personas;
         if (frappe.web_form.doc.personas) {
-          user_personas = frappe.web_form.doc.personas.map(p => p.persona);
+          user_personas = frappe.web_form.doc.personas.map((p) => p.persona);
         }
 
         personaVueComp.user_personas = user_personas;
         personaVueComp.avail_personas = r.message;
-      }
+      },
     });
-  }
+  };
 
   // addSectorToDoc = event => {
   //   if (!frappe.web_form.doc.sectors) {
@@ -142,14 +81,14 @@ frappe.ready(async function () {
   //   frappe.web_form.doc.sectors.push({ sector: event.target.value });
   // };
 
-  addFileToDoc = file => {
+  addFileToDoc = (file) => {
     if (file.xhr) {
       const response = JSON.parse(file.xhr.response);
       frappe.web_form.doc.photo = response.message.file_url;
     }
   };
 
-  removeFileFromDoc = file => {
+  removeFileFromDoc = (file) => {
     // console.log('removed', file);
     frappe.web_form.doc.photo = '';
   };
@@ -157,7 +96,7 @@ frappe.ready(async function () {
   addDropzone = () => {
     // disable autoDiscover as we are manually binding the dropzone to a form element
     Dropzone.autoDiscover = false;
-    const el = `<form class="dropzone dz-clickable d-flex align-items-center justify-content-center flex-wrap" style="font-size:var(--f14);" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
+    const el = `<form class="dropzone dz-clickable d-flex align-items-center justify-content-center flex-wrap mb-4" style="font-size:var(--f14);" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
     $('*[data-fieldname="photo"]').after(el);
     $('#dropzone').dropzone({
       url: '/api/method/upload_file',
@@ -167,7 +106,7 @@ frappe.ready(async function () {
       acceptedFiles: 'image/*',
       headers: {
         Accept: 'application/json',
-        'X-Frappe-CSRF-Token': frappe.csrf_token
+        'X-Frappe-CSRF-Token': frappe.csrf_token,
       },
       init: function () {
         // use this event to add to child table
@@ -179,7 +118,7 @@ frappe.ready(async function () {
           let mockFile = { name: file_url, size: null };
           this.displayExistingFile(mockFile, file_url);
         }
-      }
+      },
     });
   };
 
@@ -214,16 +153,16 @@ frappe.ready(async function () {
     const place = autocomplete.getPlace();
     const addressMapping = {
       locality: {
-        long_name: 'city'
+        long_name: 'city',
       },
       administrative_area_level_1: {
         short_name: 'state_code',
-        long_name: 'state'
+        long_name: 'state',
       },
       country: {
         short_name: 'country_code',
-        long_name: 'country'
-      }
+        long_name: 'country',
+      },
     };
 
     // Get each component of the address from the place details,
@@ -254,7 +193,7 @@ frappe.ready(async function () {
       method: 'contentready_oip.api.add_primary_content',
       args: {
         doctype: 'User Profile',
-        doc: frappe.web_form.doc
+        doc: frappe.web_form.doc,
       },
       callback: function (r) {
         // console.log(r.message);
@@ -263,7 +202,7 @@ frappe.ready(async function () {
         } else {
           window.location.href = '/dashboard';
         }
-      }
+      },
     });
   };
 
@@ -273,9 +212,7 @@ frappe.ready(async function () {
   };
 
   const styleFormHeadings = () => {
-    $('h6')
-      .not(':first')
-      .prepend('<hr />');
+    $('h6').not(':first').prepend('<hr />');
     $('.form-section-heading').addClass('edit-profile-subheadings');
   };
 
@@ -305,9 +242,7 @@ frappe.ready(async function () {
     $('*[data-fieldname="personas"]').before(
       '<label class="form-group control-label">Personas</label><br/><div id="personasComp"></div>'
     );
-  }
-
-
+  };
 
   // End Helpers
   // Delay until page is fully rendered
@@ -317,13 +252,16 @@ frappe.ready(async function () {
 
   // Start UI Fixes
   // We hide the default form buttons (using css) and add our own
-  $('*[data-doctype="Web Form"]').wrap(`<div class="container pt-5"><div class="row justify-content-center"><div class="col-9"></div></div></div>`);
+  $('*[data-doctype="Web Form"]').wrap(
+    `<div class="container pt-5"><div class="row justify-content-center"><div class="col-9"></div></div></div>`
+  );
 
   $('div[role="form"]').ready(function () {
     addActionButtons();
     moveDivs();
     arrangeDivs();
     createOrgOptions();
+    fixOuterDivForMobile();
     // createPersonaOptions();
     // createSectorOptions();
     addSection();
@@ -331,46 +269,46 @@ frappe.ready(async function () {
     styleFormHeadings();
     styleFields();
     pageHeadingSection();
-  })
-
-
+  });
 
   const sectorsVueComp = new Vue({
+    name: 'Sectors',
     el: '#sectorsComp',
-    data: {
-      avail_sectors: [],
-      user_sectors: []
+    data() {
+      return {
+        avail_sectors: [],
+        user_sectors: [],
+      };
     },
-    beforeCreate: function () {
-      // https://vuejs.org/v2/api/#beforeCreate
+    created() {
       getAvailableSectors();
     },
     methods: {
-      toggleClass: function (sector) {
-        let is_present = this.user_sectors.find(s => sector === s);
+      toggleClass(sector) {
+        let is_present = this.user_sectors.find((s) => sector === s);
         if (is_present) {
-          return true
-        } else {
-          return false;
+          return true;
         }
+        return false;
       },
-
-      updateSectorToDoc: function (sectorClicked) {
+      updateSectorToDoc(sectorClicked) {
         if (!frappe.web_form.doc.sectors) {
           frappe.web_form.doc.sectors = [];
         }
 
-        let index = frappe.web_form.doc.sectors.findIndex(s => s.sector === sectorClicked);
+        const updatedSectors = [...frappe.web_form.doc.sectors];
 
-        if (index > 0) {
-          frappe.web_form.doc.sectors.splice(index, 1)
+        let index = updatedSectors.findIndex((s) => s.sector === sectorClicked);
+
+        if (index > -1) {
+          updatedSectors.splice(index, 1);
         } else {
-          frappe.web_form.doc.sectors.push({ sector: sectorClicked });
+          updatedSectors.push({ sector: sectorClicked });
         }
 
-
+        frappe.web_form.doc.sectors = updatedSectors;
         getAvailableSectors();
-      }
+      },
     },
     template: `
     {% raw %}
@@ -379,7 +317,7 @@ frappe.ready(async function () {
           <button 
             v-for="sector in avail_sectors" 
             class="btn btn-lg mb-3 mr-3" 
-            v-bind:class="{
+            :class="{
               'btn-primary': toggleClass(sector['value']),
               'text-white': toggleClass(sector['value']),
               'btn-outline-primary' :!toggleClass(sector['value']) 
@@ -392,44 +330,48 @@ frappe.ready(async function () {
       </div>
     </div>
     {% endraw %}
-    `
-  })
+    `,
+  });
 
   const personaVueComp = new Vue({
+    name: 'Personas',
     el: '#personasComp',
-    data: {
-      avail_personas: [],
-      user_personas: []
+    data() {
+      return {
+        avail_personas: [],
+        user_personas: [],
+      };
     },
-    beforeCreate: function () {
-      // https://vuejs.org/v2/api/#beforeCreate
+    created() {
       getAvailablePersonas();
     },
     methods: {
-      toggleClass: function (persona) {
-        let is_present = this.user_personas.find(p => persona === p);
+      toggleClass(persona) {
+        let is_present = this.user_personas.find((p) => persona === p);
         if (is_present) {
-          return true
-        } else {
-          return false;
+          return true;
         }
+        return false;
       },
-
-      updatePersonaToDoc: function (personaClicked) {
+      updatePersonaToDoc(personaClicked) {
         if (!frappe.web_form.doc.personas) {
           frappe.web_form.doc.personas = [];
         }
+        const updatedPersonas = [...frappe.web_form.doc.personas];
 
-        let index = frappe.web_form.doc.personas.findIndex(s => s.persona === personaClicked);
+        let index = updatedPersonas.findIndex(
+          (s) => s.persona === personaClicked
+        );
 
-        if (index > 0) {
-          frappe.web_form.doc.personas.splice(index, 1)
+        if (index > -1) {
+          updatedPersonas.splice(index, 1);
         } else {
-          frappe.web_form.doc.personas.push({ persona: personaClicked });
+          updatedPersonas.push({ persona: personaClicked });
         }
 
+        frappe.web_form.doc.personas = updatedPersonas;
         getAvailablePersonas();
-      }
+      },
     },
     template: `
     {% raw %}
@@ -451,17 +393,8 @@ frappe.ready(async function () {
       </div>
     </div>
     {% endraw %}
-    `
-  })
-  //   const personaVueComp = new Vue({
-  //     el: '#personasComp',
-  //     template: `
-  //     {% raw %}
-  //     Hello world
-  //     {% endraw %}
-  //     `
-  //   })
-  // })
+    `,
+  });
 
   // Start Google Maps Autocomplete
   const gScriptUrl =

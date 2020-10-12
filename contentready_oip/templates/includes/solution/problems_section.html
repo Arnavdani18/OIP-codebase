@@ -2,9 +2,9 @@
   This solution addresses the following problems.
 </h3>
 
-<div class="problem-section-container">
+<div class="row">
   {% for p in problems_addressed %}
-  <div>
+  <div class="col-sm-12 col-md-6">
     {% set problem = frappe.get_doc('Problem', p.problem) %} 
     {% include "templates/includes/problem/problem_card_small.html" %}
   </div>
