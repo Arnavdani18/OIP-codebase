@@ -4,6 +4,7 @@ new Vue({
   data() {
     return {
       featured: false,
+      isImage: false,
       media: frappe.web_form.doc.media,
     };
   },
@@ -29,12 +30,18 @@ new Vue({
         autoSaveDraft();
       }
     },
+
+    isValidImageURL(str) {
+      if (typeof str !== 'string') return false;
+      return (str.match(/\.(jpg|jpeg|gif|png|tiff|bmp|webp)$/gi) !== null);
+    },
   },
   created() {
     if (!this.media) {
       frappe.web_form.doc.media = [];
     }
 
+    this.isImage = this.isValidImageURL(file.name);
     this.media.forEach((m) => {
       if (m.attachment.endsWith(file.name)) {
         this.featured = m['is_featured'];
@@ -56,7 +63,7 @@ new Vue({
     },
   },
   template: `
-    <div class="d-flex justify-content-center">
+    <div class="d-flex justify-content-center" v-if="isImage">
       <button class="close" title="featured photo" @click.prevent="handleClick">
         <i class="bookmark" v-if="featured">
           {% include 'public/svg/bookmark.svg'%}
