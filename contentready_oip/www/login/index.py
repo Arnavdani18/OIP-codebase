@@ -6,7 +6,8 @@ from frappe.utils.html_utils import get_icon_html
 
 def get_context(context):
     context["provider_logins"] = []
-    redirect_to = frappe.local.request.args.get("redirect-to")
+    redirect_to = "/dashboard"
+    # redirect_to = frappe.local.request.args.get("redirect-to")
     providers = [
         i.name
         for i in frappe.get_all("Social Login Key", filters={"enable_social_login": 1})
