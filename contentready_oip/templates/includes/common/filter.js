@@ -18,43 +18,49 @@ frappe.ready(() => {
     created() {
       const newThis = this;
       $(document).ready(function () {
-        document.multiselect('#sector-sel');
-        // $('#sector-sel')
-        //   .select2({ width: '100%' })
-        //   .trigger('change')
-        //   .on('change', newThis.storeSectorFilter);
+        const instance = document.multiselect('#sector-sel');
+        const available_sectors =
+          JSON.parse(`{{available_sectors | json}}`) || [];
+
+        available_sectors.forEach((sector) => {
+          instance.setCheckBoxClick(sector['name'], (target, args) => {
+            console.log(target, args);
+          });
+        });
+
 
         $('#sector-sel_input').addClass('sector-filter m-0 filter-input');
-        $('.multiselect-dropdown-arrow').remove();
+        $('.multiselect-dropdown-arrow').attr('style', 'display:none !important;');
       });
-      const existing_sectors = frappe.utils.get_query_params();
-      let sectors = localStorage.getItem('filter_sectors');
-      let rng = localStorage.getItem('filter_location_range');
+      // const existing_sectors = frappe.utils.get_query_params();
+      // let sectors = localStorage.getItem('filter_sectors');
+      // let rng = localStorage.getItem('filter_location_range');
 
-      this.selected_range = rng;
-      this.selected_sector = JSON.parse(sectors) || ['all'];
+      // this.selected_range = rng;
+      // this.selected_sector = JSON.parse(sectors) || ['all'];
 
-      // check if existing sector is from available_sectors
-      check_idx = this.available_sectors.findIndex((v) =>
-        this.selected_sector.includes(v['name'])
-      );
-      if (check_idx < 0) {
-        this.selected_sector = ['all'];
-      }
+      // // check if existing sector is from available_sectors
+      // check_idx = this.available_sectors.findIndex((v) =>
+      //   this.selected_sector.includes(v['name'])
+      // );
 
-      if (existing_sectors && existing_sectors['page']) {
-        this.qp_page = existing_sectors['page'];
-      }
+      // if (check_idx < 0) {
+      //   this.selected_sector = ['all'];
+      // }
 
-      const filter_sectors = this.selected_sector;
-      if (localStorage) {
-        localStorage.setItem('filter_sectors', JSON.stringify(filter_sectors));
-        this.setQueryParam();
-      }
+      // if (existing_sectors && existing_sectors['page']) {
+      //   this.qp_page = existing_sectors['page'];
+      // }
 
-      if (!Object.keys(existing_sectors).length) {
-        setTimeout(() => window.location.reload(), 500);
-      }
+      // const filter_sectors = this.selected_sector;
+      // if (localStorage) {
+      //   localStorage.setItem('filter_sectors', JSON.stringify(filter_sectors));
+      //   this.setQueryParam();
+      // }
+
+      // if (!Object.keys(existing_sectors).length) {
+      //   setTimeout(() => window.location.reload(), 500);
+      // }
 
       this.showDistanceSelect();
     },
