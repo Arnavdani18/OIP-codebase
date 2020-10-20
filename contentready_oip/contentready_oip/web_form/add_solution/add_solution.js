@@ -874,7 +874,7 @@ frappe.ready(async () => {
         class="list-group-item text-muted"
         style="font-size:1.4rem"  
         >
-        No problem selected yet
+        Please select a problem from above
       </li>
 
       <li 
