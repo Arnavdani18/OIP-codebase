@@ -30,6 +30,16 @@
     margin-bottom: .5rem;
   }
 
+  #sector-sel_inputCount {
+    top: -3.2rem;
+    left: 17.5rem !important;
+  }
+
+  .filter-input {
+    padding: .75rem !important;
+    font-size: 1.4rem;
+  }
+
   @media only screen and (max-width: 600px) {
     /* .in-mob {
       padding-top: 1rem;
@@ -63,6 +73,11 @@
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxSPvgric8Zn54pYneG9NondiINqdvb-w&libraries=places" defer></script>
 
+<style>
+  {% include "public/css/multiselect.css" %}
+</style>
+
 <script>
+  {% include "public/js/multiselect.min.js" %}
   {% include "templates/includes/common/filter.js" %}
 </script>

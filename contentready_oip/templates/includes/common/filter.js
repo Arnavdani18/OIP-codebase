@@ -18,12 +18,14 @@ frappe.ready(() => {
     created() {
       const newThis = this;
       $(document).ready(function () {
-        $('#sector-sel')
-          .select2({ width: '100%' })
-          .trigger('change')
-          .on('change', newThis.storeSectorFilter);
+        document.multiselect('#sector-sel');
+        // $('#sector-sel')
+        //   .select2({ width: '100%' })
+        //   .trigger('change')
+        //   .on('change', newThis.storeSectorFilter);
 
-        $('.selection>span').addClass('sector-filter');
+        $('#sector-sel_input').addClass('sector-filter m-0 filter-input');
+        $('.multiselect-dropdown-arrow').remove();
       });
       const existing_sectors = frappe.utils.get_query_params();
       let sectors = localStorage.getItem('filter_sectors');
