@@ -46,9 +46,9 @@
                   {% else %}
                   <img src="{{m.attachment or m.thumbnail }}" onerror="javascript:this.src='../assets/contentready_oip/images/image_placeholder.jpg'"
                     class="small-img-attachment-modal" alt="{{ m.description }}" id="{{id}}-{{loop.index}}" />
+                  {% endif %}
                 </a>
-                {% endif %}
-              </div>
+              </div> 
               {% endfor %}
           </div>
         </div>
