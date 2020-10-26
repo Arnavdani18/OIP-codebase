@@ -1,6 +1,6 @@
 <!-- prettier-ignore -->
-{% macro placeholder_icon(type) -%} 
-  {% if type.find('video') >= 0 or type | lower == 'link' %}
+{% macro placeholder_icon(type) -%}
+{% if type and type.find('video') >= 0 or type | lower == 'link' %}
 <!-- prettier-ignore -->
 <div class="position-absolute overlay-icon">
       {% include "public/svg/video.svg" %}
