@@ -1,9 +1,35 @@
-<div class="modal fade" id="attachment-modal-{{ id }}" tabindex="-1" role="dialog" aria-labelledby="viewmediaLabel"
-  aria-hidden="true">
+<!-- prettier-ignore -->
+{% macro placeholder_icon(type) -%}
+{% if type and type.find('video') >= 0 or type | lower == 'link' %}
+<!-- prettier-ignore -->
+<div class="position-absolute overlay-icon">
+      {% include "public/svg/video.svg" %}
+    </div>
+{% else %}
+<div class="position-absolute overlay-icon">
+  {% include "public/svg/image.svg" %}
+</div>
+{% endif %}
+<!-- prettier-ignore -->
+{%- endmacro %}
+
+<div
+  class="modal fade"
+  id="attachment-modal-{{ id }}"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="viewmediaLabel"
+  aria-hidden="true"
+>
   <div class="modal-dialog modal-full modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -11,52 +37,71 @@
         <div class="container-fluid">
           <div class="row">
             {% for m in media %}
-              <div class="col-md-6 col-lg-4 p-0">
-                <a data-fancybox="attachment-gallery-{{ id }}" href="{{m.attachment}}" title="{{m.attachment}}">
-                  {% if m.type and m.type.find('video') >= 0 %}
-                  <video class="video-thumbnail">
-                    <source src="{{m.attachment}}" type="{{m.type}}">
-                  </video>
-                  {% elif m.type and m.type.find('link') >= 0 %}
-                  <script>
-                    function getThumbnail(url) {
-                      frappe.ready(()=>{
-                          frappe.call({
-                            type: 'GET',
-                            method: 'contentready_oip.api.get_url_metadata',
-                            args: {url},
-                            callback: function (r) {
-                              const {provider,data} = r.message;
-                              if (provider === 'youtube') {
-                                const {thumbnail_url} = data;
-                                document.getElementById(`{{id}}-{{loop.index}}`).src = thumbnail_url;
-                              } else {
-                                const {thumbnail_large} = data;
-                                document.getElementById(`{{id}}-{{loop.index}}`).src = thumbnail_large;
-                              }
-                            },
-                          });
-                        });
-                    }
+            <div class="col-md-6 col-lg-4 p-0 position-relative">
+              <a
+                data-fancybox="attachment-gallery-{{ id }}"
+                href="{{m.attachment}}"
+                title="{{m.attachment}}"
+              >
+                {% if m.type and m.type.find('video') >= 0 %}
+                <video class="video-thumbnail">
+                  <source src="{{m.attachment}}" type="{{m.type}}" />
+                </video>
+                {{ placeholder_icon(m.type) }}
+                <!-- prettier-ignore -->
+                {% elif m.type and
+                m.type.find('link') >= 0 %}
+                <script>
+                  function getThumbnail(url) {
+                    frappe.ready(() => {
+                      frappe.call({
+                        type: 'GET',
+                        method: 'contentready_oip.api.get_url_metadata',
+                        args: { url },
+                        callback: function (r) {
+                          const { provider, data } = r.message;
+                          if (provider === 'youtube') {
+                            const { thumbnail_url } = data;
+                            document.getElementById(
+                              `{{id}}-{{loop.index}}`
+                            ).src = thumbnail_url;
+                          } else {
+                            const { thumbnail_large } = data;
+                            document.getElementById(
+                              `{{id}}-{{loop.index}}`
+                            ).src = thumbnail_large;
+                          }
+                        },
+                      });
+                    });
+                  }
 
-                    getThumbnail(`{{m.attachment}}`);
-                  </script>
-                  <img  onerror="javascript:this.src='../assets/contentready_oip/images/image_placeholder.jpg'"
-                    class="small-img-attachment-modal" alt="{{ m.description }}" id="{{id}}-{{loop.index}}" />
-                  {% else %}
-                  <img src="{{m.attachment or m.thumbnail }}" onerror="javascript:this.src='../assets/contentready_oip/images/image_placeholder.jpg'"
-                    class="small-img-attachment-modal" alt="{{ m.description }}" id="{{id}}-{{loop.index}}" />
-                </a>
-                {% endif %}
-              </div>
-              {% endfor %}
+                  getThumbnail(`{{m.attachment}}`);
+                </script>
+                <img
+                  onerror="javascript:this.src='../assets/contentready_oip/images/image_placeholder.jpg'"
+                  class="small-img-attachment-modal"
+                  alt="{{ m.description }}"
+                  id="{{id}}-{{loop.index}}"
+                />
+                {{ placeholder_icon(m.type) }} {% else %}
+                <img
+                  src="{{m.attachment or m.thumbnail }}"
+                  onerror="javascript:this.src='../assets/contentready_oip/images/image_placeholder.jpg'"
+                  class="small-img-attachment-modal"
+                  alt="{{ m.description }}"
+                  id="{{id}}-{{loop.index}}"
+                />
+                {{ placeholder_icon(m.type) }} {% endif %}
+              </a>
+            </div>
+            {% endfor %}
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
 
 <style>
   .small-img-attachment-modal,
@@ -73,7 +118,7 @@
     overflow: scroll;
   }
 
-  .link-thumbnail{
+  .link-thumbnail {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -81,14 +126,26 @@
     background-color: darkslategray;
   }
 
-  .link-thumbnail>svg{
+  .link-thumbnail > svg {
     width: 5rem;
   }
 
-  @media only screen and (max-width: 768px){
+  .overlay-icon {
+    top: 0;
+    color: var(--secondary6);
+    width: 8rem;
+    background-color: var(--secondary1);
+    border-bottom-right-radius: 0.5rem;
+    opacity: 0.8;
+    left: 2rem;
+    padding: 0.1rem 1rem;
+    left: 0;
+  }
+
+  @media only screen and (max-width: 768px) {
     .small-img-attachment-modal,
     .video-thumbnail {
-     height: 20rem;
+      height: 20rem;
     }
   }
 </style>
