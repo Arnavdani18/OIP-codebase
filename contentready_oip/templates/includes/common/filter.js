@@ -18,12 +18,40 @@ frappe.ready(() => {
     created() {
       const newThis = this;
       $(document).ready(function () {
-        $('#sector-sel')
-          .select2({ width: '100%' })
-          .trigger('change')
-          .on('change', newThis.storeSectorFilter);
+        const instance = document.multiselect('#sector-sel');
+        const available_sectors =
+          JSON.parse(`{{available_sectors | json}}`) || [];
 
-        $('.selection>span').addClass('sector-filter');
+        const filter_sectors = localStorage.getItem('filter_sectors');
+        this.selected_sector = JSON.parse(filter_sectors) || ['all'];
+
+        // fill the option which already selected
+        this.selected_sector.forEach((sector) => {
+          instance.select(sector);
+        });
+
+        // listner on options
+        available_sectors.forEach((sector) => {
+          instance.setCheckBoxClick(sector['name'], (target, args) =>
+            newThis.storeSectorFilter(target, args)
+          );
+        });
+
+        // listner on all option
+        instance.setCheckBoxClick('all', (target, args) =>
+          newThis.storeSectorFilter(target, args)
+        );
+
+        // listner on check all option
+        instance.setCheckBoxClick('checkboxAll', (target, args) =>
+          newThis.storeSectorFilter(target, args)
+        );
+
+        $('#sector-sel_input').addClass('sector-filter m-0 filter-input');
+        $('.multiselect-dropdown-arrow').attr(
+          'style',
+          'display:none !important;'
+        );
       });
       const existing_sectors = frappe.utils.get_query_params();
       let sectors = localStorage.getItem('filter_sectors');
@@ -36,6 +64,7 @@ frappe.ready(() => {
       check_idx = this.available_sectors.findIndex((v) =>
         this.selected_sector.includes(v['name'])
       );
+
       if (check_idx < 0) {
         this.selected_sector = ['all'];
       }
@@ -92,12 +121,13 @@ frappe.ready(() => {
         }
       },
 
-      storeSectorFilter() {
+      storeSectorFilter(target, args) {
         this.selected_sector = $('#sector-sel').val();
 
         // sectors filter cannot be null, set to default
         if (!this.selected_sector) {
-          $('#sector-sel').val(['all']).trigger('change');
+          document.multiselect('#sector-sel').select('all');
+          return;
         }
 
         const filter_sectors = JSON.stringify(this.selected_sector);
@@ -106,6 +136,7 @@ frappe.ready(() => {
           localStorage.setItem('filter_sectors', filter_sectors);
           this.setQueryParam();
         }
+
         window.location.reload();
       },
 
