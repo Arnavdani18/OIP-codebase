@@ -4,7 +4,7 @@
 <div class="poster jumbo">
   <div class="container">
     <div class="banner-text">
-      <h1>Mission to create social impact</h1>
+      <h1 class="text-white">Mission to create social impact</h1>
       <p class="left-bar text-white">
         {% set about_us = frappe.db.get_single_value('About Us Settings',
         'company_introduction') %} {{ about_us | striptags }}
