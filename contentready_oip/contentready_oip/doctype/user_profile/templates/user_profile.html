@@ -17,7 +17,7 @@
 
   <div class="row">
     <div class="col-sm-12 col-md-6">
-      <div class="row ">
+      <div class="row">
         <div class="col">
           <h3 class="black-local">Profile Photo</h3>
           <img src="{{photo}}" class="default-profile-photo" alt="" />
@@ -54,13 +54,20 @@
 
       <div class="row my-4">
         <div class="col">
+          <p class="heading">LinkedIn Profile</p>
+          <a href="{{linkedin_profile}}" target="_blank">
+            <h5>{{linkedin_profile}}</h5>
+          </a>
+        </div>
+      </div>
+
+      <div class="row my-4">
+        <div class="col">
           <h5 class="heading">Personas</h5>
           <!-- Here comes Personas -->
           {% if personas | length == 0 %}
-            <h5>No persona available</h5>
-          {% endif %}
-
-          {% for persona in personas %}
+          <h5>No persona available</h5>
+          {% endif %} {% for persona in personas %}
           <button class="tag actions text-capitalize over_tag">
             {{ persona.persona }}
           </button>
@@ -80,10 +87,8 @@
           <button class="tag actions text-capitalize over_tag">
             {{ sector.sector_title }}
           </button>
-          {% endfor %}
-          
-          {% if sectors | length == 0 %}
-            <h5>No sectors available</h5>
+          {% endfor %} {% if sectors | length == 0 %}
+          <h5>No sectors available</h5>
           {% endif %}
         </div>
       </div>
@@ -118,8 +123,8 @@
     color: var(--secondary1);
   }
 
-  .over_tag{
-    padding: 0.5rem 0.7rem; 
+  .over_tag {
+    padding: 0.5rem 0.7rem;
     font-size: 1.4rem;
     outline: none;
   }

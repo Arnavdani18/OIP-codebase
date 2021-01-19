@@ -188,7 +188,21 @@ frappe.ready(async function () {
     frappe.web_form.set_value('longitude', place.geometry.location.lng());
   };
 
+  isValidLinkedInUrl = (url) => {
+    const LINKEDIN_REGEX = /((https?:\/\/)?((www|\w\w)\.)?linkedin\.com\/)((([\w]{2,3})?)|([^\/]+\/(([\w|\d-&#?=])+\/?){1,}))$/;
+    const re = new RegExp(LINKEDIN_REGEX);
+    return re.test(url);
+  };
+
   publishProfile = () => {
+    const data = frappe.web_form.get_values();
+    const { linkedin_profile } = data;
+
+    if (linkedin_profile && !isValidLinkedInUrl(linkedin_profile)) {
+      frappe.msgprint('Enter valid LinkedIn profile url');
+      return false;
+    }
+
     frappe.call({
       method: 'contentready_oip.api.add_primary_content',
       args: {
@@ -412,4 +426,3 @@ frappe.ready(async function () {
   frappe.web_form.set_value('user', frappe.session.user);
   // frappe.web_form.doc.user = frappe.session.user;
 });
-
