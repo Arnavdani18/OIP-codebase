@@ -356,6 +356,11 @@ def get_orgs_list():
     all_orgs = frappe.get_list('Organisation', fields=['title', 'name'])
     return [{'label': o['title'], 'value': o['name']} for o in all_orgs]
 
+@frappe.whitelist(allow_guest = True)
+def get_sdg_list():
+    sdgs = frappe.get_list('Sustainable Development Goal', fields=['title','name'])
+    return [{'label': o['title'], 'value': o['name']} for o in sdgs]
+
 @frappe.whitelist(allow_guest = False)
 def get_user_list():
     all_users = frappe.get_list('User Profile', filters={'user': ['not in', ['Guest', 'Administrator']]}, fields=['full_name', 'user'])

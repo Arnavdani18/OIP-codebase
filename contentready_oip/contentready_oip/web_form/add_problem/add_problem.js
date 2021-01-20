@@ -32,6 +32,29 @@ frappe.ready(async () => {
     return 0;
   }
 
+  addSdgOptions = () => {
+    const sdg_select = $('[data-fieldname="sustainable_development_goal"][data-doctype="Problem"]');
+    // add multiple attr 
+    sdg_select.attr('multiple',true);
+
+    // remove icon
+    sdg_select.next().hide();
+    sdg_select.select2();
+
+    frappe.call({
+      method: 'contentready_oip.api.get_sdg_list',
+      args: {},
+      callback: function (r) {
+        const options = [...r.message].sort(sortAlphabetically);
+        frappe.web_form.set_df_property('sustainable_development_goal', 'options', options);
+        const existing_sdgs = frappe.web_form.doc.sustainable_development_goal
+        const sdgValues = existing_sdgs.map(v => v.sustainable_development_goal);
+        
+        sdg_select.val(sdgValues);
+      },
+    });
+  }
+
   createOrgOptions = () => {
     frappe.call({
       method: 'contentready_oip.api.get_orgs_list',
@@ -278,6 +301,11 @@ frappe.ready(async () => {
 
   autoSaveDraft = () => {
     console.log('auto save draft: ');
+
+    const sdg_select = $('[data-fieldname="sustainable_development_goal"][data-doctype="Problem"]');
+    const newVal = sdg_select.val().map(v => ({sustainable_development_goal: v}));
+    frappe.web_form.doc.sustainable_development_goal = newVal;
+
 
     if (frappe.web_form.doc.title) {
       frappe.call({
@@ -528,6 +556,7 @@ frappe.ready(async () => {
   addActionButtons();
   moveDivs();
   createOrgOptions();
+  addSdgOptions();
   // createSectorOptions();
   addSection();
   problemDetails();
