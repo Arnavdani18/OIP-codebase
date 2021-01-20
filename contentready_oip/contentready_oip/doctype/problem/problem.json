@@ -42,7 +42,8 @@
   "section_break_25",
   "likes",
   "column_break_27",
-  "watchers"
+  "watchers",
+  "sustainable_development_goal"
  ],
  "fields": [
   {
@@ -264,11 +265,17 @@
    "fieldtype": "Select",
    "label": "Population Affected",
    "options": "\n&lt;100\n&lt;1,000\n&lt;10,000\n&lt;100,000\n&gt;100,000"
+  },
+  {
+   "fieldname": "sustainable_development_goal",
+   "fieldtype": "Table",
+   "label": "Sustainable Development Goal",
+   "options": "Sustainable Development Goal Table"
   }
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2020-04-08 11:32:07.557667",
+ "modified": "2021-01-20 12:28:23.086492",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Problem",
