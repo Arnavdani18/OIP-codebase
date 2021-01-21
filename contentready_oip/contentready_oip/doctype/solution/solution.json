@@ -45,7 +45,8 @@
   "interest_section",
   "likes",
   "column_break_38",
-  "watchers"
+  "watchers",
+  "sustainable_development_goal"
  ],
  "fields": [
   {
@@ -267,11 +268,17 @@
    "fieldtype": "Table",
    "label": "Media",
    "options": "Media Table"
+  },
+  {
+   "fieldname": "sustainable_development_goal",
+   "fieldtype": "Table",
+   "label": "Sustainable Development Goal",
+   "options": "Sustainable Development Goal Table"
   }
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2020-05-29 08:18:33.844637",
+ "modified": "2021-01-21 11:09:12.362965",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Solution",

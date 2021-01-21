@@ -583,7 +583,16 @@ frappe.ready(async () => {
     $('#auto-save-alert').addClass('hidden');
   };
 
+  formatSdgValues = ()=>{
+    const sdg_select = $('[data-fieldname="sustainable_development_goal"][data-doctype="Solution"]');
+    const currVal = sdg_select.val() ?? []; 
+    const newVal = currVal.map(v => ({sustainable_development_goal: v}));
+    frappe.web_form.doc.sustainable_development_goal = newVal;
+    console.log('frappe.web_form.doc', frappe.web_form.doc)
+  }
+
   autoSaveDraft = () => {
+    formatSdgValues();
     getSolversFromMultiselect();
     if (frappe.web_form.doc.title) {
       frappe.call({
@@ -806,6 +815,29 @@ frappe.ready(async () => {
     }
   }
 
+  addSdgOptions = () => {
+    const sdg_select = $('[data-fieldname="sustainable_development_goal"][data-doctype="Solution"]');
+    // add multiple attr 
+    sdg_select.attr('multiple',true);
+
+    // remove icon
+    sdg_select.next().hide();
+    sdg_select.select2();
+
+    frappe.call({
+      method: 'contentready_oip.api.get_sdg_list',
+      args: {},
+      callback: function (r) {
+        const options = [...r.message].sort(sortAlphabetically);
+        frappe.web_form.set_df_property('sustainable_development_goal', 'options', options);
+        const existing_sdgs = frappe.web_form.doc.sustainable_development_goal
+        const sdgValues = existing_sdgs.map(v => v.sustainable_development_goal);
+        
+        sdg_select.val(sdgValues);
+      },
+    });
+  }
+
   insertSelectedProblem = function () {
     $('*[data-fieldname="problems_addressed"]*[data-fieldtype="Table"]')
       .parent()
@@ -829,6 +861,7 @@ frappe.ready(async () => {
   addActionButtons();
   moveDivs();
   createOrgOptions();
+  addSdgOptions();
   // createSectorOptions();
   addSection();
   styleFormHeadings();
