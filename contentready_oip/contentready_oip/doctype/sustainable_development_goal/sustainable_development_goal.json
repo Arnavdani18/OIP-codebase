@@ -17,7 +17,7 @@
    "unique": 1
   }
  ],
- "modified": "2021-01-20 12:53:14.324399",
+ "modified": "2021-01-21 15:31:02.282480",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Sustainable Development Goal",
@@ -46,6 +46,15 @@
    "role": "Administrator",
    "share": 1,
    "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1
   }
  ],
  "quick_entry": 1,

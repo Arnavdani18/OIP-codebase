@@ -48,9 +48,29 @@ frappe.ready(async () => {
         const options = [...r.message].sort(sortAlphabetically);
         frappe.web_form.set_df_property('sustainable_development_goal', 'options', options);
         const existing_sdgs = frappe.web_form.doc.sustainable_development_goal
-        const sdgValues = existing_sdgs.map(v => v.sustainable_development_goal);
+        const sdgValues = existing_sdgs?.map(v => v.sustainable_development_goal);
         
         sdg_select.val(sdgValues);
+      },
+    });
+  }
+
+  autoSelectOrganization = (orgRef)=>{
+    frappe.call({
+      method: 'contentready_oip.api.get_doc_field',
+      args: {
+        doctype: 'User Profile',
+        name: frappe.session.user,
+        field: ['org','org_title']
+      },
+      callback: function (r) {
+        const organisation = r.message;
+        const [org,orgTitle] = organisation;
+        if (org) {
+          frappe.web_form.doc.org = org
+          orgRef.attr('disabled',true);
+          orgRef.val(org);
+        } 
       },
     });
   }
@@ -64,6 +84,14 @@ frappe.ready(async () => {
         frappe.web_form.set_df_property('org', 'options', options);
       },
     });
+
+    const orgRef = $('select[data-fieldname="org"]');
+
+    if (!frappe.web_form.doc.org) {
+      autoSelectOrganization(orgRef);
+    } else{
+      orgRef.attr('disabled',true);
+    }
   };
 
   hideTables = () => {
@@ -301,7 +329,7 @@ frappe.ready(async () => {
 
   formatSdgValues = ()=>{
     const sdg_select = $('[data-fieldname="sustainable_development_goal"][data-doctype="Problem"]');
-    const newVal = sdg_select.val().map(v => ({sustainable_development_goal: v}));
+    const newVal = sdg_select.val()?.map(v => ({sustainable_development_goal: v}));
     frappe.web_form.doc.sustainable_development_goal = newVal;
   }
 

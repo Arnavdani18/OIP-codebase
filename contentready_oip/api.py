@@ -147,6 +147,11 @@ def get_all_doc(doctype):
 
 @frappe.whitelist(allow_guest = True)
 def get_doc_field(doctype, name, field):
+    try:
+        field = json.loads(field)
+    except:
+        field = field
+
     return frappe.get_value(doctype, name, field)
 
 @frappe.whitelist(allow_guest = True)
