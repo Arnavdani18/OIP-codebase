@@ -86,6 +86,26 @@ frappe.ready(async () => {
     return 0;
   }
 
+  autoSelectOrganization = (orgRef)=>{
+    frappe.call({
+      method: 'contentready_oip.api.get_doc_field',
+      args: {
+        doctype: 'User Profile',
+        name: frappe.session.user,
+        field: ['org','org_title']
+      },
+      callback: function (r) {
+        const organisation = r.message;
+        const [org,orgTitle] = organisation;
+        if (org) {
+          frappe.web_form.doc.org = org
+          orgRef.attr('disabled',true);
+          orgRef.val(org);
+        } 
+      },
+    });
+  }
+
   createOrgOptions = () => {
     frappe.call({
       method: 'contentready_oip.api.get_orgs_list',
@@ -95,6 +115,14 @@ frappe.ready(async () => {
         frappe.web_form.set_df_property('org', 'options', options);
       },
     });
+
+    const orgRef = $('select[data-fieldname="org"]');
+
+    if (!frappe.web_form.doc.org) {
+      autoSelectOrganization(orgRef);
+    } else{
+      orgRef.attr('disabled',true);
+    }
   };
 
   const addSection = function () {
@@ -830,7 +858,7 @@ frappe.ready(async () => {
         const options = [...r.message].sort(sortAlphabetically);
         frappe.web_form.set_df_property('sustainable_development_goal', 'options', options);
         const existing_sdgs = frappe.web_form.doc.sustainable_development_goal
-        const sdgValues = existing_sdgs.map(v => v.sustainable_development_goal);
+        const sdgValues = existing_sdgs?.map(v => v.sustainable_development_goal);
         
         sdg_select.val(sdgValues);
       },
