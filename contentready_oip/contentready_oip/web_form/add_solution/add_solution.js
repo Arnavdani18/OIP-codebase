@@ -588,7 +588,6 @@ frappe.ready(async () => {
     const currVal = sdg_select.val() ?? []; 
     const newVal = currVal.map(v => ({sustainable_development_goal: v}));
     frappe.web_form.doc.sustainable_development_goal = newVal;
-    console.log('frappe.web_form.doc', frappe.web_form.doc)
   }
 
   autoSaveDraft = () => {
