@@ -597,6 +597,9 @@ frappe.ready(async () => {
   appendAttachLink();
   hideAttachmentsSection();
   addAsterisk(['title','city','description'])
+
+  {% include "contentready_oip/contentready_oip/web_form/add_problem/Extent.js" %}
+
   // End UI Fixes
 
   const getAvailableSectors = function () {
