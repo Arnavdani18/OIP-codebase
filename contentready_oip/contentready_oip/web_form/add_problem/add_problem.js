@@ -598,7 +598,6 @@ frappe.ready(async () => {
   hideAttachmentsSection();
   addAsterisk(['title','city','description'])
 
-  {% include "contentready_oip/contentready_oip/web_form/add_problem/Extent.js" %}
 
   // End UI Fixes
 
@@ -760,7 +759,11 @@ frappe.ready(async () => {
   // Start Google Maps Autocomplete
   const gScriptUrl =
     'https://maps.googleapis.com/maps/api/js?key=AIzaSyAxSPvgric8Zn54pYneG9NondiINqdvb-w&libraries=places';
-  $.getScript(gScriptUrl, initAutocomplete);
+  $.getScript(gScriptUrl, () => {
+    initAutocomplete();
+    // Extent field relies on map script
+    {% include "contentready_oip/contentready_oip/web_form/add_problem/Extent.js" %}
+  });
   // End Google Maps Autocomplete
 
   // Start dropzone.js integration
