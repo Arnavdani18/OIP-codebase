@@ -1,8 +1,5 @@
 <div class="col pt-20">
-    <div
-        id="descriptionText"
-        class="description-rules"
-    >
+    <div id="descriptionText" class="description-rules">
         <h3 class="heading">
             Description
         </h3>
@@ -16,20 +13,35 @@
 <div class="col pt-3">
     <div class="row">
         {% set fields = {
-            'Organization': org_title, 
-            'Beneficiaries': beneficiaries, 
-            'Resources Needed': resources_needed,
-            'Impact': impact,
-            'Extent': extent,
-            'Population Affected': population_affected,
-            'Location(s)': city + ', ' + country,
+        'Organization': org_title,
+        'Beneficiaries': beneficiaries,
+        'Resources Needed': resources_needed,
+        'Impact': impact,
+        'Population Affected': population_affected,
+        'Location(s)': city + ', ' + country,
         } %}
 
         {% for field in fields %}
-        {% set label =  field %}
+        {% set label = field %}
         {% set value = fields[field] %}
         {% include "templates/includes/common/overview_field.html" %}
         {% endfor %}
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3 class="heading">
+                Extent
+            </h3>
+            <div class="tags my-3">
+                {% for location in extent %}
+                <button class="tag actions text-capitalize">
+                    {{ location.city }},
+                    {{ location.state }},
+                    {{ location.country }}
+                </button>
+                {% endfor %}
+            </div>
+        </div>
     </div>
     <div class="row">
         <div class="col">
