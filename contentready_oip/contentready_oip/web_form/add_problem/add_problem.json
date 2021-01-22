@@ -18,7 +18,7 @@
  "is_standard": 1,
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2021-01-20 13:14:14.780798",
+ "modified": "2021-01-22 11:49:46.137120",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "add-problem",
@@ -242,11 +242,12 @@
   {
    "allow_read_on_all_link_options": 0,
    "fieldname": "extent",
-   "fieldtype": "Small Text",
+   "fieldtype": "Table",
    "hidden": 0,
    "label": "Extent",
    "max_length": 0,
    "max_value": 0,
+   "options": "Location Table",
    "read_only": 0,
    "reqd": 0,
    "show_in_filter": 0
@@ -338,6 +339,16 @@
    "max_length": 0,
    "max_value": 0,
    "options": "Media Table",
+   "read_only": 0,
+   "reqd": 0,
+   "show_in_filter": 0
+  },
+  {
+   "allow_read_on_all_link_options": 0,
+   "fieldtype": "Attach",
+   "hidden": 0,
+   "max_length": 0,
+   "max_value": 0,
    "read_only": 0,
    "reqd": 0,
    "show_in_filter": 0

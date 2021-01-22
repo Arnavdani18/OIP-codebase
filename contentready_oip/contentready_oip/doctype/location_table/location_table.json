@@ -1,0 +1,71 @@
+{
+ "creation": "2021-01-22 11:25:44.728702",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "latitude",
+  "longitude",
+  "city",
+  "state",
+  "country",
+  "state_code",
+  "country_code"
+ ],
+ "fields": [
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Float",
+   "label": "Latitude"
+  },
+  {
+   "fieldname": "longitude",
+   "fieldtype": "Float",
+   "label": "Longitude"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "City"
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "State"
+  },
+  {
+   "fieldname": "state_code",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "State Code"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Country"
+  },
+  {
+   "fieldname": "country_code",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Country Code"
+  }
+ ],
+ "istable": 1,
+ "modified": "2021-01-22 11:43:15.202681",
+ "modified_by": "Administrator",
+ "module": "ContentReady OIP",
+ "name": "Location Table",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

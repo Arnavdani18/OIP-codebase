@@ -24,8 +24,9 @@
   "country",
   "country_code",
   "section_break_9",
-  "impact",
   "extent",
+  "section_break_21",
+  "impact",
   "resources_needed",
   "beneficiaries",
   "population_affected",
@@ -226,8 +227,9 @@
   },
   {
    "fieldname": "extent",
-   "fieldtype": "Small Text",
-   "label": "Extent"
+   "fieldtype": "Table",
+   "label": "Extent",
+   "options": "Location Table"
   },
   {
    "fieldname": "discussions",
@@ -271,11 +273,15 @@
    "fieldtype": "Table",
    "label": "Sustainable Development Goal",
    "options": "Sustainable Development Goal Table"
+  },
+  {
+   "fieldname": "section_break_21",
+   "fieldtype": "Section Break"
   }
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2021-01-20 12:28:23.086492",
+ "modified": "2021-01-22 11:46:58.949346",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Problem",
