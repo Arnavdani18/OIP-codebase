@@ -99,8 +99,8 @@ frappe.ready(async () => {
         const [org,orgTitle] = organisation;
         if (org) {
           frappe.web_form.doc.org = org
-          orgRef.attr('disabled',true);
           orgRef.val(org);
+          orgRef.attr('disabled',true);
         } 
       },
     });
@@ -116,13 +116,6 @@ frappe.ready(async () => {
       },
     });
 
-    const orgRef = $('select[data-fieldname="org"]');
-
-    if (!frappe.web_form.doc.org) {
-      autoSelectOrganization(orgRef);
-    } else{
-      orgRef.attr('disabled',true);
-    }
   };
 
   const addSection = function () {
@@ -517,25 +510,7 @@ frappe.ready(async () => {
     getTitleByName(frappe.web_form.doc.problems_addressed);
   };
 
-  getTitleByName = async function (problems_addressed_arr) {
-    let result = [];
 
-    for (const problem of problems_addressed_arr) {
-      let promise = new Promise(function (resolve, reject) {
-        resolve(
-          frappe.call({
-            method: 'contentready_oip.api.get_problem_details',
-            args: { name: problem['problem'] },
-          })
-        );
-      });
-
-      let problemObj = await promise;
-      result.push(problemObj['message']);
-    }
-
-    vm.selectedProblems = result;
-  };
 
   removeProblemFromSolvedSet = (name) => {
     frappe.web_form.doc.problems_addressed = frappe.web_form.doc.problems_addressed.filter(
@@ -570,7 +545,7 @@ frappe.ready(async () => {
     const {title,description,city,country} = frappe.web_form.doc;
     if (!title && !description && !city) {
       const error_message = `
-      Please enter the required field to publish.
+      Please enter the required fields to publish.
       <ul>
         <li>Title</li>
         <li>City</li>
@@ -578,7 +553,7 @@ frappe.ready(async () => {
         <li>Description</li>
       </ul>
       `
-      frappe.throw(error_message);
+      frappe.msgprint(error_message);
       return;
     }
 
@@ -875,6 +850,29 @@ frappe.ready(async () => {
     $('.attachments').hide();
   }
 
+  function addAttributesToFields(){
+    $('input[data-fieldname="title"]').attr('required',true);
+    $('input[data-fieldname="description"]').attr('required',true);
+    $('input[data-fieldname="website"]').attr('type','url');
+
+    let titleDivForm = $('div[data-fieldname="title"]').parent();
+    let wesiteDivForm = $('div[data-fieldname="website"]').parent();
+    titleDivForm.validate();
+    wesiteDivForm.validate();
+  }
+
+  async function prefillOrg() {
+    const orgRef = $('select[data-fieldname="org"]');
+
+    if (!frappe.web_form.doc.org) {
+      autoSelectOrganization(orgRef);
+    } else{
+      await sleep(500);
+      orgRef.attr('disabled',true);
+      
+    }
+  }
+
   // End Helpers
 
   // Delay until page is fully rendered
@@ -901,10 +899,10 @@ frappe.ready(async () => {
   hideAttachmentsSection();
   // getAvailableSectors();
   addAsterisk(['title','description','city','problems_addressed','country'])
+  addAttributesToFields();
+  prefillOrg();
 
-  if (frappe.web_form.doc.problems_addressed) {
-    getTitleByName(frappe.web_form.doc.problems_addressed);
-  }
+  
 
   const vm = new Vue({
     name: 'SelectedProblem',
@@ -952,6 +950,30 @@ frappe.ready(async () => {
     </div>
     `,
   });
+
+  getTitleByName = async function (problems_addressed_arr) {
+    let result = [];
+
+    for (const problem of problems_addressed_arr) {
+      let promise = new Promise(function (resolve, reject) {
+        resolve(
+          frappe.call({
+            method: 'contentready_oip.api.get_problem_details',
+            args: { name: problem['problem'] },
+          })
+        );
+      });
+
+      let problemObj = await promise;
+      result.push(problemObj['message']);
+    }
+
+    vm.selectedProblems = result;
+  };
+
+  if (frappe.web_form.doc.problems_addressed) {
+    getTitleByName(frappe.web_form.doc.problems_addressed);
+  }
 
   const getAvailableSectors = function () {
     frappe.call({
