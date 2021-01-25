@@ -1330,3 +1330,16 @@ def get_url_metadata(url):
         response["data"] = r.json()[0]
         return response
     
+@frappe.whitelist(allow_guest=False)
+def get_beneficiaries_from_sectors(sectors):
+    beneficiary_list = set()
+    try:
+        sectors = json.loads(sectors)
+        for sector in sectors:
+            s = frappe.get_doc('Sector', sector)
+            for b in s.beneficiaries:
+                beneficiary_list.add(b.beneficiary)
+
+        return beneficiary_list
+    except Exception as e:
+        print(str(e))

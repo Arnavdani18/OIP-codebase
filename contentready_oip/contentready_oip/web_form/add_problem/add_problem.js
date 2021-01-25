@@ -55,6 +55,21 @@ frappe.ready(async () => {
     });
   }
 
+  addBeneficiaryOptions = (sectors)=>{
+    console.log('sectors', sectors);
+    const beneficiary_select = $('select[data-fieldname="beneficiaries"]');
+    frappe.call({
+      method: 'contentready_oip.api.get_beneficiaries_from_sectors',
+      args: {sectors},
+      callback: function (r) {
+        const message = r.message;
+        const sorted_beneficiaries = message.map(b => ({label: b, value: b}) ).sort(sortAlphabetically);
+        frappe.web_form.set_df_property('beneficiaries', 'options', sorted_beneficiaries);
+      }
+    })
+
+  }
+
   autoSelectOrganization = (orgRef)=>{
     frappe.call({
       method: 'contentready_oip.api.get_doc_field',
@@ -617,6 +632,7 @@ frappe.ready(async () => {
 
         sectorsComp.problem_sectors = problem_sectors || [];
         sectorsComp.avail_sectors = [...r.message.sort(sortAlphabetically)];
+        addBeneficiaryOptions(problem_sectors ?? []);
       },
     });
   };
