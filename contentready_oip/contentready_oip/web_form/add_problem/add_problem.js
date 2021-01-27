@@ -117,14 +117,6 @@ frappe.ready(async () => {
         frappe.web_form.set_df_property('org', 'options', options);
       },
     });
-
-    const orgRef = $('select[data-fieldname="org"]');
-
-    if (!frappe.web_form.doc.org) {
-      autoSelectOrganization(orgRef);
-    } else{
-      orgRef.attr('disabled',true);
-    }
   };
 
   hideTables = () => {
@@ -612,6 +604,18 @@ frappe.ready(async () => {
     $('.attachments').hide();
   }
 
+  async function prefillOrg() {
+    const orgRef = $('select[data-fieldname="org"]');
+
+    if (!frappe.web_form.doc.org) {
+      autoSelectOrganization(orgRef);
+    } else{
+      await sleep(500);
+      orgRef.attr('disabled',true);
+      
+    }
+  }
+
   // End Helpers
 
   // Delay until page is fully rendered
@@ -636,6 +640,7 @@ frappe.ready(async () => {
   appendAttachLink();
   hideAttachmentsSection();
   beneficiaryAsMultiSelect();
+  prefillOrg();
   addAsterisk(['title','city','description'])
 
 
