@@ -14,7 +14,6 @@
     <div class="row">
         {% set fields = {
         'Organization': org_title,
-        'Beneficiaries': beneficiaries,
         'Resources Needed': resources_needed,
         'Impact': impact,
         'Population Affected': population_affected,
@@ -26,6 +25,20 @@
         {% set value = fields[field] %}
         {% include "templates/includes/common/overview_field.html" %}
         {% endfor %}
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3 class="heading">
+                Beneficiaries
+            </h3>
+            <div class="tags my-3">
+                {% for b in beneficiaries %}
+                <button class="tag actions text-capitalize">
+                    {{ b.beneficiary }}
+                </button>
+                {% endfor %}
+            </div>
+        </div>
     </div>
     <div class="row">
         <div class="col">
