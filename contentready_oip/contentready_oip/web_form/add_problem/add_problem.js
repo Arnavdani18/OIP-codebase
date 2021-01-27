@@ -16,6 +16,7 @@ frappe.ready(async () => {
     );
     $('#add-problem-form').append($('.form-layout'));
     $('#similar-problems').append('<div></div>');
+    $('.attached-file').parent().hide();
   };
 
   const sortAlphabetically = (a, b) => {
