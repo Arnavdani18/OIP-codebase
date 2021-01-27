@@ -359,15 +359,21 @@ frappe.ready(async () => {
     $('#auto-save-alert').addClass('hidden');
   };
 
-  formatSdgValues = ()=>{
-    const sdg_select = $('[data-fieldname="sustainable_development_goal"][data-doctype="Problem"]');
-    const newVal = sdg_select.val()?.map(v => ({sustainable_development_goal: v}));
-    frappe.web_form.doc.sustainable_development_goal = newVal;
+  formatMultiSelectValues = ()=>{
+    // sdg
+    const sdg_select = $('select[data-fieldname="sustainable_development_goal"]');
+    const sdgVal = sdg_select.val()?.map(v => ({sustainable_development_goal: v}));
+    frappe.web_form.doc.sustainable_development_goal = sdgVal;
+
+    // beneficiary
+    const beneficiary_select = $('select[data-fieldname="beneficiaries"]');
+    const beneficiariesVal = beneficiary_select.val()?.map(v => ({beneficiary: v}));
+    frappe.web_form.doc.beneficiaries = beneficiariesVal;
   }
 
   autoSaveDraft = () => {
     console.log('auto save draft: ');
-    formatSdgValues();
+    formatMultiSelectValues();
 
     if (frappe.web_form.doc.title) {
       frappe.call({
