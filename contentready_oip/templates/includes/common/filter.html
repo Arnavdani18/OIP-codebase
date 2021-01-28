@@ -111,7 +111,7 @@
       <input class="pattern1 pl-2 in-mob" type="text" ref="location" v-model="searched_location" id="autocomplete" placeholder="Search for location..."
         @input="clearLocationIfEmpty" />
     </div>
-    <div class="mt-4 mt-sm-0 in-mob" id="range-sel-div" v-show="show_range_filter">
+    <div class="mt-4 mt-sm-0 in-mob" id="range-sel-div" v-show="searched_location">
       <select class="pattern1" @change="storeRangeFilter" v-model="selected_range" id="range-sel">
         <option value="0">0 km</option>
         <option value="25">25 km</option>

@@ -8,21 +8,18 @@ frappe.ready(() => {
     template: "#filter-script",
     data: function () {
       return {
-        selected_sector: ["all"],
-        show_range_filter: false,
-        selected_range: 25,
-        searched_location: localStorage.getItem("filter_location_name") || "",
-        found_location: null,
         qp_page: "",
+        selected_range: null,
+        searched_location: "",
+        google_map_instance: null,
         sdg_multiselect_instance: null,
         sector_multiselect_instance: null,
         beneficiary_multiselect_instance: null,
       };
     },
     created() {
-      this.showDistanceSelect();
-      let rng = localStorage.getItem("filter_location_range");
-      this.selected_range = rng;
+      this.selected_range = localStorage.getItem("filter_location_range");
+      this.searched_location = localStorage.getItem("filter_location_name");
     },
     mounted() {
       // Sector, SDG, Beneficiary multiselect initialization
@@ -33,53 +30,63 @@ frappe.ready(() => {
         types: ["(cities)"],
         componentRestrictions: { country: "in" },
       };
-      this.found_location = new google.maps.places.Autocomplete(
+      this.google_map_instance = new google.maps.places.Autocomplete(
         location,
         options
       );
-      this.found_location.setFields(["address_component", "geometry"]);
-      this.found_location.addListener(
+      this.google_map_instance.setFields(["address_component", "geometry"]);
+      this.google_map_instance.addListener(
         "place_changed",
         this.storeLocationFilter
       );
 
       const query_params = frappe.utils.get_query_params();
-      const { sectors } = query_params;
+      const { sectors , sdgs, beneficiaries } = query_params;
 
       const parsed_sectors = JSON.parse(sectors) ?? ["all"];
       this.prefillMultiselect(parsed_sectors, this.sector_multiselect_instance);
-    },
-    watch: {
-      searched_location(currentVal, oldVal) {
-        if (currentVal) {
-          this.show_range_filter = true;
-        } else {
-          this.show_range_filter = false;
-        }
-      },
+      
+      if (sdgs) {
+        const parsed_sdgs = JSON.parse(sdgs);
+        this.prefillMultiselect(parsed_sdgs,this.sdg_multiselect_instance);
+      }
+      
+      if (beneficiaries) {
+        const parsed_beneficiaries = JSON.parse(beneficiaries);
+        this.prefillMultiselect(parsed_beneficiaries, this.beneficiary_multiselect_instance);
+      }
     },
     computed: {
       available_sectors() {
-        return JSON.parse(`{{available_sectors | json}}`) || [];
+        return JSON.parse(`{{ available_sectors | json }}`) || [];
       },
       available_sdg() {
-        return JSON.parse(`{{available_sdg | json}}`) || [];
+        return JSON.parse(`{{ available_sdg | json }}`) || [];
       },
       available_beneficiaries() {
-        return JSON.parse(`{{available_beneficiaries | json}}`) || [];
+        return JSON.parse(`{{ available_beneficiaries | json }}`) || [];
       },
     },
     methods: {
       initializeMultiselect() {
+        // init Sector
         this.sector_multiselect_instance = document.multiselect("#sector-sel");
+        // init SDG
         this.sdg_multiselect_instance = document.multiselect("#sdg-sel");
+        // init Beneficiary
         this.beneficiary_multiselect_instance = document.multiselect(
           "#beneficiary-sel"
         );
 
         $("#sector-sel_input, #sdg-sel_input, #beneficiary-sel_input")
-          .addClass("filter-select m-0 filter-input")
+          .addClass("filter-select m-0 filter-input");
+
+        $("#sector-sel_input")
           .attr("placeholder", "Sector Filter");
+        $("#sdg-sel_input")
+          .attr("placeholder", "SDG Filter");
+        $("#beneficiary-sel_input")
+          .attr("placeholder", "Beneficiary Filter");
 
         $(".multiselect-dropdown-arrow").attr(
           "style",
@@ -93,12 +100,23 @@ frappe.ready(() => {
 
         values.forEach((val) => instance.select(val));
       },
-      showDistanceSelect() {
-        if (this.searched_location) {
-          this.show_range_filter = true;
-        } else {
-          this.show_range_filter = false;
+
+      storeSdgFilter(){
+        const sdg_list = $("#sdg-sel").val() ?? "";
+        
+        if(typeof sdg_list === 'string'){
+          localStorage.setItem("filter_sdgs", sdg_list);
         }
+        localStorage.setItem("filter_sdgs", JSON.stringify(sdg_list));
+      },
+      
+      storeBeneficiaryFilter(){
+        const beneficiary_list = $("#beneficiary-sel").val() ?? "";
+
+        if (typeof beneficiary_list === 'string') {
+          localStorage.setItem("filter_beneficiaries", beneficiary_list);
+        }
+        localStorage.setItem("filter_beneficiaries", JSON.stringify(beneficiary_list));
       },
 
       storeSectorFilter() {
@@ -112,7 +130,6 @@ frappe.ready(() => {
 
         const filter_sectors = JSON.stringify(sectors_list);
         localStorage.setItem("filter_sectors", filter_sectors);
-        this.setQueryParam();
       },
       clearLocationIfEmpty() {
         if (this.searched_location) {
@@ -123,18 +140,13 @@ frappe.ready(() => {
           localStorage.setItem("filter_location_lat", "");
           localStorage.setItem("filter_location_lng", "");
           localStorage.setItem("filter_location_range", "");
-          this.setQueryParam();
-          window.location.reload();
         }
       },
 
       storeRangeFilter() {
-        console.log(this.selected_range, typeof this.selected_range);
         const filter_location_range = Number(this.selected_range); // Read range from the select dropdown
         if (localStorage) {
           localStorage.setItem("filter_location_range", filter_location_range);
-          this.setQueryParam();
-          window.location.reload();
         }
       },
 
@@ -165,7 +177,7 @@ frappe.ready(() => {
           console.trace(e);
           return false;
         }
-        console.log(selectedLocation);
+        
         let name_components = [
           selectedLocation.city,
           selectedLocation.state,
@@ -183,13 +195,11 @@ frappe.ready(() => {
           localStorage.setItem("filter_location_lat", filter_location_lat);
           localStorage.setItem("filter_location_lng", filter_location_lng);
           localStorage.setItem("filter_location_range", filter_location_range);
-          this.setQueryParam();
-          window.location.reload();
         }
       },
 
       getLocation() {
-        const place = this.found_location.getPlace();
+        const place = this.google_map_instance.getPlace();
         console.log("place: ", place);
 
         const addressMapping = {
@@ -267,18 +277,39 @@ frappe.ready(() => {
           if (sectors) {
             sectors = JSON.parse(sectors); // since we stringify while storing
             query_obj["sectors"] = sectors;
-            this.selected_sector = sectors;
           }
+
+          let sdgs = localStorage.getItem("filter_sdgs");
+          if (sdgs) {
+            query_obj['sdgs'] = JSON.parse(sdgs);
+          }
+          
+          let beneficiaries = localStorage.getItem("filter_beneficiaries");
+          if (beneficiaries) {
+            query_obj['beneficiaries'] = JSON.parse(beneficiaries);
+          }
+
           return query_obj;
         }
       },
       applyFilter() {
-        console.log("apply filters");
         this.storeSectorFilter();
+        this.storeBeneficiaryFilter();
+        this.storeSdgFilter();
+        this.setQueryParam();
         window.location.reload();
       },
       resetFilter() {
-        console.log("reset filters");
+        localStorage.setItem("filter_location_name", "");
+        localStorage.setItem("filter_location_lat", "");
+        localStorage.setItem("filter_location_lng", "");
+        localStorage.setItem("filter_location_range", "");
+        localStorage.setItem("filter_beneficiaries", "");
+        localStorage.setItem("filter_sdgs", "");
+        localStorage.setItem("filter_sectors", JSON.stringify(['all']));
+
+        this.setQueryParam();
+        window.location.reload();
       },
     },
   });
