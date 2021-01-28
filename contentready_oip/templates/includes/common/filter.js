@@ -10,6 +10,7 @@ frappe.ready(() => {
       return {
         qp_page: "",
         selected_range: null,
+        show_beneficiary: true,
         searched_location: "",
         google_map_instance: null,
         sdg_multiselect_instance: null,
@@ -20,6 +21,7 @@ frappe.ready(() => {
     created() {
       this.selected_range = localStorage.getItem("filter_location_range");
       this.searched_location = localStorage.getItem("filter_location_name");
+      this.update_show_beneficiary();
     },
     mounted() {
       // Sector, SDG, Beneficiary multiselect initialization
@@ -41,9 +43,16 @@ frappe.ready(() => {
       );
 
       const query_params = frappe.utils.get_query_params();
+      // if no qp exist, set qp and reload
+      if (!Object.keys(query_params).length) {
+        this.setQueryParam();
+        window.location.reload();
+        return;
+      }
+
       const { sectors , sdgs, beneficiaries } = query_params;
 
-      const parsed_sectors = JSON.parse(sectors) ?? ["all"];
+      const parsed_sectors = sectors ? JSON.parse(sectors) : ["all"];
       this.prefillMultiselect(parsed_sectors, this.sector_multiselect_instance);
       
       if (sdgs) {
@@ -55,6 +64,8 @@ frappe.ready(() => {
         const parsed_beneficiaries = JSON.parse(beneficiaries);
         this.prefillMultiselect(parsed_beneficiaries, this.beneficiary_multiselect_instance);
       }
+
+
     },
     computed: {
       available_sectors() {
@@ -311,6 +322,11 @@ frappe.ready(() => {
         this.setQueryParam();
         window.location.reload();
       },
+
+      update_show_beneficiary(){
+        const {pathname} = window.location;
+        this.show_beneficiary = !pathname.includes('solution');
+      }
     },
   });
 

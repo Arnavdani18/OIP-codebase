@@ -101,7 +101,7 @@
       </select>
     </div>
 
-    <div class="mt-4 mt-sm-0 in-mob" id="beneficiary-sel-div">
+    <div class="mt-4 mt-sm-0 in-mob" id="beneficiary-sel-div" v-show="show_beneficiary">
       <select class="pattern1" multiple id="beneficiary-sel" >
         <option v-for="option in available_beneficiaries" :value="option.name">[[option.title]]</option>
       </select>
