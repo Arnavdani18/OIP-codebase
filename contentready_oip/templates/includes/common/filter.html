@@ -79,10 +79,15 @@
     #location-input-div{
       width: 100%;
     }
+
+    .actions {
+      margin-right: 1%;
+    }
   }
 </style>
 
 <script type="text/x-template" id="filter-script">
+  <div class="d-flex flex-column">
   <div class="row justify-content-sm-start justify-content-md-end flex-wrap" id="filter-section">
     <div class="in-mob" id="sector-sel-div">
       <select class="pattern1" @change="storeSectorFilter" v-model="selected_sector" multiple id="sector-sel">
@@ -116,6 +121,12 @@
       </select>
     </div>
   </div>
+  <div class="row flex-row-reverse mt-3 actions">
+    <button class="btn btn-primary btn-lg text-white">Apply Filter</button>
+    &nbsp;&nbsp;
+    <button class="btn btn-outline-danger btn-lg">Reset Filter</button>
+  </div>
+</div>
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxSPvgric8Zn54pYneG9NondiINqdvb-w&libraries=places" defer></script>
