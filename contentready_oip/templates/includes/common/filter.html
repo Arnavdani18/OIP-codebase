@@ -29,16 +29,18 @@
     margin-bottom: .5rem;
   }
 
-  #sector-sel_itemList, #sdg-sel_itemList{
+  #sector-sel_itemList,#beneficiary-sel_itemList, #sdg-sel_itemList{
     margin-top: 1rem;
   }
 
   #sector-sel_itemList label, 
+  #beneficiary-sel_itemList label, 
   #sdg-sel_itemList label {
     font-size: 1.4rem;
   }
  
   #sector-sel_itemList li,
+  #beneficiary-sel_itemList li,
   #sdg-sel_itemList li {
     padding: .2rem .7rem;
   }
@@ -52,9 +54,10 @@
   }
 
   #sector-sel_inputCount,
+  #beneficiary-sel_inputCount,
   #sdg-sel_inputCount {
     top: -3.2rem;
-    left: 17.5rem !important;
+    left: 85% !important;
     color: var(--secondary6);
     background-color: var(--primary2)
   }
@@ -69,30 +72,41 @@
   }
 
   @media only screen and (max-width: 600px) {
-    /* .in-mob {
-      padding-top: 1rem;
-    } */
+    .in-mob {
+      width: 95%;
+    }
+
+    #location-input-div{
+      width: 100%;
+    }
   }
 </style>
 
 <script type="text/x-template" id="filter-script">
   <div class="row justify-content-sm-start justify-content-md-end flex-wrap" id="filter-section">
-    <div class="" id="sector-sel-div">
+    <div class="in-mob" id="sector-sel-div">
       <select class="pattern1" @change="storeSectorFilter" v-model="selected_sector" multiple id="sector-sel">
         <option selected value="all">All Sectors</option>
         <option v-for="sector in available_sectors" :value="sector.name">[[sector.title]]</option>
       </select>
     </div>
-    <div class="" id="sdg-sel-div">
-      <select class="pattern1" multiple v-model="selected_sdg" id="sdg-sel" placeholder="SDG Filter">
-        <option v-for="option in available_sdg" :value="option.value">[[option.label]]</option>
+    <div class="mt-4 mt-sm-0 in-mob" id="sdg-sel-div">
+      <select class="pattern1" multiple v-model="selected_sdg" id="sdg-sel" >
+        <option v-for="option in available_sdg" :value="option.name">[[option.title]]</option>
       </select>
     </div>
-    <div class="in-mob" id="location-input-div">
-      <input class="pattern1 pl-2" type="text" ref="location" v-model="searched_location" id="autocomplete" placeholder="Search for location..."
+
+    <div class="mt-4 mt-sm-0 in-mob" id="beneficiary-sel-div">
+      <select class="pattern1" multiple v-model="selected_beneficiary" id="beneficiary-sel" >
+        <option v-for="option in available_beneficiaries" :value="option.name">[[option.title]]</option>
+      </select>
+    </div>
+    
+    <div class="mt-4 mt-sm-0" id="location-input-div">
+      <input class="pattern1 pl-2 in-mob" type="text" ref="location" v-model="searched_location" id="autocomplete" placeholder="Search for location..."
         @input="clearLocationIfEmpty" />
     </div>
-    <div class="in-mob" id="range-sel-div" v-show="show_range_filter">
+    <div class="mt-4 mt-sm-0 in-mob" id="range-sel-div" v-show="show_range_filter">
       <select class="pattern1" @change="storeRangeFilter" v-model="selected_range" id="range-sel">
         <option value="0">0 km</option>
         <option value="25">25 km</option>

@@ -170,7 +170,8 @@ def get_filtered_paginated_content(context, doctype, key, limit_page_length=20):
     payload = {}
     try:
         payload['available_sectors'] = get_available_sectors()
-        payload['available_sdg'] = get_sdg_list()
+        payload['available_sdg'] = frappe.get_list('Sustainable Development Goal', fields=['title','name'])
+        payload['available_beneficiaries'] = frappe.get_list('Beneficiary',fields=['title','name'])
         parameters = frappe.form_dict
         # page
         try:

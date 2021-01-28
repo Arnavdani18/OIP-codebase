@@ -14,7 +14,8 @@ frappe.ready(() => {
         searched_location: localStorage.getItem('filter_location_name') || '',
         found_location: null,
         qp_page: '',
-        selected_sdg: []
+        selected_sdg: [],
+        selected_beneficiary: [],
       };
     },
     created() {
@@ -103,6 +104,9 @@ frappe.ready(() => {
       
       // SDGs
       this.initializeSdgMultiSelect();
+
+      // beneficiary
+      this.initializeBeneficiaryMultiSelect();
     },
     watch: {
       searched_location(currentVal, oldVal) {
@@ -120,11 +124,26 @@ frappe.ready(() => {
       available_sdg() {
         return JSON.parse(`{{available_sdg | json}}`) || [];
       },
+      available_beneficiaries() {
+        return JSON.parse(`{{available_beneficiaries | json}}`) || [];
+      },
     },
     methods: {
       initializeSdgMultiSelect() {
         const sdgSelect = document.multiselect('#sdg-sel');
-        $('#sdg-sel_input').addClass('filter-select m-0 filter-input');
+        $('#sdg-sel_input')
+          .addClass('filter-select m-0 filter-input')
+          .attr('placeholder','SDG Filter');;
+        $('.multiselect-dropdown-arrow').attr(
+          'style',
+          'display:none !important;'
+        );
+      },
+      initializeBeneficiaryMultiSelect() {
+        const sdgSelect = document.multiselect('#beneficiary-sel');
+        $('#beneficiary-sel_input')
+          .addClass('filter-select m-0 filter-input')
+          .attr('placeholder','Beneficiary Filter');
         $('.multiselect-dropdown-arrow').attr(
           'style',
           'display:none !important;'
