@@ -90,19 +90,19 @@
   <div class="d-flex flex-column">
   <div class="row justify-content-sm-start justify-content-md-end flex-wrap" id="filter-section">
     <div class="in-mob" id="sector-sel-div">
-      <select class="pattern1" @change="storeSectorFilter" v-model="selected_sector" multiple id="sector-sel">
-        <option selected value="all">All Sectors</option>
+      <select class="pattern1" multiple id="sector-sel">
+        <option value="all">All Sectors</option>
         <option v-for="sector in available_sectors" :value="sector.name">[[sector.title]]</option>
       </select>
     </div>
     <div class="mt-4 mt-sm-0 in-mob" id="sdg-sel-div">
-      <select class="pattern1" multiple v-model="selected_sdg" id="sdg-sel" >
-        <option v-for="option in available_sdg" :value="option.name">[[option.title]]</option>
+      <select class="pattern1" multiple id="sdg-sel" >
+        <option v-for="option in available_sdg" :value="option.title">[[option.title]]</option>
       </select>
     </div>
 
     <div class="mt-4 mt-sm-0 in-mob" id="beneficiary-sel-div">
-      <select class="pattern1" multiple v-model="selected_beneficiary" id="beneficiary-sel" >
+      <select class="pattern1" multiple id="beneficiary-sel" >
         <option v-for="option in available_beneficiaries" :value="option.name">[[option.title]]</option>
       </select>
     </div>
@@ -122,9 +122,9 @@
     </div>
   </div>
   <div class="row flex-row-reverse mt-3 actions">
-    <button class="btn btn-primary btn-lg text-white">Apply Filter</button>
+    <button class="btn btn-primary btn-lg text-white" @click="applyFilter">Apply Filter</button>
     &nbsp;&nbsp;
-    <button class="btn btn-outline-danger btn-lg">Reset Filter</button>
+    <button class="btn btn-outline-danger btn-lg" @click="resetFilter">Reset Filter</button>
   </div>
 </div>
 </script>
