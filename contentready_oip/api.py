@@ -170,6 +170,7 @@ def get_filtered_paginated_content(context, doctype, key, limit_page_length=20):
     payload = {}
     try:
         payload['available_sectors'] = get_available_sectors()
+        payload['available_sdg'] = get_sdg_list()
         parameters = frappe.form_dict
         # page
         try:

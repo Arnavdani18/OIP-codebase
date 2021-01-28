@@ -3,9 +3,8 @@
 </div>
 
 <style>
-  #sector-sel-div > select,
-  #range-sel-div > select,
-  #location-input-div > input {
+  #range-sel-div select,
+  #location-input-div input {
     font-weight: var(--wgt500);
     height: 4.2rem;
     border: 0.2rem solid var(--secondary1);
@@ -21,7 +20,7 @@
     font-size: var(--f12);
   } 
 
-  .sector-filter {
+  .filter-select {
     font-weight: var(--wgt500);
     line-height: 2.3rem;
     border: 0.2rem solid var(--secondary1) !important;
@@ -30,11 +29,17 @@
     margin-bottom: .5rem;
   }
 
-  #sector-sel_itemList label {
+  #sector-sel_itemList, #sdg-sel_itemList{
+    margin-top: 1rem;
+  }
+
+  #sector-sel_itemList label, 
+  #sdg-sel_itemList label {
     font-size: 1.4rem;
   }
  
-  #sector-sel_itemList li {
+  #sector-sel_itemList li,
+  #sdg-sel_itemList li {
     padding: .2rem .7rem;
   }
 
@@ -42,12 +47,12 @@
     background-color: var(--primary2) !important;
   }
 
-
   .multiselect-wrapper ul li:hover {
     background-color: var(--primary2) !important;
   }
 
-  #sector-sel_inputCount {
+  #sector-sel_inputCount,
+  #sdg-sel_inputCount {
     top: -3.2rem;
     left: 17.5rem !important;
     color: var(--secondary6);
@@ -76,6 +81,11 @@
       <select class="pattern1" @change="storeSectorFilter" v-model="selected_sector" multiple id="sector-sel">
         <option selected value="all">All Sectors</option>
         <option v-for="sector in available_sectors" :value="sector.name">[[sector.title]]</option>
+      </select>
+    </div>
+    <div class="" id="sdg-sel-div">
+      <select class="pattern1" multiple v-model="selected_sdg" id="sdg-sel" placeholder="SDG Filter">
+        <option v-for="option in available_sdg" :value="option.value">[[option.label]]</option>
       </select>
     </div>
     <div class="in-mob" id="location-input-div">

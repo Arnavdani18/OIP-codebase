@@ -2,6 +2,7 @@ let copy_vue_filter;
 
 frappe.ready(() => {
   const vue_filter = new Vue({
+    name: 'filters',
     el: '#filter-component',
     delimiters: ['[[', ']]'],
     template: '#filter-script',
@@ -13,6 +14,7 @@ frappe.ready(() => {
         searched_location: localStorage.getItem('filter_location_name') || '',
         found_location: null,
         qp_page: '',
+        selected_sdg: []
       };
     },
     created() {
@@ -47,7 +49,7 @@ frappe.ready(() => {
           newThis.storeSectorFilter(target, args)
         );
 
-        $('#sector-sel_input').addClass('sector-filter m-0 filter-input');
+        $('#sector-sel_input').addClass('filter-select m-0 filter-input');
         $('.multiselect-dropdown-arrow').attr(
           'style',
           'display:none !important;'
@@ -84,6 +86,7 @@ frappe.ready(() => {
       }
 
       this.showDistanceSelect();
+      
     },
     async mounted() {
       const inputBox = this.$refs.location;
@@ -97,6 +100,9 @@ frappe.ready(() => {
         'place_changed',
         this.storeLocationFilter
       );
+      
+      // SDGs
+      this.initializeSdgMultiSelect();
     },
     watch: {
       searched_location(currentVal, oldVal) {
@@ -111,8 +117,19 @@ frappe.ready(() => {
       available_sectors() {
         return JSON.parse(`{{available_sectors | json}}`) || [];
       },
+      available_sdg() {
+        return JSON.parse(`{{available_sdg | json}}`) || [];
+      },
     },
     methods: {
+      initializeSdgMultiSelect() {
+        const sdgSelect = document.multiselect('#sdg-sel');
+        $('#sdg-sel_input').addClass('filter-select m-0 filter-input');
+        $('.multiselect-dropdown-arrow').attr(
+          'style',
+          'display:none !important;'
+        );
+      },
       showDistanceSelect() {
         if (this.searched_location) {
           this.show_range_filter = true;
