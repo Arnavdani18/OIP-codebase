@@ -47,7 +47,7 @@
                     {% endif %}
                 </div>
             </div>
-            <div class="tab-pane fade" id="validations" role="tabpanel" aria-labelledby="validations-tab">
+            <div class="tab-pane fade" name="test" id="validations" role="tabpanel" aria-labelledby="validations-tab">
                 <div class="col pb-4">
                     <div class="row px-3 pt-3">
                         {% for validation in validations | reverse %}
@@ -95,3 +95,17 @@
         </div>
     </div>
 </div>
+
+<script>
+    frappe.ready(()=>{
+        const {hash} = window.location;
+        if (hash) {
+            $(`#leftTab a[href="${hash}"]`).tab('show');
+        }
+
+        $('a[data-toggle="tab"]').on("click", function() {
+            const tab_hash = $(this).attr("href");
+            history.replaceState(null, null, tab_hash);
+        })
+    })
+</script>
