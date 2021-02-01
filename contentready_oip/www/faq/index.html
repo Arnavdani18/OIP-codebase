@@ -1,1 +1,23 @@
-<h1>Hello...</h1>
+<h2>Frequently Asked Questions (FAQs)</h2>
+<br />
+<div class="accordion">
+    {% for faq in faq_list %}
+    <div class="card">
+      <div class="card-header" id="question {{loop.index}}">
+        <h2 class="mb-0">
+            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#{{faq.name}}" aria-expanded="true" aria-controls="collapseOne">
+                {{ faq.question }}
+                <a href="#{{faq.name}}"> #
+              </a>
+          </button>
+        </h2>
+      </div>
+  
+      <div id="{{faq.name}}" class="collapse show" aria-labelledby="question {{loop.index}}">
+        <div class="card-body">
+          {{ faq.answer }}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
