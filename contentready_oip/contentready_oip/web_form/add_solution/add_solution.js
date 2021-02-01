@@ -873,6 +873,17 @@ frappe.ready(async () => {
     }
   }
 
+  moveHelpTxtNextToLabel = ()=>{
+    $('.help-box').each(function (){
+      const helpBox = $(this);
+      helpBox
+        .removeClass('small')
+        .parent()
+        .prev()
+        .append(helpBox);
+    })
+  }
+
   // End Helpers
 
   // Delay until page is fully rendered
@@ -901,6 +912,7 @@ frappe.ready(async () => {
   addAsterisk(['title','description','city','problems_addressed','country'])
   addAttributesToFields();
   prefillOrg();
+  moveHelpTxtNextToLabel();
 
   
 

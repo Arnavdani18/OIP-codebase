@@ -88,6 +88,17 @@ frappe.ready(async () => {
 
   }
 
+  moveHelpTxtNextToLabel = ()=>{
+    $('.help-box').each(function (){
+      const helpBox = $(this);
+      helpBox
+        .removeClass('small')
+        .parent()
+        .prev()
+        .append(helpBox);
+    })
+  }
+
   autoSelectOrganization = (orgRef)=>{
     frappe.call({
       method: 'contentready_oip.api.get_doc_field',
@@ -641,8 +652,8 @@ frappe.ready(async () => {
   hideAttachmentsSection();
   beneficiaryAsMultiSelect();
   prefillOrg();
-  addAsterisk(['title','city','description'])
-
+  addAsterisk(['title','city','description']);
+  moveHelpTxtNextToLabel();
 
   // End UI Fixes
 

@@ -17,7 +17,7 @@
  "is_standard": 1,
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2021-01-21 11:21:11.796674",
+ "modified": "2021-02-01 18:49:48.715461",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "add-solution",
@@ -227,18 +227,22 @@
   },
   {
    "allow_read_on_all_link_options": 0,
+   "default": "",
+   "description": "",
    "fieldname": "website",
    "fieldtype": "Data",
    "hidden": 0,
    "label": "Website",
    "max_length": 0,
    "max_value": 0,
+   "options": "url",
    "read_only": 0,
    "reqd": 0,
    "show_in_filter": 0
   },
   {
    "allow_read_on_all_link_options": 0,
+   "description": "Describe your solution briefly ",
    "fieldname": "description",
    "fieldtype": "Text Editor",
    "hidden": 0,
@@ -251,6 +255,7 @@
   },
   {
    "allow_read_on_all_link_options": 0,
+   "description": "How is your solution innovative? What problem does it solve better than previous solutions?",
    "fieldname": "innovation",
    "fieldtype": "Small Text",
    "hidden": 0,
@@ -263,6 +268,7 @@
   },
   {
    "allow_read_on_all_link_options": 0,
+   "description": "Talk about how the solution affects an individual's or community\u2019s livelihoods. Feel free to add any relevant financial figures",
    "fieldname": "impact",
    "fieldtype": "Small Text",
    "hidden": 0,
@@ -275,6 +281,7 @@
   },
   {
    "allow_read_on_all_link_options": 0,
+   "description": "What is timeline for implementing this solution from scratch to actually solving the problem or seeing measurable results",
    "fieldname": "timeline",
    "fieldtype": "Data",
    "hidden": 0,
@@ -287,6 +294,7 @@
   },
   {
    "allow_read_on_all_link_options": 0,
+   "description": "Mention dates along with other relevant details (Ex - 1 to 30 Nov, 2019 - Launched in Tamil Nadu for 1000 users)",
    "fieldname": "pilots",
    "fieldtype": "Small Text",
    "hidden": 0,
@@ -311,6 +319,7 @@
   },
   {
    "allow_read_on_all_link_options": 0,
+   "description": "Any details related to pricing, costing or budget that you want to share. You can add text in this field as well",
    "fieldname": "budget",
    "fieldtype": "Data",
    "hidden": 0,
@@ -323,6 +332,7 @@
   },
   {
    "allow_read_on_all_link_options": 0,
+   "description": "As the solution owner, what set of resources do you think are needed to better solve the identified problem with your solution",
    "fieldname": "resources_needed",
    "fieldtype": "Small Text",
    "hidden": 0,
@@ -335,6 +345,7 @@
   },
   {
    "allow_read_on_all_link_options": 0,
+   "description": "Which of the SDGs do you think the solution is addressing ",
    "fieldname": "sustainable_development_goal",
    "fieldtype": "Select",
    "hidden": 0,
@@ -348,6 +359,7 @@
   },
   {
    "allow_read_on_all_link_options": 0,
+   "description": "What sectors do you think the solution falls under",
    "fieldname": "sectors",
    "fieldtype": "Table",
    "hidden": 1,
