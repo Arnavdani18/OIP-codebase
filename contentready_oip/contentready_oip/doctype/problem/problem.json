@@ -75,7 +75,7 @@
   },
   {
    "fieldname": "resources_needed",
-   "fieldtype": "Small Text",
+   "fieldtype": "Table",
    "in_preview": 1,
    "label": "Resources Needed",
    "options": "Resource Table"
@@ -281,7 +281,7 @@
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2021-01-25 17:31:46.822144",
+ "modified": "2021-02-02 11:18:09.763551",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Problem",
