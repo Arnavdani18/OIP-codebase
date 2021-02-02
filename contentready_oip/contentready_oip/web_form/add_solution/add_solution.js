@@ -913,8 +913,7 @@ frappe.ready(async () => {
   addAttributesToFields();
   prefillOrg();
   moveHelpTxtNextToLabel();
-
-  
+  {% include "contentready_oip/public/js/ResourceNeeded.js" %}
 
   const vm = new Vue({
     name: 'SelectedProblem',
@@ -1053,7 +1052,7 @@ frappe.ready(async () => {
           <div class="col d-flex flex-wrap">
             <button
               v-for="sector in avail_sectors"
-              class="btn btn-lg mb-3 mr-3"
+              class="btn btn-lg mb-3 mr-3 btnHover"
               :title="sector['label']"
               :class="{
                 'btn-primary': toggleClass(sector['value']),
