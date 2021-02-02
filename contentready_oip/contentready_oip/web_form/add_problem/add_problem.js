@@ -388,7 +388,7 @@ frappe.ready(async () => {
           is_draft: true,
         },
         callback: function (r) {
-          console.log(r);
+          // console.log(r);
           // update local form technical fields so that they are up to date with server values
           // Important: do no update fields on the UI as that will interfere with user experience.
           const keysToCopy = [
@@ -725,7 +725,7 @@ frappe.ready(async () => {
           <div class="col d-flex flex-wrap">
             <button 
               v-for="sector in avail_sectors"
-              class="btn btn-lg mb-3 mr-3" 
+              class="btn btn-lg mb-3 mr-3 btnHover" 
               :title="sector['label']"
               :class="{
                 'btn-primary': toggleClass(sector['value']),

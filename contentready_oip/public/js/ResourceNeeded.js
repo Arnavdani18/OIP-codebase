@@ -34,9 +34,24 @@ new Vue({
             })
         },
 
-        handleClick(){},
+        handleClick(item){
+            const { resources_needed = [] } = frappe.web_form.doc;
+            const index = resources_needed.findIndex(r => r.resource === item);
+            if (index > -1) {
+                resources_needed.splice(index,1);
+            }else{
+                resources_needed.push({resource: item});
+            }
 
-        toggleClass(){},
+            frappe.web_form.doc.resources_needed = resources_needed;
+            this.$forceUpdate();
+        },
+
+        toggleClass(item){
+            const { resources_needed = [] } = frappe.web_form.doc;
+            const isPresent = resources_needed.find(r => r.resource === item);
+            return !!isPresent;
+        },
     },
     template: `
     <div>
@@ -49,7 +64,7 @@ new Vue({
           <div class="col d-flex flex-wrap">
             <button 
               v-for="option in resourceOptions"
-              class="btn btn-lg mb-3 mr-3" 
+              class="btn btn-lg mb-3 mr-3 btnHover" 
               :title="option"
               :class="{
                 'btn-primary': toggleClass(option),

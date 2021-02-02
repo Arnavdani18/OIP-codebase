@@ -111,3 +111,7 @@
 .select2-selection__rendered {
   font-size: var(--f12);
 }
+
+.btnHover:hover {
+  color: white;
+}
