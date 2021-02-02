@@ -21,7 +21,6 @@
             'Impact': impact, 
             'Deployments': deployments, 
             'Innovation': innovation, 
-            'Resources Needed': resources_needed,
             'Timeline': timeline,
             'Pilots': pilots,
             'Location(s)': city + ', ' + country,
@@ -33,6 +32,20 @@
         {% set value = fields[field] %}
         {% include "templates/includes/common/overview_field.html" %}
         {% endfor %}
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3 class="heading">
+                Resources Needed
+            </h3>
+            <div class="tags my-3">
+                {% for res in resources_needed %}
+                <button class="tag actions text-capitalize">
+                    {{ res.resource }}
+                </button>
+                {% endfor %}
+            </div>
+        </div>
     </div>
     <div class="row">
         <div class="col">
