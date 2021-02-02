@@ -654,6 +654,7 @@ frappe.ready(async () => {
   prefillOrg();
   addAsterisk(['title','city','description']);
   moveHelpTxtNextToLabel();
+  {% include "contentready_oip/public/js/ResourceNeeded.js" %}
 
   // End UI Fixes
 
