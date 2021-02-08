@@ -1,6 +1,7 @@
 import frappe
 import json
 from frappe import _
+from frappe.utils.html_utils import clean_html
 import platform
 from elasticsearch_dsl import Document, Date, Integer, Keyword, Text, Object
 from elasticsearch_dsl.connections import connections
@@ -508,6 +509,10 @@ def add_primary_content(doctype, doc, is_draft=False):
     doc = json.loads(doc)
     if isinstance(is_draft,str):
         is_draft = json.loads(is_draft)
+    # loop over all fields and call clean_html 
+    # to sanitize the input by removing html, css and JS
+    for fieldname, value in doc.items():
+        doc[fieldname] = clean_html(value)
     if 'name' in doc and doc['name']:
         # edit
         content = frappe.get_doc(doctype, doc['name'])
