@@ -26,6 +26,7 @@
   "section_break_21",
   "impact",
   "timeline",
+  "timeline_unit",
   "pilots",
   "deployments",
   "budget",
@@ -275,11 +276,17 @@
    "fieldtype": "Table",
    "label": "Sustainable Development Goal",
    "options": "Sustainable Development Goal Table"
+  },
+  {
+   "fieldname": "timeline_unit",
+   "fieldtype": "Select",
+   "label": "Timeline Unit",
+   "options": "\nDays\nWeeks\nMonths\nYears"
   }
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2021-02-02 11:20:05.266206",
+ "modified": "2021-02-10 17:10:09.475840",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Solution",

@@ -884,6 +884,23 @@ frappe.ready(async () => {
     })
   }
 
+  updateTimeline = ()=>{
+    let timeline = $('div[data-fieldname="timeline"] .control-input-wrapper');
+    let timelineUnit = $('div[data-fieldname="timeline_unit"]');
+
+    let inputTimline = $('input[data-fieldname="timeline"]');
+    let selectTimelineUnit = $('select[data-fieldname="timeline_unit"]');
+
+    // selectTimelineUnit.attr('required',true);
+
+    timeline
+      .addClass('input-group')
+      .html(inputTimline)
+      .append([$('<div/>',{ "class": "input-group-append" }).append(selectTimelineUnit)]);
+    
+    timelineUnit.hide();
+  }
+
   // End Helpers
 
   // Delay until page is fully rendered
@@ -913,6 +930,7 @@ frappe.ready(async () => {
   addAttributesToFields();
   prefillOrg();
   moveHelpTxtNextToLabel();
+  updateTimeline();
   {% include "contentready_oip/public/js/ResourceNeeded.js" %}
 
   const vm = new Vue({
