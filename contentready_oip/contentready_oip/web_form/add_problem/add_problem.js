@@ -330,7 +330,7 @@ frappe.ready(async () => {
         <li>Description</li>
       </ul>
       `
-      frappe.throw(error_message);
+      frappe.msgprint(error_message);
       return;
     }
 

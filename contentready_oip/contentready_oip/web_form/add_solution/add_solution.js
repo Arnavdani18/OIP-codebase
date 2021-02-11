@@ -935,10 +935,10 @@ frappe.ready(async () => {
   // getAvailableSectors();
   addAsterisk(['title','description','city','problems_addressed','country'])
   addAttributesToFields();
-  prefillOrg();
   moveHelpTxtNextToLabel();
   updateTimeline();
   {% include "contentready_oip/public/js/ResourceNeeded.js" %}
+  prefillOrg();
 
   const vm = new Vue({
     name: 'SelectedProblem',
@@ -960,7 +960,7 @@ frappe.ready(async () => {
         this.getTitleByName(frappe.web_form.doc.problems_addressed);
         deselectProblemUI(name);
       },
-      getTitleByName: async function (problems_addressed_arr) {
+      getTitleByName: async function (problems_addressed_arr=[]) {
         let result = [];
     
         for (const problem of problems_addressed_arr) {
