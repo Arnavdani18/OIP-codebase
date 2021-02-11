@@ -853,7 +853,14 @@ frappe.ready(async () => {
   function addAttributesToFields(){
     $('input[data-fieldname="title"]').attr('required',true);
     $('input[data-fieldname="description"]').attr('required',true);
-    $('input[data-fieldname="website"]').attr('type','url');
+    const websiteInput = $('input[data-fieldname="website"]');
+
+    if (!websiteInput.val()){
+      websiteInput.val('https://');
+    }
+
+    websiteInput
+      .attr('type','url');
 
     let titleDivForm = $('div[data-fieldname="title"]').parent();
     let wesiteDivForm = $('div[data-fieldname="website"]').parent();
