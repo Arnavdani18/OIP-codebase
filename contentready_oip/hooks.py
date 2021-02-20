@@ -64,7 +64,7 @@ website_catch_all = [ home_page ]
 # ------------
 
 # before_install = "contentready_oip.install.before_install"
-# after_install = "contentready_oip.install.after_install"
+after_install = "contentready_oip.install.after_install"
 
 # Desk Notifications
 # ------------------
