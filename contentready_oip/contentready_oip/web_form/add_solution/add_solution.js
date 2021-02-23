@@ -98,7 +98,7 @@ frappe.ready(async () => {
         const organisation = r.message;
         const [org,orgTitle] = organisation;
         if (org) {
-          frappe.web_form.doc.org = org
+          frappe.web_form.set_value('org', org);
           orgRef.val(org);
           orgRef.attr('disabled',true);
         } 

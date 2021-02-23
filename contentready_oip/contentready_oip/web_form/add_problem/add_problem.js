@@ -119,7 +119,7 @@ frappe.ready(async () => {
         const organisation = r.message;
         const [org,orgTitle] = organisation;
         if (org) {
-          frappe.web_form.doc.org = org
+          frappe.web_form.set_value('org', org);
           orgRef.attr('disabled',true);
           orgRef.val(org);
         } 
@@ -377,11 +377,13 @@ frappe.ready(async () => {
     const sdg_select = $('select[data-fieldname="sustainable_development_goal"]');
     const sdgVal = sdg_select.val()?.map(v => ({sustainable_development_goal: v}));
     frappe.web_form.doc.sustainable_development_goal = sdgVal;
+    // frappe.web_form.set_value('sustainable_development_goal', sdgVal);
 
     // beneficiary
     const beneficiary_select = $('select[data-fieldname="beneficiaries"]');
     const beneficiariesVal = beneficiary_select.val()?.map(v => ({beneficiary: v}));
     frappe.web_form.doc.beneficiaries = beneficiariesVal;
+    // frappe.web_form.set_value('beneficiaries', beneficiariesVal);
   }
 
   autoSaveDraft = () => {
@@ -626,7 +628,6 @@ frappe.ready(async () => {
 
   async function prefillOrg() {
     const orgRef = $('select[data-fieldname="org"]');
-
     if (!frappe.web_form.doc.org) {
       autoSelectOrganization(orgRef);
     } else{
@@ -850,7 +851,7 @@ frappe.ready(async () => {
   });
   // Set org link field when org title is selected
   $('*[data-fieldname="org"]').on('change', (e) => {
-    frappe.web_form.doc.org = e.target.value;
+    frappe.web_form.set_value('org', e.target.value);
   });
 
   const autoSave = setInterval(autoSaveDraft, 5000);

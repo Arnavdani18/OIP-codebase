@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_guest_to_view": 1,
  "autoname": "field:user",
  "creation": "2019-12-04 19:18:32.487148",
@@ -74,6 +75,7 @@
   },
   {
    "fetch_from": "org.title",
+   "fetch_if_empty": 1,
    "fieldname": "org_title",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -221,7 +223,8 @@
  "has_web_view": 1,
  "image_field": "photo",
  "is_published_field": "is_published",
- "modified": "2021-01-19 15:05:28.924147",
+ "links": [],
+ "modified": "2021-02-23 13:46:38.294347",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "User Profile",

@@ -210,7 +210,6 @@ frappe.ready(async function () {
         doc: frappe.web_form.doc,
       },
       callback: function (r) {
-        // console.log(r.message);
         if (r.message && r.message.route) {
           window.location.href = r.message.route;
         } else {

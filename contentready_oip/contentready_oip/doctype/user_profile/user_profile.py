@@ -15,6 +15,10 @@ class UserProfile(WebsiteGenerator):
         route/title'''
         from_title = self.scrubbed_title()
         return 'contributors' + '/' + from_title
+    
+    def before_save(self):
+        # print("before_save", self.as_dict())
+        pass
 
     def autoname(self):
         # Override autoname from parent class to allow creation of problems with the same name.
@@ -24,9 +28,10 @@ class UserProfile(WebsiteGenerator):
 
     def on_update(self):
         if self.org_title:
-            try:
-                org = frappe.get_doc('Organisation', {'title': self.org_title})
-            except:
+            orgs = frappe.get_all('Organisation', {'title': self.org_title})
+            if len(orgs) > 0:
+                org = frappe.get_doc('Organisation', orgs[0])
+            else:
                 org = frappe.get_doc({
                     'doctype': 'Organisation',
                     'title': self.org_title
