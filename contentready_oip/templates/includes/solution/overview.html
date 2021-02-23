@@ -16,15 +16,15 @@
 <div class="col pt-3">
     <div class="row">
         {% set fields = {
-            'Organization': org_title, 
-            'Budget': budget, 
-            'Impact': impact, 
-            'Deployments': deployments, 
-            'Innovation': innovation, 
+            'Organization': org_title or '', 
+            'Budget': budget or '', 
+            'Impact': impact or '', 
+            'Deployments': deployments or '', 
+            'Innovation': innovation or '', 
             'Timeline': timeline or '' + ' ' + timeline_unit or '',
-            'Pilots': pilots,
-            'Location(s)': city + ', ' + country,
-            'Website': website
+            'Pilots': pilots or '',
+            'Location(s)': city or '' + ', ' + country or '',
+            'Website': website or ''
         } %}
 
         {% for field in fields %}
