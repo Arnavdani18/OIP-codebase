@@ -299,7 +299,7 @@ frappe.ready(async () => {
       method: 'contentready_oip.api.get_problem_card',
       args: { name: name },
       callback: function (r) {
-        console.log('Get Problem Card: ', r);
+        // console.log('Get Problem Card: ', r);
 
         // r.message[0] is the html
         // r.message[1] is the doc_name in case we need to do any processing client side
@@ -507,7 +507,7 @@ frappe.ready(async () => {
       problem: name,
     });
 
-    getTitleByName(frappe.web_form.doc.problems_addressed);
+    vm.getTitleByName(frappe.web_form.doc.problems_addressed);
   };
 
 
@@ -853,7 +853,14 @@ frappe.ready(async () => {
   function addAttributesToFields(){
     $('input[data-fieldname="title"]').attr('required',true);
     $('input[data-fieldname="description"]').attr('required',true);
-    $('input[data-fieldname="website"]').attr('type','url');
+    const websiteInput = $('input[data-fieldname="website"]');
+
+    if (!websiteInput.val()){
+      websiteInput.val('https://');
+    }
+
+    websiteInput
+      .attr('type','url');
 
     let titleDivForm = $('div[data-fieldname="title"]').parent();
     let wesiteDivForm = $('div[data-fieldname="website"]').parent();
@@ -884,6 +891,23 @@ frappe.ready(async () => {
     })
   }
 
+  updateTimeline = ()=>{
+    let timeline = $('div[data-fieldname="timeline"] .control-input-wrapper');
+    let timelineUnit = $('div[data-fieldname="timeline_unit"]');
+
+    let inputTimline = $('input[data-fieldname="timeline"]');
+    let selectTimelineUnit = $('select[data-fieldname="timeline_unit"]');
+
+    // selectTimelineUnit.attr('required',true);
+
+    timeline
+      .addClass('input-group')
+      .html(inputTimline)
+      .append([$('<div/>',{ "class": "input-group-append" }).append(selectTimelineUnit)]);
+    
+    timelineUnit.hide();
+  }
+
   // End Helpers
 
   // Delay until page is fully rendered
@@ -911,32 +935,60 @@ frappe.ready(async () => {
   // getAvailableSectors();
   addAsterisk(['title','description','city','problems_addressed','country'])
   addAttributesToFields();
-  prefillOrg();
   moveHelpTxtNextToLabel();
+  updateTimeline();
   {% include "contentready_oip/public/js/ResourceNeeded.js" %}
+  prefillOrg();
 
   const vm = new Vue({
     name: 'SelectedProblem',
     el: '#selectedProblem',
-    data: function () {
+    delimiters: ['[[', ']]'],
+    data() {
       return {
         selectedProblems: [],
+        problemAddressed: frappe.web_form.doc.problems_addressed
       };
     },
     methods: {
-      removeTitle: function (name) {
+      removeTitle(name) {
         let problemIndex = frappe.web_form.doc.problems_addressed.findIndex(
           (p) => p['problem'] === name
         );
 
         frappe.web_form.doc.problems_addressed.splice(problemIndex, 1);
-        getTitleByName(frappe.web_form.doc.problems_addressed);
+        this.getTitleByName(frappe.web_form.doc.problems_addressed);
         deselectProblemUI(name);
       },
+      getTitleByName: async function (problems_addressed_arr=[]) {
+        let result = [];
+    
+        for (const problem of problems_addressed_arr) {
+          let promise = new Promise(function (resolve, reject) {
+            resolve(
+              frappe.call({
+                method: 'contentready_oip.api.get_problem_details',
+                args: { name: problem['problem'] },
+              })
+            );
+          });
+    
+          let problemObj = await promise;
+          result.push(problemObj['message']);
+        }
+    
+        this.selectedProblems = result;
+      }
+    },
+    mounted(){
+      this.$nextTick(function () {
+        // Code that will run only after the
+        // entire view has been rendered
+        this.getTitleByName(frappe.web_form.doc.problems_addressed);
+      })
     },
     template: `
     <div>
-    {% raw %}
     <ul class="list-group mb-3">
       <li 
         v-if="selectedProblems.length == 0"
@@ -948,43 +1000,18 @@ frappe.ready(async () => {
 
       <li 
         v-for="(problem,i) in selectedProblems" 
-        class="list-group-item"
+        class="list-group-item d-flex"
         style="font-size:1.4rem"
         >
-        {{ problem['title'] }}
-        <button type="button" class="close" aria-label="Close" v-on:click="removeTitle(problem['name'])">
+        <div style="width: 96%;">[[ problem['title'] ]] </div>
+        <button type="button" class="close" title="remove" aria-label="Close" v-on:click="removeTitle(problem['name'])">
           <span aria-hidden="true">&times;</span>
         </button>
       </li>
     </ul>
-    {% endraw %}
     </div>
     `,
   });
-
-  getTitleByName = async function (problems_addressed_arr) {
-    let result = [];
-
-    for (const problem of problems_addressed_arr) {
-      let promise = new Promise(function (resolve, reject) {
-        resolve(
-          frappe.call({
-            method: 'contentready_oip.api.get_problem_details',
-            args: { name: problem['problem'] },
-          })
-        );
-      });
-
-      let problemObj = await promise;
-      result.push(problemObj['message']);
-    }
-
-    vm.selectedProblems = result;
-  };
-
-  if (frappe.web_form.doc.problems_addressed) {
-    getTitleByName(frappe.web_form.doc.problems_addressed);
-  }
 
   const getAvailableSectors = function () {
     frappe.call({
