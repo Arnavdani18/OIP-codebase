@@ -21,9 +21,9 @@
             'Impact': impact or '', 
             'Deployments': deployments or '', 
             'Innovation': innovation or '', 
-            'Timeline': timeline or '' + ' ' + timeline_unit or '',
+            'Timeline': (timeline or '') + ' ' + (timeline_unit or ''),
             'Pilots': pilots or '',
-            'Location(s)': city or '' + ', ' + country or '',
+            'Location(s)': (city or '') + ', ' + (country or ''),
             'Website': website or ''
         } %}
 
