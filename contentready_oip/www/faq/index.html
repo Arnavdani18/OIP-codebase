@@ -1,0 +1,24 @@
+<h2>Frequently Asked Questions (FAQs)</h2>
+<br />
+<div class="accordion" id="faq">
+    {% for faq in faq_list %}
+    <div class="card">
+      <div class="card-header" id="question {{loop.index}}">
+        <h2 class="mb-0 ">
+            <button class="btn btn-link btn-block text-left text-reset text-decoration-none questionBtn collapsed" type="button" data-toggle="collapse" data-target="#{{faq.name}}" aria-expanded="true" aria-controls="collapseOne">
+                {{ faq.question }}
+                <a href="#{{faq.name}}" class="link" style="padding-left: 0.375em;">
+                    {% include "/public/svg/hash.svg" %}
+                </a>
+          </button>
+        </h2>
+      </div>
+  
+      <div id="{{faq.name}}" class="collapse answerDiv" aria-labelledby="question {{loop.index}}" data-parent="#faq">
+        <div class="card-body">
+          {{ faq.answer }}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>

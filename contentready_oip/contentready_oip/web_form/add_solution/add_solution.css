@@ -93,6 +93,14 @@
   width: 2rem;
 }
 
+input.error{
+  background-color: #f8d7da;
+}
+
+.error {
+  color: #842029;
+}
+
 .select2-results__option--highlighted {
   background-color: var(--primary3) !important;
 }
@@ -103,4 +111,8 @@
 
 .select2-selection__rendered{
   font-size: var(--f12);
+}
+
+.btnHover:hover {
+  color: white;
 }

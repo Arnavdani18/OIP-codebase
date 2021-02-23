@@ -1,0 +1,19 @@
+.questionBtn{
+    font-size: large;
+}
+
+.answerDiv{
+    font-size:small
+}
+
+.link {
+    display: none;
+}
+
+.questionBtn:hover .link{
+    display: inline-block;
+}
+
+.link svg{
+    width: 2rem;
+}

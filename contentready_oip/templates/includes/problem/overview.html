@@ -1,8 +1,5 @@
 <div class="col pt-20">
-    <div
-        id="descriptionText"
-        class="description-rules"
-    >
+    <div id="descriptionText" class="description-rules">
         <h3 class="heading">
             Description
         </h3>
@@ -16,20 +13,61 @@
 <div class="col pt-3">
     <div class="row">
         {% set fields = {
-            'Organization': org_title, 
-            'Beneficiaries': beneficiaries, 
-            'Resources Needed': resources_needed,
-            'Impact': impact,
-            'Extent': extent,
-            'Population Affected': population_affected,
-            'Location(s)': city + ', ' + country,
+        'Organization': org_title,
+        'Impact': impact,
+        'Population Affected': population_affected,
+        'Location(s)': city + ', ' + country,
         } %}
 
         {% for field in fields %}
-        {% set label =  field %}
+        {% set label = field %}
         {% set value = fields[field] %}
         {% include "templates/includes/common/overview_field.html" %}
         {% endfor %}
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3 class="heading">
+                Resources Needed
+            </h3>
+            <div class="tags my-3">
+                {% for res in resources_needed %}
+                <button class="tag actions text-capitalize">
+                    {{ res.resource }}
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3 class="heading">
+                Beneficiaries
+            </h3>
+            <div class="tags my-3">
+                {% for b in beneficiaries %}
+                <button class="tag actions text-capitalize">
+                    {{ b.beneficiary }}
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3 class="heading">
+                Extent
+            </h3>
+            <div class="tags my-3">
+                {% for location in extent %}
+                <button class="tag actions text-capitalize">
+                    {{ location.city }},
+                    {{ location.state }},
+                    {{ location.country }}
+                </button>
+                {% endfor %}
+            </div>
+        </div>
     </div>
     <div class="row">
         <div class="col">
@@ -39,6 +77,14 @@
             {% set doctype = doctype %}
             {% set show_all = True %}
             {% include "templates/includes/common/sector_labels.html" %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3 class="heading">
+                Sustainable Development Goals
+            </h3>
+            {% include "templates/includes/common/sdg_labels.html" %}
         </div>
     </div>
 </div>

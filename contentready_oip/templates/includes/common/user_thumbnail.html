@@ -3,15 +3,16 @@
   <img
     src="{{doc.photo|default('/files/default-avatar.jpg', true)}}"
     alt="profile photo"
-    class="img-profile"
+    class="img-profile actions"
     style="object-fit: cover;overflow: hidden !important;"
     width="50"
     height="50"
     onerror="javascript:this.src='../assets/contentready_oip/images/default-avatar.jpg'"
+    onclick="window.location.href = '/{{doc.route}}'"
   />
 </div>
 <div class="created-by-section">
-  <div class="neutralize">{{doc.full_name}}</div>
+  <div class="neutralize actions" onclick="window.location.href = '/{{doc.route}}'">{{doc.full_name}}</div>
   {% if date %}
   <div class="neutralize"></div>
   <div class="neutralize">{{frappe.utils.pretty_date(date)}}</div>

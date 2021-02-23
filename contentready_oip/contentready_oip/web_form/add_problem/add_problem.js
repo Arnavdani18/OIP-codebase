@@ -16,6 +16,7 @@ frappe.ready(async () => {
     );
     $('#add-problem-form').append($('.form-layout'));
     $('#similar-problems').append('<div></div>');
+    $('.attached-file').parent().hide();
   };
 
   const sortAlphabetically = (a, b) => {
@@ -30,6 +31,100 @@ frappe.ready(async () => {
 
     // for equal case
     return 0;
+  }
+
+  addSdgOptions = () => {
+    const sdg_select = $('select[data-fieldname="sustainable_development_goal"]');
+    // add multiple attr 
+    sdg_select.attr('multiple',true);
+
+    // remove icon
+    sdg_select.next().hide();
+    sdg_select.select2();
+
+    frappe.call({
+      method: 'contentready_oip.api.get_sdg_list',
+      args: {},
+      callback: function (r) {
+        const options = [...r.message].sort(sortAlphabetically);
+        frappe.web_form.set_df_property('sustainable_development_goal', 'options', options);
+        const existing_sdgs = frappe.web_form.doc.sustainable_development_goal
+        const sdgValues = existing_sdgs?.map(v => v.sustainable_development_goal);
+        
+        sdg_select.val(sdgValues);
+      },
+    });
+  }
+
+  beneficiaryAsMultiSelect = () => {
+    const beneficiary_select = $('select[data-fieldname="beneficiaries"]');
+    beneficiary_select.attr('multiple',true);
+    beneficiary_select.next().hide();
+    beneficiary_select.select2();
+  }
+  
+
+  addBeneficiaryOptions = (sectors)=>{
+    const beneficiary_select = $('select[data-fieldname="beneficiaries"]');
+
+    frappe.call({
+      method: 'contentready_oip.api.get_beneficiaries_from_sectors',
+      args: {sectors},
+      callback: function (r) {
+        const message = r.message;
+        // adding already selected values to options
+        const existing_beneficiaries = frappe.web_form.doc.beneficiaries ?? [];
+        const beneficiary_values = existing_beneficiaries.map(val => val.beneficiary);
+        const optionsSet = new Set([...message,...beneficiary_values]);
+
+        const sorted_beneficiaries = [...optionsSet].map(b => ({label: b, value: b}) ).sort(sortAlphabetically);
+        frappe.web_form.set_df_property('beneficiaries', 'options', sorted_beneficiaries);
+        
+        // re-iterating based on options available
+        // console.log('object', optionsSet);
+        beneficiary_select.val(beneficiary_values);
+      }
+    })
+
+  }
+
+  moveHelpTxtNextToLabel = () => {
+    $('.help-box').each(function (){
+      const helpBox = $(this);
+      if (helpBox.context.textContent) {
+        const helpIcon = $(`<i class="octicon octicon-question text-muted actions"></i>`);
+        $(helpIcon).click(() => {
+          helpBox.toggleClass('hidden');
+        })
+        helpBox
+        .removeClass('small')
+        .addClass('hidden')
+        .parent()
+        .prev()
+        .append(helpIcon)
+        .append(helpBox);
+      }
+    })
+  }
+
+  autoSelectOrganization = (orgRef)=>{
+    frappe.call({
+      method: 'contentready_oip.api.get_doc_field',
+      args: {
+        doctype: 'User Profile',
+        name: frappe.session.user,
+        field: ['org','org_title']
+      },
+      callback: function (r) {
+        const organisation = r.message;
+        const [org,orgTitle] = organisation;
+        if (org) {
+          frappe.web_form.set_value('org', org);
+          orgRef.attr('disabled',true);
+          orgRef.val(org);
+        } 
+      },
+    });
   }
 
   createOrgOptions = () => {
@@ -233,17 +328,18 @@ frappe.ready(async () => {
   };
 
   submitProblemForm = (is_draft) => {
-    const {title,description,city} = frappe.web_form.doc;
-    if (!title && !description && !city) {
+    const {title, description, city, country} = frappe.web_form.doc;
+    if (!title || !description || !city || !country) {
       const error_message = `
-      Please enter the required field to publish.
+      The following fields are mandatory.
       <ul>
         <li>Title</li>
-        <li>City</li>
         <li>Description</li>
+        <li>City</li>
+        <li>Country</li>
       </ul>
       `
-      frappe.throw(error_message);
+      frappe.msgprint(error_message);
       return;
     }
 
@@ -276,8 +372,23 @@ frappe.ready(async () => {
     $('#auto-save-alert').addClass('hidden');
   };
 
+  formatMultiSelectValues = ()=>{
+    // sdg
+    const sdg_select = $('select[data-fieldname="sustainable_development_goal"]');
+    const sdgVal = sdg_select.val()?.map(v => ({sustainable_development_goal: v}));
+    frappe.web_form.doc.sustainable_development_goal = sdgVal;
+    // frappe.web_form.set_value('sustainable_development_goal', sdgVal);
+
+    // beneficiary
+    const beneficiary_select = $('select[data-fieldname="beneficiaries"]');
+    const beneficiariesVal = beneficiary_select.val()?.map(v => ({beneficiary: v}));
+    frappe.web_form.doc.beneficiaries = beneficiariesVal;
+    // frappe.web_form.set_value('beneficiaries', beneficiariesVal);
+  }
+
   autoSaveDraft = () => {
     console.log('auto save draft: ');
+    formatMultiSelectValues();
 
     if (frappe.web_form.doc.title) {
       frappe.call({
@@ -288,7 +399,7 @@ frappe.ready(async () => {
           is_draft: true,
         },
         callback: function (r) {
-          console.log(r);
+          // console.log(r);
           // update local form technical fields so that they are up to date with server values
           // Important: do no update fields on the UI as that will interfere with user experience.
           const keysToCopy = [
@@ -515,6 +626,17 @@ frappe.ready(async () => {
     $('.attachments').hide();
   }
 
+  async function prefillOrg() {
+    const orgRef = $('select[data-fieldname="org"]');
+    if (!frappe.web_form.doc.org) {
+      autoSelectOrganization(orgRef);
+    } else{
+      await sleep(500);
+      orgRef.attr('disabled',true);
+      
+    }
+  }
+
   // End Helpers
 
   // Delay until page is fully rendered
@@ -528,6 +650,7 @@ frappe.ready(async () => {
   addActionButtons();
   moveDivs();
   createOrgOptions();
+  addSdgOptions();
   // createSectorOptions();
   addSection();
   problemDetails();
@@ -537,7 +660,12 @@ frappe.ready(async () => {
   pageHeadingSection();
   appendAttachLink();
   hideAttachmentsSection();
-  addAsterisk(['title','city','description'])
+  beneficiaryAsMultiSelect();
+  prefillOrg();
+  addAsterisk(['title','city','description']);
+  moveHelpTxtNextToLabel();
+  {% include "contentready_oip/public/js/ResourceNeeded.js" %}
+
   // End UI Fixes
 
   const getAvailableSectors = function () {
@@ -556,6 +684,7 @@ frappe.ready(async () => {
 
         sectorsComp.problem_sectors = problem_sectors || [];
         sectorsComp.avail_sectors = [...r.message.sort(sortAlphabetically)];
+        addBeneficiaryOptions(problem_sectors ?? []);
       },
     });
   };
@@ -606,7 +735,7 @@ frappe.ready(async () => {
           <div class="col d-flex flex-wrap">
             <button 
               v-for="sector in avail_sectors"
-              class="btn btn-lg mb-3 mr-3" 
+              class="btn btn-lg mb-3 mr-3 btnHover" 
               :title="sector['label']"
               :class="{
                 'btn-primary': toggleClass(sector['value']),
@@ -698,7 +827,11 @@ frappe.ready(async () => {
   // Start Google Maps Autocomplete
   const gScriptUrl =
     'https://maps.googleapis.com/maps/api/js?key=AIzaSyAxSPvgric8Zn54pYneG9NondiINqdvb-w&libraries=places';
-  $.getScript(gScriptUrl, initAutocomplete);
+  $.getScript(gScriptUrl, () => {
+    initAutocomplete();
+    // Extent field relies on map script
+    {% include "contentready_oip/contentready_oip/web_form/add_problem/Extent.js" %}
+  });
   // End Google Maps Autocomplete
 
   // Start dropzone.js integration
@@ -718,7 +851,7 @@ frappe.ready(async () => {
   });
   // Set org link field when org title is selected
   $('*[data-fieldname="org"]').on('change', (e) => {
-    frappe.web_form.doc.org = e.target.value;
+    frappe.web_form.set_value('org', e.target.value);
   });
 
   const autoSave = setInterval(autoSaveDraft, 5000);

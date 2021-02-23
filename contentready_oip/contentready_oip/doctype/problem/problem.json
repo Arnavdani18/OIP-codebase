@@ -24,8 +24,9 @@
   "country",
   "country_code",
   "section_break_9",
-  "impact",
   "extent",
+  "section_break_21",
+  "impact",
   "resources_needed",
   "beneficiaries",
   "population_affected",
@@ -42,7 +43,8 @@
   "section_break_25",
   "likes",
   "column_break_27",
-  "watchers"
+  "watchers",
+  "sustainable_development_goal"
  ],
  "fields": [
   {
@@ -73,7 +75,7 @@
   },
   {
    "fieldname": "resources_needed",
-   "fieldtype": "Small Text",
+   "fieldtype": "Table",
    "in_preview": 1,
    "label": "Resources Needed",
    "options": "Resource Table"
@@ -86,7 +88,7 @@
   },
   {
    "fieldname": "beneficiaries",
-   "fieldtype": "Small Text",
+   "fieldtype": "Table",
    "label": "Beneficiaries",
    "options": "Beneficiary Table"
   },
@@ -225,8 +227,9 @@
   },
   {
    "fieldname": "extent",
-   "fieldtype": "Small Text",
-   "label": "Extent"
+   "fieldtype": "Table",
+   "label": "Extent",
+   "options": "Location Table"
   },
   {
    "fieldname": "discussions",
@@ -264,11 +267,21 @@
    "fieldtype": "Select",
    "label": "Population Affected",
    "options": "\n&lt;100\n&lt;1,000\n&lt;10,000\n&lt;100,000\n&gt;100,000"
+  },
+  {
+   "fieldname": "sustainable_development_goal",
+   "fieldtype": "Table",
+   "label": "Sustainable Development Goal",
+   "options": "Sustainable Development Goal Table"
+  },
+  {
+   "fieldname": "section_break_21",
+   "fieldtype": "Section Break"
   }
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2020-04-08 11:32:07.557667",
+ "modified": "2021-02-02 11:18:09.763551",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Problem",

@@ -1,51 +1,26 @@
 {
- "allow_rename": 1,
- "creation": "2019-12-04 19:13:43.466873",
+ "creation": "2021-01-20 11:21:40.355313",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "title",
-  "description",
-  "column_break_3",
-  "image",
-  "beneficiaries"
+  "title"
  ],
  "fields": [
   {
+   "allow_in_quick_entry": 1,
    "fieldname": "title",
    "fieldtype": "Data",
    "in_list_view": 1,
+   "in_preview": 1,
    "label": "Title",
-   "reqd": 1,
    "unique": 1
-  },
-  {
-   "fieldname": "description",
-   "fieldtype": "Small Text",
-   "label": "Description"
-  },
-  {
-   "fieldname": "column_break_3",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "image",
-   "fieldtype": "Attach Image",
-   "label": "Image"
-  },
-  {
-   "fieldname": "beneficiaries",
-   "fieldtype": "Table",
-   "label": "Beneficiaries",
-   "options": "Beneficiary Table"
   }
  ],
- "image_field": "image",
- "modified": "2021-01-25 17:17:10.667798",
+ "modified": "2021-01-28 10:59:53.199606",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
- "name": "Sector",
+ "name": "Sustainable Development Goal",
  "owner": "Administrator",
  "permissions": [
   {
@@ -57,6 +32,18 @@
    "read": 1,
    "report": 1,
    "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Administrator",
    "share": 1,
    "write": 1
   },

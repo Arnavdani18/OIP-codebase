@@ -1,0 +1,38 @@
+{
+ "creation": "2021-01-20 12:25:12.745081",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "sustainable_development_goal",
+  "sdg_title"
+ ],
+ "fields": [
+  {
+   "fieldname": "sustainable_development_goal",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Sustainable Development Goal",
+   "options": "Sustainable Development Goal"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fetch_from": "sustainable_development_goal.title",
+   "fieldname": "sdg_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Title"
+  }
+ ],
+ "istable": 1,
+ "modified": "2021-01-21 11:55:58.128138",
+ "modified_by": "Administrator",
+ "module": "ContentReady OIP",
+ "name": "Sustainable Development Goal Table",
+ "owner": "Administrator",
+ "permissions": [],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

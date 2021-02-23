@@ -86,6 +86,26 @@ frappe.ready(async () => {
     return 0;
   }
 
+  autoSelectOrganization = (orgRef)=>{
+    frappe.call({
+      method: 'contentready_oip.api.get_doc_field',
+      args: {
+        doctype: 'User Profile',
+        name: frappe.session.user,
+        field: ['org','org_title']
+      },
+      callback: function (r) {
+        const organisation = r.message;
+        const [org,orgTitle] = organisation;
+        if (org) {
+          frappe.web_form.set_value('org', org);
+          orgRef.val(org);
+          orgRef.attr('disabled',true);
+        } 
+      },
+    });
+  }
+
   createOrgOptions = () => {
     frappe.call({
       method: 'contentready_oip.api.get_orgs_list',
@@ -95,6 +115,7 @@ frappe.ready(async () => {
         frappe.web_form.set_df_property('org', 'options', options);
       },
     });
+
   };
 
   const addSection = function () {
@@ -278,7 +299,7 @@ frappe.ready(async () => {
       method: 'contentready_oip.api.get_problem_card',
       args: { name: name },
       callback: function (r) {
-        console.log('Get Problem Card: ', r);
+        // console.log('Get Problem Card: ', r);
 
         // r.message[0] is the html
         // r.message[1] is the doc_name in case we need to do any processing client side
@@ -486,28 +507,10 @@ frappe.ready(async () => {
       problem: name,
     });
 
-    getTitleByName(frappe.web_form.doc.problems_addressed);
+    vm.getTitleByName(frappe.web_form.doc.problems_addressed);
   };
 
-  getTitleByName = async function (problems_addressed_arr) {
-    let result = [];
 
-    for (const problem of problems_addressed_arr) {
-      let promise = new Promise(function (resolve, reject) {
-        resolve(
-          frappe.call({
-            method: 'contentready_oip.api.get_problem_details',
-            args: { name: problem['problem'] },
-          })
-        );
-      });
-
-      let problemObj = await promise;
-      result.push(problemObj['message']);
-    }
-
-    vm.selectedProblems = result;
-  };
 
   removeProblemFromSolvedSet = (name) => {
     frappe.web_form.doc.problems_addressed = frappe.web_form.doc.problems_addressed.filter(
@@ -539,18 +542,18 @@ frappe.ready(async () => {
   };
 
   submitSolutionForm = (is_draft) => {
-    const {title,description,city,country} = frappe.web_form.doc;
-    if (!title && !description && !city) {
+    const {title, description, city, country} = frappe.web_form.doc;
+    if (!title || !description || !city || !country) {
       const error_message = `
-      Please enter the required field to publish.
+      The following fields are mandatory.
       <ul>
         <li>Title</li>
+        <li>Description</li>
         <li>City</li>
         <li>Country</li>
-        <li>Description</li>
       </ul>
       `
-      frappe.throw(error_message);
+      frappe.msgprint(error_message);
       return;
     }
 
@@ -583,7 +586,15 @@ frappe.ready(async () => {
     $('#auto-save-alert').addClass('hidden');
   };
 
+  formatSdgValues = ()=>{
+    const sdg_select = $('[data-fieldname="sustainable_development_goal"][data-doctype="Solution"]');
+    const currVal = sdg_select.val() ?? []; 
+    const newVal = currVal.map(v => ({sustainable_development_goal: v}));
+    frappe.web_form.doc.sustainable_development_goal = newVal;
+  }
+
   autoSaveDraft = () => {
+    formatSdgValues();
     getSolversFromMultiselect();
     if (frappe.web_form.doc.title) {
       frappe.call({
@@ -806,6 +817,29 @@ frappe.ready(async () => {
     }
   }
 
+  addSdgOptions = () => {
+    const sdg_select = $('[data-fieldname="sustainable_development_goal"][data-doctype="Solution"]');
+    // add multiple attr 
+    sdg_select.attr('multiple',true);
+
+    // remove icon
+    sdg_select.next().hide();
+    sdg_select.select2();
+
+    frappe.call({
+      method: 'contentready_oip.api.get_sdg_list',
+      args: {},
+      callback: function (r) {
+        const options = [...r.message].sort(sortAlphabetically);
+        frappe.web_form.set_df_property('sustainable_development_goal', 'options', options);
+        const existing_sdgs = frappe.web_form.doc.sustainable_development_goal
+        const sdgValues = existing_sdgs?.map(v => v.sustainable_development_goal);
+        
+        sdg_select.val(sdgValues);
+      },
+    });
+  }
+
   insertSelectedProblem = function () {
     $('*[data-fieldname="problems_addressed"]*[data-fieldtype="Table"]')
       .parent()
@@ -814,6 +848,72 @@ frappe.ready(async () => {
 
   function hideAttachmentsSection() {
     $('.attachments').hide();
+  }
+
+  function addAttributesToFields(){
+    $('input[data-fieldname="title"]').attr('required',true);
+    $('input[data-fieldname="description"]').attr('required',true);
+    const websiteInput = $('input[data-fieldname="website"]');
+
+    if (!websiteInput.val()){
+      websiteInput.val('https://');
+    }
+
+    websiteInput
+      .attr('type','url');
+
+    let titleDivForm = $('div[data-fieldname="title"]').parent();
+    let wesiteDivForm = $('div[data-fieldname="website"]').parent();
+    titleDivForm.validate();
+    wesiteDivForm.validate();
+  }
+
+  async function prefillOrg() {
+    const orgRef = $('select[data-fieldname="org"]');
+
+    if (!frappe.web_form.doc.org) {
+      autoSelectOrganization(orgRef);
+    } else{
+      await sleep(500);
+      orgRef.attr('disabled',true);
+      
+    }
+  }
+
+  moveHelpTxtNextToLabel = () => {
+    $('.help-box').each(function (){
+      const helpBox = $(this);
+      if (helpBox.context.textContent) {
+        const helpIcon = $(`<i class="octicon octicon-question text-muted actions"></i>`);
+        $(helpIcon).click(() => {
+          helpBox.toggleClass('hidden');
+        })
+        helpBox
+        .removeClass('small')
+        .addClass('hidden')
+        .parent()
+        .prev()
+        .append(helpIcon)
+        .append(helpBox);
+      }
+    })
+  }
+
+  updateTimeline = ()=>{
+    let timeline = $('div[data-fieldname="timeline"] .control-input-wrapper');
+    let timelineUnit = $('div[data-fieldname="timeline_unit"]');
+
+    let inputTimline = $('input[data-fieldname="timeline"]');
+    let selectTimelineUnit = $('select[data-fieldname="timeline_unit"]');
+
+    // selectTimelineUnit.attr('required',true);
+
+    timeline
+      .addClass('input-group')
+      .html(inputTimline)
+      .append([$('<div/>',{ "class": "input-group-append" }).append(selectTimelineUnit)]);
+    
+    timelineUnit.hide();
   }
 
   // End Helpers
@@ -829,6 +929,7 @@ frappe.ready(async () => {
   addActionButtons();
   moveDivs();
   createOrgOptions();
+  addSdgOptions();
   // createSectorOptions();
   addSection();
   styleFormHeadings();
@@ -841,33 +942,61 @@ frappe.ready(async () => {
   hideAttachmentsSection();
   // getAvailableSectors();
   addAsterisk(['title','description','city','problems_addressed','country'])
-
-  if (frappe.web_form.doc.problems_addressed) {
-    getTitleByName(frappe.web_form.doc.problems_addressed);
-  }
+  addAttributesToFields();
+  moveHelpTxtNextToLabel();
+  updateTimeline();
+  {% include "contentready_oip/public/js/ResourceNeeded.js" %}
+  prefillOrg();
 
   const vm = new Vue({
     name: 'SelectedProblem',
     el: '#selectedProblem',
-    data: function () {
+    delimiters: ['[[', ']]'],
+    data() {
       return {
         selectedProblems: [],
+        problemAddressed: frappe.web_form.doc.problems_addressed
       };
     },
     methods: {
-      removeTitle: function (name) {
+      removeTitle(name) {
         let problemIndex = frappe.web_form.doc.problems_addressed.findIndex(
           (p) => p['problem'] === name
         );
 
         frappe.web_form.doc.problems_addressed.splice(problemIndex, 1);
-        getTitleByName(frappe.web_form.doc.problems_addressed);
+        this.getTitleByName(frappe.web_form.doc.problems_addressed);
         deselectProblemUI(name);
       },
+      getTitleByName: async function (problems_addressed_arr=[]) {
+        let result = [];
+    
+        for (const problem of problems_addressed_arr) {
+          let promise = new Promise(function (resolve, reject) {
+            resolve(
+              frappe.call({
+                method: 'contentready_oip.api.get_problem_details',
+                args: { name: problem['problem'] },
+              })
+            );
+          });
+    
+          let problemObj = await promise;
+          result.push(problemObj['message']);
+        }
+    
+        this.selectedProblems = result;
+      }
+    },
+    mounted(){
+      this.$nextTick(function () {
+        // Code that will run only after the
+        // entire view has been rendered
+        this.getTitleByName(frappe.web_form.doc.problems_addressed);
+      })
     },
     template: `
     <div>
-    {% raw %}
     <ul class="list-group mb-3">
       <li 
         v-if="selectedProblems.length == 0"
@@ -879,16 +1008,15 @@ frappe.ready(async () => {
 
       <li 
         v-for="(problem,i) in selectedProblems" 
-        class="list-group-item"
+        class="list-group-item d-flex"
         style="font-size:1.4rem"
         >
-        {{ problem['title'] }}
-        <button type="button" class="close" aria-label="Close" v-on:click="removeTitle(problem['name'])">
+        <div style="width: 96%;">[[ problem['title'] ]] </div>
+        <button type="button" class="close" title="remove" aria-label="Close" v-on:click="removeTitle(problem['name'])">
           <span aria-hidden="true">&times;</span>
         </button>
       </li>
     </ul>
-    {% endraw %}
     </div>
     `,
   });
@@ -959,7 +1087,7 @@ frappe.ready(async () => {
           <div class="col d-flex flex-wrap">
             <button
               v-for="sector in avail_sectors"
-              class="btn btn-lg mb-3 mr-3"
+              class="btn btn-lg mb-3 mr-3 btnHover"
               :title="sector['label']"
               :class="{
                 'btn-primary': toggleClass(sector['value']),

@@ -2,165 +2,162 @@ let copy_vue_filter;
 
 frappe.ready(() => {
   const vue_filter = new Vue({
-    el: '#filter-component',
-    delimiters: ['[[', ']]'],
-    template: '#filter-script',
+    name: "filters",
+    el: "#filter-component",
+    delimiters: ["[[", "]]"],
+    template: "#filter-script",
     data: function () {
       return {
-        selected_sector: ['all'],
-        show_range_filter: true,
-        selected_range: 25,
-        searched_location: localStorage.getItem('filter_location_name') || '',
-        found_location: null,
-        qp_page: '',
+        qp_page: "",
+        selected_range: null,
+        show_beneficiary: true,
+        searched_location: "",
+        google_map_instance: null,
+        sdg_multiselect_instance: null,
+        sector_multiselect_instance: null,
+        beneficiary_multiselect_instance: null,
       };
     },
     created() {
-      const newThis = this;
-      $(document).ready(function () {
-        const instance = document.multiselect('#sector-sel');
-        const available_sectors =
-          JSON.parse(`{{available_sectors | json}}`) || [];
-
-        const filter_sectors = localStorage.getItem('filter_sectors');
-        this.selected_sector = JSON.parse(filter_sectors) || ['all'];
-
-        // fill the option which already selected
-        this.selected_sector.forEach((sector) => {
-          instance.select(sector);
-        });
-
-        // listner on options
-        available_sectors.forEach((sector) => {
-          instance.setCheckBoxClick(sector['name'], (target, args) =>
-            newThis.storeSectorFilter(target, args)
-          );
-        });
-
-        // listner on all option
-        instance.setCheckBoxClick('all', (target, args) =>
-          newThis.storeSectorFilter(target, args)
-        );
-
-        // listner on check all option
-        instance.setCheckBoxClick('checkboxAll', (target, args) =>
-          newThis.storeSectorFilter(target, args)
-        );
-
-        $('#sector-sel_input').addClass('sector-filter m-0 filter-input');
-        $('.multiselect-dropdown-arrow').attr(
-          'style',
-          'display:none !important;'
-        );
-      });
-      const existing_sectors = frappe.utils.get_query_params();
-      let sectors = localStorage.getItem('filter_sectors');
-      let rng = localStorage.getItem('filter_location_range');
-
-      this.selected_range = rng;
-      this.selected_sector = JSON.parse(sectors) || ['all'];
-
-      // check if existing sector is from available_sectors
-      check_idx = this.available_sectors.findIndex((v) =>
-        this.selected_sector.includes(v['name'])
-      );
-
-      if (check_idx < 0) {
-        this.selected_sector = ['all'];
-      }
-
-      if (existing_sectors && existing_sectors['page']) {
-        this.qp_page = existing_sectors['page'];
-      }
-
-      const filter_sectors = this.selected_sector;
-      if (localStorage) {
-        localStorage.setItem('filter_sectors', JSON.stringify(filter_sectors));
-        this.setQueryParam();
-      }
-
-      if (!Object.keys(existing_sectors).length) {
-        setTimeout(() => window.location.reload(), 500);
-      }
-
-      this.showDistanceSelect();
+      this.selected_range = localStorage.getItem("filter_location_range");
+      this.searched_location = localStorage.getItem("filter_location_name");
+      this.update_show_beneficiary();
     },
-    async mounted() {
-      const inputBox = this.$refs.location;
-      this.found_location = new google.maps.places.Autocomplete(inputBox, {
-        types: ['(cities)'],
-        componentRestrictions: { country: 'in' },
-      });
+    mounted() {
+      // Sector, SDG, Beneficiary multiselect initialization
+      this.initializeMultiselect();
 
-      this.found_location.setFields(['address_component', 'geometry']);
-      this.found_location.addListener(
-        'place_changed',
+      const { location } = this.$refs;
+      const options = {
+        types: ["(cities)"],
+        componentRestrictions: { country: "in" },
+      };
+      this.google_map_instance = new google.maps.places.Autocomplete(
+        location,
+        options
+      );
+      this.google_map_instance.setFields(["address_component", "geometry"]);
+      this.google_map_instance.addListener(
+        "place_changed",
         this.storeLocationFilter
       );
-    },
-    watch: {
-      searched_location(currentVal, oldVal) {
-        if (currentVal) {
-          this.show_range_filter = true;
-        } else {
-          this.show_range_filter = false;
-        }
-      },
+
+      const query_params = frappe.utils.get_query_params();
+      // if no qp exist, set qp and reload
+      if (!Object.keys(query_params).length) {
+        this.setQueryParam();
+        window.location.reload();
+        return;
+      }
+
+      const { sectors , sdgs, beneficiaries } = query_params;
+
+      const parsed_sectors = sectors ? JSON.parse(sectors) : ["all"];
+      this.prefillMultiselect(parsed_sectors, this.sector_multiselect_instance);
+      
+      if (sdgs) {
+        const parsed_sdgs = JSON.parse(sdgs);
+        this.prefillMultiselect(parsed_sdgs,this.sdg_multiselect_instance);
+      }
+      
+      if (beneficiaries) {
+        const parsed_beneficiaries = JSON.parse(beneficiaries);
+        this.prefillMultiselect(parsed_beneficiaries, this.beneficiary_multiselect_instance);
+      }
+
+
     },
     computed: {
       available_sectors() {
-        return JSON.parse(`{{available_sectors | json}}`) || [];
+        return JSON.parse(`{{ available_sectors | json }}`) || [];
+      },
+      available_sdg() {
+        return JSON.parse(`{{ available_sdg | json }}`) || [];
+      },
+      available_beneficiaries() {
+        return JSON.parse(`{{ available_beneficiaries | json }}`) || [];
       },
     },
     methods: {
-      showDistanceSelect() {
-        if (this.searched_location) {
-          this.show_range_filter = true;
-        } else {
-          this.show_range_filter = false;
-        }
+      initializeMultiselect() {
+        // init Sector
+        this.sector_multiselect_instance = document.multiselect("#sector-sel");
+        // init SDG
+        this.sdg_multiselect_instance = document.multiselect("#sdg-sel");
+        // init Beneficiary
+        this.beneficiary_multiselect_instance = document.multiselect(
+          "#beneficiary-sel"
+        );
+
+        $("#sector-sel_input, #sdg-sel_input, #beneficiary-sel_input")
+          .addClass("filter-select m-0 filter-input");
+
+        $("#sector-sel_input")
+          .attr("placeholder", "Sector Filter");
+        $("#sdg-sel_input")
+          .attr("placeholder", "SDG Filter");
+        $("#beneficiary-sel_input")
+          .attr("placeholder", "Beneficiary Filter");
+
+        $(".multiselect-dropdown-arrow").attr(
+          "style",
+          "display:none !important;"
+        );
       },
-
-      storeSectorFilter(target, args) {
-        this.selected_sector = $('#sector-sel').val();
-
-        // sectors filter cannot be null, set to default
-        if (!this.selected_sector) {
-          document.multiselect('#sector-sel').select('all');
+      prefillMultiselect(values, instance) {
+        if (!values || !instance) {
           return;
         }
 
-        const filter_sectors = JSON.stringify(this.selected_sector);
-
-        if (localStorage) {
-          localStorage.setItem('filter_sectors', filter_sectors);
-          this.setQueryParam();
-        }
-
-        window.location.reload();
+        values.forEach((val) => instance.select(val));
       },
 
+      storeSdgFilter(){
+        const sdg_list = $("#sdg-sel").val() ?? "";
+        
+        if(typeof sdg_list === 'string'){
+          localStorage.setItem("filter_sdgs", sdg_list);
+        }
+        localStorage.setItem("filter_sdgs", JSON.stringify(sdg_list));
+      },
+      
+      storeBeneficiaryFilter(){
+        const beneficiary_list = $("#beneficiary-sel").val() ?? "";
+
+        if (typeof beneficiary_list === 'string') {
+          localStorage.setItem("filter_beneficiaries", beneficiary_list);
+        }
+        localStorage.setItem("filter_beneficiaries", JSON.stringify(beneficiary_list));
+      },
+
+      storeSectorFilter() {
+        const sectors_list = $("#sector-sel").val() ?? [];
+
+        // sectors filter cannot be null, set to default
+        if (!sectors_list.length) {
+          document.multiselect("#sector-sel").select("all");
+          sectors_list.push("all");
+        }
+
+        const filter_sectors = JSON.stringify(sectors_list);
+        localStorage.setItem("filter_sectors", filter_sectors);
+      },
       clearLocationIfEmpty() {
         if (this.searched_location) {
           return false; // don't do anything
         }
         if (localStorage) {
-          localStorage.setItem('filter_location_name', '');
-          localStorage.setItem('filter_location_lat', '');
-          localStorage.setItem('filter_location_lng', '');
-          localStorage.setItem('filter_location_range', '');
-          this.setQueryParam();
-          window.location.reload();
+          localStorage.setItem("filter_location_name", "");
+          localStorage.setItem("filter_location_lat", "");
+          localStorage.setItem("filter_location_lng", "");
+          localStorage.setItem("filter_location_range", "");
         }
       },
 
       storeRangeFilter() {
-        console.log(this.selected_range, typeof this.selected_range);
         const filter_location_range = Number(this.selected_range); // Read range from the select dropdown
         if (localStorage) {
-          localStorage.setItem('filter_location_range', filter_location_range);
-          this.setQueryParam();
-          window.location.reload();
+          localStorage.setItem("filter_location_range", filter_location_range);
         }
       },
 
@@ -191,44 +188,42 @@ frappe.ready(() => {
           console.trace(e);
           return false;
         }
-        console.log(selectedLocation);
+        
         let name_components = [
           selectedLocation.city,
           selectedLocation.state,
           selectedLocation.country,
         ];
         name_components = name_components.filter((c) => c); // remove falsy values
-        const filter_location_name = name_components.join(', ');
+        const filter_location_name = name_components.join(", ");
         const filter_location_lat = selectedLocation.latitude;
         const filter_location_lng = selectedLocation.longitude;
         const filter_location_range = Number(this.selected_range); // Read range from the select dropdown
         this.searched_location = filter_location_name;
 
         if (localStorage) {
-          localStorage.setItem('filter_location_name', filter_location_name);
-          localStorage.setItem('filter_location_lat', filter_location_lat);
-          localStorage.setItem('filter_location_lng', filter_location_lng);
-          localStorage.setItem('filter_location_range', filter_location_range);
-          this.setQueryParam();
-          window.location.reload();
+          localStorage.setItem("filter_location_name", filter_location_name);
+          localStorage.setItem("filter_location_lat", filter_location_lat);
+          localStorage.setItem("filter_location_lng", filter_location_lng);
+          localStorage.setItem("filter_location_range", filter_location_range);
         }
       },
 
       getLocation() {
-        const place = this.found_location.getPlace();
-        console.log('place: ', place);
+        const place = this.google_map_instance.getPlace();
+        console.log("place: ", place);
 
         const addressMapping = {
           locality: {
-            long_name: 'city',
+            long_name: "city",
           },
           administrative_area_level_1: {
-            short_name: 'state_code',
-            long_name: 'state',
+            short_name: "state_code",
+            long_name: "state",
           },
           country: {
-            short_name: 'country_code',
-            long_name: 'country',
+            short_name: "country_code",
+            long_name: "country",
           },
         };
         // Get each component of the address from the place details,
@@ -242,18 +237,18 @@ frappe.ready(() => {
         for (let i = 0; i < place.address_components.length; i++) {
           const address_type = place.address_components[i].types[0];
           if (addressMapping[address_type]) {
-            if (addressMapping[address_type]['short_name']) {
-              selectedLocation[addressMapping[address_type]['short_name']] =
-                place.address_components[i]['short_name'];
+            if (addressMapping[address_type]["short_name"]) {
+              selectedLocation[addressMapping[address_type]["short_name"]] =
+                place.address_components[i]["short_name"];
             }
-            if (addressMapping[address_type]['long_name']) {
-              selectedLocation[addressMapping[address_type]['long_name']] =
-                place.address_components[i]['long_name'];
+            if (addressMapping[address_type]["long_name"]) {
+              selectedLocation[addressMapping[address_type]["long_name"]] =
+                place.address_components[i]["long_name"];
             }
           }
         }
-        selectedLocation['latitude'] = place.geometry.location.lat();
-        selectedLocation['longitude'] = place.geometry.location.lng();
+        selectedLocation["latitude"] = place.geometry.location.lat();
+        selectedLocation["longitude"] = place.geometry.location.lng();
         return selectedLocation;
       },
 
@@ -262,42 +257,76 @@ frappe.ready(() => {
           // guest user so we don't have filters stored on the server.
           // retrieve from localStorage and get our content
           let query_obj = {};
-          const lat = localStorage.getItem('filter_location_lat');
+          const lat = localStorage.getItem("filter_location_lat");
           if (lat) {
-            query_obj['lat'] = Number(lat);
+            query_obj["lat"] = Number(lat);
           }
-          const lng = localStorage.getItem('filter_location_lng');
+          const lng = localStorage.getItem("filter_location_lng");
           if (lng) {
-            query_obj['lng'] = Number(lng);
+            query_obj["lng"] = Number(lng);
           }
-          let rng = localStorage.getItem('filter_location_range');
+          let rng = localStorage.getItem("filter_location_range");
           if (rng) {
             rng = Number(rng);
-            query_obj['rng'] = rng;
+            query_obj["rng"] = rng;
             this.selected_range = rng;
           }
-          let loc_name = localStorage.getItem('filter_location_name');
+          let loc_name = localStorage.getItem("filter_location_name");
           if (loc_name) {
-            query_obj['loc_name'] = loc_name;
+            query_obj["loc_name"] = loc_name;
           }
 
-          let search_str = localStorage.getItem('search_query');
-          if (search_str && window.location.pathname.includes('search')) {
-            query_obj['key'] = search_str;
+          let search_str = localStorage.getItem("search_query");
+          if (search_str && window.location.pathname.includes("search")) {
+            query_obj["key"] = search_str;
           }
 
-          let sectors = localStorage.getItem('filter_sectors');
+          let sectors = localStorage.getItem("filter_sectors");
           if (!sectors) {
-            sectors = JSON.stringify(['all']);
+            sectors = JSON.stringify(["all"]);
           }
           if (sectors) {
             sectors = JSON.parse(sectors); // since we stringify while storing
-            query_obj['sectors'] = sectors;
-            this.selected_sector = sectors;
+            query_obj["sectors"] = sectors;
           }
+
+          let sdgs = localStorage.getItem("filter_sdgs");
+          if (sdgs) {
+            query_obj['sdgs'] = JSON.parse(sdgs);
+          }
+          
+          let beneficiaries = localStorage.getItem("filter_beneficiaries");
+          if (beneficiaries) {
+            query_obj['beneficiaries'] = JSON.parse(beneficiaries);
+          }
+
           return query_obj;
         }
       },
+      applyFilter() {
+        this.storeSectorFilter();
+        this.storeBeneficiaryFilter();
+        this.storeSdgFilter();
+        this.setQueryParam();
+        window.location.reload();
+      },
+      resetFilter() {
+        localStorage.setItem("filter_location_name", "");
+        localStorage.setItem("filter_location_lat", "");
+        localStorage.setItem("filter_location_lng", "");
+        localStorage.setItem("filter_location_range", "");
+        localStorage.setItem("filter_beneficiaries", "");
+        localStorage.setItem("filter_sdgs", "");
+        localStorage.setItem("filter_sectors", JSON.stringify(['all']));
+
+        this.setQueryParam();
+        window.location.reload();
+      },
+
+      update_show_beneficiary(){
+        const {pathname} = window.location;
+        this.show_beneficiary = !pathname.includes('solution');
+      }
     },
   });
 

@@ -85,17 +85,33 @@
 }
 
 .modal-footer > button {
-    padding: 0.5rem 1rem;
-    font-size: 1.25rem;
-    line-height: 1.5;
-    border-radius: 0.3rem;
-    color: white;
+  padding: 0.5rem 1rem;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  border-radius: 0.3rem;
+  color: white;
 }
 
-.close{
+.close {
   font-size: 2rem;
 }
 
-.bookmark>svg {
+.bookmark > svg {
   width: 2rem;
+}
+
+.select2-results__option--highlighted {
+  background-color: var(--primary3) !important;
+}
+
+.select2-results__options {
+  font-size: var(--f14);
+}
+
+.select2-selection__rendered {
+  font-size: var(--f12);
+}
+
+.btnHover:hover {
+  color: white;
 }

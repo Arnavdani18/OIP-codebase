@@ -1,6 +1,7 @@
 import frappe
 import json
 from frappe import _
+from frappe.utils.html_utils import clean_html
 import platform
 from elasticsearch_dsl import Document, Date, Integer, Keyword, Text, Object
 from elasticsearch_dsl.connections import connections
@@ -16,6 +17,19 @@ CLIENT = meilisearch.Client('http://localhost:7700/', 'test123')
 def nudge_guests():
     if not frappe.session.user or frappe.session.user == 'Guest':
         frappe.throw('Please login to collaborate.')
+
+
+# def new_user_tasks(doc=None, event_name=None, email=None):
+#     ''' Only run these tasks for self-sign up.'''
+#     try:
+#         if email == 'Guest':
+#             return False
+#         if email:
+#             doc = frappe.get_doc('User', email)
+#             doc.enabled = False
+#         create_user_profile_if_missing(doc, event_name, email)
+#     except Exception as e:
+#         print(str(e))
 
 def create_user_profile_if_missing(doc=None, event_name=None, email=None):
     try:
@@ -147,6 +161,11 @@ def get_all_doc(doctype):
 
 @frappe.whitelist(allow_guest = True)
 def get_doc_field(doctype, name, field):
+    try:
+        field = json.loads(field)
+    except:
+        field = field
+
     return frappe.get_value(doctype, name, field)
 
 @frappe.whitelist(allow_guest = True)
@@ -165,6 +184,8 @@ def get_filtered_paginated_content(context, doctype, key, limit_page_length=20):
     payload = {}
     try:
         payload['available_sectors'] = get_available_sectors()
+        payload['available_sdg'] = frappe.get_list('Sustainable Development Goal', fields=['title','name'])
+        payload['available_beneficiaries'] = frappe.get_list('Beneficiary',fields=['title','name'])
         parameters = frappe.form_dict
         # page
         try:
@@ -356,6 +377,11 @@ def get_orgs_list():
     all_orgs = frappe.get_list('Organisation', fields=['title', 'name'])
     return [{'label': o['title'], 'value': o['name']} for o in all_orgs]
 
+@frappe.whitelist(allow_guest = True)
+def get_sdg_list():
+    sdgs = frappe.get_list('Sustainable Development Goal', fields=['title','name'])
+    return [{'label': o['title'], 'value': o['name']} for o in sdgs]
+
 @frappe.whitelist(allow_guest = False)
 def get_user_list():
     all_users = frappe.get_list('User Profile', filters={'user': ['not in', ['Guest', 'Administrator']]}, fields=['full_name', 'user'])
@@ -496,6 +522,10 @@ def add_primary_content(doctype, doc, is_draft=False):
     doc = json.loads(doc)
     if isinstance(is_draft,str):
         is_draft = json.loads(is_draft)
+    # loop over all fields and call clean_html 
+    # to sanitize the input by removing html, css and JS
+    for fieldname, value in doc.items():
+        doc[fieldname] = clean_html(value)
     if 'name' in doc and doc['name']:
         # edit
         content = frappe.get_doc(doctype, doc['name'])
@@ -1320,3 +1350,16 @@ def get_url_metadata(url):
         response["data"] = r.json()[0]
         return response
     
+@frappe.whitelist(allow_guest=False)
+def get_beneficiaries_from_sectors(sectors):
+    beneficiary_list = set()
+    try:
+        sectors = json.loads(sectors)
+        for sector in sectors:
+            s = frappe.get_doc('Sector', sector)
+            for b in s.beneficiaries:
+                beneficiary_list.add(b.beneficiary)
+
+        return beneficiary_list
+    except Exception as e:
+        print(str(e))

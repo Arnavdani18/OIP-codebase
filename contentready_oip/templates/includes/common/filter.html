@@ -3,9 +3,8 @@
 </div>
 
 <style>
-  #sector-sel-div > select,
-  #range-sel-div > select,
-  #location-input-div > input {
+  #range-sel-div select,
+  #location-input-div input {
     font-weight: var(--wgt500);
     height: 4.2rem;
     border: 0.2rem solid var(--secondary1);
@@ -21,7 +20,7 @@
     font-size: var(--f12);
   } 
 
-  .sector-filter {
+  .filter-select {
     font-weight: var(--wgt500);
     line-height: 2.3rem;
     border: 0.2rem solid var(--secondary1) !important;
@@ -30,11 +29,19 @@
     margin-bottom: .5rem;
   }
 
-  #sector-sel_itemList label {
+  #sector-sel_itemList,#beneficiary-sel_itemList, #sdg-sel_itemList{
+    margin-top: 1rem;
+  }
+
+  #sector-sel_itemList label, 
+  #beneficiary-sel_itemList label, 
+  #sdg-sel_itemList label {
     font-size: 1.4rem;
   }
  
-  #sector-sel_itemList li {
+  #sector-sel_itemList li,
+  #beneficiary-sel_itemList li,
+  #sdg-sel_itemList li {
     padding: .2rem .7rem;
   }
 
@@ -42,14 +49,15 @@
     background-color: var(--primary2) !important;
   }
 
-
   .multiselect-wrapper ul li:hover {
     background-color: var(--primary2) !important;
   }
 
-  #sector-sel_inputCount {
+  #sector-sel_inputCount,
+  #beneficiary-sel_inputCount,
+  #sdg-sel_inputCount {
     top: -3.2rem;
-    left: 17.5rem !important;
+    left: 85% !important;
     color: var(--secondary6);
     background-color: var(--primary2)
   }
@@ -64,25 +72,46 @@
   }
 
   @media only screen and (max-width: 600px) {
-    /* .in-mob {
-      padding-top: 1rem;
-    } */
+    .in-mob {
+      width: 95%;
+    }
+
+    #location-input-div{
+      width: 100%;
+    }
+
+    .actions {
+      margin-right: 1%;
+    }
   }
 </style>
 
 <script type="text/x-template" id="filter-script">
+  <div class="d-flex flex-column">
   <div class="row justify-content-sm-start justify-content-md-end flex-wrap" id="filter-section">
-    <div class="" id="sector-sel-div">
-      <select class="pattern1" @change="storeSectorFilter" v-model="selected_sector" multiple id="sector-sel">
-        <option selected value="all">All Sectors</option>
+    <div class="in-mob" id="sector-sel-div">
+      <select class="pattern1" multiple id="sector-sel">
+        <option value="all">All Sectors</option>
         <option v-for="sector in available_sectors" :value="sector.name">[[sector.title]]</option>
       </select>
     </div>
-    <div class="in-mob" id="location-input-div">
-      <input class="pattern1 pl-2" type="text" ref="location" v-model="searched_location" id="autocomplete" placeholder="Search for location..."
+    <div class="mt-4 mt-sm-0 in-mob" id="sdg-sel-div">
+      <select class="pattern1" multiple id="sdg-sel" >
+        <option v-for="option in available_sdg" :value="option.title">[[option.title]]</option>
+      </select>
+    </div>
+
+    <div class="mt-4 mt-sm-0 in-mob" id="beneficiary-sel-div" v-show="show_beneficiary">
+      <select class="pattern1" multiple id="beneficiary-sel" >
+        <option v-for="option in available_beneficiaries" :value="option.name">[[option.title]]</option>
+      </select>
+    </div>
+    
+    <div class="mt-4 mt-sm-0" id="location-input-div">
+      <input class="pattern1 pl-2 in-mob" type="text" ref="location" v-model="searched_location" id="autocomplete" placeholder="Search for location..."
         @input="clearLocationIfEmpty" />
     </div>
-    <div class="in-mob" id="range-sel-div" v-show="show_range_filter">
+    <div class="mt-4 mt-sm-0 in-mob" id="range-sel-div" v-show="searched_location">
       <select class="pattern1" @change="storeRangeFilter" v-model="selected_range" id="range-sel">
         <option value="0">0 km</option>
         <option value="25">25 km</option>
@@ -92,6 +121,12 @@
       </select>
     </div>
   </div>
+  <div class="row flex-row-reverse mt-3 actions">
+    <button class="btn btn-primary btn-lg text-white" @click="applyFilter">Apply Filter</button>
+    &nbsp;&nbsp;
+    <button class="btn btn-outline-danger btn-lg" @click="resetFilter">Reset Filter</button>
+  </div>
+</div>
 </script>
 
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxSPvgric8Zn54pYneG9NondiINqdvb-w&libraries=places" defer></script>

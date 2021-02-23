@@ -65,3 +65,17 @@
         </div>
     </div>
 </div>
+
+<script>
+    frappe.ready(()=>{
+        const {hash} = window.location;
+        if (hash) {
+            $(`#leftTab a[href="${hash}"]`).tab('show');
+        }
+
+        $('a[data-toggle="tab"]').on("click", function() {
+            const tab_hash = $(this).attr("href");
+            history.replaceState(null, null, tab_hash);
+        })
+    })
+</script>

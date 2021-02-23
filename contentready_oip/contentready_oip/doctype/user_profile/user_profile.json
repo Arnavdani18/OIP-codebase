@@ -1,6 +1,6 @@
 {
+ "actions": [],
  "allow_guest_to_view": 1,
- "allow_rename": 1,
  "autoname": "field:user",
  "creation": "2019-12-04 19:18:32.487148",
  "doctype": "DocType",
@@ -14,6 +14,7 @@
   "photo",
   "org",
   "org_title",
+  "linkedin_profile",
   "personas",
   "sectors",
   "column_break_4",
@@ -74,6 +75,7 @@
   },
   {
    "fetch_from": "org.title",
+   "fetch_if_empty": 1,
    "fieldname": "org_title",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -211,12 +213,18 @@
    "fieldname": "is_first_login",
    "fieldtype": "Check",
    "label": "First Login"
+  },
+  {
+   "fieldname": "linkedin_profile",
+   "fieldtype": "Data",
+   "label": "Linkedin Profile"
   }
  ],
  "has_web_view": 1,
  "image_field": "photo",
  "is_published_field": "is_published",
- "modified": "2020-08-19 08:11:34.953748",
+ "links": [],
+ "modified": "2021-02-23 13:46:38.294347",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "User Profile",
