@@ -542,15 +542,15 @@ frappe.ready(async () => {
   };
 
   submitSolutionForm = (is_draft) => {
-    const {title,description,city,country} = frappe.web_form.doc;
-    if (!title && !description && !city) {
+    const {title, description, city, country} = frappe.web_form.doc;
+    if (!title || !description || !city || !country) {
       const error_message = `
-      Please enter the required fields to publish.
+      The following fields are mandatory.
       <ul>
         <li>Title</li>
+        <li>Description</li>
         <li>City</li>
         <li>Country</li>
-        <li>Description</li>
       </ul>
       `
       frappe.msgprint(error_message);
