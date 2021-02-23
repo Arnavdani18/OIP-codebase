@@ -4,6 +4,7 @@
     <div class="col">
       <h2 class="black-local">{{full_name or name}}</h2>
     </div>
+    {% if frappe.session.user == name %}
     <div class="col text-right">
       <button
         class="btn btn-outline-primary outline-primary-btn"
@@ -12,6 +13,7 @@
         Edit Profile
       </button>
     </div>
+    {% endif %}
   </div>
   <hr class="hr-border" />
 

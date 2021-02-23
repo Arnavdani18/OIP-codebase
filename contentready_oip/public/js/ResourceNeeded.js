@@ -5,6 +5,7 @@ new Vue({
     data(){
         return{
             helpText: '',
+            showHelp: false,
             resourceOptions: []
         }
     },
@@ -56,8 +57,8 @@ new Vue({
     template: `
     <div>
         <div class="clearfix">
-        <label class="control-label label-styles" style="padding-right: 0px;">Resources Needed</label>
-        <p>[[ helpText ]]</p>
+        <label class="control-label label-styles" style="padding-right: 0px;">Resources Needed<i class="pl-1 octicon octicon-question text-muted actions" @click="showHelp=!showHelp"></i></label>
+        <p v-show="showHelp">[[ helpText ]]</p>
         </div>
 
         <div class="row">

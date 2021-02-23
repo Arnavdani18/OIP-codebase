@@ -18,6 +18,19 @@ def nudge_guests():
     if not frappe.session.user or frappe.session.user == 'Guest':
         frappe.throw('Please login to collaborate.')
 
+
+# def new_user_tasks(doc=None, event_name=None, email=None):
+#     ''' Only run these tasks for self-sign up.'''
+#     try:
+#         if email == 'Guest':
+#             return False
+#         if email:
+#             doc = frappe.get_doc('User', email)
+#             doc.enabled = False
+#         create_user_profile_if_missing(doc, event_name, email)
+#     except Exception as e:
+#         print(str(e))
+
 def create_user_profile_if_missing(doc=None, event_name=None, email=None):
     try:
         if email == 'Guest':
