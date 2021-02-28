@@ -82,8 +82,9 @@
     </div>
 
     <div class="d-flex">
-      {% set doctype = comment.doctype %} {% set name = comment.name %} {% set
-      likes = comment.likes %} {% include "templates/includes/common/likes.html"
+      {% set doctype = comment.doctype %} {% set name = comment.name %} 
+      {% set likes = frappe.get_list('Like', filters={'parent_doctype': doctype, 'parent_name': name}) %} 
+      {% include "templates/includes/common/likes.html"
       %} {% include "templates/includes/common/share.html" %}
     </div>
   </div>

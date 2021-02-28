@@ -239,10 +239,9 @@ frappe.ready( async () => {
 
   submitEnrichmentForm = ( is_draft ) => {
     frappe.web_form.doc.doctype = "Enrichment";
-    frappe.web_form.doc.user = frappe.session.user;
 
     const {title,description,city,country} = frappe.web_form.doc;
-    if (!title && !description && !city) {
+    if (!title || !description || !city || !country) {
       const error_message = `
       Please enter the required field to publish.
       <ul>
@@ -285,7 +284,6 @@ frappe.ready( async () => {
 
   autoSaveDraft = () => {
     if ( frappe.web_form.doc.title ) {
-      frappe.web_form.doc.user = frappe.session.user;
       frappe.call( {
         method: "contentready_oip.api.add_enrichment",
         args: {

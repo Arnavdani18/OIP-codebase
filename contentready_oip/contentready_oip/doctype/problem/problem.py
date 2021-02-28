@@ -75,58 +75,42 @@ class Problem(WebsiteGenerator):
             'parent_name': self.name,
         }
         verbs = {
-            'Enrichment Table': 'enriched',
-            'Validation Table': 'validated',
-            'Collaboration Table': 'wants to collaborate on',
-            'Discussion Table': 'added a comment on',
-            'Like Table': 'liked',
-            'Solution Table': 'added a solution to',
+            'Enrichment': 'enriched',
+            'Validation': 'validated',
+            'Collaboration': 'wants to collaborate on',
+            'Discussion': 'added a comment on',
+            'Like': 'liked',
+            'Solution': 'added a solution to',
         }
-        for c in self.enrichments + self.validations + self.collaborations + self.discussions + self.likes:
+        doctypes = ['Enrichment', 'Validation', 'Collaboration', 'Discussion', 'Like', 'Solution']
+        for doctype in doctypes:
             try:
-                # do not create notifications if the owner themselves contributed
-                if c.user == self.owner:
-                    continue
-                n_template = template.copy()
-                n_template['parent_field'] = c.parentfield
-                n_template['child_name'] = c.name
-                n_template['child_doctype'] = c.doctype
-                n_template['source_user'] = c.user
-                n_name = '{}-{}-{}'.format(n_template['target_user'], n_template['source_user'], n_template['child_name'])
-                # This prevents duplicates
-                if frappe.db.exists('OIP Notification', n_name):
-                    continue
-                user = frappe.get_doc('User', c.user)
-                n_template['text'] = '{} {} your {}: {}'.format(user.full_name, verbs[c.doctype], self.doctype.lower(), self.title)
-                n_template['route'] = self.route + '#' + c.parentfield
-                notification = frappe.get_doc(n_template)
-                notification.save()
-            except:
-                pass
-        for c in self.solutions:
-            try:
-                doc = frappe.get_doc('Solution', c.solution)
-                # do not create notifications if the owner themselves contributed
-                if doc.owner == self.owner:
-                    continue
-                n_template = template.copy()
-                n_template['parent_field'] = c.parentfield
-                n_template['child_name'] = c.name
-                n_template['child_doctype'] = c.doctype
-                n_template['source_user'] = doc.owner
-                n_name = '{}-{}-{}'.format(n_template['target_user'], n_template['source_user'], n_template['child_name'])
-                if frappe.db.exists('OIP Notification', n_name):
-                    continue
-                user = frappe.get_doc('User', doc.owner)
-                n_template['text'] = '{} {} your {}: {}'.format(user.full_name, verbs[c.doctype], self.doctype.lower(), self.title)
-                n_template['route'] = doc.route
-                notification = frappe.get_doc(n_template)
-                notification.save()
+                if doctype == 'Solution':
+                    query = '''select parent as name, owner from `tabProblem Table` where parent_doctype={} and problem='{}';'''.format(doctype, self.name)
+                    contrib_list = frappe.db.sql(query)
+                else:
+                    contrib_list = frappe.get_list(doctype, fields=['name', 'owner'], filters={'parent_doctype': self.doctype, 'parent_name': self.name})
+                for c in contrib_list:
+                    # do not create notifications if the owner themselves contributed
+                    if c['owner'] == self.owner:
+                        continue
+                    n_template = template.copy()
+                    n_template['child_name'] = c['name']
+                    n_template['child_doctype'] = doctype
+                    n_template['source_user'] = c['owner']
+                    n_name = '{}-{}-{}'.format(n_template['target_user'], n_template['source_user'], n_template['child_name'])
+                    if frappe.db.exists('OIP Notification', n_name):
+                        continue
+                    user = frappe.get_doc('User', c['owner'])
+                    n_template['text'] = '{} {} your {}: {}'.format(user.full_name, verbs[doctype], self.doctype.lower(), self.title)
+                    n_template['route'] = self.route + '#' + doctype.lower() + 's'
+                    notification = frappe.get_doc(n_template)
+                    notification.save()
             except:
                 pass
         frappe.db.commit()
 
     def get_context(self, context):
         # published_enrichments = [e for e in self.enrichments if e.is_published]
-        context.enrichment_count = frappe.db.count("Enrichment", {'Problem': context.name ,'is_published': True})
+        context.enrichment_count = frappe.db.count("Enrichment", {'parent_name': context.name ,'is_published': True})
         return context

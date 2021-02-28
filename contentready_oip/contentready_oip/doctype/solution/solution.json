@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_guest_to_view": 1,
  "autoname": "Solution.###",
  "creation": "2019-12-04 19:46:43.122149",
@@ -39,14 +40,7 @@
   "short_description",
   "section_break_9",
   "problems_addressed",
-  "validations",
-  "collaborations",
-  "discussions",
   "solver_team",
-  "interest_section",
-  "likes",
-  "column_break_38",
-  "watchers",
   "sustainable_development_goal"
  ],
  "fields": [
@@ -215,45 +209,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "validations",
-   "fieldtype": "Table",
-   "label": "Validations",
-   "options": "Validation Table"
-  },
-  {
-   "fieldname": "collaborations",
-   "fieldtype": "Table",
-   "label": "Collaborations",
-   "options": "Collaboration Table"
-  },
-  {
-   "fieldname": "discussions",
-   "fieldtype": "Table",
-   "label": "Discussions",
-   "options": "Discussion Table"
-  },
-  {
-   "fieldname": "interest_section",
-   "fieldtype": "Section Break",
-   "label": "Interest"
-  },
-  {
-   "fieldname": "likes",
-   "fieldtype": "Table",
-   "label": "Likes",
-   "options": "Like Table"
-  },
-  {
-   "fieldname": "column_break_38",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "watchers",
-   "fieldtype": "Table",
-   "label": "Watchers",
-   "options": "Watch Table"
-  },
-  {
    "fieldname": "short_description",
    "fieldtype": "Text",
    "hidden": 1,
@@ -286,7 +241,8 @@
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2021-02-10 17:10:09.475840",
+ "links": [],
+ "modified": "2021-02-28 15:25:20.567774",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Solution",

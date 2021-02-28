@@ -22,20 +22,20 @@
     <div class="interaction-container mt-3">
       {% set doctype = problem.doctype %} {% set name = problem.name %}
       <div class="likes-container">
-        {% set likes = problem.likes %}
+        {% set likes = frappe.get_list('Like', filters={'parent_doctype': doctype, 'parent_name': name}) %}
         {% set isClickable = false %}
         {% include
         "templates/includes/common/likes.html" %}
       </div>
       <div class="watchers-container">
-        {% set watchers = problem.watchers %}
+        {% set watchers = frappe.get_list('Watch', filters={'parent_doctype': doctype, 'parent_name': name}) %}
         {% set isClickable = false %}
         {% include
         "templates/includes/common/watchers.html" %}
       </div>
       <div class="validations-container">
-        {% set validations = problem.validations %} {% include
-        "templates/includes/common/validations.html" %}
+        {% set validations = frappe.get_list('Validation', filters={'parent_doctype': doctype, 'parent_name': name}) %} 
+        {% include "templates/includes/common/validations.html" %}
       </div>
     </div>
   </div>

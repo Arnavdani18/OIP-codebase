@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-# Copyright (c) 2020, ContentReady and Contributors
+# Copyright (c) 2021, ContentReady and Contributors
 # See license.txt
 from __future__ import unicode_literals
 
 # import frappe
 import unittest
 
-class TestDiscussionTable(unittest.TestCase):
+class TestLike(unittest.TestCase):
 	pass

@@ -277,9 +277,12 @@ def get_filtered_content(doctype):
                     doc_sectors = {sector.sector for sector in doc.sectors}
                     relevant_sectors = doc_sectors.intersection(user_sectors)
                     if doctype == 'Problem':
-                        doc.score = 0.3 * len(doc.validations) + 0.1 * len(doc.likes) + 0.1 * len(doc.enrichments) + 0.1 * len(doc.watchers) + 0.05 * len(doc.discussions) + 0.3 * len(relevant_sectors)
+                        # disabling scores until we migrate all child tables
+                        doc.score = 1
+                        # doc.score = 0.3 * len(doc.validations) + 0.1 * len(doc.likes) + 0.1 * len(doc.enrichments) + 0.1 * len(doc.watchers) + 0.05 * len(doc.discussions) + 0.3 * len(relevant_sectors)
                     else:
-                        doc.score = 0.3 * len(doc.validations) + 0.1 * len(doc.likes) + 0.1 * len(doc.watchers) + 0.05 * len(doc.discussions) + 0.3 * len(relevant_sectors)
+                        doc.score = 1
+                        # doc.score = 0.3 * len(doc.validations) + 0.1 * len(doc.likes) + 0.1 * len(doc.watchers) + 0.05 * len(doc.discussions) + 0.3 * len(relevant_sectors)
                     content.append(doc)
             except Exception as e:
                 print(str(e))
@@ -408,7 +411,7 @@ def get_homepage_stats():
 
 @frappe.whitelist(allow_guest = True)
 def has_user_contributed(child_doctype, parent_doctype, parent_name):
-    contributions_by_user = frappe.db.count(child_doctype, filters={'user': frappe.session.user, 'parenttype': parent_doctype, 'parent': parent_name})
+    contributions_by_user = frappe.db.count(child_doctype, filters={'owner': frappe.session.user, 'parent_doctype': parent_doctype, 'parent_name': parent_name})
     return contributions_by_user > 0
 
 @frappe.whitelist(allow_guest = True)
@@ -418,18 +421,20 @@ def can_user_contribute(child_doctype, parent_doctype, parent_name):
     return has_user_contributed(child_doctype, parent_doctype, parent_name), doc_owner == frappe.session.user
 
 @frappe.whitelist(allow_guest = False)
-def toggle_contribution(child_doctype, parent_doctype, parent_name, field_name):
+def toggle_contribution(child_doctype, parent_doctype, parent_name):
     nudge_guests()
-    contributions = frappe.get_all(child_doctype, filters={'user': frappe.session.user, 'parenttype': parent_doctype, 'parent': parent_name})
+    contributions = frappe.get_all(child_doctype, filters={'owner': frappe.session.user, 'parent_doctype': parent_doctype, 'parent_name': parent_name})
     if len(contributions) > 0:
         # user has already contributed to this document
         for c in contributions:
             frappe.delete_doc(child_doctype, c['name'])
     else:
         # add contribution for user
-        doc = frappe.get_doc(parent_doctype, parent_name)
-        like = doc.append(field_name, {})
-        like.user = frappe.session.user
+        doc = frappe.get_doc({
+            'doctype': child_doctype,
+            'parent_doctype': parent_doctype,
+            'parent_name': parent_name,
+        })
         doc.save()
         frappe.db.commit()
     return has_user_contributed(child_doctype, parent_doctype, parent_name), get_child_table(child_doctype, parent_doctype, parent_name)
@@ -560,10 +565,12 @@ def add_enrichment(doc,is_draft=False):
         content.save()
     else:
         # create
-        if has_user_contributed('Enrichment Table', 'Problem', doc['problem']):
+        if has_user_contributed('Enrichment', 'Problem', doc['problem']):
             frappe.throw('You have already enriched this problem.')
         content = frappe.get_doc({
-            'doctype': doctype
+            'doctype': doctype,
+            'parent_doctype': 'Problem',
+            'parent_name': doc['problem']
         })
         content.update(doc)
         content.insert(ignore_mandatory=is_draft)
@@ -575,20 +582,23 @@ def add_enrichment(doc,is_draft=False):
 @frappe.whitelist(allow_guest = False)
 def add_or_edit_validation(doctype, name, validation, html=True):
     validation = json.loads(validation)
-    if doctype == 'Validation Table':
+    if doctype == 'Validation':
         # in edit mode
-        v = frappe.get_doc('Validation Table', name)
+        v = frappe.get_doc('Validation', name)
         v.update(validation)
         v.save()
-        total_count = frappe.db.count('Validation Table', filters={'parenttype': v.parenttype, 'parent': v.parent})
+        total_count = frappe.db.count('Validation', filters={'parent_doctype': v.parent_doctype, 'parent_name': v.parent_name})
     else:
-        if has_user_contributed('Validation Table', doctype, name):
+        if has_user_contributed('Validation', doctype, name):
             frappe.throw('You have already validated this {}.'.format(doctype).capitalize())
-        doc = frappe.get_doc(doctype, name)
-        v = doc.append('validations', {})
-        v.update(validation)
+        doc = frappe.get_doc({
+            'doctype': 'Validation',
+            'parent_doctype': doctype,
+            'parent_name': name
+        })
+        doc.update(validation)
         doc.save()
-        total_count = frappe.db.count('Validation Table', filters={'parenttype': doctype, 'parent': name})
+        total_count = frappe.db.count('Validation', filters={'parent_doctype': v.parent_doctype, 'parent_name': v.parent_name})
     frappe.db.commit()
     if html:
         context = {
@@ -603,10 +613,9 @@ def add_or_edit_validation(doctype, name, validation, html=True):
 @frappe.whitelist(allow_guest = False)
 def add_or_edit_collaboration(doctype, name, collaboration, html=True):
     collaboration = json.loads(collaboration)
-    print(collaboration)
-    if doctype == 'Collaboration Intent':
+    if doctype == 'Collaboration':
         # in edit mode
-        doc = frappe.get_doc('Collaboration Intent', name)
+        doc = frappe.get_doc('Collaboration', name)
         doc.comment = collaboration['comment']
         doc.personas = []
         doc.personas_list = ','.join(collaboration['personas'])
@@ -614,15 +623,14 @@ def add_or_edit_collaboration(doctype, name, collaboration, html=True):
             row = doc.append('personas', {})
             row.persona = p
         doc.save()
-        total_count = frappe.db.count('Collaboration Table', filters={'parenttype': doc.parent_doctype, 'parent': doc.parent_name})
+        total_count = frappe.db.count('Collaboration', filters={'parent_doctype': doc.parent_doctype, 'parent_name': doc.parent_name})
     else:
         # creating new collaboration
-        if has_user_contributed('Collaboration Table', doctype, name):
+        if has_user_contributed('Collaboration', doctype, name):
             frappe.throw('You have already added your collaboration intent on this {}.'.format(doctype).capitalize())
         doc = frappe.get_doc({
-            'doctype': 'Collaboration Intent',
+            'doctype': 'Collaboration',
             'comment': collaboration['comment'],
-            'user': frappe.session.user,
             'parent_doctype': doctype,
             'parent_name': name
         })
@@ -630,12 +638,8 @@ def add_or_edit_collaboration(doctype, name, collaboration, html=True):
             row = doc.append('personas', {})
             row.persona = p
         doc.save()
-        parent_doc = frappe.get_doc(doctype, name)
-        child = parent_doc.append('collaborations', {})
-        child.collaboration_intent = doc.name
-        parent_doc.save()
         frappe.db.commit()
-        total_count = frappe.db.count('Collaboration Table', filters={'parenttype': doctype, 'parent': name})
+        total_count = frappe.db.count('Collaboration', filters={'parent_doctype': doc.parent_doctype, 'parent_name': doc.parent_name})
     frappe.db.commit()
     if html:
         context = {
@@ -706,11 +710,11 @@ def get_contributions_by_user(parent_doctype, child_doctypes, limit_page_length=
     try:
         content_dict = {}
         for child_doctype in child_doctypes:
-            filtered = frappe.get_list(child_doctype, fields=['parent', 'modified'], filters={'user': frappe.session.user, 'parenttype': parent_doctype})
+            filtered = frappe.get_list(child_doctype, fields=['parent_name', 'modified'], filters={'user': frappe.session.user, 'parent_doctype': parent_doctype})
             for f in filtered:
-                if f['parent'] not in content_dict:
-                    content_dict[f['parent']] = []
-                content_dict[f['parent']].append({'type': child_doctype, 'modified': f['modified']})
+                if f['parent_name'] not in content_dict:
+                    content_dict[f['parent_name']] = []
+                content_dict[f['parent_name']].append({'type': child_doctype, 'modified': f['modified']})
                 # content_set.add(f['parent'])
         content = []
         # print(content_dict)
@@ -725,13 +729,13 @@ def get_contributions_by_user(parent_doctype, child_doctypes, limit_page_length=
                     doc.discussed = False
                     for e in content_dict[c]:
                         contribution_type = e['type']
-                        if contribution_type == 'Enrichment Table':
+                        if contribution_type == 'Enrichment':
                             doc.enriched = e['modified']
-                        elif contribution_type == 'Validation Table':
+                        elif contribution_type == 'Validation':
                             doc.validated = e['modified']
-                        elif contribution_type == 'Collaboration Table':
+                        elif contribution_type == 'Collaboration':
                             doc.collaborated = e['modified']
-                        elif contribution_type == 'Discussion Table':
+                        elif contribution_type == 'Discussion':
                             doc.discussed = e['modified']
                     content.append(doc)
             except Exception as e:
@@ -744,7 +748,7 @@ def get_contributions_by_user(parent_doctype, child_doctypes, limit_page_length=
 def get_content_watched_by_user(doctype, limit_page_length=5):
     content = []
     try:
-        filtered = frappe.get_list('Watch Table', fields=['parent'], filters={'parenttype': doctype, 'user': frappe.session.user}, limit_page_length=limit_page_length)
+        filtered = frappe.get_list('Watch', fields=['parent'], filters={'parenttype': doctype, 'user': frappe.session.user}, limit_page_length=limit_page_length)
         content_set = {f['parent'] for f in filtered}
         for c in content_set:
             try:
@@ -775,7 +779,7 @@ def get_content_recommended_for_user(doctype, sectors, limit_page_length=5,creat
             try:
                 doc = frappe.get_doc(doctype, c)
                 # don't show content that the user has already contributed to
-                if doc.is_published and not has_user_contributed('Like Table', doctype, c) and not has_user_contributed('Watch Table',doctype, c) and not has_user_contributed('Validation Table',doctype, c) and not has_user_contributed('Collaboration Table',doctype, c) and not has_user_contributed('Enrichment Table',doctype, c):
+                if doc.is_published and not has_user_contributed('Like', doctype, c) and not has_user_contributed('Watch',doctype, c) and not has_user_contributed('Validation',doctype, c) and not has_user_contributed('Collaboration',doctype, c) and not has_user_contributed('Enrichment',doctype, c):
                     doc.photo = frappe.get_value('User Profile', doc.owner, 'photo')
                     if html:
                         if doctype == 'Problem':
@@ -870,9 +874,9 @@ def get_dashboard_content(limit_page_length=5,content_list=None):
     if 'watched_solutions' in content_list:
         payload['watched_solutions'] = get_content_watched_by_user('Solution', limit_page_length=limit_page_length)
     if 'contributed_problems' in content_list:
-        payload['contributed_problems'] = get_contributions_by_user('Problem', ['Enrichment Table', 'Validation Table', 'Collaboration Table', 'Discussion Table'], limit_page_length=limit_page_length)
+        payload['contributed_problems'] = get_contributions_by_user('Problem', ['Enrichment', 'Validation', 'Collaboration', 'Discussion'], limit_page_length=limit_page_length)
     if 'contributed_solutions' in content_list:
-        payload['contributed_solutions'] = get_contributions_by_user('Solution', ['Validation Table', 'Collaboration Table', 'Discussion Table'], limit_page_length=limit_page_length)
+        payload['contributed_solutions'] = get_contributions_by_user('Solution', ['Validation', 'Collaboration', 'Discussion'], limit_page_length=limit_page_length)
     if 'drafts' in content_list:
         payload['drafts'] = get_drafts_by_user(limit_page_length=limit_page_length)
     return payload
@@ -888,11 +892,7 @@ def delete_contribution(child_doctype, name):
 @frappe.whitelist(allow_guest = False)
 def delete_collaboration(name):
     try:
-        e = frappe.get_doc('Collaboration Table', {'collaboration_intent': name})
-        # delete from the parent child table
-        frappe.delete_doc('Collaboration Table', e.name)
-        # delete the primary document
-        frappe.delete_doc('Collaboration Intent', name)
+        frappe.delete_doc('Collaboration', name)
         return True
     except:
         frappe.throw('Collaboration not found.')
@@ -901,11 +901,7 @@ def delete_collaboration(name):
 def delete_reply(reply):
     try:
         reply = json.loads(reply)
-        
-        # delete from the parent child table
-        frappe.delete_doc_if_exists('Discussion Table', reply['name'])
-        # delete the primary document
-        frappe.delete_doc_if_exists('Discussion', reply['discussion'])
+        frappe.delete_doc_if_exists('Discussion', reply['name'])
         frappe.db.commit()
         return True
     except:
@@ -914,10 +910,6 @@ def delete_reply(reply):
 @frappe.whitelist(allow_guest = False)
 def delete_enrichment(name):
     try:
-        e = frappe.get_doc('Enrichment Table', {'enrichment': name})
-        # delete from the problem child table
-        frappe.delete_doc('Enrichment Table', e.name)
-        # delete the primary document
         frappe.delete_doc('Enrichment', name)
         return True
     except:

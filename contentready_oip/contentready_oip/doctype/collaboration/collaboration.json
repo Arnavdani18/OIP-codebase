@@ -1,10 +1,10 @@
 {
+ "actions": [],
  "creation": "2020-05-12 11:21:48.336675",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "user",
   "personas",
   "comment",
   "parent_doctype",
@@ -12,14 +12,6 @@
   "personas_list"
  ],
  "fields": [
-  {
-   "fieldname": "user",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "User",
-   "options": "User",
-   "reqd": 1
-  },
   {
    "fieldname": "personas",
    "fieldtype": "Table",
@@ -41,8 +33,9 @@
   },
   {
    "fieldname": "parent_name",
-   "fieldtype": "Data",
-   "label": "Parent Name"
+   "fieldtype": "Dynamic Link",
+   "label": "Parent Name",
+   "options": "parent_doctype"
   },
   {
    "fieldname": "personas_list",
@@ -50,10 +43,11 @@
    "label": "Personas List"
   }
  ],
- "modified": "2020-05-13 18:53:51.644790",
- "modified_by": "tej@iotready.co",
+ "links": [],
+ "modified": "2021-02-28 16:24:18.919255",
+ "modified_by": "Administrator",
  "module": "ContentReady OIP",
- "name": "Collaboration Intent",
+ "name": "Collaboration",
  "owner": "Administrator",
  "permissions": [
   {

@@ -22,7 +22,7 @@
                 </form>
             </div>
             <div class="modal-footer validation-footer">
-                {% if doctype == 'Validation Table' %}
+                {% if doctype == 'Validation' %}
                 <!-- Edit mode -->
                 <button type="button" class="modal-btn btn-outline-danger"
                     onclick="deleteValidation('{{doctype}}', '{{name}}')">Delete</button>
@@ -68,7 +68,7 @@
             },
             callback: (r) => {
                 if (r.message[1] > 0) {
-                    if (doctype == 'Validation Table') {
+                    if (doctype == 'Validation') {
                         // edit mode
                         $('#validation-card-' + name).replaceWith(r.message[0]);
                         // TODO: Toggles twice for some reason, leaving an empty form on the screen.

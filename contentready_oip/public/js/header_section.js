@@ -5,7 +5,7 @@ frappe.ready(async () => {
         }
         frappe.call({
             method: 'contentready_oip.api.can_user_contribute',
-            args: {child_doctype: 'Enrichment Table', parent_doctype: doctype, parent_name: name},
+            args: {child_doctype: 'Enrichment', parent_doctype: doctype, parent_name: name},
             callback: (r) => {
                 const has_contributed = r.message[0];
                 const is_owner = r.message[1];
@@ -26,7 +26,7 @@ frappe.ready(async () => {
         }
         frappe.call({
             method: 'contentready_oip.api.can_user_contribute',
-            args: {child_doctype: 'Validation Table', parent_doctype: doctype, parent_name: name},
+            args: {child_doctype: 'Validation', parent_doctype: doctype, parent_name: name},
             callback: (r) => {
                 const has_contributed = r.message[0];
                 const is_owner = r.message[1];
@@ -47,7 +47,7 @@ frappe.ready(async () => {
         }
         frappe.call({
             method: 'contentready_oip.api.can_user_contribute',
-            args: {child_doctype: 'Collaboration Table', parent_doctype: doctype, parent_name: name},
+            args: {child_doctype: 'Collaboration', parent_doctype: doctype, parent_name: name},
             callback: (r) => {
                 const has_contributed = r.message[0];
                 const is_owner = r.message[1];

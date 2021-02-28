@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_guest_to_view": 1,
  "autoname": "Enrichment.###",
  "creation": "2020-02-28 13:00:33.338376",
@@ -7,7 +8,6 @@
  "engine": "InnoDB",
  "field_order": [
   "problem",
-  "user",
   "title",
   "column_break_8",
   "is_published",
@@ -34,7 +34,6 @@
   "description",
   "short_description",
   "section_break_25",
-  "likes",
   "parent_doctype",
   "parent_name"
  ],
@@ -178,12 +177,6 @@
    "label": "Interest"
   },
   {
-   "fieldname": "likes",
-   "fieldtype": "Table",
-   "label": "Likes",
-   "options": "Like Table"
-  },
-  {
    "fieldname": "short_description",
    "fieldtype": "Text",
    "label": "Short Description"
@@ -192,13 +185,6 @@
    "fieldname": "problem",
    "fieldtype": "Data",
    "label": "Problem"
-  },
-  {
-   "fieldname": "user",
-   "fieldtype": "Link",
-   "label": "User",
-   "options": "User",
-   "reqd": 1
   },
   {
    "fieldname": "media",
@@ -214,8 +200,9 @@
   },
   {
    "fieldname": "parent_name",
-   "fieldtype": "Data",
-   "label": "Parent Name"
+   "fieldtype": "Dynamic Link",
+   "label": "Parent Name",
+   "options": "parent_doctype"
   },
   {
    "fieldname": "population_affected",
@@ -225,7 +212,8 @@
   }
  ],
  "is_published_field": "is_published",
- "modified": "2020-03-19 19:36:41.691747",
+ "links": [],
+ "modified": "2021-02-28 18:16:08.799080",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Enrichment",
