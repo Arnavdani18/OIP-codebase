@@ -259,14 +259,33 @@ frappe.ready(async () => {
 
   addDropzone = () => {
     // TODO: Allow user to select an image as featured image
-    // disable autoDiscover as we are manually binding the dropzone to a form element
+
+    const get_upload_url = async (files) => {
+      await sleep(500);
+      const file = files[0];
+      const content = file.dataURL.split('base64,')[1];
+
+      frappe.call({
+        method: 'contentready_oip.google_vision.is_base64_explicit',
+        args: {b64str: content},
+        callback: function (r) {
+          if(r.message) {
+            frappe.throw('Explicit content detected. This file will not be uploaded.')
+          } else {
+            return '/api/method/upload_file';
+          }
+        },
+      });
+    }
+    
 
     // d-flex align-items-center justify-content-center flex-wrap
+    // disable autoDiscover as we are manually binding the dropzone to a form element
     Dropzone.autoDiscover = false;
     const el = `{% include "public/custom_templates/dz.html" %}`;
     $('*[data-fieldname="media"]*[data-fieldtype="Table"]').parent().after(el);
     $('#dropzone').dropzone({
-      url: '/api/method/upload_file',
+      url: get_upload_url,
       autoDiscover: false,
       addRemoveLinks: true,
       acceptedFiles: 'image/*,video/*',

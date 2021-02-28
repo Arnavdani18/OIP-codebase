@@ -94,12 +94,31 @@ frappe.ready(async function () {
   };
 
   addDropzone = () => {
+
+    const get_upload_url = async (files) => {
+      await sleep(500);
+      const file = files[0];
+      const content = file.dataURL.split('base64,')[1];
+
+      frappe.call({
+        method: 'contentready_oip.google_vision.is_base64_explicit',
+        args: {b64str: content},
+        callback: function (r) {
+          if(r.message) {
+            frappe.throw('Explicit content detected. This file will not be uploaded.')
+          } else {
+            return '/api/method/upload_file';
+          }
+        },
+      });
+    }
+
     // disable autoDiscover as we are manually binding the dropzone to a form element
     Dropzone.autoDiscover = false;
     const el = `<form class="dropzone dz-clickable d-flex align-items-center justify-content-center flex-wrap mb-4" style="font-size:var(--f14);" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
     $('*[data-fieldname="photo"]').after(el);
     $('#dropzone').dropzone({
-      url: '/api/method/upload_file',
+      url: get_upload_url,
       autoDiscover: false,
       maxFiles: 1,
       addRemoveLinks: true,
