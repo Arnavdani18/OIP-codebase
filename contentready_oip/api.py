@@ -1032,7 +1032,7 @@ def unpack_linkedin_response(info, profile=None):
     return payload
 
 @frappe.whitelist(allow_guest=True)
-def send_sms_2_recipients(recipients, message):
+def send_sms_to_recipients(recipients, message):
     from frappe.core.doctype.sms_settings.sms_settings import send_sms
     # hostname = 'https://openinnovationplatform.org'
     # Strip out + when sending SMS

@@ -104,7 +104,7 @@
       });
 
       frappe.call({
-        method: 'contentready_oip.api.send_sms_2_recipients',
+        method: 'contentready_oip.api.send_sms_to_recipients',
         args: data,
         callback: (r) => {
           console.log(r);
