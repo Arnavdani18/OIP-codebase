@@ -808,20 +808,26 @@ def get_drafts_by_user(doctypes=None, limit_page_length=5):
     content = []
     if not doctypes:
         doctypes = ['Problem', 'Solution', 'Enrichment']
+    filtered = []
     try:
         for doctype in doctypes:
-            filtered = frappe.get_list(doctype, filters={'is_published': False, 'owner': frappe.session.user})
-            content_set = {f['name'] for f in filtered}
-            for c in content_set:
-                try:
-                    doc = frappe.get_doc(doctype, c)
-                    doc.photo = frappe.get_value('User Profile', doc.owner, 'photo')
-                    content.append(doc)
-                except Exception as e:
-                    print(str(e))
+            # using frappe.db.sql here to allow insertion of doctype into the results
+            # post-sorting we need the doctype to retrieve the full document
+            query = '''select modified,name,'{}' as doctype from `tab{}` where is_published=false and owner='{}';'''.format(doctype, doctype, frappe.session.user)
+            sublist = frappe.db.sql(query)
+            filtered += sublist
+        # Sorts by first element, which is, conveniently, `modified`
+        # reverse=True ensures descending order
+        filtered.sort(reverse=True)
+        for f in filtered:
+            try:
+                doc = frappe.get_doc(f[2], f[1])
+                doc.photo = frappe.get_value('User Profile', doc.owner, 'photo')
+                content.append(doc)
+            except Exception as e:
+                print(str(e))
     except Exception as e:
         print(str(e))
-    print("\n\n\nDrafts",content)
     return content
 
 @frappe.whitelist(allow_guest = False)
