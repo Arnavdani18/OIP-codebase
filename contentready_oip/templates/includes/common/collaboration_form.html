@@ -164,7 +164,7 @@
 
   submitCollaboration = (doctype, name) => {
     const collaboration = {
-      user: frappe.session.user,
+      owner: frappe.session.user,
       personas: frappe.collaboration_persona,
       comment: $('#collaboration-comment-' + name)
         .val()

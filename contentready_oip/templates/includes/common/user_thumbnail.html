@@ -1,5 +1,5 @@
+{% set doc = frappe.get_doc('User Profile', doc_owner) %}
 <div>
-  {% set doc = frappe.get_doc('User Profile', doc_owner) %}
   <img
     src="{{doc.photo|default('/files/default-avatar.jpg', true)}}"
     alt="profile photo"

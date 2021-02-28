@@ -584,9 +584,9 @@ def add_or_edit_validation(doctype, name, validation, html=True):
     validation = json.loads(validation)
     if doctype == 'Validation':
         # in edit mode
-        v = frappe.get_doc('Validation', name)
-        v.update(validation)
-        v.save()
+        doc = frappe.get_doc('Validation', name)
+        doc.update(validation)
+        doc.save()
         total_count = frappe.db.count('Validation', filters={'parent_doctype': v.parent_doctype, 'parent_name': v.parent_name})
     else:
         if has_user_contributed('Validation', doctype, name):
@@ -598,11 +598,11 @@ def add_or_edit_validation(doctype, name, validation, html=True):
         })
         doc.update(validation)
         doc.save()
-        total_count = frappe.db.count('Validation', filters={'parent_doctype': v.parent_doctype, 'parent_name': v.parent_name})
+        total_count = frappe.db.count('Validation', filters={'parent_doctype': doctype, 'parent_name': name})
     frappe.db.commit()
     if html:
         context = {
-            'validation': v
+            'validation': doc
         }
         template = "templates/includes/common/validation_card.html"
         html = frappe.render_template(template, context)
@@ -639,7 +639,7 @@ def add_or_edit_collaboration(doctype, name, collaboration, html=True):
             row.persona = p
         doc.save()
         frappe.db.commit()
-        total_count = frappe.db.count('Collaboration', filters={'parent_doctype': doc.parent_doctype, 'parent_name': doc.parent_name})
+        total_count = frappe.db.count('Collaboration', filters={'parent_doctype': doctype, 'parent_name': name})
     frappe.db.commit()
     if html:
         context = {

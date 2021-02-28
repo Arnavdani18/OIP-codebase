@@ -50,21 +50,22 @@
             <div class="tab-pane fade" name="test" id="validations" role="tabpanel" aria-labelledby="validations-tab">
                 <div class="col pb-4">
                     <div class="row px-3 pt-3">
-                        {% for validation in validations | reverse %}
-                        {% include "templates/includes/common/validation_card.html" %}
+                        {% for v in validations | reverse %}
+                            {% set validation = frappe.get_doc('Validation', v.name) %}
+                            {% include "templates/includes/common/validation_card.html" %}
                         {% endfor %}
 
                     </div>
                     {% set img_src = "../assets/contentready_oip/svg/no_validation_yet.svg" %}
                     {% if frappe.session.user != 'Guest' %}
                         {% if (validations | length) == 0 %}
-                        {% set msg = "No validations yet" %}
-                        {% include "templates/includes/common/empty_card.html" %}
+                            {% set msg = "No validations yet" %}
+                            {% include "templates/includes/common/empty_card.html" %}
                         {% endif %}
                     {% else %}
                         {% if (validations | length) == 0 %}
-                        {% set msg = "No validations yet. <br /> <span class='pre-login-text'><a href='/login'>Login</a></span> to validate this problem." %}
-                        {% include "templates/includes/common/empty_card.html" %}
+                            {% set msg = "No validations yet. <br /> <span class='pre-login-text'><a href='/login'>Login</a></span> to validate this problem." %}
+                            {% include "templates/includes/common/empty_card.html" %}
                         {% endif %}
                     {% endif %}
                 </div>
@@ -73,7 +74,7 @@
                 <div class="col pb-4">
                     <div class="row px-3 pt-3">
                         {% for c in collaborations | reverse %}
-                        {% set collaboration = frappe.get_doc('Collaboration', c.collaboration_intent) %}
+                        {% set collaboration = frappe.get_doc('Collaboration', c.name) %}
                         {% include "templates/includes/common/collaboration_card.html" %}
                         {% endfor %}
                     </div>

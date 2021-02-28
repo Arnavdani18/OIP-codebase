@@ -3,7 +3,7 @@
 <div class="discussion-section">
   <div class="comment-section">
     <div class="">
-      {% set doc = frappe.get_doc('User Profile', comment.user) %}
+      {% set doc = frappe.get_doc('User Profile', comment.owner) %}
       <img
         src="{{doc.photo|default('/files/default-avatar.jpg', true)}}"
         alt="profile photo"
@@ -38,7 +38,7 @@
   {% for reply in comment.replies %}
   <div class="reply-section">
     <div class="">
-      {% set doc = frappe.get_doc('User Profile', comment.user) %}
+      {% set doc = frappe.get_doc('User Profile', comment.owner) %}
       <img
         src="{{doc.photo|default('/files/default-avatar.jpg', true)}}"
         alt="profile photo"

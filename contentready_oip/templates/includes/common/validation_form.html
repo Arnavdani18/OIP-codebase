@@ -54,7 +54,7 @@
 
     submitValidation = (doctype, name, agree) => {
         const validation = {
-            user: frappe.session.user,
+            owner: frappe.session.user,
             agree: agree,
             comment: $('#validation-comment-' + name).val(),
             attachment: $('#validation-dropzone-' + name).data('file-url'),
