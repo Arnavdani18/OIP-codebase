@@ -444,7 +444,7 @@ def add_comment(doctype, name, text, media=None, html=True):
     doc = frappe.get_doc({
         'doctype': 'Discussion',
         'text': text,
-        'user': frappe.session.user,
+        'owner': frappe.session.user,
         'parent_doctype': doctype,
         'parent_name': name
     })
@@ -453,13 +453,6 @@ def add_comment(doctype, name, text, media=None, html=True):
         a = doc.append('media', {})
         a.attachment = f
     doc.save()
-    parent_doc = frappe.get_doc(doctype, name)
-    if doctype == 'Discussion':
-        child = parent_doc.append('replies', {})
-    else:
-        child = parent_doc.append('discussions', {})
-    child.discussion = doc.name
-    parent_doc.save()
     frappe.db.commit()
     if html:
         template = "templates/includes/common/comment.html"
