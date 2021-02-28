@@ -105,8 +105,8 @@
                 <li class="nav-item dropdown profile-btn-li">
                     <a class="nav-link profile-icon dropdown-toggle" href="#" id="profileDropdown" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {% set doc = frappe.get_doc('User Profile', frappe.session.user) %}
-                        <img src="{{doc.photo|default('/files/default-avatar.jpg', true)}}" alt="profile photo" class="profile-photo"
+                        {% set profile = frappe.get_doc('User Profile', frappe.session.user) %}
+                        <img src="{{profile.photo|default('/files/default-avatar.jpg', true)}}" alt="profile photo" class="profile-photo"
                              onerror="javascript:this.src='assets/contentready_oip/images/default-avatar.jpg'" />
 
                         <span class="d-lg-none text-capitalize ml-3" style="color: var(--secondary1);">Profile</span>
@@ -133,22 +133,8 @@
                     <span class="display-sm-md ">Log Out</span>
                 </li>
 
-                <li class="nav-item dropdown ml-lg-5 add-problem-li">
-                    <a class="nav-link dropdown-toggle add-problem-btn" href="javascript:void(0);" role="button"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Add Problem / Solution
-                    </a>
-                    <div class="dropdown-menu mt-2 dropdown-menu-right dropdown-section">
-                        <a class="dropdown-item py-2" href="/add-problem?new=1">
-                            <img src="../assets/contentready_oip/svg/problem_icon.svg" alt="" height="22" width="30" />
-                            <span> Add Problem</span>
-                        </a>
-                        <a class="dropdown-item py-2" href="/add-solution?new=1">
-                            <img src="../assets/contentready_oip/svg/solution_icon.svg" alt="" height="22" width="30" />
-                            <span> Add Solution </span>
-                        </a>
-                    </div>
-                </li>
+                <div id="add-content-actions"></div>
+
                 {% else %}
                 <li class="nav-item">
                     <!-- <button class="pr-0 text-primary" onclick="onClickLogin()">
@@ -271,8 +257,40 @@
                 }
             } );
         }
+
+        add_content_actions = () =>{
+            frappe.call( {
+                method: 'contentready_oip.api.has_collaborator_role',
+                callback: function( r ) {
+                    if (r.message) {
+                        new Vue({
+                            el: '#add-content-actions',
+                            template:`
+                            <li class="nav-item dropdown ml-lg-5 add-problem-li">
+                                <a class="nav-link dropdown-toggle add-problem-btn" href="javascript:void(0);" role="button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Add Problem / Solution
+                                </a>
+                                <div class="dropdown-menu mt-2 dropdown-menu-right dropdown-section">
+                                    <a class="dropdown-item py-2" href="/add-problem?new=1">
+                                        <img src="../assets/contentready_oip/svg/problem_icon.svg" alt="" height="22" width="30" />
+                                        <span> Add Problem</span>
+                                    </a>
+                                    <a class="dropdown-item py-2" href="/add-solution?new=1">
+                                        <img src="../assets/contentready_oip/svg/solution_icon.svg" alt="" height="22" width="30" />
+                                        <span> Add Solution </span>
+                                    </a>
+                                </div>
+                            </li>
+                            `
+                        }) 
+                    }
+                }
+            } );
+        }
     
         add_desk_route();
+        add_content_actions();
     })
 
     onClickLogin = () => {

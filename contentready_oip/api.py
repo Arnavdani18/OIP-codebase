@@ -1322,7 +1322,7 @@ def add_doc_to_elasticsearch(doc, hook_action='on_update'):
 
 @frappe.whitelist(allow_guest=True)
 def has_admin_role():
-    roles = frappe.get_roles(frappe.session.user);
+    roles = frappe.get_roles(frappe.session.user)
     allowed_roles = ["Administrator", "System Manager"]
     is_allowed = False
     for role in allowed_roles:
@@ -1331,6 +1331,17 @@ def has_admin_role():
     
     return is_allowed
 
+
+@frappe.whitelist(allow_guest=True)
+def has_collaborator_role():
+    roles = frappe.get_roles(frappe.session.user)
+    allowed_roles = ["Collaborator"]
+    is_allowed = False
+    for role in allowed_roles:
+        if role in roles:
+            is_allowed = True
+    
+    return is_allowed
 
 @frappe.whitelist(allow_guest=True)
 def get_url_metadata(url):
