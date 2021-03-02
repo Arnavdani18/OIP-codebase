@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_guest_to_view": 1,
  "autoname": "Solution.###",
  "creation": "2019-12-04 19:46:43.122149",
@@ -26,6 +27,7 @@
   "section_break_21",
   "impact",
   "timeline",
+  "timeline_unit",
   "pilots",
   "deployments",
   "budget",
@@ -38,14 +40,8 @@
   "short_description",
   "section_break_9",
   "problems_addressed",
-  "validations",
-  "collaborations",
-  "discussions",
   "solver_team",
-  "interest_section",
-  "likes",
-  "column_break_38",
-  "watchers"
+  "sustainable_development_goal"
  ],
  "fields": [
   {
@@ -199,8 +195,9 @@
   },
   {
    "fieldname": "resources_needed",
-   "fieldtype": "Small Text",
-   "label": "Resources Needed"
+   "fieldtype": "Table",
+   "label": "Resources Needed",
+   "options": "Resource Table"
   },
   {
    "fieldname": "website",
@@ -210,45 +207,6 @@
   {
    "fieldname": "column_break_29",
    "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "validations",
-   "fieldtype": "Table",
-   "label": "Validations",
-   "options": "Validation Table"
-  },
-  {
-   "fieldname": "collaborations",
-   "fieldtype": "Table",
-   "label": "Collaborations",
-   "options": "Collaboration Table"
-  },
-  {
-   "fieldname": "discussions",
-   "fieldtype": "Table",
-   "label": "Discussions",
-   "options": "Discussion Table"
-  },
-  {
-   "fieldname": "interest_section",
-   "fieldtype": "Section Break",
-   "label": "Interest"
-  },
-  {
-   "fieldname": "likes",
-   "fieldtype": "Table",
-   "label": "Likes",
-   "options": "Like Table"
-  },
-  {
-   "fieldname": "column_break_38",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "watchers",
-   "fieldtype": "Table",
-   "label": "Watchers",
-   "options": "Watch Table"
   },
   {
    "fieldname": "short_description",
@@ -267,11 +225,24 @@
    "fieldtype": "Table",
    "label": "Media",
    "options": "Media Table"
+  },
+  {
+   "fieldname": "sustainable_development_goal",
+   "fieldtype": "Table",
+   "label": "Sustainable Development Goal",
+   "options": "Sustainable Development Goal Table"
+  },
+  {
+   "fieldname": "timeline_unit",
+   "fieldtype": "Select",
+   "label": "Timeline Unit",
+   "options": "\nDays\nWeeks\nMonths\nYears"
   }
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2020-05-29 08:18:33.844637",
+ "links": [],
+ "modified": "2021-03-02 12:17:50.318821",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Solution",
@@ -294,6 +265,7 @@
    "delete": 1,
    "email": 1,
    "export": 1,
+   "if_owner": 1,
    "print": 1,
    "read": 1,
    "report": 1,

@@ -23,6 +23,10 @@ def mix_two_list(list1, list2):
 
 def get_context(context):
     api.create_user_profile_if_missing(None,None,frappe.session.user)
+
+    # check if collaborator
+    context.is_collaborator = api.has_collaborator_role()
+
     # catch all
     context.recommended_problems = []
     context.recommended_solutions = []

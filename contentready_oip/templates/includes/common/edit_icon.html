@@ -21,7 +21,7 @@
       window.location.href = `/add-enrichment?name=${name}`;
     } else if (doctype === 'Solution') {
       window.location.href = `/add-solution?name=${name}`;
-    } else if (doctype === 'Collaboration Intent') {
+    } else if (doctype === 'Collaboration') {
       // data = JSON.parse(data.replace(/u\'/g, '"').replace(/\'/g, '"'));
       data = JSON.parse(`{{data | tojson if data}}`);
 
@@ -32,7 +32,7 @@
       $('#collaboration-modal-' + name).modal('toggle');
       $('#persona-select-' + name).val(personas_list[0]);
       $('#collaboration-comment-' + name).val(data[1]);
-    } else if (doctype === 'Validation Table') {
+    } else if (doctype === 'Validation') {
       data = JSON.parse(data.replace(/u\'/g, '"').replace(/\'/g, '"'));
       $('#validation-modal-' + name).modal('toggle');
       $('#validation-comment-' + name).val(data[0]);

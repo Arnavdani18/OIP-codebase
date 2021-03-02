@@ -186,10 +186,11 @@
     const dScriptUrl =
       window.location.origin + '/assets/contentready_oip/js/dropzone.js';
     $.getScript(dScriptUrl, () => {
+
       // disable autoDiscover as we are manually binding the dropzone to a form element
       Dropzone.autoDiscover = false;
       $('#comment-dropzone-{{doctype}}-{{name}}').dropzone({
-        url: '/api/method/upload_file',
+        url: '/api/method/contentready_oip.api.upload_file',
         autoDiscover: false,
         // maxFiles: 1,
         addRemoveLinks: true,
@@ -204,29 +205,40 @@
         init: function () {
           // use this event to add to child table
           this.on('complete', (file) => {
-            // console.log('{{name}}');
             const response = JSON.parse(file.xhr.response);
-            const file_url = response.message.file_url;
-            const media = $('#comment-dropzone-{{doctype}}-{{name}}').data(
-              'file-urls'
-            );
-            media.push(file_url);
-            $('#comment-dropzone-{{doctype}}-{{name}}').data(
-              'file-urls',
-              JSON.stringify(media)
-            );
+            if (response.message === false) {
+              this.removeFile(file);
+              frappe.msgprint('Explicit content detected. This file will not be uploaded.');
+            } else {
+              const file_url = response.message.file_url;
+              let media = $('#comment-dropzone-{{doctype}}-{{name}}').data(
+                'file-urls'
+              );
+              if (!media) {
+                media = [];
+              }
+              if (typeof media === "string" || media instanceof String) {
+                  media = JSON.parse(media);
+              }
+              media.push(file_url);
+              $('#comment-dropzone-{{doctype}}-{{name}}').data(
+                'file-urls',
+                JSON.stringify(media)
+              );
+            }
           });
 
           // use this event to remove from child table
           this.on('removedfile', (file) => {
-            // console.log('removed', file);
             toggleAddMore(myDropzone.files.length);
             let media = $('#comment-dropzone-{{doctype}}-{{name}}').data(
               'file-urls'
             );
             try {
               if (media) {
-                media = JSON.parse(media);
+                if (typeof media === "string" || media instanceof String) {
+                  media = JSON.parse(media);
+                }
                 media = media.filter((i) => !i.endsWith(file.name));
                 $('#comment-dropzone-{{doctype}}-{{name}}').data(
                   'file-urls',

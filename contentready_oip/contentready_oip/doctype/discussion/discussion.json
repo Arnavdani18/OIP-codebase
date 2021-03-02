@@ -1,16 +1,14 @@
 {
+ "actions": [],
  "creation": "2020-02-27 21:52:25.472674",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "user",
   "text",
   "parent_doctype",
   "parent_name",
-  "media",
-  "replies",
-  "likes"
+  "media"
  ],
  "fields": [
   {
@@ -21,29 +19,10 @@
    "reqd": 1
   },
   {
-   "fieldname": "replies",
-   "fieldtype": "Table",
-   "label": "Replies",
-   "options": "Discussion Table"
-  },
-  {
    "fieldname": "media",
    "fieldtype": "Table",
    "label": "Media",
    "options": "Media Table"
-  },
-  {
-   "fieldname": "user",
-   "fieldtype": "Link",
-   "label": "User",
-   "options": "User",
-   "reqd": 1
-  },
-  {
-   "fieldname": "likes",
-   "fieldtype": "Table",
-   "label": "Likes",
-   "options": "Like Table"
   },
   {
    "fieldname": "parent_doctype",
@@ -57,7 +36,8 @@
    "label": "Parent Name"
   }
  ],
- "modified": "2020-03-19 18:02:32.517666",
+ "links": [],
+ "modified": "2021-02-28 18:39:16.674200",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Discussion",
@@ -87,6 +67,24 @@
    "role": "Collaborator",
    "share": 1,
    "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Guest",
+   "share": 1
   }
  ],
  "quick_entry": 1,

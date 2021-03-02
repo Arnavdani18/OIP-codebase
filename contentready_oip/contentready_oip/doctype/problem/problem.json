@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_guest_to_view": 1,
  "autoname": "Problem.###",
  "creation": "2019-12-04 19:37:02.229461",
@@ -24,8 +25,9 @@
   "country",
   "country_code",
   "section_break_9",
-  "impact",
   "extent",
+  "section_break_21",
+  "impact",
   "resources_needed",
   "beneficiaries",
   "population_affected",
@@ -33,16 +35,7 @@
   "description",
   "short_description",
   "media",
-  "section_break_14",
-  "enrichments",
-  "validations",
-  "collaborations",
-  "discussions",
-  "solutions",
-  "section_break_25",
-  "likes",
-  "column_break_27",
-  "watchers"
+  "sustainable_development_goal"
  ],
  "fields": [
   {
@@ -73,7 +66,7 @@
   },
   {
    "fieldname": "resources_needed",
-   "fieldtype": "Small Text",
+   "fieldtype": "Table",
    "in_preview": 1,
    "label": "Resources Needed",
    "options": "Resource Table"
@@ -81,12 +74,11 @@
   {
    "fieldname": "impact",
    "fieldtype": "Small Text",
-   "label": "Impact",
-   "options": "Impact Table"
+   "label": "Impact"
   },
   {
    "fieldname": "beneficiaries",
-   "fieldtype": "Small Text",
+   "fieldtype": "Table",
    "label": "Beneficiaries",
    "options": "Beneficiary Table"
   },
@@ -115,29 +107,6 @@
    "fieldname": "route",
    "fieldtype": "Data",
    "label": "Route"
-  },
-  {
-   "fieldname": "section_break_14",
-   "fieldtype": "Section Break",
-   "label": "Collaboration"
-  },
-  {
-   "fieldname": "likes",
-   "fieldtype": "Table",
-   "label": "Likes",
-   "options": "Like Table"
-  },
-  {
-   "fieldname": "watchers",
-   "fieldtype": "Table",
-   "label": "Watchers",
-   "options": "Watch Table"
-  },
-  {
-   "fieldname": "validations",
-   "fieldtype": "Table",
-   "label": "Validations",
-   "options": "Validation Table"
   },
   {
    "fieldname": "section_break_9",
@@ -188,21 +157,6 @@
    "label": "Longitude"
   },
   {
-   "fieldname": "section_break_25",
-   "fieldtype": "Section Break",
-   "label": "Interest"
-  },
-  {
-   "fieldname": "column_break_27",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "enrichments",
-   "fieldtype": "Table",
-   "label": "Enrichments",
-   "options": "Enrichment Table"
-  },
-  {
    "fieldname": "state_code",
    "fieldtype": "Data",
    "label": "State Code"
@@ -225,33 +179,15 @@
   },
   {
    "fieldname": "extent",
-   "fieldtype": "Small Text",
-   "label": "Extent"
-  },
-  {
-   "fieldname": "discussions",
    "fieldtype": "Table",
-   "label": "Discussions",
-   "options": "Discussion Table",
-   "permlevel": 1
-  },
-  {
-   "fieldname": "collaborations",
-   "fieldtype": "Table",
-   "label": "Collaborations",
-   "options": "Collaboration Table"
+   "label": "Extent",
+   "options": "Location Table"
   },
   {
    "fieldname": "short_description",
    "fieldtype": "Text",
    "hidden": 1,
    "label": "Short Description"
-  },
-  {
-   "fieldname": "solutions",
-   "fieldtype": "Table",
-   "label": "Solutions",
-   "options": "Solution Table"
   },
   {
    "fieldname": "media",
@@ -264,11 +200,22 @@
    "fieldtype": "Select",
    "label": "Population Affected",
    "options": "\n&lt;100\n&lt;1,000\n&lt;10,000\n&lt;100,000\n&gt;100,000"
+  },
+  {
+   "fieldname": "sustainable_development_goal",
+   "fieldtype": "Table",
+   "label": "Sustainable Development Goal",
+   "options": "Sustainable Development Goal Table"
+  },
+  {
+   "fieldname": "section_break_21",
+   "fieldtype": "Section Break"
   }
  ],
  "has_web_view": 1,
  "is_published_field": "is_published",
- "modified": "2020-04-08 11:32:07.557667",
+ "links": [],
+ "modified": "2021-03-02 12:18:18.201429",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Problem",
@@ -303,6 +250,7 @@
    "delete": 1,
    "email": 1,
    "export": 1,
+   "if_owner": 1,
    "print": 1,
    "read": 1,
    "report": 1,

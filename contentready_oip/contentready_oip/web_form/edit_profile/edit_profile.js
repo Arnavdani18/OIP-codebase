@@ -81,9 +81,9 @@ frappe.ready(async function () {
   //   frappe.web_form.doc.sectors.push({ sector: event.target.value });
   // };
 
-  addFileToDoc = (file) => {
-    if (file.xhr) {
-      const response = JSON.parse(file.xhr.response);
+  addFileToDoc = ( file ) => {
+    if ( file.xhr ) {
+      const response = JSON.parse( file.xhr.response );
       frappe.web_form.doc.photo = response.message.file_url;
     }
   };
@@ -94,12 +94,31 @@ frappe.ready(async function () {
   };
 
   addDropzone = () => {
+
+    const get_upload_url = async (files) => {
+      await sleep(500);
+      const file = files[0];
+      const content = file.dataURL.split('base64,')[1];
+
+      frappe.call({
+        method: 'contentready_oip.google_vision.is_base64_explicit',
+        args: {b64str: content},
+        callback: function (r) {
+          if(r.message) {
+            frappe.throw('Explicit content detected. This file will not be uploaded.')
+          } else {
+            return '/api/method/upload_file';
+          }
+        },
+      });
+    }
+
     // disable autoDiscover as we are manually binding the dropzone to a form element
     Dropzone.autoDiscover = false;
     const el = `<form class="dropzone dz-clickable d-flex align-items-center justify-content-center flex-wrap mb-4" style="font-size:var(--f14);" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
     $('*[data-fieldname="photo"]').after(el);
     $('#dropzone').dropzone({
-      url: '/api/method/upload_file',
+      url: get_upload_url,
       autoDiscover: false,
       maxFiles: 1,
       addRemoveLinks: true,
@@ -110,7 +129,15 @@ frappe.ready(async function () {
       },
       init: function () {
         // use this event to add to child table
-        this.on('complete', addFileToDoc);
+        this.on('complete', (file) => {
+          const response = JSON.parse(file.xhr.response);
+          if (response.message === false) {
+            this.removeFile(file);
+            frappe.msgprint('Explicit content detected. This file will not be uploaded.');
+          } else {
+            addFileToDoc(file);
+          }
+        });
         // use this event to remove from child table
         this.on('removedfile', removeFileFromDoc);
         if (frappe.web_form.doc.photo) {
@@ -188,7 +215,21 @@ frappe.ready(async function () {
     frappe.web_form.set_value('longitude', place.geometry.location.lng());
   };
 
+  isValidLinkedInUrl = (url) => {
+    const LINKEDIN_REGEX = /((https?:\/\/)?((www|\w\w)\.)?linkedin\.com\/)((([\w]{2,3})?)|([^\/]+\/(([\w|\d-&#?=])+\/?){1,}))$/;
+    const re = new RegExp(LINKEDIN_REGEX);
+    return re.test(url);
+  };
+
   publishProfile = () => {
+    const data = frappe.web_form.get_values();
+    const { linkedin_profile } = data;
+
+    if (linkedin_profile && !isValidLinkedInUrl(linkedin_profile)) {
+      frappe.msgprint('Enter valid LinkedIn profile url');
+      return false;
+    }
+
     frappe.call({
       method: 'contentready_oip.api.add_primary_content',
       args: {
@@ -196,7 +237,6 @@ frappe.ready(async function () {
         doc: frappe.web_form.doc,
       },
       callback: function (r) {
-        // console.log(r.message);
         if (r.message && r.message.route) {
           window.location.href = r.message.route;
         } else {
@@ -412,4 +452,3 @@ frappe.ready(async function () {
   frappe.web_form.set_value('user', frappe.session.user);
   // frappe.web_form.doc.user = frappe.session.user;
 });
-

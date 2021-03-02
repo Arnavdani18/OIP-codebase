@@ -11,18 +11,18 @@
             </div>
 
             <div class="enrich-description">
-                {{ frappe.utils.html2text(enrichment.description)[:180] + '...' if not enrichment.short_description else enrichment.short_description }}
+                {{ enrichment.short_description }}
 
             </div>
 
             <div class="created-by mt-5">
-                {% set doc_owner = enrichment.user %}
+                {% set doc_owner = enrichment.owner %}
                 {% set date = enrichment.modified %}
                 {% include "templates/includes/common/user_thumbnail.html" %}
             </div>
 
             <div class="stats-section my-4">
-                {% set likes = enrichment.likes %}
+                {% set likes = frappe.get_list('Like', filters={'parent_doctype': doctype, 'parent_name': name}) %}
                 {% include "templates/includes/common/likes.html" %}
             </div>
         </div>

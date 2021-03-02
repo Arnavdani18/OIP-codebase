@@ -1,3 +1,4 @@
+{% set discussions = frappe.get_list('Discussion', filters={'parent_doctype': doctype, 'parent_name': name}) %}
 <div class="bg-white pb-2">
     <ul class="nav nav-tabs nav-section" id="discussionTab" role="tablist">
         <li class="nav-item">
@@ -29,7 +30,7 @@
     <div id="discussionTabGroup" class="pb-2">
         <div class="px-4 my-2" id="comments-list">
             {% for d in discussions | reverse %}
-            {% set comment = frappe.get_doc('Discussion', d.discussion) %}
+            {% set comment = frappe.get_doc('Discussion', d.name) %}
             {% include "templates/includes/common/comment.html" %}
             {% endfor %}
         </div>

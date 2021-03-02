@@ -43,7 +43,7 @@
                     }
                     frappe.call( {
                         method: 'contentready_oip.api.can_user_contribute',
-                        args: {child_doctype: 'Watch Table', parent_doctype: doctype, parent_name: name},
+                        args: {child_doctype: 'Watch', parent_doctype: doctype, parent_name: name},
                         callback: ( r ) => {
                             // const has_contributed = r.message[0];
                             const is_owner = r.message[ 1 ];
@@ -63,7 +63,11 @@
                                 // changeUI(btnId, countId, hasUserWatched, numWatchers);
                                 frappe.call( {
                                     method: 'contentready_oip.api.toggle_contribution',
-                                    args: {child_doctype: 'Watch Table', parent_doctype: doctype, parent_name: name, field_name: 'watchers'},
+                                    args: {
+                                        child_doctype: 'Watch', 
+                                        parent_doctype: doctype, 
+                                        parent_name: name
+                                    },
                                     callback: ( r ) => {
                                         // console.log(r);
                                         // server is the source of truth so we change the UI to reflect that.
@@ -81,7 +85,11 @@
                 // However, currently, frappe does not expand child tables within child tables into dicts.
                     frappe.call( {
                         method: 'contentready_oip.api.has_user_contributed',
-                        args: {child_doctype: 'Watch Table', parent_doctype: '{{doctype}}', parent_name: '{{name}}'},
+                        args: {
+                            child_doctype: 'Watch', 
+                            parent_doctype: '{{doctype}}', 
+                            parent_name: '{{name}}'
+                        },
                         callback: ( r ) => {
                             this.watched = r.message;
                         }

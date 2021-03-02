@@ -124,19 +124,19 @@ frappe.ready( async () => {
   };
 
   addFileToDoc = ( file ) => {
-    attachFeaturedBtn( file );
-
     if ( file.xhr ) {
       const response = JSON.parse( file.xhr.response );
       const file_url = response.message.file_url;
       if ( !frappe.web_form.doc.media ) {
         frappe.web_form.doc.media = [];
       }
-      frappe.web_form.doc.media.push( {
+      const m = {
         attachment: file_url,
         size: file.size,
         type: file.type
-      } );
+      };
+      frappe.web_form.doc.media.push(m);
+      attachFeaturedBtn( file );
     }
   };
 
@@ -145,12 +145,15 @@ frappe.ready( async () => {
     {% include 'public/custom_templates/featureBtn.js' %}
   }
 
-  removeFileFromDoc = ( file ) => {
-    frappe.web_form.doc.media = frappe.web_form.doc.media.filter( i => !i.attachment.endsWith( file.name ) );
+  removeFileFromDoc = (file) => {
+    if (frappe.web_form.doc.media) {
+      frappe.web_form.doc.media = frappe.web_form.doc.media.filter(
+        (i) => !i.attachment.endsWith(file.name)
+      );
+    }
   };
 
   addDropzone = () => {
-    // TODO: Allow user to select an image as featured image
     // disable autoDiscover as we are manually binding the dropzone to a form element
     Dropzone.autoDiscover = false;
     const el = `{% include "public/custom_templates/dz.html" %}`;
@@ -159,7 +162,7 @@ frappe.ready( async () => {
       .parent()
       .after( el );
     $( "#dropzone" ).dropzone( {
-      url: "/api/method/upload_file",
+      url: '/api/method/contentready_oip.api.upload_file',
       autoDiscover: false,
       addRemoveLinks: true,
       acceptedFiles: "image/*,video/*",
@@ -171,7 +174,15 @@ frappe.ready( async () => {
       init: function () {
         let myDropzone = this;
         // use this event to add to child table
-        this.on( "complete", addFileToDoc );
+        this.on('complete', (file) => {
+          const response = JSON.parse(file.xhr.response);
+          if (response.message === false) {
+            this.removeFile(file);
+            frappe.msgprint('Explicit content detected. This file will not be uploaded.');
+          } else {
+            addFileToDoc(file);
+          }
+        });
         // use this event to remove from child table
         this.on( 'removedfile', function ( file ) {
           toggleAddMore( myDropzone.files.length );
@@ -221,10 +232,9 @@ frappe.ready( async () => {
 
   submitEnrichmentForm = ( is_draft ) => {
     frappe.web_form.doc.doctype = "Enrichment";
-    frappe.web_form.doc.user = frappe.session.user;
 
     const {title,description,city,country} = frappe.web_form.doc;
-    if (!title && !description && !city) {
+    if (!title || !description || !city || !country) {
       const error_message = `
       Please enter the required field to publish.
       <ul>
@@ -267,7 +277,6 @@ frappe.ready( async () => {
 
   autoSaveDraft = () => {
     if ( frappe.web_form.doc.title ) {
-      frappe.web_form.doc.user = frappe.session.user;
       frappe.call( {
         method: "contentready_oip.api.add_enrichment",
         args: {

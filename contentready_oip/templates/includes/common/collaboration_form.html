@@ -40,7 +40,7 @@
         </form>
       </div>
       <div class="modal-footer collaboration-footer justify-content-start">
-        {% if doctype == 'Collaboration Intent' %}
+        {% if doctype == 'Collaboration' %}
         <!-- Edit mode -->
         <button
           type="button"
@@ -164,7 +164,7 @@
 
   submitCollaboration = (doctype, name) => {
     const collaboration = {
-      user: frappe.session.user,
+      owner: frappe.session.user,
       personas: frappe.collaboration_persona,
       comment: $('#collaboration-comment-' + name)
         .val()
@@ -187,7 +187,7 @@
       },
       callback: (r) => {
         if (r.message[1] > 0) {
-          if (doctype == 'Collaboration Intent') {
+          if (doctype == 'Collaboration') {
             // edit mode
             $('#collaboration-card-' + name).replaceWith(r.message[0]);
             // TODO: Toggles twice for some reason leaving an empty form on the screen.

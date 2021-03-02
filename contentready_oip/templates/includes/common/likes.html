@@ -43,7 +43,7 @@
         frappe.call({
           method: "contentready_oip.api.can_user_contribute",
           args: {
-            child_doctype: "Like Table",
+            child_doctype: "Like",
             parent_doctype: doctype,
             parent_name: name,
           },
@@ -67,10 +67,9 @@
               frappe.call({
                 method: "contentready_oip.api.toggle_contribution",
                 args: {
-                  child_doctype: "Like Table",
+                  child_doctype: "Like",
                   parent_doctype: doctype,
                   parent_name: name,
-                  field_name: "likes",
                 },
                 callback: (r) => {
                   // server is the source of truth so we change the UI to reflect that.
@@ -90,7 +89,7 @@
       frappe.call({
         method: "contentready_oip.api.has_user_contributed",
         args: {
-          child_doctype: "Like Table",
+          child_doctype: "Like",
           parent_doctype: "{{doctype}}",
           parent_name: "{{name}}",
         },

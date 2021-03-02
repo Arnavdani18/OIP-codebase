@@ -1,6 +1,6 @@
 <div class="col-sm-12 validateCard" id="validation-card-{{validation.name}}">
     <div class="float-right">
-        {% if frappe.session.user == validation.user %}
+        {% if frappe.session.user == validation.owner %}
         {% set doctype = validation.doctype %}
         {% set name = validation.name %}
         {% set data = [validation.comment] %}
@@ -29,7 +29,7 @@
     {% endif %}
 
     <div class="d-flex align-items-center validate-profile">
-        {% set doc_owner = validation.user %}
+        {% set doc_owner = validation.owner %}
         {% set date = validation.modified %}
         {% include "templates/includes/common/user_thumbnail.html" %}
     </div>

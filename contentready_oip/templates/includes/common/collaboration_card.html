@@ -3,7 +3,7 @@
 class="col-sm-12 collaborateCard" id="collaboration-card-{{collaboration.name}}"
 >
     <div class="float-right">
-        {% if frappe.session.user == collaboration.user %}
+        {% if frappe.session.user == collaboration.owner %}
             {% set existing_persona = [] %}
             {% if collaboration.personas %}
                 {% for p in collaboration.personas %}
@@ -31,7 +31,7 @@ class="col-sm-12 collaborateCard" id="collaboration-card-{{collaboration.name}}"
     </div>
 
     <div class="d-flex align-items-center validate-profile">
-        {% set doc_owner = collaboration.user %}
+        {% set doc_owner = collaboration.owner %}
         {% set date = collaboration.modified %}
         {% include "templates/includes/common/user_thumbnail.html" %}
     </div>

@@ -1,0 +1,103 @@
+{
+ "actions": [],
+ "creation": "2021-02-28 09:06:20.961945",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "google_vision_settings_section",
+  "enable_explicit_content_detection",
+  "vision_api_service_key",
+  "thresholds_column",
+  "adult",
+  "medical",
+  "spoof",
+  "violence",
+  "racy"
+ ],
+ "fields": [
+  {
+   "fieldname": "google_vision_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Google Vision Settings"
+  },
+  {
+   "default": "1",
+   "fieldname": "enable_explicit_content_detection",
+   "fieldtype": "Check",
+   "label": "Enable Explicit Content Detection"
+  },
+  {
+   "fieldname": "vision_api_service_key",
+   "fieldtype": "Attach",
+   "label": "Vision API Service Key"
+  },
+  {
+   "description": "Range from 0 to 5: https://cloud.google.com/vision/docs/reference/rpc/google.cloud.vision.v1#likelihood",
+   "fieldname": "thresholds_column",
+   "fieldtype": "Column Break",
+   "label": "Thresholds"
+  },
+  {
+   "default": "3",
+   "fieldname": "adult",
+   "fieldtype": "Int",
+   "label": "Adult"
+  },
+  {
+   "default": "3",
+   "fieldname": "medical",
+   "fieldtype": "Int",
+   "label": "Medical"
+  },
+  {
+   "default": "3",
+   "fieldname": "spoof",
+   "fieldtype": "Int",
+   "label": "Spoof"
+  },
+  {
+   "default": "3",
+   "fieldname": "racy",
+   "fieldtype": "Int",
+   "label": "Racy"
+  },
+  {
+   "default": "3",
+   "fieldname": "violence",
+   "fieldtype": "Int",
+   "label": "Violence"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2021-03-02 12:20:38.225276",
+ "modified_by": "Administrator",
+ "module": "ContentReady OIP",
+ "name": "OIP Configuration",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "All",
+   "share": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

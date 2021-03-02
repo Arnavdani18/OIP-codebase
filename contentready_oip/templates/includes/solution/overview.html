@@ -16,16 +16,15 @@
 <div class="col pt-3">
     <div class="row">
         {% set fields = {
-            'Organization': org_title, 
-            'Budget': budget, 
-            'Impact': impact, 
-            'Deployments': deployments, 
-            'Innovation': innovation, 
-            'Resources Needed': resources_needed,
-            'Timeline': timeline,
-            'Pilots': pilots,
-            'Location(s)': city + ', ' + country,
-            'Website': website
+            'Organization': org_title or '', 
+            'Budget': budget or '', 
+            'Impact': impact or '', 
+            'Deployments': deployments or '', 
+            'Innovation': innovation or '', 
+            'Timeline': (timeline or '') + ' ' + (timeline_unit or ''),
+            'Pilots': pilots or '',
+            'Location(s)': (city or '') + ', ' + (country or ''),
+            'Website': website or ''
         } %}
 
         {% for field in fields %}
@@ -37,11 +36,33 @@
     <div class="row">
         <div class="col">
             <h3 class="heading">
+                Resources Needed
+            </h3>
+            <div class="tags my-3">
+                {% for res in resources_needed %}
+                <button class="tag actions text-capitalize">
+                    {{ res.resource }}
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3 class="heading">
                 Sectors
             </h3>
             {% set doctype = doctype %}
             {% set show_all = True %}
             {% include "templates/includes/common/sector_labels.html" %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <h3 class="heading">
+                Sustainable Development Goals
+            </h3>
+            {% include "templates/includes/common/sdg_labels.html" %}
         </div>
     </div>
 </div>

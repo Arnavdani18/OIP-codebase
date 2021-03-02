@@ -8,7 +8,8 @@
   "title",
   "description",
   "column_break_3",
-  "image"
+  "image",
+  "beneficiaries"
  ],
  "fields": [
   {
@@ -32,10 +33,16 @@
    "fieldname": "image",
    "fieldtype": "Attach Image",
    "label": "Image"
+  },
+  {
+   "fieldname": "beneficiaries",
+   "fieldtype": "Table",
+   "label": "Beneficiaries",
+   "options": "Beneficiary Table"
   }
  ],
  "image_field": "image",
- "modified": "2020-03-07 21:49:31.941760",
+ "modified": "2021-01-25 17:17:10.667798",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Sector",

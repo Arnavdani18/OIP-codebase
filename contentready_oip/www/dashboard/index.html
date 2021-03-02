@@ -10,6 +10,7 @@
 </style>
 <div class="jumbotron border shadow mb-5">
   <h1 class="display-4">Hello, {{self_profile.full_name}}</h1>
+  {% if is_collaborator %}
   <p class="lead f-size">
     Welcome to the Open Innovation Platform. Update your profile before you
     proceed !
@@ -29,6 +30,11 @@
   >
     Skip >>
   </button>
+  {% else %}
+  <p class="lead f-size">
+    An admin is yet to approve your account and add collaboration privileges. Feel free to browse the platform in the meanwhile. 
+  </p>
+  {% endif %}
 </div>
 
 <script>
