@@ -1371,12 +1371,13 @@ def get_beneficiaries_from_sectors(sectors):
 @frappe.whitelist(allow_guest=False)
 def upload_file():
     IMAGE_TYPES = ('image/png', 'image/jpeg')
+    should_check_explicit = int(frappe.get_value('OIP Configuration', '', 'enable_explicit_content_detection'))
     if 'file' in frappe.request.files:
         file = frappe.request.files['file']
         content = file.stream.read()
         filename = file.filename
         filetype = mimetypes.guess_type(filename)[0]
-        if filetype in IMAGE_TYPES and is_content_explicit(content):
+        if filetype in IMAGE_TYPES and should_check_explicit and is_content_explicit(content):
             return False
         else:
             ret = frappe.get_doc({

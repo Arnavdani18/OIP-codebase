@@ -43,10 +43,10 @@ class Solution(WebsiteGenerator):
         print('\n\nInside on_update hook of Solution\n\n')
         if self.is_published:
             # Add reference to this solution in each of the problems_addressed
-            for p in self.problems_addressed:
-                problem = frappe.get_doc('Problem', p.problem)
-                problem.add_solution(self)
-                frappe.db.commit()
+            # for p in self.problems_addressed:
+            #     problem = frappe.get_doc('Problem', p.problem)
+            #     problem.add_solution(self)
+            #     frappe.db.commit()
             # read all child tables and add notifications
             self.create_notifications()
         # use sets for sectors
