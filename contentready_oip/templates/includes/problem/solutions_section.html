@@ -5,7 +5,7 @@
 <div class="row">
   {% for s in solutions %} 
   <div class="col-sm-12 col-md-6">
-    {% set solution = frappe.get_doc('Solution', s.solution) %}
+    {% set solution = frappe.get_doc('Solution', s.name) %}
     {% include "templates/includes/solution/solution_card_small.html" %}
   </div>
   {% endfor %}
