@@ -100,7 +100,8 @@
    "fieldname": "sectors",
    "fieldtype": "Table",
    "label": "Sectors",
-   "options": "Sector Table"
+   "options": "Sector Table",
+   "reqd": 1
   },
   {
    "fieldname": "route",
@@ -242,7 +243,7 @@
  "has_web_view": 1,
  "is_published_field": "is_published",
  "links": [],
- "modified": "2021-03-02 12:17:50.318821",
+ "modified": "2021-03-02 14:37:26.231908",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Solution",

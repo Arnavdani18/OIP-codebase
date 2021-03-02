@@ -40,7 +40,6 @@ class Solution(WebsiteGenerator):
             pass
 
     def on_update(self):
-        print('\n\nInside on_update hook of Solution\n\n')
         if self.is_published:
             # Add reference to this solution in each of the problems_addressed
             # for p in self.problems_addressed:

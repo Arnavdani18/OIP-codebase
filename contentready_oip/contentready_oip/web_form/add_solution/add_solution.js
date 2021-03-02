@@ -551,8 +551,8 @@ frappe.ready(async () => {
   };
 
   submitSolutionForm = (is_draft) => {
-    const {title, description, city, country} = frappe.web_form.doc;
-    if (!title || !description || !city || !country) {
+    const {title, description, city, country, sectors, problems_addressed} = frappe.web_form.doc;
+    if (!title || !description || !city || !country || !sectors || !sectors.length || !problems_addressed || !problems_addressed.length) {
       const error_message = `
       The following fields are mandatory.
       <ul>
@@ -560,6 +560,8 @@ frappe.ready(async () => {
         <li>Description</li>
         <li>City</li>
         <li>Country</li>
+        <li>Sectors</li>
+        <li>Problems</li>
       </ul>
       `
       frappe.msgprint(error_message);

@@ -111,9 +111,8 @@ class Problem(WebsiteGenerator):
         frappe.db.commit()
 
     def get_context(self, context):
-        # published_enrichments = [e for e in self.enrichments if e.is_published]
         context.enrichment_count = frappe.db.count("Enrichment", {'parent_name': context.name ,'is_published': True})
-        # solution_ids = frappe.get_list('Problem Table', filters={'problem': self.name, 'parenttype': 'Solution'}, fields=['parent'])
-        # solution_ids = [s['name'] for s in solution_ids]
-        # context.solutions = frappe.get_list('Solution', filters={'name': ['in', solution_ids], 'is_published': True})
+        solution_ids = frappe.get_list('Problem Table', filters={'problem': self.name, 'parenttype': 'Solution'}, fields=['parent'])
+        solution_ids = [s['parent'] for s in solution_ids]
+        context.solutions = frappe.get_list('Solution', filters={'name': ['in', solution_ids], 'is_published': True})
         return context
