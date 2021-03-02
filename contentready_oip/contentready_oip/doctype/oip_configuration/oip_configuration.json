@@ -72,7 +72,7 @@
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-02-28 09:15:22.766070",
+ "modified": "2021-03-02 12:20:38.225276",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP Configuration",
@@ -87,6 +87,13 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "All",
+   "share": 1
   }
  ],
  "quick_entry": 1,
