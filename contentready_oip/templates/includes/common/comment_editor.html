@@ -211,9 +211,15 @@
               frappe.msgprint('Explicit content detected. This file will not be uploaded.');
             } else {
               const file_url = response.message.file_url;
-              const media = $('#comment-dropzone-{{doctype}}-{{name}}').data(
+              let media = $('#comment-dropzone-{{doctype}}-{{name}}').data(
                 'file-urls'
               );
+              if (!media) {
+                media = [];
+              }
+              if (typeof media === "string" || media instanceof String) {
+                  media = JSON.parse(media);
+              }
               media.push(file_url);
               $('#comment-dropzone-{{doctype}}-{{name}}').data(
                 'file-urls',
