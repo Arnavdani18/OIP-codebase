@@ -228,21 +228,20 @@ frappe.ready(async () => {
     }
   };
 
-  addFileToDoc = (file) => {
-    attachFeaturedBtn(file);
-
-    // Since we are showing previously added, remote
-    if (file.xhr) {
-      const response = JSON.parse(file.xhr.response);
+  addFileToDoc = ( file ) => {
+    if ( file.xhr ) {
+      const response = JSON.parse( file.xhr.response );
       const file_url = response.message.file_url;
-      if (!frappe.web_form.doc.media) {
+      if ( !frappe.web_form.doc.media ) {
         frappe.web_form.doc.media = [];
       }
-      frappe.web_form.doc.media.push({
+      const m = {
         attachment: file_url,
         size: file.size,
-        type: file.type,
-      });
+        type: file.type
+      };
+      frappe.web_form.doc.media.push(m);
+      attachFeaturedBtn( file );
     }
   };
 
@@ -252,40 +251,21 @@ frappe.ready(async () => {
   };
 
   removeFileFromDoc = (file) => {
-    frappe.web_form.doc.media = frappe.web_form.doc.media.filter(
-      (i) => !i.attachment.endsWith(file.name)
-    );
+    if (frappe.web_form.doc.media) {
+      frappe.web_form.doc.media = frappe.web_form.doc.media.filter(
+        (i) => !i.attachment.endsWith(file.name)
+      );
+    }
   };
 
   addDropzone = () => {
-    // TODO: Allow user to select an image as featured image
-
-    const get_upload_url = async (files) => {
-      await sleep(500);
-      const file = files[0];
-      const content = file.dataURL.split('base64,')[1];
-
-      frappe.call({
-        method: 'contentready_oip.google_vision.is_base64_explicit',
-        args: {b64str: content},
-        callback: function (r) {
-          if(r.message) {
-            frappe.throw('Explicit content detected. This file will not be uploaded.')
-          } else {
-            return '/api/method/upload_file';
-          }
-        },
-      });
-    }
-    
-
     // d-flex align-items-center justify-content-center flex-wrap
     // disable autoDiscover as we are manually binding the dropzone to a form element
     Dropzone.autoDiscover = false;
     const el = `{% include "public/custom_templates/dz.html" %}`;
     $('*[data-fieldname="media"]*[data-fieldtype="Table"]').parent().after(el);
     $('#dropzone').dropzone({
-      url: get_upload_url,
+      url: '/api/method/contentready_oip.api.upload_file',
       autoDiscover: false,
       addRemoveLinks: true,
       acceptedFiles: 'image/*,video/*',
@@ -297,7 +277,15 @@ frappe.ready(async () => {
       init: function () {
         let myDropzone = this;
         // use this event to add to child table
-        this.on('complete', addFileToDoc);
+        this.on('complete', (file) => {
+          const response = JSON.parse(file.xhr.response);
+          if (response.message === false) {
+            this.removeFile(file);
+            frappe.msgprint('Explicit content detected. This file will not be uploaded.');
+          } else {
+            addFileToDoc(file);
+          }
+        });
         // use this event to remove from child table
         this.on('removedfile', function (file) {
           toggleAddMore(myDropzone.files.length);

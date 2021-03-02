@@ -187,34 +187,10 @@
       window.location.origin + '/assets/contentready_oip/js/dropzone.js';
     $.getScript(dScriptUrl, () => {
 
-      const sleep = (m) => new Promise((r) => setTimeout(r, m));
-
-      const get_upload_url = (files) => {
-        // await sleep(500);
-        const file = files[0];
-        // console.log(file)
-        if (file.type.split('/')[0] === 'image') {
-          const content = file.dataURL.split('base64,')[1];
-          return frappe.call({
-            method: 'contentready_oip.google_vision.is_base64_explicit',
-            args: {b64str: content},
-            callback: function (r) {
-              if(r.message) {
-                frappe.throw('Explicit content detected. This file will not be uploaded.')
-              } else {
-                return '/api/method/upload_file';
-              }
-            },
-          });
-        } else {
-          return '/api/method/upload_file';
-        }
-      }
-
       // disable autoDiscover as we are manually binding the dropzone to a form element
       Dropzone.autoDiscover = false;
       $('#comment-dropzone-{{doctype}}-{{name}}').dropzone({
-        url: get_upload_url,
+        url: '/api/method/contentready_oip.api.upload_file',
         autoDiscover: false,
         // maxFiles: 1,
         addRemoveLinks: true,
@@ -223,37 +199,40 @@
           '#add-multiple-files-{{doctype}}-{{name}}',
         ],
         headers: {
-          // "Content-Type": "application/json",
           Accept: 'application/json',
           'X-Frappe-CSRF-Token': frappe.csrf_token,
         },
         init: function () {
           // use this event to add to child table
           this.on('complete', (file) => {
-            // console.log('{{name}}');
-            console.log(file);
             const response = JSON.parse(file.xhr.response);
-            const file_url = response.message.file_url;
-            const media = $('#comment-dropzone-{{doctype}}-{{name}}').data(
-              'file-urls'
-            );
-            media.push(file_url);
-            $('#comment-dropzone-{{doctype}}-{{name}}').data(
-              'file-urls',
-              JSON.stringify(media)
-            );
+            if (response.message === false) {
+              this.removeFile(file);
+              frappe.msgprint('Explicit content detected. This file will not be uploaded.');
+            } else {
+              const file_url = response.message.file_url;
+              const media = $('#comment-dropzone-{{doctype}}-{{name}}').data(
+                'file-urls'
+              );
+              media.push(file_url);
+              $('#comment-dropzone-{{doctype}}-{{name}}').data(
+                'file-urls',
+                JSON.stringify(media)
+              );
+            }
           });
 
           // use this event to remove from child table
           this.on('removedfile', (file) => {
-            // console.log('removed', file);
             toggleAddMore(myDropzone.files.length);
             let media = $('#comment-dropzone-{{doctype}}-{{name}}').data(
               'file-urls'
             );
             try {
               if (media) {
-                media = JSON.parse(media);
+                if (typeof media === "string" || media instanceof String) {
+                  media = JSON.parse(media);
+                }
                 media = media.filter((i) => !i.endsWith(file.name));
                 $('#comment-dropzone-{{doctype}}-{{name}}').data(
                   'file-urls',

@@ -10,6 +10,8 @@ from elasticsearch_dsl import Search
 from elasticsearch_dsl import Q
 from frappe.email.doctype.email_template.email_template import get_email_template
 import meilisearch
+from contentready_oip.google_vision import is_content_explicit
+import mimetypes
 
 python_version_2 = platform.python_version().startswith('2')
 CLIENT = meilisearch.Client('http://localhost:7700/', 'test123')
@@ -1365,3 +1367,25 @@ def get_beneficiaries_from_sectors(sectors):
         return beneficiary_list
     except Exception as e:
         print(str(e))
+
+@frappe.whitelist(allow_guest=False)
+def upload_file():
+    IMAGE_TYPES = ('image/png', 'image/jpeg')
+    if 'file' in frappe.request.files:
+        file = frappe.request.files['file']
+        content = file.stream.read()
+        filename = file.filename
+        filetype = mimetypes.guess_type(filename)[0]
+        if filetype in IMAGE_TYPES and is_content_explicit(content):
+            return False
+        else:
+            ret = frappe.get_doc({
+                "doctype": "File",
+                "file_name": filename,
+                "is_private": False,
+                "content": content
+            })
+            ret.save(ignore_permissions=False)
+            return ret
+    else:
+        frappe.throw('No file detected.')

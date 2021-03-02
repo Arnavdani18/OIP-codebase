@@ -81,9 +81,9 @@ frappe.ready(async function () {
   //   frappe.web_form.doc.sectors.push({ sector: event.target.value });
   // };
 
-  addFileToDoc = (file) => {
-    if (file.xhr) {
-      const response = JSON.parse(file.xhr.response);
+  addFileToDoc = ( file ) => {
+    if ( file.xhr ) {
+      const response = JSON.parse( file.xhr.response );
       frappe.web_form.doc.photo = response.message.file_url;
     }
   };
@@ -129,7 +129,15 @@ frappe.ready(async function () {
       },
       init: function () {
         // use this event to add to child table
-        this.on('complete', addFileToDoc);
+        this.on('complete', (file) => {
+          const response = JSON.parse(file.xhr.response);
+          if (response.message === false) {
+            this.removeFile(file);
+            frappe.msgprint('Explicit content detected. This file will not be uploaded.');
+          } else {
+            addFileToDoc(file);
+          }
+        });
         // use this event to remove from child table
         this.on('removedfile', removeFileFromDoc);
         if (frappe.web_form.doc.photo) {

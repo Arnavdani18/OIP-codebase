@@ -5,7 +5,7 @@ new Vue({
     return {
       featured: false,
       isImage: false,
-      media: frappe.web_form.doc.media,
+      media: frappe.web_form.doc.media || [],
     };
   },
   methods: {
