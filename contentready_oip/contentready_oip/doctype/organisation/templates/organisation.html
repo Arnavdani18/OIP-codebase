@@ -2,18 +2,17 @@
 <div class="">
   <div class="row">
     <div class="col">
-      <h2 class="black-local">{{full_name or name}}</h2>
+      <h2 class="black-local">{{title}}</h2>
     </div>
-    {% if frappe.session.user == name %}
+    
     <div class="col text-right">
       <button
         class="btn btn-outline-primary outline-primary-btn"
-        onclick="navigateToEditProfile()"
+        onclick="navigateToEditOrg()"
       >
-        Edit Profile
+        Edit Organisation
       </button>
     </div>
-    {% endif %}
   </div>
   <hr class="hr-border" />
 
@@ -21,8 +20,8 @@
     <div class="col-sm-12 col-md-6">
       <div class="row">
         <div class="col">
-          <h3 class="black-local">Profile Photo</h3>
-          <img src="{{photo}}" class="default-profile-photo" alt="" />
+          <h3 class="black-local">Brandmark</h3>
+          <img src="{{brandmark}}" class="default-profile-photo" alt="" />
         </div>
       </div>
 
@@ -34,48 +33,21 @@
 
       <div class="row">
         <div class="col-6">
-          <p class="heading">Phone Number</p>
-          <h5>{{phone}}</h5>
+          <p class="heading">Website</p>
+          <h5><a href="{{website}}">{{website}}</a></h5>
         </div>
         <div class="col-6">
-          <p class="heading">Email ID</p>
-          <h5>{{ name}}</h5>
+          
         </div>
       </div>
 
       <div class="row my-4">
         <div class="col-6">
           <p class="heading">Location</p>
-          <h5>{{state}}, {{country}}</h5>
+          <h5>{{city}}, {{state}}, {{country}}</h5>
         </div>
         <div class="col-6">
-          <p class="heading">Organization</p>
-          {% set org_route = frappe.db.get_value('Organisation', org, 'route') %}
-          <h5><a href="/{{ org_route }}">{{ org_title }}</a></h5>
-        </div>
-      </div>
-
-      <div class="row my-4">
-        <div class="col">
-          <p class="heading">LinkedIn Profile</p>
-          <a href="{{linkedin_profile}}" target="_blank">
-            <h5>{{linkedin_profile}}</h5>
-          </a>
-        </div>
-      </div>
-
-      <div class="row my-4">
-        <div class="col">
-          <h5 class="heading">Personas</h5>
-          <!-- Here comes Personas -->
-          {% if personas | length == 0 %}
-          <h5>No persona available</h5>
-          {% endif %} {% for persona in personas %}
-          <button class="tag actions text-capitalize over_tag">
-            {{ persona.persona }}
-          </button>
-          <!-- {# {% if not loop.last %}, {% endif %} #} -->
-          {% endfor %}
+          
         </div>
       </div>
 
@@ -95,11 +67,7 @@
           {% endif %}
         </div>
       </div>
-    </div>
 
-    <div class="col-6">
-      <!-- Empty section -->
-    </div>
   </div>
 </div>
 
@@ -136,8 +104,8 @@
 <script>
     {% include "public/js/global.js" %}
 
-    navigateToEditProfile = ()=> {
-      location.href = '/update-profile';
+    navigateToEditOrg = ()=> {
+      location.href = '/update-organisation';
   };
 </script>
 

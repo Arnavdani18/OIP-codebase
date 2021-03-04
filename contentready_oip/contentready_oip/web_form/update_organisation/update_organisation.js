@@ -23,25 +23,7 @@ frappe.ready(async function () {
     $('.form-layout').addClass('bg-transparent px-0');
   };
 
-  createOrgOptions = () => {
-    $('*[data-fieldname="org_title"]').attr('list', 'orgs');
-    $('*[data-fieldname="org_title"]').after('<datalist id="orgs"></datalist>');
-    frappe.call({
-      method: 'contentready_oip.api.get_orgs_list',
-      args: {},
-      callback: function (r) {
-        r.message.map((op) => {
-          $('#orgs').append(
-            $('<option>', {
-              value: op.label,
-            })
-          );
-          orgs[op.label] = op.value;
-        });
-      },
-    });
-  };
-
+  
   const getAvailableSectors = function () {
     frappe.call({
       method: 'contentready_oip.api.get_sector_list',
@@ -77,20 +59,20 @@ frappe.ready(async function () {
   addFileToDoc = ( file ) => {
     if ( file.xhr ) {
       const response = JSON.parse( file.xhr.response );
-      frappe.web_form.doc.photo = response.message.file_url;
+      frappe.web_form.doc.brandmark = response.message.file_url;
     }
   };
 
   removeFileFromDoc = (file) => {
     // console.log('removed', file);
-    frappe.web_form.doc.photo = '';
+    frappe.web_form.doc.brandmark = '';
   };
 
   addDropzone = () => {
     // disable autoDiscover as we are manually binding the dropzone to a form element
     Dropzone.autoDiscover = false;
     const el = `<form class="dropzone dz-clickable d-flex align-items-center justify-content-center flex-wrap mb-4" style="font-size:var(--f14);" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
-    $('*[data-fieldname="photo"]').after(el);
+    $('*[data-fieldname="brandmark"]').after(el);
     $('#dropzone').dropzone({
       url: '/api/method/contentready_oip.api.upload_file',
       autoDiscover: false,
@@ -114,8 +96,8 @@ frappe.ready(async function () {
         });
         // use this event to remove from child table
         this.on('removedfile', removeFileFromDoc);
-        if (frappe.web_form.doc.photo) {
-          const file_url = frappe.web_form.doc.photo;
+        if (frappe.web_form.doc.brandmark) {
+          const file_url = frappe.web_form.doc.brandmark;
           let mockFile = { name: file_url, size: null };
           this.displayExistingFile(mockFile, file_url);
         }
@@ -124,7 +106,7 @@ frappe.ready(async function () {
   };
 
   addActionButtons = () => {
-    const publishBtn = `<button class="btn btn-sm btn-primary ml-2" onclick="publishProfile()">Update</button>`;
+    const publishBtn = `<button class="btn btn-sm btn-primary ml-2" onclick="publishOrg()">Update</button>`;
     $('.page-header-actions-block').append(publishBtn);
   };
 
@@ -189,25 +171,12 @@ frappe.ready(async function () {
     frappe.web_form.set_value('longitude', place.geometry.location.lng());
   };
 
-  isValidLinkedInUrl = (url) => {
-    const LINKEDIN_REGEX = /((https?:\/\/)?((www|\w\w)\.)?linkedin\.com\/)((([\w]{2,3})?)|([^\/]+\/(([\w|\d-&#?=])+\/?){1,}))$/;
-    const re = new RegExp(LINKEDIN_REGEX);
-    return re.test(url);
-  };
 
-  publishProfile = () => {
-    const data = frappe.web_form.get_values();
-    const { linkedin_profile } = data;
-
-    if (linkedin_profile && !isValidLinkedInUrl(linkedin_profile)) {
-      frappe.msgprint('Enter valid LinkedIn profile url');
-      return false;
-    }
-
+  publishOrg = () => {
     frappe.call({
       method: 'contentready_oip.api.add_primary_content',
       args: {
-        doctype: 'User Profile',
+        doctype: 'Organisation',
         doc: frappe.web_form.doc,
       },
       callback: function (r) {
@@ -251,11 +220,6 @@ frappe.ready(async function () {
     $('*[data-fieldname="sectors"]').before(
       '<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sectorsComp"></div>'
     );
-
-    // For Personas
-    $('*[data-fieldname="personas"]').before(
-      '<label class="form-group control-label">Personas</label><br/><div id="personasComp"></div>'
-    );
   };
 
   // End Helpers
@@ -274,10 +238,7 @@ frappe.ready(async function () {
     addActionButtons();
     moveDivs();
     arrangeDivs();
-    createOrgOptions();
     fixOuterDivForMobile();
-    // createPersonaOptions();
-    // createSectorOptions();
     addSection();
     controlLabels();
     styleFormHeadings();
@@ -347,68 +308,6 @@ frappe.ready(async function () {
     `,
   });
 
-  const personaVueComp = new Vue({
-    name: 'Personas',
-    el: '#personasComp',
-    data() {
-      return {
-        avail_personas: [],
-        user_personas: [],
-      };
-    },
-    created() {
-      getAvailablePersonas();
-    },
-    methods: {
-      toggleClass(persona) {
-        let is_present = this.user_personas.find((p) => persona === p);
-        if (is_present) {
-          return true;
-        }
-        return false;
-      },
-      updatePersonaToDoc(personaClicked) {
-        if (!frappe.web_form.doc.personas) {
-          frappe.web_form.doc.personas = [];
-        }
-        const updatedPersonas = [...frappe.web_form.doc.personas];
-
-        let index = updatedPersonas.findIndex(
-          (s) => s.persona === personaClicked
-        );
-
-        if (index > -1) {
-          updatedPersonas.splice(index, 1);
-        } else {
-          updatedPersonas.push({ persona: personaClicked });
-        }
-
-        frappe.web_form.doc.personas = updatedPersonas;
-        getAvailablePersonas();
-      },
-    },
-    template: `
-    {% raw %}
-    <div class="row">
-      <div class="col d-flex flex-wrap">
-          <button 
-            v-for="persona in avail_personas" 
-            class="btn btn-lg mb-3 mr-3" 
-            :title="persona['label']"
-            :class="{
-              'btn-primary': toggleClass(persona['value']),
-              'text-white': toggleClass(persona['value']),
-              'btn-outline-primary' :!toggleClass(persona['value']) 
-            }"
-            v-on:click="updatePersonaToDoc(persona['value'])"
-            >
-            {{persona['label']}}
-          </button>
-      </div>
-    </div>
-    {% endraw %}
-    `,
-  });
 
   // Start Google Maps Autocomplete
   const gScriptUrl =
