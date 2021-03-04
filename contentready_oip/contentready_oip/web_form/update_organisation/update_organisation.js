@@ -1,6 +1,8 @@
 frappe.provide('Vue');
 
 frappe.ready(async function () {
+
+  {% include "contentready_oip/public/js/utils.js" %}
   // Start helpers
   // Simple sleep(ms) function from https://stackoverflow.com/a/48882182
   const sleep = (m) => new Promise((r) => setTimeout(r, m));
@@ -23,40 +25,8 @@ frappe.ready(async function () {
     $('.form-layout').addClass('bg-transparent px-0');
   };
 
-  
-  const getAvailableSectors = function () {
-    frappe.call({
-      method: 'contentready_oip.api.get_sector_list',
-      args: {},
-      callback: function (r) {
-        let user_sectors;
-        if (frappe.web_form.doc.sectors) {
-          user_sectors = frappe.web_form.doc.sectors.map((s) => s.sector);
-        }
 
-        sectorsVueComp.user_sectors = user_sectors || [];
-        sectorsVueComp.avail_sectors = r.message;
-      },
-    });
-  };
-
-  const getAvailablePersonas = function () {
-    frappe.call({
-      method: 'contentready_oip.api.get_persona_list',
-      args: {},
-      callback: function (r) {
-        let user_personas;
-        if (frappe.web_form.doc.personas) {
-          user_personas = frappe.web_form.doc.personas.map((p) => p.persona);
-        }
-
-        personaVueComp.user_personas = user_personas;
-        personaVueComp.avail_personas = r.message;
-      },
-    });
-  };
-
-  addFileToDoc = ( file ) => {
+  add_brandmark_to_doc = ( file ) => {
     if ( file.xhr ) {
       const response = JSON.parse( file.xhr.response );
       frappe.web_form.doc.brandmark = response.message.file_url;
@@ -91,7 +61,7 @@ frappe.ready(async function () {
             this.removeFile(file);
             frappe.msgprint('Explicit content detected. This file will not be uploaded.');
           } else {
-            addFileToDoc(file);
+            add_brandmark_to_doc(file);
           }
         });
         // use this event to remove from child table
@@ -105,12 +75,12 @@ frappe.ready(async function () {
     });
   };
 
-  addActionButtons = () => {
+  add_action_buttons = () => {
     const publishBtn = `<button class="btn btn-sm btn-primary ml-2" onclick="publishOrg()">Update</button>`;
     $('.page-header-actions-block').append(publishBtn);
   };
 
-  initAutocomplete = () => {
+  init_google_maps_autocomplete = () => {
     // TODO: Use domain settings to retrieve country list
     $('*[data-fieldname="city"]:text')
       .attr('id', 'autocomplete')
@@ -128,10 +98,10 @@ frappe.ready(async function () {
     autocomplete.setFields(['address_component', 'geometry']);
     // When the user selects an address from the drop-down, populate the
     // address fields in the form.
-    autocomplete.addListener('place_changed', fillInAddress);
+    autocomplete.addListener('place_changed', fill_address_from_google_maps);
   };
 
-  fillInAddress = () => {
+  fill_address_from_google_maps = () => {
     // Get the place details from the autocomplete object.
     const place = autocomplete.getPlace();
     const addressMapping = {
@@ -189,12 +159,12 @@ frappe.ready(async function () {
     });
   };
 
-  const controlLabels = () => {
+  const control_labels = () => {
     $('.control-label').addClass('label-styles');
     $('span.label-area.small').removeClass('small');
   };
 
-  const styleFormHeadings = () => {
+  const style_form_headings = () => {
     $('h6').not(':first').prepend('<hr />');
     $('.form-section-heading').addClass('edit-profile-subheadings');
   };
@@ -211,7 +181,7 @@ frappe.ready(async function () {
     $('#introduction').addClass('d-none');
   };
 
-  const styleFields = () => {
+  const style_fields = () => {
     $('.input-with-feedback').addClass('field-styles');
   };
 
@@ -235,84 +205,24 @@ frappe.ready(async function () {
   );
 
   $('div[role="form"]').ready(function () {
-    addActionButtons();
+    add_action_buttons();
     moveDivs();
     arrangeDivs();
     fixOuterDivForMobile();
     addSection();
-    controlLabels();
-    styleFormHeadings();
-    styleFields();
+    control_labels();
+    style_form_headings();
+    style_fields();
     pageHeadingSection();
   });
 
-  const sectorsVueComp = new Vue({
-    name: 'Sectors',
-    el: '#sectorsComp',
-    data() {
-      return {
-        avail_sectors: [],
-        user_sectors: [],
-      };
-    },
-    created() {
-      getAvailableSectors();
-    },
-    methods: {
-      toggleClass(sector) {
-        let is_present = this.user_sectors.find((s) => sector === s);
-        if (is_present) {
-          return true;
-        }
-        return false;
-      },
-      updateSectorToDoc(sectorClicked) {
-        if (!frappe.web_form.doc.sectors) {
-          frappe.web_form.doc.sectors = [];
-        }
-
-        const updatedSectors = [...frappe.web_form.doc.sectors];
-
-        let index = updatedSectors.findIndex((s) => s.sector === sectorClicked);
-
-        if (index > -1) {
-          updatedSectors.splice(index, 1);
-        } else {
-          updatedSectors.push({ sector: sectorClicked });
-        }
-
-        frappe.web_form.doc.sectors = updatedSectors;
-        getAvailableSectors();
-      },
-    },
-    template: `
-    {% raw %}
-    <div class="row">
-      <div class="col d-flex flex-wrap">
-          <button 
-            v-for="sector in avail_sectors" 
-            class="btn btn-lg mb-3 mr-3" 
-            :class="{
-              'btn-primary': toggleClass(sector['value']),
-              'text-white': toggleClass(sector['value']),
-              'btn-outline-primary' :!toggleClass(sector['value']) 
-            }"
-
-            v-on:click="updateSectorToDoc(sector['value'])"
-            >
-            {{sector['label']}}
-          </button>
-      </div>
-    </div>
-    {% endraw %}
-    `,
-  });
+  {% include "contentready_oip/public/js/sector_component.js" %}
 
 
   // Start Google Maps Autocomplete
   const gScriptUrl =
     'https://maps.googleapis.com/maps/api/js?key=AIzaSyAxSPvgric8Zn54pYneG9NondiINqdvb-w&libraries=places';
-  $.getScript(gScriptUrl, initAutocomplete);
+  $.getScript(gScriptUrl, init_google_maps_autocomplete);
   // End Google Maps Autocomplete
 
   // Start dropzone.js integration

@@ -23,7 +23,7 @@ frappe.ready(async function () {
     $('.form-layout').addClass('bg-transparent px-0');
   };
 
-  createOrgOptions = () => {
+  create_org_options = () => {
     $('*[data-fieldname="org_title"]').attr('list', 'orgs');
     $('*[data-fieldname="org_title"]').after('<datalist id="orgs"></datalist>');
     frappe.call({
@@ -74,7 +74,7 @@ frappe.ready(async function () {
     });
   };
 
-  addFileToDoc = ( file ) => {
+  add_photo_to_doc = ( file ) => {
     if ( file.xhr ) {
       const response = JSON.parse( file.xhr.response );
       frappe.web_form.doc.photo = response.message.file_url;
@@ -109,7 +109,7 @@ frappe.ready(async function () {
             this.removeFile(file);
             frappe.msgprint('Explicit content detected. This file will not be uploaded.');
           } else {
-            addFileToDoc(file);
+            add_photo_to_doc(file);
           }
         });
         // use this event to remove from child table
@@ -123,12 +123,12 @@ frappe.ready(async function () {
     });
   };
 
-  addActionButtons = () => {
+  add_action_buttons = () => {
     const publishBtn = `<button class="btn btn-sm btn-primary ml-2" onclick="publishProfile()">Update</button>`;
     $('.page-header-actions-block').append(publishBtn);
   };
 
-  initAutocomplete = () => {
+  init_google_maps_autocomplete = () => {
     // TODO: Use domain settings to retrieve country list
     $('*[data-fieldname="city"]:text')
       .attr('id', 'autocomplete')
@@ -146,10 +146,10 @@ frappe.ready(async function () {
     autocomplete.setFields(['address_component', 'geometry']);
     // When the user selects an address from the drop-down, populate the
     // address fields in the form.
-    autocomplete.addListener('place_changed', fillInAddress);
+    autocomplete.addListener('place_changed', fill_address_from_google_maps);
   };
 
-  fillInAddress = () => {
+  fill_address_from_google_maps = () => {
     // Get the place details from the autocomplete object.
     const place = autocomplete.getPlace();
     const addressMapping = {
@@ -220,12 +220,12 @@ frappe.ready(async function () {
     });
   };
 
-  const controlLabels = () => {
+  const control_labels = () => {
     $('.control-label').addClass('label-styles');
     $('span.label-area.small').removeClass('small');
   };
 
-  const styleFormHeadings = () => {
+  const style_form_headings = () => {
     $('h6').not(':first').prepend('<hr />');
     $('.form-section-heading').addClass('edit-profile-subheadings');
   };
@@ -242,7 +242,7 @@ frappe.ready(async function () {
     $('#introduction').addClass('d-none');
   };
 
-  const styleFields = () => {
+  const style_fields = () => {
     $('.input-with-feedback').addClass('field-styles');
   };
 
@@ -271,17 +271,17 @@ frappe.ready(async function () {
   );
 
   $('div[role="form"]').ready(function () {
-    addActionButtons();
+    add_action_buttons();
     moveDivs();
     arrangeDivs();
-    createOrgOptions();
+    create_org_options();
     fixOuterDivForMobile();
     // createPersonaOptions();
     // createSectorOptions();
     addSection();
-    controlLabels();
-    styleFormHeadings();
-    styleFields();
+    control_labels();
+    style_form_headings();
+    style_fields();
     pageHeadingSection();
   });
 
@@ -413,7 +413,7 @@ frappe.ready(async function () {
   // Start Google Maps Autocomplete
   const gScriptUrl =
     'https://maps.googleapis.com/maps/api/js?key=AIzaSyAxSPvgric8Zn54pYneG9NondiINqdvb-w&libraries=places';
-  $.getScript(gScriptUrl, initAutocomplete);
+  $.getScript(gScriptUrl, init_google_maps_autocomplete);
   // End Google Maps Autocomplete
 
   // Start dropzone.js integration

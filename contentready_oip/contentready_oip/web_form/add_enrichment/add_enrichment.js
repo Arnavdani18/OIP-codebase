@@ -35,7 +35,7 @@ frappe.ready( async () => {
     return 0;
   }
 
-  createOrgOptions = () => {
+  create_org_options = () => {
     frappe.call( {
       method: "contentready_oip.api.get_orgs_list",
       args: {},
@@ -62,7 +62,7 @@ frappe.ready( async () => {
     $( '*[data-fieldtype="Table"]' ).hide();
   };
 
-  initAutocomplete = () => {
+  init_google_maps_autocomplete = () => {
     // TODO: Use domain settings to retrieve country list
     $( '*[data-fieldname="city"]:text' )
       .attr( "id", "autocomplete" )
@@ -80,10 +80,10 @@ frappe.ready( async () => {
     autocomplete.setFields( [ "address_component", "geometry" ] );
     // When the user selects an address from the drop-down, populate the
     // address fields in the form.
-    autocomplete.addListener( "place_changed", fillInAddress );
+    autocomplete.addListener( "place_changed", fill_address_from_google_maps );
   };
 
-  fillInAddress = () => {
+  fill_address_from_google_maps = () => {
     // Get the place details from the autocomplete object.
     const place = autocomplete.getPlace();
     const addressMapping = {
@@ -123,7 +123,7 @@ frappe.ready( async () => {
     frappe.web_form.set_value( "longitude", place.geometry.location.lng() );
   };
 
-  addFileToDoc = ( file ) => {
+  add_media_to_doc = ( file ) => {
     if ( file.xhr ) {
       const response = JSON.parse( file.xhr.response );
       const file_url = response.message.file_url;
@@ -136,16 +136,16 @@ frappe.ready( async () => {
         type: file.type
       };
       frappe.web_form.doc.media.push(m);
-      attachFeaturedBtn( file );
+      show_feature_button( file );
     }
   };
 
-  attachFeaturedBtn = ( file ) => {
+  show_feature_button = ( file ) => {
     $(file['previewElement']).append(`<div id="featureBtn"></div>`);
     {% include 'public/custom_templates/featureBtn.js' %}
   }
 
-  removeFileFromDoc = (file) => {
+  remove_media_from_doc = (file) => {
     if (frappe.web_form.doc.media) {
       frappe.web_form.doc.media = frappe.web_form.doc.media.filter(
         (i) => !i.attachment.endsWith(file.name)
@@ -180,17 +180,17 @@ frappe.ready( async () => {
             this.removeFile(file);
             frappe.msgprint('Explicit content detected. This file will not be uploaded.');
           } else {
-            addFileToDoc(file);
+            add_media_to_doc(file);
           }
         });
         // use this event to remove from child table
         this.on( 'removedfile', function ( file ) {
-          toggleAddMore( myDropzone.files.length );
-          removeFileFromDoc( file );
+          toggle_add_more( myDropzone.files.length );
+          remove_media_from_doc( file );
         } );
 
         if ( frappe.web_form.doc.media ) {
-          toggleAddMore( frappe.web_form.doc.media.length );
+          toggle_add_more( frappe.web_form.doc.media.length );
           frappe.web_form.doc.media.map( a => {
             let mockFile = { name: a.attachment, size: a.size };
             myDropzone.displayExistingFile( mockFile, a.attachment );
@@ -198,7 +198,7 @@ frappe.ready( async () => {
         }
 
         this.on( 'sending', function () {
-          toggleAddMore( myDropzone.files.length );
+          toggle_add_more( myDropzone.files.length );
         } )
 
         const addMutipleFilesBtn = document.querySelector( "#add-multiple-files" );
@@ -213,7 +213,7 @@ frappe.ready( async () => {
           clearDzBtn.addEventListener( "click", function ( e ) {
             e.preventDefault();
             myDropzone.removeAllFiles();
-            toggleAddMore( myDropzone.files.length );
+            toggle_add_more( myDropzone.files.length );
           } );
         }
 
@@ -221,7 +221,7 @@ frappe.ready( async () => {
     } );
   };
 
-  toggleAddMore = ( len ) => {
+  toggle_add_more = ( len ) => {
     const addMore = $( '#add-multiple-files' ).parent();
     if ( len ) {
       addMore.addClass( 'dz-preview' ).removeClass( 'hidden' );
@@ -275,7 +275,7 @@ frappe.ready( async () => {
     $( "#auto-save-alert" ).addClass( "hidden" );
   };
 
-  autoSaveDraft = () => {
+  auto_save_draft = () => {
     if ( frappe.web_form.doc.title ) {
       frappe.call( {
         method: "contentready_oip.api.add_enrichment",
@@ -302,7 +302,7 @@ frappe.ready( async () => {
           } );
 
           // update delete btn vue instance
-          deleteBtnInstance.btnText = deleteBtnInstance.getBtnText();
+          vue_delete_button.btnText = vue_delete_button.getBtnText();
 
           // Replace state if exists
           const currQueryParam = window.location[ 'search' ];
@@ -319,7 +319,7 @@ frappe.ready( async () => {
     }
   };
 
-  saveAsDraft = ( event ) => {
+  save_as_draft = ( event ) => {
     const is_draft = true;
     submitEnrichmentForm( is_draft );
   };
@@ -330,8 +330,8 @@ frappe.ready( async () => {
     submitEnrichmentForm( is_draft );
   };
 
-  addActionButtons = () => {
-    const saveAsDraftBtn = `<button class="btn ml-2 btn-outline-primary outline-primary-btn" onclick="saveAsDraft()">Save as Draft</button>`;
+  add_action_buttons = () => {
+    const save_as_draftBtn = `<button class="btn ml-2 btn-outline-primary outline-primary-btn" onclick="save_as_draft()">Save as Draft</button>`;
     const publishBtn = `<button 
       class="btn btn-primary ml-2 solid-primary-btn" 
       onclick="publishEnrichment()">
@@ -344,7 +344,7 @@ frappe.ready( async () => {
     const alert = `<span class="alert alert-primary fade show hidden" role="alert" id="auto-save-alert">Saved</span>`;
     $( ".page-header-actions-block" ).append( alert );
     $( ".page-header-actions-block" )
-      // .append(saveAsDraftBtn)
+      // .append(save_as_draftBtn)
       .append( deleteBtnPlaceholder )
       .append( publishBtn );
   };
@@ -478,7 +478,7 @@ frappe.ready( async () => {
     }
   }
 
-  function hideAttachmentsSection () {
+  function hide_attachments_section () {
     $( '.attachments' ).hide();
   }
 
@@ -492,20 +492,20 @@ frappe.ready( async () => {
   // Start UI Fixes
   $( '*[data-doctype="Web Form"]' ).wrap( '<div class="container pt-5"></div>' );
   // We hide the default form buttons (using css) and add our own
-  addActionButtons();
+  add_action_buttons();
   moveDivs();
-  createOrgOptions();
+  create_org_options();
   getProblemCard();
-  styleFormHeadings();
-  styleFields();
-  controlLabels();
+  style_form_headings();
+  style_fields();
+  control_labels();
   appendAttachLink();
   pageHeadingSection();
-  hideAttachmentsSection();
+  hide_attachments_section();
   addAsterisk(['title','description','city','country']);
   // End UI Fixes
 
-  const deleteBtnInstance = new Vue( {
+  const vue_delete_button = new Vue( {
     name: 'DeleteBtn',
     el: '#deleteBtn',
     name: 'deleteORCancel',
@@ -589,7 +589,7 @@ frappe.ready( async () => {
   // Start Google Maps Autocomplete
   const gScriptUrl =
     "https://maps.googleapis.com/maps/api/js?key=AIzaSyAxSPvgric8Zn54pYneG9NondiINqdvb-w&libraries=places";
-  $.getScript( gScriptUrl, initAutocomplete );
+  $.getScript( gScriptUrl, init_google_maps_autocomplete );
   // End Google Maps Autocomplete
 
   // Start dropzone.js integration
@@ -603,29 +603,29 @@ frappe.ready( async () => {
     frappe.web_form.doc.org = e.target.value;
   } );
 
-  let autoSave = setInterval( autoSaveDraft, 5000 );
+  let autoSave = setInterval( auto_save_draft, 5000 );
   function stopInterval () {
     clearInterval( autoSave );
   }
 
   $( window ).on( "beforeunload", function ( e ) {
     e.preventDefault();
-    autoSaveDraft();
+    auto_save_draft();
     return;
   } );
 
   // End Events
 } );
 
-const styleFormHeadings = () => {
+const style_form_headings = () => {
   $('h6').not(':first').prepend('<hr />');
   $('.form-section-heading').addClass('enrichment-details-page-subheadings');
 };
 
-const styleFields = () => {
+const style_fields = () => {
   $('.input-with-feedback').addClass('field-styles');
 };
 
-const controlLabels = () => {
+const control_labels = () => {
   $('.control-label').addClass('label-styles');
 };
