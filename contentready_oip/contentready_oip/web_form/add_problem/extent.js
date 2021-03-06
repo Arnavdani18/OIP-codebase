@@ -92,7 +92,7 @@ new Vue({
     
             <div class="tags">
             <div class="tag" v-for="loc,idx in frappe.web_form.doc.extent">
-                <span class="text-capitalize">[[loc.city]],[[loc.state]],[[loc.country]]</span>
+                <span class="text-capitalize">[[loc.city]], [[loc.state]], [[loc.country]]</span>
                 <button type="button" @click="removeLocation(idx)" style="font-size:1.9rem;" class="close ml-2" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

@@ -956,7 +956,7 @@ frappe.ready(async () => {
   addAttributesToFields();
   add_help_icon();
   updateTimeline();
-  {% include "contentready_oip/public/js/ResourceNeeded.js" %}
+  {% include "contentready_oip/public/js/resources_needed.js" %}
   prefill_org_field();
 
   const vm = new Vue({

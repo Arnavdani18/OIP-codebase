@@ -39,8 +39,9 @@ const submit_form = (is_draft) => {
 
 
 const auto_save_draft = () => {
-    console.log('auto save draft: ');
-    formatMultiSelectValues();
+    if (doctype === 'Problem') {
+        formatMultiSelectValues();
+    }
 
     if (frappe.web_form.doc.title) {
         frappe.call({
@@ -116,6 +117,8 @@ add_action_buttons = () => {
         .append(publishBtn);
 };
 
+add_action_buttons();
+
 const vue_delete_button = new Vue({
     name: 'DeleteBtn',
     el: '#deleteBtn',
@@ -150,7 +153,7 @@ const vue_delete_button = new Vue({
             }
         },
         getBtnText: function () {
-            if (frappe.web_form.doc.name) {
+            if (frappe.web_form && frappe.web_form.doc && frappe.web_form.doc.name) {
                 return 'Delete';
             } else {
                 return 'Cancel';
@@ -181,7 +184,7 @@ const vue_delete_button = new Vue({
         },
     },
     template: `<button 
-      v-if="frappe.web_form.doc.is_published !== 1"
+      v-if="frappe.web_form.doc && frappe.web_form.doc.is_published !== 1"
       class="btn ml-2 solid-primary-btn btn-danger bg-danger" 
       title="delete" 
       style="border-color: var(--danger);" 
@@ -189,4 +192,11 @@ const vue_delete_button = new Vue({
       >
         [[btnText]]
       </button>`,
+});
+
+const autoSave = setInterval(auto_save_draft, 5000);
+  $(window).on('beforeunload', function (e) {
+    e.preventDefault();
+    auto_save_draft();
+    return;
 });

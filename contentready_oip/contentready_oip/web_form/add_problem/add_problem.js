@@ -2,6 +2,13 @@ frappe.provide('Vue');
 
 frappe.ready(async () => {
 
+  const doctype = 'Problem';
+
+  const mandatory_fields = ['title', 'description', 'city', 'country', 'sectors'];
+
+  // Start Helpers
+  // Only write form specific helpers here. Use includes for common use cases.
+
   {% include "contentready_oip/public/js/utils.js" %}
   {% include "contentready_oip/public/js/sdg_options.js" %}
   {% include "contentready_oip/public/js/help_icon.js" %}
@@ -13,11 +20,6 @@ frappe.ready(async () => {
   {% include "contentready_oip/public/js/video_url_attachments.js" %}
   {% include "contentready_oip/public/js/form_actions.js" %}
 
-  const doctype = 'Problem';
-
-  const mandatory_fields = ['title', 'description', 'city', 'country', 'sectors'];
-
-  // Start Helpers
 
   // Fix layout - without this, the entire form occupies col-2 due to custom CSS.
   moveDivs = () => {
@@ -60,7 +62,7 @@ frappe.ready(async () => {
   };
 
 
-  formatMultiSelectValues = ()=>{
+  formatMultiSelectValues = () => {
     // sdg
     const sdg_select = $('select[data-fieldname="sustainable_development_goal"]');
     const sdgVal = sdg_select.val()?.map(v => ({sustainable_development_goal: v}));
@@ -74,15 +76,11 @@ frappe.ready(async () => {
     // frappe.web_form.set_value('beneficiaries', beneficiariesVal);
   }
 
-
-
   const problemDetails = () => {
     $('.form-layout').prepend(
       `<h2 class="form-layout-problem-details">1. Problem Details</h2>`
     );
   };
-
-  
 
   const style_form_headings = () => {
     $('.form-section-heading').prepend('<hr/>');
@@ -110,7 +108,7 @@ frappe.ready(async () => {
   };
 
 
-  const addSection = function () {
+  const addSectorsSection = function () {
     // For Sectors
     $('*[data-fieldname="sectors"]').before(
       '<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sectorsComp"></div>'
@@ -127,12 +125,11 @@ frappe.ready(async () => {
   // Start UI Fixes
   $('*[data-doctype="Web Form"]').wrap('<div class="container pt-5"></div>');
   // We hide the default form buttons (using css) and add our own
-  add_action_buttons();
   moveDivs();
   create_org_options();
   addSdgOptions();
   // createSectorOptions();
-  addSection();
+  addSectorsSection();
   problemDetails();
   control_labels();
   style_fields();
@@ -146,7 +143,7 @@ frappe.ready(async () => {
   add_help_icon();
   // End UI Fixes
 
-  {% include "contentready_oip/public/js/ResourceNeeded.js" %}
+  {% include "contentready_oip/public/js/resources_needed.js" %}
 
   {% include "contentready_oip/public/js/sector_component.js" %}
   
@@ -157,14 +154,13 @@ frappe.ready(async () => {
   $.getScript(gScriptUrl, () => {
     init_google_maps_autocomplete();
     // Extent field relies on map script
-    {% include "contentready_oip/contentready_oip/web_form/add_problem/Extent.js" %}
+    {% include "contentready_oip/contentready_oip/web_form/add_problem/extent.js" %}
   });
   // End Google Maps Autocomplete
 
-  // Start dropzone.js integration
   const dScriptUrl = 'assets/contentready_oip/js/dropzone.js';
   $.getScript(dScriptUrl, addDropzone);
-  // End dropzone.js integration
+
 
   // Start Events
   // Look for similar problems when title is entered
@@ -179,13 +175,6 @@ frappe.ready(async () => {
   // Set org link field when org title is selected
   $('*[data-fieldname="org"]').on('change', (e) => {
     frappe.web_form.set_value('org', e.target.value);
-  });
-
-  const autoSave = setInterval(auto_save_draft, 5000);
-  $(window).on('beforeunload', function (e) {
-    e.preventDefault();
-    auto_save_draft();
-    return;
   });
 
   // End Events
