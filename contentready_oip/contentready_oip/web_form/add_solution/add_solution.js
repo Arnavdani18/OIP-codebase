@@ -88,14 +88,6 @@ frappe.ready(async () => {
   };
 
 
-  const add_sectors_section = function () {
-    // For Sectors
-    $('*[data-fieldname="sectors"]').before(
-      '<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sectorsComp"></div>'
-    );
-  };
-
-
   addMultiselectForSolverTeam = () => {
     const el = `
     <h6 class="mt-3">Solver Team</h6>
@@ -365,14 +357,6 @@ frappe.ready(async () => {
   };
 
   const pageHeadingSection = () => {
-    // $('button:contains("Save as Draft")')
-    //   .removeClass('btn-sm')
-    //   .addClass('btn-outline-primary outline-primary-btn');
-
-    // $('button:contains("Publish")')
-    //   .removeClass('')
-    //   .addClass('solid-primary-btn');
-
     $('#auto-save-alert').addClass('auto-saved');
     $('.page-header-actions-block').addClass('d-flex align-items-center');
     $('.page-header')
@@ -456,8 +440,6 @@ frappe.ready(async () => {
   moveDivs();
   create_org_options();
   addSdgOptions();
-  // createSectorOptions();
-  add_sectors_section();
   style_form_headings();
   style_fields();
   control_labels();
@@ -466,7 +448,6 @@ frappe.ready(async () => {
   appendAttachLink();
   insertSelectedProblem();
   hide_attachments_section();
-  // getAvailableSectors();
   addAsterisk(mandatory_fields);
   addAttributesToFields();
   add_help_icon();

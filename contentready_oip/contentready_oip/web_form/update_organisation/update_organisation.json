@@ -19,7 +19,7 @@
  "is_standard": 1,
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2021-03-02 21:58:01.016339",
+ "modified": "2021-03-06 19:21:16.345095",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "update-organisation",
@@ -37,7 +37,7 @@
  "web_form_fields": [
   {
    "allow_read_on_all_link_options": 0,
-   "fieldname": "brandmark",
+   "fieldname": "photo",
    "fieldtype": "Attach Image",
    "hidden": 1,
    "label": "Brandmark",

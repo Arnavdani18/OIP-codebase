@@ -1,3 +1,7 @@
+$('*[data-fieldname="sectors"]').before(
+    '<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sectorsComp"></div>'
+);
+
 const sectorsComp = new Vue({
     name: 'Sectors',
     el: '#sectorsComp',
@@ -28,7 +32,9 @@ const sectorsComp = new Vue({
 
                     sectorsComp.selected_sectors = selected_sectors || [];
                     sectorsComp.available_sectors = [...r.message.sort(sortAlphabetically)];
-                    add_beneficiary_options(selected_sectors ?? []);
+                    if (['Problem', 'Enrichment'].includes(doctype)) {
+                        add_beneficiary_options(selected_sectors ?? []);
+                    }
                 },
             });
         },

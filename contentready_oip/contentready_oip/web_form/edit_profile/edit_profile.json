@@ -19,7 +19,7 @@
  "is_standard": 1,
  "login_required": 1,
  "max_attachment_size": 10,
- "modified": "2021-03-02 18:24:51.237334",
+ "modified": "2021-03-06 19:11:49.611772",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "edit-profile",
@@ -269,19 +269,6 @@
   },
   {
    "allow_read_on_all_link_options": 0,
-   "fieldname": "personas",
-   "fieldtype": "Table",
-   "hidden": 1,
-   "label": "Personas",
-   "max_length": 0,
-   "max_value": 0,
-   "options": "Persona Table",
-   "read_only": 0,
-   "reqd": 0,
-   "show_in_filter": 0
-  },
-  {
-   "allow_read_on_all_link_options": 0,
    "fieldname": "org",
    "fieldtype": "Select",
    "hidden": 1,
@@ -301,6 +288,19 @@
    "label": "Organisation Name",
    "max_length": 0,
    "max_value": 0,
+   "read_only": 0,
+   "reqd": 0,
+   "show_in_filter": 0
+  },
+  {
+   "allow_read_on_all_link_options": 0,
+   "fieldname": "personas",
+   "fieldtype": "Table",
+   "hidden": 1,
+   "label": "Personas",
+   "max_length": 0,
+   "max_value": 0,
+   "options": "Persona Table",
    "read_only": 0,
    "reqd": 0,
    "show_in_filter": 0

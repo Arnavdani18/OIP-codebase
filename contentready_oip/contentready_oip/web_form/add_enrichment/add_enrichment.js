@@ -34,6 +34,12 @@ frappe.ready( async () => {
     $( "#add-problem-form" ).append( $( ".form-layout" ) );
   };
 
+  formatMultiSelectValues = () => {
+    // beneficiary
+    const beneficiary_select = $('select[data-fieldname="beneficiaries"]');
+    const beneficiariesVal = beneficiary_select.val()?.map(v => ({beneficiary: v}));
+    frappe.web_form.doc.beneficiaries = beneficiariesVal;
+  }
 
 
   getProblemCard = () => {
@@ -82,14 +88,21 @@ frappe.ready( async () => {
   appendAttachLink();
   pageHeadingSection();
   hide_attachments_section();
+  add_beneficiary_select2();
   addAsterisk(mandatory_fields);
+  {% include "contentready_oip/public/js/resources_needed.js" %}
+  {% include "contentready_oip/public/js/sector_component.js" %}
   // End UI Fixes
 
 
   // Start Google Maps Autocomplete
   const gScriptUrl =
-    "https://maps.googleapis.com/maps/api/js?key=AIzaSyAxSPvgric8Zn54pYneG9NondiINqdvb-w&libraries=places";
-  $.getScript( gScriptUrl, init_google_maps_autocomplete );
+    'https://maps.googleapis.com/maps/api/js?key=AIzaSyAxSPvgric8Zn54pYneG9NondiINqdvb-w&libraries=places';
+  $.getScript(gScriptUrl, () => {
+    init_google_maps_autocomplete();
+    // Extent field relies on map script
+    {% include "contentready_oip/contentready_oip/web_form/add_problem/extent.js" %}
+  });
   // End Google Maps Autocomplete
 
   // Start dropzone.js integration

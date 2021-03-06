@@ -107,14 +107,6 @@ frappe.ready(async () => {
     $('#introduction').addClass('d-none');
   };
 
-
-  const add_sectors_section = function () {
-    // For Sectors
-    $('*[data-fieldname="sectors"]').before(
-      '<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sectorsComp"></div>'
-    );
-  };
-
   // End Helpers
 
   // Delay until page is fully rendered
@@ -128,8 +120,6 @@ frappe.ready(async () => {
   moveDivs();
   create_org_options();
   addSdgOptions();
-  // createSectorOptions();
-  add_sectors_section();
   problemDetails();
   control_labels();
   style_fields();

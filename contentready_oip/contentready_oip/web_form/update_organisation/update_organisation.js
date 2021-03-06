@@ -2,13 +2,15 @@ frappe.provide('Vue');
 
 frappe.ready(async function () {
 
+  
+  const doctype = 'User Profile';
+
+  // Start Helpers
+  // Only write form specific helpers here. Use includes for common use cases.
+
   {% include "contentready_oip/public/js/utils.js" %}
-  // Start helpers
-  // Simple sleep(ms) function from https://stackoverflow.com/a/48882182
-  const sleep = (m) => new Promise((r) => setTimeout(r, m));
-
-  let orgs = {};
-
+  {% include "contentready_oip/public/js/google_maps_autocomplete.js" %}
+  {% include "contentready_oip/public/js/dropzone_photo.js" %}
   // Fix layout - without this, the entire form occupies col-2 due to custom CSS.
   moveDivs = () => {
     $('.section-body > div').each(function () {
@@ -25,120 +27,9 @@ frappe.ready(async function () {
     $('.form-layout').addClass('bg-transparent px-0');
   };
 
-
-  add_brandmark_to_doc = ( file ) => {
-    if ( file.xhr ) {
-      const response = JSON.parse( file.xhr.response );
-      frappe.web_form.doc.brandmark = response.message.file_url;
-    }
-  };
-
-  removeFileFromDoc = (file) => {
-    // console.log('removed', file);
-    frappe.web_form.doc.brandmark = '';
-  };
-
-  addDropzone = () => {
-    // disable autoDiscover as we are manually binding the dropzone to a form element
-    Dropzone.autoDiscover = false;
-    const el = `<form class="dropzone dz-clickable d-flex align-items-center justify-content-center flex-wrap mb-4" style="font-size:var(--f14);" id='dropzone'><div class="dz-default dz-message"><button class="dz-button" type="button">Drop files here to upload</button></div></form>`;
-    $('*[data-fieldname="brandmark"]').after(el);
-    $('#dropzone').dropzone({
-      url: '/api/method/contentready_oip.api.upload_file',
-      autoDiscover: false,
-      maxFiles: 1,
-      addRemoveLinks: true,
-      acceptedFiles: 'image/*',
-      headers: {
-        Accept: 'application/json',
-        'X-Frappe-CSRF-Token': frappe.csrf_token,
-      },
-      init: function () {
-        // use this event to add to child table
-        this.on('complete', (file) => {
-          const response = JSON.parse(file.xhr.response);
-          if (response.message === false) {
-            this.removeFile(file);
-            frappe.msgprint('Explicit content detected. This file will not be uploaded.');
-          } else {
-            add_brandmark_to_doc(file);
-          }
-        });
-        // use this event to remove from child table
-        this.on('removedfile', removeFileFromDoc);
-        if (frappe.web_form.doc.brandmark) {
-          const file_url = frappe.web_form.doc.brandmark;
-          let mockFile = { name: file_url, size: null };
-          this.displayExistingFile(mockFile, file_url);
-        }
-      },
-    });
-  };
-
   add_action_buttons = () => {
     const publishBtn = `<button class="btn btn-sm btn-primary ml-2" onclick="publishOrg()">Update</button>`;
     $('.page-header-actions-block').append(publishBtn);
-  };
-
-  init_google_maps_autocomplete = () => {
-    // TODO: Use domain settings to retrieve country list
-    $('*[data-fieldname="city"]:text')
-      .attr('id', 'autocomplete')
-      .attr('placeholder', 'Search here');
-    // Create the autocomplete object, restricting the search predictions to
-    // geographical location types.
-    autocomplete = new google.maps.places.Autocomplete(
-      document.getElementById('autocomplete'),
-      { types: ['(cities)'], componentRestrictions: { country: 'in' } }
-      // { types: ['(cities)'] }
-    );
-    // Avoid paying for data that you don't need by restricting the set of
-    // place fields that are returned to just the address components.
-    // See https://developers.google.com/maps/documentation/javascript/places-autocomplete#add_autocomplete
-    autocomplete.setFields(['address_component', 'geometry']);
-    // When the user selects an address from the drop-down, populate the
-    // address fields in the form.
-    autocomplete.addListener('place_changed', fill_address_from_google_maps);
-  };
-
-  fill_address_from_google_maps = () => {
-    // Get the place details from the autocomplete object.
-    const place = autocomplete.getPlace();
-    const addressMapping = {
-      locality: {
-        long_name: 'city',
-      },
-      administrative_area_level_1: {
-        short_name: 'state_code',
-        long_name: 'state',
-      },
-      country: {
-        short_name: 'country_code',
-        long_name: 'country',
-      },
-    };
-
-    // Get each component of the address from the place details,
-    // and then fill-in the corresponding field on the form.
-    for (let i = 0; i < place.address_components.length; i++) {
-      const address_type = place.address_components[i].types[0];
-      if (addressMapping[address_type]) {
-        if (addressMapping[address_type]['short_name']) {
-          frappe.web_form.set_value(
-            addressMapping[address_type]['short_name'],
-            place.address_components[i]['short_name']
-          );
-        }
-        if (addressMapping[address_type]['long_name']) {
-          frappe.web_form.set_value(
-            addressMapping[address_type]['long_name'],
-            place.address_components[i]['long_name']
-          );
-        }
-      }
-    }
-    frappe.web_form.set_value('latitude', place.geometry.location.lat());
-    frappe.web_form.set_value('longitude', place.geometry.location.lng());
   };
 
 
@@ -159,10 +50,6 @@ frappe.ready(async function () {
     });
   };
 
-  const control_labels = () => {
-    $('.control-label').addClass('label-styles');
-    $('span.label-area.small').removeClass('small');
-  };
 
   const style_form_headings = () => {
     $('h6').not(':first').prepend('<hr />');
@@ -179,17 +66,6 @@ frappe.ready(async function () {
 
     $('.page-header h2').css({ 'margin-bottom': '0px' });
     $('#introduction').addClass('d-none');
-  };
-
-  const style_fields = () => {
-    $('.input-with-feedback').addClass('field-styles');
-  };
-
-  const addSection = function () {
-    // For Sectors
-    $('*[data-fieldname="sectors"]').before(
-      '<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sectorsComp"></div>'
-    );
   };
 
   // End Helpers
@@ -209,7 +85,6 @@ frappe.ready(async function () {
     moveDivs();
     arrangeDivs();
     fixOuterDivForMobile();
-    addSection();
     control_labels();
     style_form_headings();
     style_fields();

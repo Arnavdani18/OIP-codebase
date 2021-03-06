@@ -8,7 +8,7 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
-  "brandmark",
+  "photo",
   "website",
   "sectors",
   "column_break_5",
@@ -32,11 +32,6 @@
    "in_standard_filter": 1,
    "label": "Title",
    "reqd": 1
-  },
-  {
-   "fieldname": "brandmark",
-   "fieldtype": "Attach Image",
-   "label": "Brandmark"
   },
   {
    "fieldname": "website",
@@ -98,13 +93,18 @@
    "fieldname": "longitude",
    "fieldtype": "Float",
    "label": "Longitude"
+  },
+  {
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "label": "Brandmark"
   }
  ],
  "has_web_view": 1,
- "image_field": "brandmark",
+ "image_field": "photo",
  "is_published_field": "is_published",
  "links": [],
- "modified": "2021-03-02 19:39:45.728324",
+ "modified": "2021-03-06 19:20:18.578148",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Organisation",

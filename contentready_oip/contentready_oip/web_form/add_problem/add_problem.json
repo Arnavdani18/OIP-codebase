@@ -8,6 +8,7 @@
  "allow_print": 0,
  "amount": 0.0,
  "amount_based_on_field": 0,
+ "apply_document_permissions": 0,
  "button_label": "Publish",
  "creation": "2020-02-23 15:50:00.641537",
  "doc_type": "Problem",
@@ -18,7 +19,7 @@
  "is_standard": 1,
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2021-02-02 11:17:38.660537",
+ "modified": "2021-03-06 18:39:55.535921",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "add-problem",
@@ -347,16 +348,6 @@
    "max_length": 0,
    "max_value": 0,
    "options": "Media Table",
-   "read_only": 0,
-   "reqd": 0,
-   "show_in_filter": 0
-  },
-  {
-   "allow_read_on_all_link_options": 0,
-   "fieldtype": "Attach",
-   "hidden": 0,
-   "max_length": 0,
-   "max_value": 0,
    "read_only": 0,
    "reqd": 0,
    "show_in_filter": 0
