@@ -41,6 +41,8 @@ const submit_form = (is_draft) => {
 const auto_save_draft = () => {
     if (doctype === 'Problem') {
         formatMultiSelectValues();
+    } else if (doctype === 'Solution') {
+        formatSdgValues();
     }
 
     if (frappe.web_form.doc.title) {

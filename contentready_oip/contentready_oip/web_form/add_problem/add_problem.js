@@ -108,7 +108,7 @@ frappe.ready(async () => {
   };
 
 
-  const addSectorsSection = function () {
+  const add_sectors_section = function () {
     // For Sectors
     $('*[data-fieldname="sectors"]').before(
       '<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sectorsComp"></div>'
@@ -129,7 +129,7 @@ frappe.ready(async () => {
   create_org_options();
   addSdgOptions();
   // createSectorOptions();
-  addSectorsSection();
+  add_sectors_section();
   problemDetails();
   control_labels();
   style_fields();
