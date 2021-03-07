@@ -15,7 +15,7 @@
     {% include "templates/includes/meta_block.html" %}
     {% endblock %}
 
-    <title>{% block title %} {{ domain_settings.title | striptags }} {% endblock %}</title>
+    <title>{% block title %} {{ title | striptags }} {% endblock %}</title>
 
     {% block favicon %}
     <link rel="shortcut icon" href="{{ (domain_settings.favicon or favicon or " /assets/frappe/images/favicon.png") |
