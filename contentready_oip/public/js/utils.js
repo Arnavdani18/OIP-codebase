@@ -30,10 +30,6 @@ const addAsterisk = function (fieldnameArr) {
     }
 }
 
-const showAutoSaveAlert = () => {
-    $('#auto-save-alert').removeClass('hidden');
-};
-
 const hideAutoSaveAlert = () => {
     $('#auto-save-alert').addClass('hidden');
 };

@@ -81,12 +81,13 @@ const auto_save_draft = () => {
                     window.history.replaceState({}, null, `?name=${r.message['name']}`);
                 }
 
-                showAutoSaveAlert();
+                frappe.show_alert('Saved', 2);
                 setTimeout(hideAutoSaveAlert, 1000);
             },
         });
     }
 };
+
 
 save_as_draft = (event) => {
     frappe.web_form.doc.is_published = false;
@@ -111,8 +112,6 @@ add_action_buttons = () => {
     const deleteBtnPlaceholder = `
       <div id="deleteBtn"></div>
     `;
-    const alert = `<span class="alert alert-primary fade show hidden" role="alert" id="auto-save-alert">Saved</span>`;
-    $('.page-header-actions-block').append(alert);
     $('.page-header-actions-block')
         // .append(save_as_draftBtn)
         .append(deleteBtnPlaceholder)
