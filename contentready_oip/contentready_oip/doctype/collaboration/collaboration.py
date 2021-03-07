@@ -18,7 +18,7 @@ class Collaboration(Document):
 	
 	def maybe_notify_owner(self):
 		old = self.get_doc_before_save()
-		if old.status == 'New' and self.status == 'Accept':
+		if old and old.status == 'New' and self.status == 'Accept':
 			# Recipient has accepted
 			# For now, send an email connecting the two parties
 			recipients = ['tej@contentready.co' if r == 'Administrator' else r for r in [self.owner, self.recipient]]

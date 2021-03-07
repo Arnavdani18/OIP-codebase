@@ -547,12 +547,13 @@ def add_primary_content(doctype, doc, is_draft=False):
 @frappe.whitelist(allow_guest = False)
 def add_enrichment(doc,is_draft=False):
     doc = json.loads(doc)
+    print(doc)
     if isinstance(is_draft,str):
         is_draft = json.loads(is_draft)
     if not ('problem' in doc or doc['problem']):
         return False
     doctype = 'Enrichment'
-    if 'name' in doc and doc['name']:
+    if doc.get('name'):
         # edit
         content = frappe.get_doc(doctype, doc['name'])
         content.update(doc)
