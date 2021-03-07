@@ -5,10 +5,13 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "personas",
   "comment",
   "parent_doctype",
   "parent_name",
+  "personas",
+  "column_break_5",
+  "recipient",
+  "status",
   "personas_list"
  ],
  "fields": [
@@ -29,22 +32,44 @@
    "fieldname": "parent_doctype",
    "fieldtype": "Link",
    "label": "Parent Doctype",
-   "options": "DocType"
+   "options": "DocType",
+   "set_only_once": 1
   },
   {
    "fieldname": "parent_name",
    "fieldtype": "Dynamic Link",
    "label": "Parent Name",
-   "options": "parent_doctype"
+   "options": "parent_doctype",
+   "set_only_once": 1
+  },
+  {
+   "fetch_from": "problem.owner",
+   "fieldname": "recipient",
+   "fieldtype": "Link",
+   "label": "Recipient",
+   "options": "User",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "New",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "New\nAccept\nIgnore"
   },
   {
    "fieldname": "personas_list",
    "fieldtype": "Data",
-   "label": "Personas List"
+   "label": "Personas List",
+   "length": 600
   }
  ],
  "links": [],
- "modified": "2021-02-28 16:24:18.919255",
+ "modified": "2021-03-07 13:33:31.250901",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Collaboration",

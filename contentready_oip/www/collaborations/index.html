@@ -1,0 +1,58 @@
+<!-- jinja -->
+<!-- no-breadcrumbs -->
+<!-- no-cache -->
+
+<table class="table collaborations-table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Type</th>
+      <th scope="col">Title</th>
+      <th scope="col">Comment</th>
+      <th scope="col">Personas</th>
+      <th scope="col">Collaborator</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for collaboration in collaborations %}
+    {% set title, content_route = frappe.db.get_value(collaboration.parent_doctype, collaboration.parent_name, ['title', 'route']) %}
+    {% set full_name, user_route = frappe.db.get_value('User Profile', collaboration.owner, ['full_name', 'route']) %}
+    <tr>
+      <th scope="row">{{ loop.index }}</th>
+      <td>{{ collaboration.parent_doctype }}</td>
+      <td><a href="{{ content_route }}" target="_blank">{{ title }}</a></td>
+      <td>{{ collaboration.comment }}</td>
+      <td>{{ collaboration.personas_list }}</td>
+      <td><a href="{{ user_route }}" target="_blank">{{ full_name }}</a></td>
+      <td>
+        <select name="status" value="{{collaboration.status}}" onchange="change_status('{{collaboration.name}}', event.target.value)">
+          <option value="New">New</option>
+          <option value="Accept">Accept</option>
+          <option value="Ignore">Ignore</option>
+        </select>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<style>
+  .collaborations-table {
+    font-size: 1.3rem;
+  }
+</style>
+
+<script>
+  const change_status = (docname, status) => {
+    frappe.call({
+      method: "contentready_oip.api.change_collaboration_status",
+      args: { docname, status },
+      callback: function ( r ) {
+        if (r.message) {
+          frappe.show_alert('Updated');
+        }
+      }
+      });
+  }
+</script>

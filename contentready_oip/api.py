@@ -647,6 +647,15 @@ def add_or_edit_collaboration(doctype, name, collaboration, html=True):
     else:
         return doc
 
+@frappe.whitelist(allow_guest = False)
+def change_collaboration_status(docname, status):
+    doc = frappe.get_doc('Collaboration', docname)
+    if frappe.session.user == doc.recipient:
+        doc.status = status
+        doc.save()
+        frappe.db.commit()
+        return True
+
 @frappe.whitelist(allow_guest = True)
 def add_subscriber(email, first_name='', last_name=''):
     contact = frappe.get_doc({
@@ -1308,6 +1317,7 @@ def add_doc_to_elasticsearch(doc, hook_action='on_update'):
             content.save()
     except Exception as _e:
         print(str(_e))
+
 
 @frappe.whitelist(allow_guest=True)
 def has_admin_role():
