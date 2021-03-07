@@ -85,12 +85,12 @@ def get_available_sectors():
     hostname = get_url()
     try:
         domain = frappe.get_doc('OIP White Label Domain', {'url': hostname})
-        sectors = [{'name': s.sector, 'title': s.sector_title} for s in domain.sectors]
+        sectors = [{'name': s.sector, 'title': s.sector_title, 'description': s.description} for s in domain.sectors]
         assert len(sectors) > 0, 'Need at least 1 sector per domain. Reverting to defaults.'
         return sectors
     except Exception as e:
         print(str(e))
-        return frappe.get_list('Sector', ['name', 'title'])
+        return frappe.get_list('Sector', ['name', 'title', 'description'])
 
 @frappe.whitelist(allow_guest = True)
 def get_partners():
@@ -401,7 +401,7 @@ def get_persona_list():
 def get_sector_list():
     available_sectors = get_available_sectors()
     # all_sectors = frappe.get_list('Sector', fields=['title', 'name'])
-    return [{'label': o['title'], 'value': o['name']} for o in available_sectors]
+    return [{'label': o['title'], 'value': o['name'], 'description': o['description']} for o in available_sectors]
 
 @frappe.whitelist(allow_guest = True)
 def get_homepage_stats():

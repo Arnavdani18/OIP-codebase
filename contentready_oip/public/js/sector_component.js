@@ -65,24 +65,33 @@ const sectorsComp = new Vue({
                 return false;
             }
         },
+        showDescription: function(description) {
+            frappe.msgprint({
+                title: __('Description'),
+                indicator: 'blue',
+                message: description
+            })
+        }
     },
     template: `
       {% raw %}
         <div class="row">
           <div class="col d-flex flex-wrap">
-            <button 
-              v-for="sector in available_sectors"
-              class="btn btn-lg mb-3 mr-3 btnHover" 
-              :title="sector['label']"
-              :class="{
-                'btn-primary': toggleClass(sector['value']),
-                'text-white': toggleClass(sector['value']),
-                'btn-outline-primary' :!toggleClass(sector['value']) 
-              }"
-              v-on:click="updateSectorToDoc(sector['value'])"
-            >
-            {{sector['label']}}
-            </button>
+            <div class="btn-group" role="group" v-for="sector in available_sectors">
+                <button 
+                class="btn btn-lg btnHover" 
+                :title="sector['label']"
+                :class="{
+                    'btn-primary': toggleClass(sector['value']),
+                    'text-white': toggleClass(sector['value']),
+                    'btn-outline-primary' :!toggleClass(sector['value']) 
+                }"
+                v-on:click="updateSectorToDoc(sector['value'])"
+                >
+                {{sector['label']}}
+                </button>
+                <button type="button" class="btn btn-outline-primary" @click="showDescription(sector['description'])"><i class="octicon octicon-question actions"></i></button>
+            </div>
           </div>
         </div>
       {% endraw %}
