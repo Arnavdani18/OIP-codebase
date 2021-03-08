@@ -3,18 +3,11 @@ import json
 from frappe import _
 from frappe.utils.html_utils import clean_html
 import platform
-from elasticsearch_dsl import Document, Date, Integer, Keyword, Text, Object
-from elasticsearch_dsl.connections import connections
-from elasticsearch import Elasticsearch
-from elasticsearch_dsl import Search
-from elasticsearch_dsl import Q
 from frappe.email.doctype.email_template.email_template import get_email_template
-import meilisearch
 from contentready_oip.google_vision import is_content_explicit
 import mimetypes
 
 python_version_2 = platform.python_version().startswith('2')
-CLIENT = meilisearch.Client('http://localhost:7700/', 'test123')
 
 def nudge_guests():
     if not frappe.session.user or frappe.session.user == 'Guest':
@@ -89,7 +82,7 @@ def get_available_sectors():
         assert len(sectors) > 0, 'Need at least 1 sector per domain. Reverting to defaults.'
         return sectors
     except Exception as e:
-        print(str(e))
+        # print(str(e))
         return frappe.get_list('Sector', ['name', 'title', 'description'])
 
 @frappe.whitelist(allow_guest = True)
@@ -1159,28 +1152,6 @@ def get_searched_content(index_name,search_str,filters=None):
     else:
         apply_range_filter = filter_content_by_range(result['hits'], index_name)
         return apply_range_filter
-
-@frappe.whitelist(allow_guest=False)
-def get_searched_content_es(index_name,search_str,filters=None):
-    client = Elasticsearch('https://search-contentready-es-knpak5szkr5ljrj2kvgfu36qz4.ap-south-1.es.amazonaws.com')
-    index_name = index_name.replace(' ', '_').lower()
-    search_str = '*{}*'.format(search_str)
-    q = Q("wildcard", doc__title=search_str) | Q("wildcard", doc__description=search_str)
-    s = Search(using=client, index=index_name).query(q)
-    response = s.execute()
-    results = []
-    for r in response:
-        try:
-            doctype = r.doc.doctype
-            docname = r.doc.name
-            doc = refactor_2_list_str(frappe.get_doc(doctype, docname).as_dict(), 'sectors','sector')
-            results.append(doc)
-        except:
-            pass
-    if index_name == 'user_profile':
-        return results
-    else:
-        return filter_content_by_range(results, doctype)
          
 
 def filter_content_by_range(searched_content,doctype):
@@ -1241,83 +1212,6 @@ def filter_content_by_range(searched_content,doctype):
         print(str(e))
     content.sort(key=lambda x: x["score"], reverse=True)
     return content
-
-def replace_space(name):
-    """
-    replace white space with _
-    """
-    name_list = name.split(" ")
-    if len(name_list) > 1:
-        name = "_".join(name_list)
-
-    return name.lower()
-
-def refactor_2_list_str(doc_dict, p_key, c_key):
-    """
-    Refactor sector or persona to list of strings.
-
-    Parameters: 
-    doc_dict (dict): Dictionary of doctype. \n
-    p_key (str): primary key of doctype.\n
-    c_key (str): child key of primary key's value.
-
-    Returns: 
-    doc_dict (dict): Updated dictionary of doctype.
-    """
-    try:
-        refactor_list = doc_dict[p_key]
-        new_key = "meili_{}".format(p_key)
-        doc_dict[new_key] = []
-
-        for item in refactor_list:
-            doc_dict[new_key].append(item[c_key])
-    except Exception as _e:
-        print(str(_e))
-
-    return doc_dict
-
-def update_doc_to_meilisearch(doc, hook_action):
-    try:
-        if doc.is_published:
-            index_name = replace_space(doc.doctype)
-            j = doc.as_json()
-            document = refactor_2_list_str(json.loads(j), 'sectors','sector')
-            index = CLIENT.get_index(index_name)
-            index.add_documents([document])
-    except Exception as _e:
-        print(str(_e))
-
-def update_user_profile_to_meilisearch(doc, hook_action):
-    try:
-        document = doc.as_dict()
-        index_name = replace_space(document['doctype'])
-        # https://docs.python.org/3/library/stdtypes.html#str.isalnum
-        document['meili_idx'] = "".join(v for v in document['name'] if v.isalnum())
-        document = refactor_2_list_str(document, 'sectors','sector')
-        document = refactor_2_list_str(document, 'personas', 'persona')
-        index = CLIENT.get_index(index_name)
-        index.add_documents([document])
-    except Exception as _e:
-        print(str(_e))
-
-
-def add_doc_to_elasticsearch(doc, hook_action='on_update'):
-    try:
-        connections.create_connection(hosts=['https://search-contentready-es-knpak5szkr5ljrj2kvgfu36qz4.ap-south-1.es.amazonaws.com'])
-        doctype = doc.doctype.replace(' ', '_').lower()
-        class Content(Document):
-            doc = Object()
-            class Index:
-                name = doctype
-        Content.init()
-        if doc.is_published:
-            content = Content(meta={'id': doc.name})
-            content.doc = refactor_2_list_str(doc.as_dict(), 'sectors','sector')
-            if doctype == 'User Profile':
-                content.doc = refactor_2_list_str(content.doc, 'personas','persona')
-            content.save()
-    except Exception as _e:
-        print(str(_e))
 
 
 @frappe.whitelist(allow_guest=True)

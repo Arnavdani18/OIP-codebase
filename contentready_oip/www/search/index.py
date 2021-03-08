@@ -33,31 +33,31 @@ def get_context(context):
     if not key:
         return False
     context.key = key
-    sectors = set()
+    # sectors = set()
 
-    prepare_sector_filter = ''
-    filter_str = " AND meili_sectors=".join(sector_list) if not "all" in sector_list else ''
-    if filter_str:
-        prepare_sector_filter = "meili_sectors=" + filter_str
+    # prepare_sector_filter = ''
+    # filter_str = " AND meili_sectors=".join(sector_list) if not "all" in sector_list else ''
+    # if filter_str:
+    #     prepare_sector_filter = "meili_sectors=" + filter_str
 
-    # problems
-    _r = api.get_filtered_paginated_content(context, 'Problem', 'problems')
-    context.update(_r)
-    context.matched_problems = api.get_searched_content_es('Problem', key, prepare_sector_filter)
+    # # problems
+    # _r = api.get_filtered_paginated_content(context, 'Problem', 'problems')
+    # context.update(_r)
+    # context.matched_problems = api.get_searched_content_es('Problem', key, prepare_sector_filter)
 
-    # solutions
-    _s = api.get_filtered_paginated_content(context, 'Solution', 'solutions')
-    context.update(_s)
-    context.matched_solutions = api.get_searched_content_es('Solution', key, prepare_sector_filter)
+    # # solutions
+    # _s = api.get_filtered_paginated_content(context, 'Solution', 'solutions')
+    # context.update(_s)
+    # context.matched_solutions = api.get_searched_content_es('Solution', key, prepare_sector_filter)
 
-    sectors_4_contributors = set()
-    for document in context.matched_problems:
-        sectors_4_contributors.update(document["meili_sectors"])
+    # sectors_4_contributors = set()
+    # for document in context.matched_problems:
+    #     sectors_4_contributors.update(document["meili_sectors"])
     
-    for document in context.matched_solutions:
-        sectors_4_contributors.update(document["meili_sectors"])
+    # for document in context.matched_solutions:
+    #     sectors_4_contributors.update(document["meili_sectors"])
         
-    # User-Profile
-    # context.matched_contributors = api.get_content_recommended_for_user('User Profile', sectors_4_contributors)
-    context.matched_contributors = api.get_searched_content_es('User Profile', key, prepare_sector_filter)
-    # print('\n\n\n>>>>>>>', len(context.matched_contributors), '\n\n\n')
+    # # User-Profile
+    # # context.matched_contributors = api.get_content_recommended_for_user('User Profile', sectors_4_contributors)
+    # context.matched_contributors = api.get_searched_content_es('User Profile', key, prepare_sector_filter)
+    # # print('\n\n\n>>>>>>>', len(context.matched_contributors), '\n\n\n')

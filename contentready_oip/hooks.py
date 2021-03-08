@@ -51,7 +51,6 @@ home_page = "home"
 
 # runs after login
 on_session_creation = [
-#    "contentready_oip.initialize_meilisearch.main_fn",
 ]
 
 # automatically create page for each record of this doctype
