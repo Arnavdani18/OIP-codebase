@@ -1,11 +1,12 @@
 import frappe
 import json
+import mimetypes
+import platform
 from frappe import _
 from frappe.utils.html_utils import clean_html
-import platform
 from frappe.email.doctype.email_template.email_template import get_email_template
 from contentready_oip.google_vision import is_content_explicit
-import mimetypes
+from contentready_oip import problem_search, solution_search, user_search
 
 python_version_2 = platform.python_version().startswith('2')
 
@@ -1297,3 +1298,14 @@ def upload_file():
             return ret
     else:
         frappe.throw('No file detected.')
+
+def index_document(doc=None, event_name=None):
+    try:
+        if doc.doctype == 'Problem':
+            problem_search.update_index_for_id(doc.name)
+        elif doc.doctype == 'Solution':
+            solution_search.update_index_for_id(doc.name)
+        elif doc.doctype == 'User Profile':
+            user_search.update_index_for_id(doc.name)
+    except Exception as e:
+        print(str(e))

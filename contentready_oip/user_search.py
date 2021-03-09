@@ -3,6 +3,7 @@
 
 from __future__ import unicode_literals
 import frappe
+from whoosh.query import Term, And, Or
 from whoosh.fields import TEXT, ID, Schema, STORED, DATETIME, NUMERIC
 from whoosh.qparser import MultifieldParser, FieldsPlugin, WildcardPlugin
 from frappe.search.full_text_search import FullTextSearch
@@ -10,13 +11,13 @@ import json
 
 INDEX_NAME = "user"
 
+DOCTYPE = 'User Profile'
+
 search_fields = [
 	"full_name",
 	"city",
 	"state",
 	"country",
-	"sectors",
-	"personas",
 ]
 
 class UserSearch(FullTextSearch):
@@ -45,7 +46,7 @@ class UserSearch(FullTextSearch):
 		Returns:
 			self (object): FullTextSearch Instance
 		"""
-		user = frappe.get_list('User Profile')
+		user = frappe.get_list(DOCTYPE)
 
 		documents = [self.get_document_to_index(user['name']) for user in user]
 		return documents
@@ -61,7 +62,7 @@ class UserSearch(FullTextSearch):
 		"""
 		frappe.local.no_cache = True
 		try:
-			user = frappe.get_doc('User Profile', name) 
+			user = frappe.get_doc(DOCTYPE, name) 
 			sectors = [c.sector for c in user.sectors]
 			personas = [c.persona for c in user.personas]
 			sectors = json.dumps(sectors)
@@ -97,7 +98,7 @@ class UserSearch(FullTextSearch):
 
 		Args:
 			text (str): String to search for
-			scope (str, optional): Scope to limit the search. Defaults to None.
+			scope (dict, optional): Scope to limit the search. Defaults to None.
 			limit (int, optional): Limit number of search results. Defaults to 20.
 
 		Returns:
@@ -123,18 +124,30 @@ class UserSearch(FullTextSearch):
 			# parser.remove_plugin_class(WildcardPlugin)
 			query = parser.parse(text)
 
+			# if scope is provided, then we construct a query from the filters
 			filter_scoped = None
-			if scope:
-				filter_scoped = Prefix(self.name, scope)
+			terms = []
+			sector_filters = []
+			persona_filters = []
+			if type(scope) == dict:
+				sectors = scope.get('sectors')
+				if type(sectors) == list:
+					for s in sectors:
+						sector_filters.append(Term('sectors', s))
+					terms.append(Or(sector_filters))
+				personas = scope.get('personas')
+				if type(personas) == list:
+					for s in personas:
+						persona_filters.append(Term('personas', s))
+					terms.append(Or(persona_filters))
+			filter_scoped = And(terms)
 			results = searcher.search(query, limit=limit, filter=filter_scoped)
 			for r in results:
 				out.append(self.parse_result(r))
-				# out.append(r)
 		return out
 
 
 def update_index_for_id(name):
-	print('Updating search index for', name)
 	ws = UserSearch(INDEX_NAME)
 	return ws.update_index_by_name(name)
 
@@ -146,6 +159,6 @@ def build_index_for_all_ids():
 	ws = UserSearch(INDEX_NAME)
 	return ws.build()
 
-def search_index(text, limit=20):
+def search_index(text, scope=None, limit=20):
 	ws = UserSearch(INDEX_NAME)
-	return ws.search(text=text, limit=limit)
+	return ws.search(text=text, scope=scope, limit=limit)

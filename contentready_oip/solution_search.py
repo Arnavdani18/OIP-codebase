@@ -3,6 +3,7 @@
 
 from __future__ import unicode_literals
 import frappe
+from whoosh.query import Term, And, Or
 from whoosh.fields import TEXT, ID, Schema, STORED, DATETIME, NUMERIC
 from whoosh.qparser import MultifieldParser, FieldsPlugin, WildcardPlugin
 from frappe.search.full_text_search import FullTextSearch
@@ -133,12 +134,25 @@ class SolutionSearch(FullTextSearch):
 			# parser.remove_plugin_class(WildcardPlugin)
 			query = parser.parse(text)
 
+			# if scope is provided, then we construct a query from the filters
 			filter_scoped = None
-			if scope:
-				filter_scoped = Prefix(self.name, scope)
+			terms = []
+			sector_filters = []
+			sdg_filters = []
+			if type(scope) == dict:
+				sectors = scope.get('sectors')
+				if type(sectors) == list:
+					for s in sectors:
+						sector_filters.append(Term('sectors', s))
+					terms.append(Or(sector_filters))
+				sdg = scope.get('sdg')
+				if type(sdg) == list:
+					for s in sdg:
+						sdg_filters.append(Term('sdg', s))
+					terms.append(Or(sdg_filters))
+			filter_scoped = And(terms)
 			results = searcher.search(query, limit=limit, filter=filter_scoped)
 			for r in results:
-				print(r)
 				out.append(self.parse_result(r))
 		return out
 
@@ -156,6 +170,6 @@ def build_index_for_all_ids():
 	ws = SolutionSearch(INDEX_NAME)
 	return ws.build()
 
-def search_index(text, limit=20):
+def search_index(text, scope=None, limit=20):
 	ws = SolutionSearch(INDEX_NAME)
-	return ws.search(text=text, limit=limit)
+	return ws.search(text=text, scope=scope, limit=limit)
