@@ -70,9 +70,6 @@ class ProblemSearch(FullTextSearch):
 			sectors = [c.sector for c in problem.sectors]
 			sdg = [c.sdg for c in problem.sdgs]
 			beneficiaries = [c.beneficiary for c in problem.beneficiaries]
-			sectors = json.dumps(sectors)
-			sdg = json.dumps(sdg)
-			beneficiaries = json.dumps(beneficiaries)
 			return frappe._dict(
 				name=name, 
 				title=problem.title,
@@ -82,9 +79,9 @@ class ProblemSearch(FullTextSearch):
 				country=problem.country,
 				# latitude=problem.latitude,
 				# longitude=problem.longitude,
-				sectors=sectors,
-				sdg=sdg,
-				beneficiaries=beneficiaries,
+				sectors=json.dumps(sectors),
+				sdg=json.dumps(sdg),
+				beneficiaries=json.dumps(beneficiaries),
 				modified=problem.modified,
 				doctype=problem.doctype,
 			)
@@ -164,7 +161,7 @@ class ProblemSearch(FullTextSearch):
 					if len(beneficiary_filters):
 						terms.append(Or(beneficiary_filters))
 			filter_scoped = And(terms)
-			results = searcher.search(query, limit=limit, filter=filter_scoped)
+			results = searcher.search(query, limit=limit, filter=filter_scoped, terms=True)
 			for r in results:
 				out.append(self.parse_result(r))
 		return out

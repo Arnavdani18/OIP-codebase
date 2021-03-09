@@ -152,7 +152,7 @@ class SolutionSearch(FullTextSearch):
 					if len(sdg_filters):
 						terms.append(Or(sdg_filters))
 			filter_scoped = And(terms)
-			results = searcher.search(query, limit=limit, filter=filter_scoped)
+			results = searcher.search(query, limit=limit, filter=filter_scoped, terms=True)
 			for r in results:
 				out.append(self.parse_result(r))
 		return out

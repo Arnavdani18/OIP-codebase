@@ -9,4 +9,4 @@ from frappe.website.utils import cleanup_page_name
 
 class SustainableDevelopmentGoal(Document):
 	def autoname(self):
-		self.name = cleanup_page_name(self.title).replace('_', '-')
+		self.name = cleanup_page_name(self.title).replace('-', '_')

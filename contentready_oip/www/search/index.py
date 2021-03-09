@@ -35,7 +35,7 @@ def get_context(context):
     try:
         context.key = parameters['key'].lower()
         scope['sectors'] = json.loads(parameters['sectors']) if "sectors" in parameters else []
-        # scope['sdg'] = json.loads(parameters['sdg']) if parameters.get("sdg") else []
+        scope['sdg'] = json.loads(parameters['sdg']) if parameters.get("sdg") else []
         # scope['beneficiaries'] = json.loads(parameters['beneficiaries']) if parameters.get("beneficiaries") else []
     except Exception as e:
         print(str(e))
