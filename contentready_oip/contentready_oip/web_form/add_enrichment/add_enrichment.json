@@ -18,7 +18,7 @@
  "is_standard": 1,
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2021-02-28 18:14:06.911471",
+ "modified": "2021-03-06 18:45:10.148028",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "add-enrichment",
@@ -246,7 +246,7 @@
    "label": "Impact",
    "max_length": 0,
    "max_value": 0,
-   "options": "Impact Table",
+   "options": "",
    "read_only": 0,
    "reqd": 0,
    "show_in_filter": 0
@@ -254,11 +254,12 @@
   {
    "allow_read_on_all_link_options": 0,
    "fieldname": "extent",
-   "fieldtype": "Small Text",
+   "fieldtype": "Table",
    "hidden": 0,
    "label": "Extent",
    "max_length": 0,
    "max_value": 0,
+   "options": "Location Table",
    "read_only": 0,
    "reqd": 0,
    "show_in_filter": 0
@@ -266,7 +267,7 @@
   {
    "allow_read_on_all_link_options": 0,
    "fieldname": "resources_needed",
-   "fieldtype": "Small Text",
+   "fieldtype": "Table",
    "hidden": 0,
    "label": "Resources Needed",
    "max_length": 0,
@@ -278,8 +279,21 @@
   },
   {
    "allow_read_on_all_link_options": 0,
+   "fieldname": "sectors",
+   "fieldtype": "Table",
+   "hidden": 1,
+   "label": "Sectors",
+   "max_length": 0,
+   "max_value": 0,
+   "options": "Sector Table",
+   "read_only": 0,
+   "reqd": 0,
+   "show_in_filter": 0
+  },
+  {
+   "allow_read_on_all_link_options": 0,
    "fieldname": "beneficiaries",
-   "fieldtype": "Small Text",
+   "fieldtype": "Select",
    "hidden": 0,
    "label": "Beneficiaries",
    "max_length": 0,

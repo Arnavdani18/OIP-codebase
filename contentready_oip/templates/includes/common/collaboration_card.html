@@ -35,4 +35,39 @@ class="col-sm-12 collaborateCard" id="collaboration-card-{{collaboration.name}}"
         {% set date = collaboration.modified %}
         {% include "templates/includes/common/user_thumbnail.html" %}
     </div>
+    {% if frappe.session.user == owner and collaboration.status == 'New' %}
+    <div class="stats-section" style="margin-top: 2rem;">
+        <button 
+          class="btn btn-lg btn-primary btnHover text-white actions"
+          role="button"
+          onclick="change_collaboration_status('{{collaboration.name}}', 'Accept')"
+        >
+          Accept
+        </button>
+        <button 
+          class="btn btn-lg btn-outline-primary actions"
+          role="button"
+          onclick="change_collaboration_status('{{collaboration.name}}', 'Ignore')"
+        >
+          Ignore
+        </button>
+    </div>
+    {% endif %}
 </div>
+
+
+<script>
+    const change_collaboration_status = (docname, status) => {
+        console.log(docname, status);
+      frappe.call({
+        method: "contentready_oip.api.change_collaboration_status",
+        args: { docname, status },
+        callback: function ( r ) {
+          if (r.message) {
+            frappe.show_alert('Updated');
+            window.location.reload();
+          }
+        }
+        });
+    }
+  </script>

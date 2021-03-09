@@ -27,6 +27,7 @@
   "impact",
   "extent",
   "resources_needed",
+  "sectors",
   "beneficiaries",
   "population_affected",
   "media",
@@ -139,24 +140,24 @@
   {
    "fieldname": "impact",
    "fieldtype": "Small Text",
-   "label": "Impact",
-   "options": "Impact Table"
+   "label": "Impact"
   },
   {
    "fieldname": "extent",
-   "fieldtype": "Small Text",
-   "label": "Extent"
+   "fieldtype": "Table",
+   "label": "Extent",
+   "options": "Location Table"
   },
   {
    "fieldname": "resources_needed",
-   "fieldtype": "Small Text",
+   "fieldtype": "Table",
    "in_preview": 1,
    "label": "Resources Needed",
    "options": "Resource Table"
   },
   {
    "fieldname": "beneficiaries",
-   "fieldtype": "Small Text",
+   "fieldtype": "Table",
    "label": "Beneficiaries",
    "options": "Beneficiary Table"
   },
@@ -209,11 +210,17 @@
    "fieldtype": "Select",
    "label": "Population Affected",
    "options": "\n&lt;100\n&lt;1,000\n&lt;10,000\n&gt;100,000"
+  },
+  {
+   "fieldname": "sectors",
+   "fieldtype": "Table",
+   "label": "Sectors",
+   "options": "Sector Table"
   }
  ],
  "is_published_field": "is_published",
  "links": [],
- "modified": "2021-02-28 18:16:08.799080",
+ "modified": "2021-03-06 18:44:43.484304",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Enrichment",

@@ -9,47 +9,31 @@ from frappe.utils.html_utils import clean_html
 
 
 class Enrichment(Document):
-    def before_save(self):
-        if self.short_description:
-            self.short_description = clean_html(self.description)[:500]
-            if len(self.description) > 1000:
-                self.short_description += '...'
-     
-    def on_update(self):
-        # read all child tables and add notifications
-        self.create_notifications()
-    
-    def create_notifications(self):
-        # notify owner when someone enriches
-        template = {
-            'doctype': 'OIP Notification',
-            'target_user': self.owner,
-            'parent_doctype': self.doctype,
-            'parent_name': self.name,
-        }
-        verbs = {
-            'Like': 'liked',
-        }
-        doctypes = ['Like']
-        for doctype in doctypes:
-            try:
-                contrib_list = frappe.get_list(doctype, fields=['name', 'owner'], filters={'parent_doctype': self.doctype, 'parent_name': self.name})
-                for c in contrib_list:
-                    # do not create notifications if the owner themselves contributed
-                    if c['owner'] == self.owner:
-                        continue
-                    n_template = template.copy()
-                    n_template['child_name'] = c['name']
-                    n_template['child_doctype'] = doctype
-                    n_template['source_user'] = c['owner']
-                    n_name = '{}-{}-{}'.format(n_template['target_user'], n_template['source_user'], n_template['child_name'])
-                    if frappe.db.exists('OIP Notification', n_name):
-                        continue
-                    user = frappe.get_doc('User', c['owner'])
-                    n_template['text'] = '{} {} your {}: {}'.format(user.full_name, verbs[doctype], self.doctype.lower(), self.title)
-                    n_template['route'] = self.route + '#' + doctype.lower() + 's'
-                    notification = frappe.get_doc(n_template)
-                    notification.save()
-            except:
-                pass
-        frappe.db.commit()
+	def before_save(self):
+		if self.short_description:
+			self.short_description = clean_html(self.description)[:500]
+			if len(self.description) > 1000:
+				self.short_description += '...'
+		if not self.parent_doctype:
+			self.parent_doctype = 'Problem'
+			self.parent_name = self.problem
+		old = self.get_doc_before_save()
+		if not old.is_published and self.is_published:
+			self.create_insert_notifications()
+	
+	def create_insert_notifications(self):
+		source_full_name = frappe.db.get_value('User Profile', self.owner, 'full_name')
+		content_title, content_route = frappe.db.get_value(self.parent_doctype, self.parent_name, ['title', 'route'])
+		recipient = frappe.db.get_value(self.parent_doctype, self.parent_name, 'owner')
+		notification = frappe.get_doc({
+			'doctype': 'OIP Notification',
+			'source_user': self.owner,
+			'target_user': recipient,
+			'parent_doctype': self.parent_doctype,
+			'parent_name': self.parent_name,
+			'child_doctype': self.doctype,
+			'child_name': self.name,
+			'text': '{} enriched your {}: {}'.format(source_full_name, self.parent_doctype.lower(), content_title),
+			'route': content_route + '#' + self.doctype.lower() + 's',
+		})
+		notification.save()

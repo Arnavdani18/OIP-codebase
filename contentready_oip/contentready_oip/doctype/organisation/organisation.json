@@ -1,4 +1,6 @@
 {
+ "actions": [],
+ "allow_guest_to_view": 1,
  "autoname": "Org.#####",
  "creation": "2019-11-28 07:32:24.729074",
  "doctype": "DocType",
@@ -6,7 +8,19 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
-  "brandmark"
+  "photo",
+  "website",
+  "sectors",
+  "column_break_5",
+  "city",
+  "state",
+  "state_code",
+  "country",
+  "country_code",
+  "latitude",
+  "longitude",
+  "route",
+  "is_published"
  ],
  "fields": [
   {
@@ -20,13 +34,77 @@
    "reqd": 1
   },
   {
-   "fieldname": "brandmark",
+   "fieldname": "website",
+   "fieldtype": "Data",
+   "label": "Website"
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "label": "Route"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_published",
+   "fieldtype": "Check",
+   "label": "Is Published"
+  },
+  {
+   "fieldname": "sectors",
+   "fieldtype": "Table",
+   "label": "Sectors",
+   "options": "Sector Table"
+  },
+  {
+   "fieldname": "column_break_5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Data",
+   "label": "State"
+  },
+  {
+   "fieldname": "state_code",
+   "fieldtype": "Data",
+   "label": "State Code"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Data",
+   "label": "Country"
+  },
+  {
+   "fieldname": "country_code",
+   "fieldtype": "Data",
+   "label": "Country Code"
+  },
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Float",
+   "label": "Latitude"
+  },
+  {
+   "fieldname": "longitude",
+   "fieldtype": "Float",
+   "label": "Longitude"
+  },
+  {
+   "fieldname": "photo",
    "fieldtype": "Attach Image",
    "label": "Brandmark"
   }
  ],
- "image_field": "brandmark",
- "modified": "2020-03-06 08:31:42.825650",
+ "has_web_view": 1,
+ "image_field": "photo",
+ "is_published_field": "is_published",
+ "links": [],
+ "modified": "2021-03-06 19:20:18.578148",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Organisation",
@@ -77,6 +155,7 @@
   }
  ],
  "quick_entry": 1,
+ "route": "list_orgs",
  "search_fields": "title",
  "show_preview_popup": 1,
  "sort_field": "modified",

@@ -230,7 +230,7 @@
 
           // use this event to remove from child table
           this.on('removedfile', (file) => {
-            toggleAddMore(myDropzone.files.length);
+            toggle_add_more(myDropzone.files.length);
             let media = $('#comment-dropzone-{{doctype}}-{{name}}').data(
               'file-urls'
             );
@@ -254,7 +254,7 @@
 
           // Add more section
           this.on('sending', function () {
-            toggleAddMore(myDropzone.files.length);
+            toggle_add_more(myDropzone.files.length);
           });
 
           const addMutipleFilesBtn = document.querySelector(
@@ -279,7 +279,7 @@
         },
       });
 
-      function toggleAddMore(len) {
+      function toggle_add_more(len) {
         const addMore = $('#add-multiple-files-{{doctype}}-{{name}}').parent();
         if (len) {
           addMore.addClass('dz-preview').removeClass('hidden');

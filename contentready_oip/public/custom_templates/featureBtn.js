@@ -19,7 +19,7 @@ new Vue({
       });
 
       this.setDefaultFeatured();
-      autoSaveDraft();
+      auto_save_draft();
     },
 
     setDefaultFeatured() {
@@ -27,7 +27,7 @@ new Vue({
 
       if (!is_featured) {
         this.media[0]['is_featured'] = 1;
-        autoSaveDraft();
+        auto_save_draft();
       }
     },
 
