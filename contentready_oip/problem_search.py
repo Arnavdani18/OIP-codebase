@@ -23,7 +23,7 @@ class ProblemSearch(FullTextSearch):
 
 	def get_schema(self):
 		return Schema(
-			id=ID(stored=True), 
+			name=ID(stored=True), 
 			title=TEXT(stored=True, sortable=True, field_boost=5.0),
 			description=TEXT(stored=True, field_boost=3.0),
 			city=TEXT(stored=True, field_boost=2.0),
@@ -38,31 +38,34 @@ class ProblemSearch(FullTextSearch):
 			doctype=STORED(),
 		)
 
-	def get_id(self):
-		return "id"
+	def get_name(self):
+		return "name"
 
 	def get_items_to_index(self):
-		"""Get all ids to be indexed and index the JSON for each.
+		"""Get all names to be indexed and index the JSON for each.
 		Returns:
 			self (object): FullTextSearch Instance
 		"""
-		problem = frappe.get_list('Problem')
+		problem = frappe.get_list('Problem', filters={'is_published': True})
 
 		documents = [self.get_document_to_index(problem['name']) for problem in problem]
 		return documents
 
-	def get_document_to_index(self, id):
+	def get_document_to_index(self, name):
 		"""Grab all data related to a problem and index the JSON
 
 		Args:
-			id (str): docname of the problem to index
+			name (str): docname of the problem to index
 
 		Returns:
-			document (_dict): A dictionary with business_name, id and problem
+			document (_dict): A dictionary with business_name, name and problem
 		"""
 		frappe.local.no_cache = True
 		try:
-			problem = frappe.get_doc('Problem', id) 
+			problem = frappe.get_doc('Problem', name)
+			# Should be unnecessary but in case we call this in published flows...
+			if not problem.is_published:
+				return False
 			sectors = [c.sector for c in problem.sectors]
 			sdg = [c.sustainable_development_goal for c in problem.sustainable_development_goal]
 			beneficiaries = [c.beneficiary for c in problem.beneficiaries]
@@ -70,7 +73,7 @@ class ProblemSearch(FullTextSearch):
 			sdg = json.dumps(sdg)
 			beneficiaries = json.dumps(beneficiaries)
 			return frappe._dict(
-				id=id, 
+				name=name, 
 				title=problem.title,
 				description=problem.description,
 				city=problem.city,
@@ -89,18 +92,18 @@ class ProblemSearch(FullTextSearch):
 			pass
 
 	def parse_result(self, result):
-		# title_highlights = result.highlights("title")
-		# description_highlights = result.highlights("description")
+		title_highlights = result.highlights("title")
+		description_highlights = result.highlights("description")
 
 		return frappe._dict(
-			id=result["id"],
+			name=result["name"],
 			title=result["title"],
 			description=result["description"],
 			city=result["city"],
 			state=result["state"],
 			country=result["country"],
-			# title_highlights=title_highlights,
-			# description_highlights=description_highlights,
+			title_highlights=title_highlights,
+			description_highlights=description_highlights,
 		)
 	
 	def search(self, text, scope=None, limit=20):
@@ -136,7 +139,7 @@ class ProblemSearch(FullTextSearch):
 
 			filter_scoped = None
 			if scope:
-				filter_scoped = Prefix(self.id, scope)
+				filter_scoped = Prefix(self.name, scope)
 			results = searcher.search(query, limit=limit, filter=filter_scoped)
 			for r in results:
 				out.append(self.parse_result(r))
@@ -144,14 +147,14 @@ class ProblemSearch(FullTextSearch):
 		return out
 
 
-def update_index_for_id(id):
-	print('Updating search index for', id)
+def update_index_for_id(name):
+	print('Updating search index for', name)
 	ws = ProblemSearch(INDEX_NAME)
-	return ws.update_index_by_name(id)
+	return ws.update_index_by_name(name)
 
-def remove_document_from_index(id):
+def remove_document_from_index(name):
 	ws = ProblemSearch(INDEX_NAME)
-	return ws.remove_document_from_index(id)
+	return ws.remove_document_from_index(name)
 
 def build_index_for_all_ids():
 	ws = ProblemSearch(INDEX_NAME)

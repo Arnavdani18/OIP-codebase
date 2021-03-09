@@ -15,6 +15,8 @@ search_fields = [
 	"city",
 	"state",
 	"country",
+	"sectors",
+	"personas",
 ]
 
 class UserSearch(FullTextSearch):
@@ -22,7 +24,7 @@ class UserSearch(FullTextSearch):
 
 	def get_schema(self):
 		return Schema(
-			id=ID(stored=True), 
+			name=ID(stored=True), 
 			full_name=TEXT(stored=True, sortable=True, field_boost=5.0),
 			city=TEXT(stored=True, field_boost=2.0),
 			state=TEXT(stored=True, field_boost=2.0),
@@ -35,11 +37,11 @@ class UserSearch(FullTextSearch):
 			doctype=STORED(),
 		)
 
-	def get_id(self):
-		return "id"
+	def get_name(self):
+		return "name"
 
 	def get_items_to_index(self):
-		"""Get all ids to be indexed and index the JSON for each.
+		"""Get all names to be indexed and index the JSON for each.
 		Returns:
 			self (object): FullTextSearch Instance
 		"""
@@ -48,24 +50,24 @@ class UserSearch(FullTextSearch):
 		documents = [self.get_document_to_index(user['name']) for user in user]
 		return documents
 
-	def get_document_to_index(self, id):
+	def get_document_to_index(self, name):
 		"""Grab all data related to a user and index the JSON
 
 		Args:
-			id (str): docname of the user to index
+			name (str): docname of the user to index
 
 		Returns:
-			document (_dict): A dictionary with business_name, id and user
+			document (_dict): A dictionary with business_name, name and user
 		"""
 		frappe.local.no_cache = True
 		try:
-			user = frappe.get_doc('User Profile', id) 
+			user = frappe.get_doc('User Profile', name) 
 			sectors = [c.sector for c in user.sectors]
 			personas = [c.persona for c in user.personas]
 			sectors = json.dumps(sectors)
 			personas = json.dumps(personas)
 			return frappe._dict(
-				id=id, 
+				name=name, 
 				full_name=user.full_name,
 				city=user.city,
 				state=user.state,
@@ -83,11 +85,11 @@ class UserSearch(FullTextSearch):
 
 	def parse_result(self, result):
 		return frappe._dict(
-			id=result["id"],
+			name=result["name"],
 			full_name=result["full_name"],
-			city=result["city"],
-			state=result["state"],
-			country=result["country"],
+			city=result.get('city'),
+			state=result.get("state"),
+			country=result.get("country"),
 		)
 	
 	def search(self, text, scope=None, limit=20):
@@ -123,7 +125,7 @@ class UserSearch(FullTextSearch):
 
 			filter_scoped = None
 			if scope:
-				filter_scoped = Prefix(self.id, scope)
+				filter_scoped = Prefix(self.name, scope)
 			results = searcher.search(query, limit=limit, filter=filter_scoped)
 			for r in results:
 				out.append(self.parse_result(r))
@@ -131,14 +133,14 @@ class UserSearch(FullTextSearch):
 		return out
 
 
-def update_index_for_id(id):
-	print('Updating search index for', id)
+def update_index_for_id(name):
+	print('Updating search index for', name)
 	ws = UserSearch(INDEX_NAME)
-	return ws.update_index_by_name(id)
+	return ws.update_index_by_name(name)
 
-def remove_document_from_index(id):
+def remove_document_from_index(name):
 	ws = UserSearch(INDEX_NAME)
-	return ws.remove_document_from_index(id)
+	return ws.remove_document_from_index(name)
 
 def build_index_for_all_ids():
 	ws = UserSearch(INDEX_NAME)
