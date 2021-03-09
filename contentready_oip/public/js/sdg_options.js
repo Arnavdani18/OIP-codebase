@@ -1,5 +1,5 @@
 const addSdgOptions = () => {
-    const sdg_select = $('select[data-fieldname="sustainable_development_goal"]');
+    const sdg_select = $('select[data-fieldname="sdgs"]');
     // add multiple attr 
     sdg_select.attr('multiple',true);
 
@@ -12,9 +12,9 @@ const addSdgOptions = () => {
       args: {},
       callback: function (r) {
         const options = [...r.message].sort(sortAlphabetically);
-        frappe.web_form.set_df_property('sustainable_development_goal', 'options', options);
-        const existing_sdgs = frappe.web_form.doc.sustainable_development_goal
-        const sdgValues = existing_sdgs?.map(v => v.sustainable_development_goal);
+        frappe.web_form.set_df_property('sdgs', 'options', options);
+        const existing_sdgs = frappe.web_form.doc.sdgs
+        const sdgValues = existing_sdgs?.map(v => v.sdg);
         
         sdg_select.val(sdgValues);
       },

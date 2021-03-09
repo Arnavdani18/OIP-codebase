@@ -67,7 +67,7 @@ class SolutionSearch(FullTextSearch):
 			if not solution.is_published:
 				return False
 			sectors = [c.sector for c in solution.sectors]
-			sdg = [c.sustainable_development_goal for c in solution.sustainable_development_goal]
+			sdg = [c.sdg for c in solution.sdgs]
 			sectors = json.dumps(sectors)
 			sdg = json.dumps(sdg)
 			return frappe._dict(
@@ -120,7 +120,7 @@ class SolutionSearch(FullTextSearch):
 		out = []
 
 		# Add wildcard if not already present to force search for partial text
-		if text[-1] != '*':
+		if text and text[-1] != '*':
 			text = text + '*'
 
 		# the parser does not seem to like the '@' symbol
@@ -149,7 +149,8 @@ class SolutionSearch(FullTextSearch):
 				if type(sdg) == list:
 					for s in sdg:
 						sdg_filters.append(Term('sdg', s))
-					terms.append(Or(sdg_filters))
+					if len(sdg_filters):
+						terms.append(Or(sdg_filters))
 			filter_scoped = And(terms)
 			results = searcher.search(query, limit=limit, filter=filter_scoped)
 			for r in results:
@@ -158,7 +159,6 @@ class SolutionSearch(FullTextSearch):
 
 
 def update_index_for_id(name):
-	print('Updating search index for', name)
 	ws = SolutionSearch(INDEX_NAME)
 	return ws.update_index_by_name(name)
 

@@ -68,7 +68,7 @@ class ProblemSearch(FullTextSearch):
 			if not problem.is_published:
 				return False
 			sectors = [c.sector for c in problem.sectors]
-			sdg = [c.sustainable_development_goal for c in problem.sustainable_development_goal]
+			sdg = [c.sdg for c in problem.sdgs]
 			beneficiaries = [c.beneficiary for c in problem.beneficiaries]
 			sectors = json.dumps(sectors)
 			sdg = json.dumps(sdg)
@@ -124,7 +124,7 @@ class ProblemSearch(FullTextSearch):
 		out = []
 
 		# Add wildcard if not already present to force search for partial text
-		if text[-1] != '*':
+		if text and text[-1] != '*':
 			text = text + '*'
 
 		# the parser does not seem to like the '@' symbol
@@ -149,17 +149,20 @@ class ProblemSearch(FullTextSearch):
 				if type(sectors) == list:
 					for s in sectors:
 						sector_filters.append(Term('sectors', s))
-					terms.append(Or(sector_filters))
+					if len(sector_filters):
+						terms.append(Or(sector_filters))
 				sdg = scope.get('sdg')
 				if type(sdg) == list:
 					for s in sdg:
 						sdg_filters.append(Term('sdg', s))
-					terms.append(Or(sdg_filters))
-				beficiaries = scope.get('beficiaries')
-				if type(beficiaries) == list:
-					for s in beficiaries:
-						beneficiary_filters.append(Term('beficiaries', s))
-					terms.append(Or(beneficiary_filters))
+					if len(sdg_filters):
+						terms.append(Or(sdg_filters))
+				beneficiaries = scope.get('beneficiaries')
+				if type(beneficiaries) == list:
+					for s in beneficiaries:
+						beneficiary_filters.append(Term('beneficiaries', s))
+					if len(beneficiary_filters):
+						terms.append(Or(beneficiary_filters))
 			filter_scoped = And(terms)
 			results = searcher.search(query, limit=limit, filter=filter_scoped)
 			for r in results:
@@ -168,7 +171,6 @@ class ProblemSearch(FullTextSearch):
 
 
 def update_index_for_id(name):
-	print('Updating search index for', name)
 	ws = ProblemSearch(INDEX_NAME)
 	return ws.update_index_by_name(name)
 

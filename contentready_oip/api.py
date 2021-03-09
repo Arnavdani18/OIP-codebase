@@ -1216,8 +1216,10 @@ def filter_content_by_range(searched_content,doctype):
 
 
 @frappe.whitelist(allow_guest=True)
-def has_admin_role():
-    roles = frappe.get_roles(frappe.session.user)
+def has_admin_role(user=None):
+    if not user:
+        user = frappe.session.user
+    roles = frappe.get_roles(user)
     allowed_roles = ["Administrator", "System Manager"]
     is_allowed = False
     for role in allowed_roles:
@@ -1228,8 +1230,10 @@ def has_admin_role():
 
 
 @frappe.whitelist(allow_guest=True)
-def has_collaborator_role():
-    roles = frappe.get_roles(frappe.session.user)
+def has_collaborator_role(user=None):
+    if not user:
+        user = frappe.session.user
+    roles = frappe.get_roles(user)
     allowed_roles = ["Collaborator"]
     is_allowed = False
     for role in allowed_roles:

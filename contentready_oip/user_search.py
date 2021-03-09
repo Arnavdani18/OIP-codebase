@@ -3,11 +3,12 @@
 
 from __future__ import unicode_literals
 import frappe
+import json
 from whoosh.query import Term, And, Or
 from whoosh.fields import TEXT, ID, Schema, STORED, DATETIME, NUMERIC
 from whoosh.qparser import MultifieldParser, FieldsPlugin, WildcardPlugin
 from frappe.search.full_text_search import FullTextSearch
-import json
+from contentready_oip import api
 
 INDEX_NAME = "user"
 
@@ -62,7 +63,9 @@ class UserSearch(FullTextSearch):
 		"""
 		frappe.local.no_cache = True
 		try:
-			user = frappe.get_doc(DOCTYPE, name) 
+			if not api.has_collaborator_role(name):
+				return False
+			user = frappe.get_doc(DOCTYPE, name)
 			sectors = [c.sector for c in user.sectors]
 			personas = [c.persona for c in user.personas]
 			sectors = json.dumps(sectors)
@@ -110,7 +113,7 @@ class UserSearch(FullTextSearch):
 		out = []
 
 		# Add wildcard if not already present to force search for partial text
-		if text[-1] != '*':
+		if text and text[-1] != '*':
 			text = text + '*'
 
 		# the parser does not seem to like the '@' symbol

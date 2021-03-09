@@ -345,10 +345,10 @@ frappe.ready(async () => {
 
 
   formatSdgValues = ()=>{
-    const sdg_select = $('[data-fieldname="sustainable_development_goal"][data-doctype="Solution"]');
+    const sdg_select = $('[data-fieldname="sdgs"][data-doctype="Solution"]');
     const currVal = sdg_select.val() ?? []; 
-    const newVal = currVal.map(v => ({sustainable_development_goal: v}));
-    frappe.web_form.doc.sustainable_development_goal = newVal;
+    const newVal = currVal.map(v => ({sdg: v}));
+    frappe.web_form.doc.sdgs = newVal;
   }
 
   const style_form_headings = () => {
