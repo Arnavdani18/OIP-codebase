@@ -3,6 +3,7 @@
 
 from __future__ import unicode_literals
 import frappe
+from whoosh.analysis import NgramWordAnalyzer
 from whoosh.query import Term, And, Or
 from whoosh.fields import TEXT, ID, Schema, STORED, DATETIME, NUMERIC
 from whoosh.qparser import MultifieldParser, FieldsPlugin, WildcardPlugin
@@ -23,9 +24,10 @@ class ProblemSearch(FullTextSearch):
 	""" Wrapper for ProblemSearch """
 
 	def get_schema(self):
+		analyzer = NgramWordAnalyzer(3)
 		return Schema(
 			name=ID(stored=True), 
-			title=TEXT(stored=True, sortable=True, field_boost=5.0),
+			title=TEXT(stored=True, analyzer=analyzer, phrase=False, sortable=True, field_boost=5.0),
 			description=TEXT(stored=True, field_boost=3.0),
 			city=TEXT(stored=True, field_boost=2.0),
 			state=TEXT(stored=True, field_boost=2.0),
@@ -148,7 +150,7 @@ class ProblemSearch(FullTextSearch):
 						sector_filters.append(Term('sectors', s))
 					if len(sector_filters):
 						terms.append(Or(sector_filters))
-				sdg = scope.get('sdg')
+				sdg = scope.get('sdgs')
 				if type(sdg) == list:
 					for s in sdg:
 						sdg_filters.append(Term('sdg', s))

@@ -145,7 +145,7 @@ class SolutionSearch(FullTextSearch):
 					for s in sectors:
 						sector_filters.append(Term('sectors', s))
 					terms.append(Or(sector_filters))
-				sdg = scope.get('sdg')
+				sdg = scope.get('sdgs')
 				if type(sdg) == list:
 					for s in sdg:
 						sdg_filters.append(Term('sdg', s))
