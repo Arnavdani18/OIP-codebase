@@ -146,7 +146,8 @@ class UserSearch(FullTextSearch):
 			filter_scoped = And(terms)
 			results = searcher.search(query, limit=limit, filter=filter_scoped)
 			for r in results:
-				out.append(self.parse_result(r))
+				# out.append(self.parse_result(r))
+				out.append({'name': r['name']})
 		return out
 
 

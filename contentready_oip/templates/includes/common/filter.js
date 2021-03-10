@@ -21,7 +21,7 @@ frappe.ready(() => {
     created() {
       this.selected_range = localStorage.getItem("filter_location_range");
       this.searched_location = localStorage.getItem("filter_location_name");
-      this.update_show_beneficiary();
+      // this.update_show_beneficiary();
     },
     mounted() {
       // Sector, SDG, Beneficiary multiselect initialization
@@ -52,8 +52,10 @@ frappe.ready(() => {
 
       const { sectors , sdgs, beneficiaries } = query_params;
 
-      const parsed_sectors = sectors ? JSON.parse(sectors) : ["all"];
-      this.prefillMultiselect(parsed_sectors, this.sector_multiselect_instance);
+      if (sectors) {
+        const parsed_sectors = JSON.parse(sectors);
+        this.prefillMultiselect(parsed_sectors, this.sector_multiselect_instance);
+      }
       
       if (sdgs) {
         const parsed_sdgs = JSON.parse(sdgs);
@@ -114,7 +116,6 @@ frappe.ready(() => {
 
       storeSdgFilter(){
         const sdg_list = $("#sdg-sel").val() ?? "";
-        
         if(typeof sdg_list === 'string'){
           localStorage.setItem("filter_sdgs", sdg_list);
         }
@@ -123,7 +124,6 @@ frappe.ready(() => {
       
       storeBeneficiaryFilter(){
         const beneficiary_list = $("#beneficiary-sel").val() ?? "";
-
         if (typeof beneficiary_list === 'string') {
           localStorage.setItem("filter_beneficiaries", beneficiary_list);
         }
@@ -132,16 +132,12 @@ frappe.ready(() => {
 
       storeSectorFilter() {
         const sectors_list = $("#sector-sel").val() ?? [];
-
-        // sectors filter cannot be null, set to default
-        if (!sectors_list.length) {
-          document.multiselect("#sector-sel").select("all");
-          sectors_list.push("all");
+        if(typeof sectors_list === 'string'){
+          localStorage.setItem("filter_sectors", sectors_list);
         }
-
-        const filter_sectors = JSON.stringify(sectors_list);
-        localStorage.setItem("filter_sectors", filter_sectors);
+        localStorage.setItem("filter_sectors", JSON.stringify(sectors_list));
       },
+
       clearLocationIfEmpty() {
         if (this.searched_location) {
           return false; // don't do anything
@@ -282,9 +278,6 @@ frappe.ready(() => {
           }
 
           let sectors = localStorage.getItem("filter_sectors");
-          if (!sectors) {
-            sectors = JSON.stringify(["all"]);
-          }
           if (sectors) {
             sectors = JSON.parse(sectors); // since we stringify while storing
             query_obj["sectors"] = sectors;
@@ -317,16 +310,11 @@ frappe.ready(() => {
         localStorage.setItem("filter_location_range", "");
         localStorage.setItem("filter_beneficiaries", "");
         localStorage.setItem("filter_sdgs", "");
-        localStorage.setItem("filter_sectors", JSON.stringify(['all']));
+        localStorage.setItem("filter_sectors", "");
 
         this.setQueryParam();
         window.location.reload();
       },
-
-      update_show_beneficiary(){
-        const {pathname} = window.location;
-        this.show_beneficiary = !pathname.includes('solution');
-      }
     },
   });
 

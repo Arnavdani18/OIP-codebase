@@ -15,8 +15,9 @@ def get_context(context):
     scope['sectors'] = json.loads(parameters['sectors']) if "sectors" in parameters else []
     scope['sdg'] = json.loads(parameters['sdgs']) if parameters.get("sdgs") else []
     scope['beneficiaries'] = json.loads(parameters['beneficiaries']) if parameters.get("beneficiaries") else []
-    # For the search we match everything we can as we handle pagination at the 
-    matched = problem_search.search_index('*', scope=scope, limit=10)
+    # For the search we match everything and set limit very high as 
+    # we handle pagination locally
+    matched = problem_search.search_index('*', scope=scope, limit=1000000)
     context.start = (context.page - 1) * RESULTS_PER_PAGE
     context.end = context.start + RESULTS_PER_PAGE
     context.total_count = len(matched)

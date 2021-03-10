@@ -89,23 +89,30 @@
 <script type="text/x-template" id="filter-script">
   <div class="d-flex flex-column">
   <div class="row justify-content-sm-start justify-content-md-end flex-wrap" id="filter-section">
+    {% if available_sectors | length %}
     <div class="in-mob" id="sector-sel-div">
       <select class="pattern1" multiple id="sector-sel">
-        <option value="all">All Sectors</option>
+        <!-- <option value="all">All Sectors</option> -->
         <option v-for="sector in available_sectors" :value="sector.name">[[sector.title]]</option>
       </select>
     </div>
+    {% endif %}
+
+    {% if available_sdg | length %}
     <div class="mt-4 mt-sm-0 in-mob" id="sdg-sel-div">
       <select class="pattern1" multiple id="sdg-sel" >
         <option v-for="option in available_sdg" :value="option.title">[[option.title]]</option>
       </select>
     </div>
+    {% endif %}
 
+    {% if available_beneficiaries | length %}
     <div class="mt-4 mt-sm-0 in-mob" id="beneficiary-sel-div" v-show="show_beneficiary">
       <select class="pattern1" multiple id="beneficiary-sel" >
         <option v-for="option in available_beneficiaries" :value="option.name">[[option.title]]</option>
       </select>
     </div>
+    {% endif %}
     
     <div class="mt-4 mt-sm-0" id="location-input-div">
       <input class="pattern1 pl-2 in-mob" type="text" ref="location" v-model="searched_location" id="autocomplete" placeholder="Search for location..."
