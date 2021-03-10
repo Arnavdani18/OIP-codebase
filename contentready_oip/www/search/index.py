@@ -30,15 +30,17 @@ def get_context(context):
     context.matched_contributors = []
     context.key = ''
     context.available_sectors = api.get_available_sectors()
+    context.available_beneficiaries = frappe.get_list('Beneficiary',fields=['title','name'])
+    context.available_sdg = frappe.get_list('Sustainable Development Goal', fields=['title','name'])
     parameters = frappe.form_dict
     scope = {}
     try:
         context.key = parameters['key'].lower()
         scope['sectors'] = json.loads(parameters['sectors']) if "sectors" in parameters else []
-        scope['sdg'] = json.loads(parameters['sdg']) if parameters.get("sdg") else []
-        # scope['beneficiaries'] = json.loads(parameters['beneficiaries']) if parameters.get("beneficiaries") else []
-    except Exception as e:
-        print(str(e))
+        scope['sdg'] = json.loads(parameters['sdgs']) if parameters.get("sdgs") else []
+        scope['beneficiaries'] = json.loads(parameters['beneficiaries']) if parameters.get("beneficiaries") else []
+    except:
+        pass
     if not context.key:
         return False
     

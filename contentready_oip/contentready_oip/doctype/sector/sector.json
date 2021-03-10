@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_rename": 1,
  "creation": "2019-12-04 19:13:43.466873",
  "doctype": "DocType",
@@ -42,7 +43,8 @@
   }
  ],
  "image_field": "image",
- "modified": "2021-01-25 17:17:10.667798",
+ "links": [],
+ "modified": "2021-03-10 10:37:11.797595",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Sector",
@@ -89,8 +91,8 @@
   }
  ],
  "quick_entry": 1,
- "sort_field": "modified",
- "sort_order": "DESC",
+ "sort_field": "name",
+ "sort_order": "ASC",
  "title_field": "title",
  "track_changes": 1
 }
