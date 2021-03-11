@@ -154,7 +154,7 @@ frappe.ready(() => {
       },
 
       storeSdgFilter(){
-        const sdg_list = $("#sdg-sel").val() ?? "";
+        const sdg_list = $("#sdg-sel").val() ?? [];
         if(typeof sdg_list === 'string'){
           localStorage.setItem("filter_sdgs", sdg_list);
         }
@@ -162,7 +162,7 @@ frappe.ready(() => {
       },
       
       storeBeneficiaryFilter(){
-        const beneficiary_list = $("#beneficiary-sel").val() ?? "";
+        const beneficiary_list = $("#beneficiary-sel").val() ?? [];
         if (typeof beneficiary_list === 'string') {
           localStorage.setItem("filter_beneficiaries", beneficiary_list);
         }
@@ -170,7 +170,7 @@ frappe.ready(() => {
       },
 
       storePersonaFilter(){
-        const persona_list = $("#persona-sel").val() ?? "";
+        const persona_list = $("#persona-sel").val() ?? [];
         if (typeof persona_list === 'string') {
           localStorage.setItem("filter_personas", persona_list);
         }

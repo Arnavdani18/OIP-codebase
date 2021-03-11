@@ -126,7 +126,7 @@
     {% if available_sdg | length %}
     <div class="mt-4 mt-sm-0 in-mob" id="sdg-sel-div">
       <select class="pattern1" multiple id="sdg-sel" @input="storeSdgFilter">
-        <option v-for="option in available_sdg" :value="option.title">[[option.title]]</option>
+        <option v-for="option in available_sdg" :value="option.name">[[option.title]]</option>
       </select>
     </div>
     {% endif %}
