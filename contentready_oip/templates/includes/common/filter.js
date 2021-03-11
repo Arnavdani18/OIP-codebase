@@ -8,6 +8,7 @@ frappe.ready(() => {
     template: "#filter-script",
     data: function () {
       return {
+        key: "",
         qp_page: "",
         selected_range: null,
         show_beneficiary: true,
@@ -43,14 +44,10 @@ frappe.ready(() => {
       );
 
       const query_params = frappe.utils.get_query_params();
-      // if no qp exist, set qp and reload
-      // if (!Object.keys(query_params).length) {
-      //   this.setQueryParam();
-      //   window.location.reload();
-      //   return;
-      // }
 
-      const { sectors , sdgs, beneficiaries } = query_params;
+      const { key, sectors , sdgs, beneficiaries } = query_params;
+      
+      this.key = key;
 
       if (sectors) {
         const parsed_sectors = JSON.parse(sectors);
@@ -81,6 +78,7 @@ frappe.ready(() => {
       },
     },
     methods: {
+
       initializeMultiselect() {
         // init Sector
         this.sector_multiselect_instance = document.multiselect("#sector-sel");
@@ -106,6 +104,7 @@ frappe.ready(() => {
           "display:none !important;"
         );
       },
+
       prefillMultiselect(values, instance) {
         if (!values || !instance) {
           return;
@@ -207,7 +206,6 @@ frappe.ready(() => {
 
       getLocation() {
         const place = this.google_map_instance.getPlace();
-        console.log("place: ", place);
 
         const addressMapping = {
           locality: {
@@ -272,9 +270,8 @@ frappe.ready(() => {
             query_obj["loc_name"] = loc_name;
           }
 
-          let search_str = localStorage.getItem("search_query");
-          if (search_str && window.location.pathname.includes("search")) {
-            query_obj["key"] = search_str;
+          if (this.key && window.location.pathname.includes("search")) {
+            query_obj["key"] = this.key;
           }
 
           let sectors = localStorage.getItem("filter_sectors");
@@ -296,13 +293,15 @@ frappe.ready(() => {
           return query_obj;
         }
       },
-      applyFilter() {
+      
+      searchWithFilters() {
         this.storeSectorFilter();
         this.storeBeneficiaryFilter();
         this.storeSdgFilter();
         this.setQueryParam();
         window.location.reload();
       },
+
       resetFilter() {
         localStorage.setItem("filter_location_name", "");
         localStorage.setItem("filter_location_lat", "");
