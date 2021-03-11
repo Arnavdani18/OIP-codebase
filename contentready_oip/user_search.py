@@ -143,11 +143,11 @@ class UserSearch(FullTextSearch):
 				if type(personas) == list:
 					for s in personas:
 						persona_filters.append(Term('personas', s))
-					terms.append(Or(persona_filters))
+					if len(persona_filters):
+						terms.append(Or(persona_filters))
 			filter_scoped = And(terms)
 			results = searcher.search(query, limit=limit, filter=filter_scoped)
 			for r in results:
-				# out.append(self.parse_result(r))
 				out.append({'name': r['name']})
 		return out
 
