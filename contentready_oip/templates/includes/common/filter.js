@@ -17,15 +17,17 @@ frappe.ready(() => {
         sdg_multiselect_instance: null,
         sector_multiselect_instance: null,
         beneficiary_multiselect_instance: null,
+        persona_multiselect_instance: null,
+        selected_range: 25,
+        range_options: [0, 25, 50, 100, 200],
       };
     },
     created() {
       this.selected_range = localStorage.getItem("filter_location_range");
       this.searched_location = localStorage.getItem("filter_location_name");
-      // this.update_show_beneficiary();
     },
     mounted() {
-      // Sector, SDG, Beneficiary multiselect initialization
+      // Sector, SDG, Beneficiary, Persona multiselect initialization
       this.initializeMultiselect();
 
       const { location } = this.$refs;
@@ -45,7 +47,7 @@ frappe.ready(() => {
 
       const query_params = frappe.utils.get_query_params();
 
-      const { key, sectors , sdgs, beneficiaries } = query_params;
+      const { key, sectors , sdgs, beneficiaries, personas } = query_params;
       
       this.key = key;
 
@@ -64,6 +66,11 @@ frappe.ready(() => {
         this.prefillMultiselect(parsed_beneficiaries, this.beneficiary_multiselect_instance);
       }
 
+      if (personas) {
+        const parsed_personas = JSON.parse(personas);
+        this.prefillMultiselect(parsed_personas, this.persona_multiselect_instance);
+      }
+
 
     },
     computed: {
@@ -75,6 +82,9 @@ frappe.ready(() => {
       },
       available_beneficiaries() {
         return JSON.parse(`{{ available_beneficiaries | json }}`) || [];
+      },
+      available_personas() {
+        return JSON.parse(`{{ available_personas | json }}`) || [];
       },
     },
     methods: {
@@ -88,8 +98,12 @@ frappe.ready(() => {
         this.beneficiary_multiselect_instance = document.multiselect(
           "#beneficiary-sel"
         );
+        // init Personas
+        this.persona_multiselect_instance = document.multiselect(
+          "#persona-sel"
+        );
 
-        $("#sector-sel_input, #sdg-sel_input, #beneficiary-sel_input")
+        $("#sector-sel_input, #sdg-sel_input, #beneficiary-sel_input, #persona-sel_input")
           .addClass("filter-select m-0 filter-input");
 
         $("#sector-sel_input")
@@ -98,6 +112,9 @@ frappe.ready(() => {
           .attr("placeholder", "SDG Filter");
         $("#beneficiary-sel_input")
           .attr("placeholder", "Beneficiary Filter");
+
+        $("#persona-sel_input")
+          .attr("placeholder", "Persona Filter");
 
         $(".multiselect-dropdown-arrow").attr(
           "style",
@@ -127,6 +144,14 @@ frappe.ready(() => {
           localStorage.setItem("filter_beneficiaries", beneficiary_list);
         }
         localStorage.setItem("filter_beneficiaries", JSON.stringify(beneficiary_list));
+      },
+
+      storePersonaFilter(){
+        const persona_list = $("#persona-sel").val() ?? "";
+        if (typeof persona_list === 'string') {
+          localStorage.setItem("filter_personas", persona_list);
+        }
+        localStorage.setItem("filter_personas", JSON.stringify(persona_list));
       },
 
       storeSectorFilter() {
@@ -290,6 +315,11 @@ frappe.ready(() => {
             query_obj['beneficiaries'] = JSON.parse(beneficiaries);
           }
 
+          let personas = localStorage.getItem("filter_personas");
+          if (personas) {
+            query_obj['personas'] = JSON.parse(personas);
+          }
+
           return query_obj;
         }
       },
@@ -297,6 +327,7 @@ frappe.ready(() => {
       searchWithFilters() {
         this.storeSectorFilter();
         this.storeBeneficiaryFilter();
+        this.storePersonaFilter();
         this.storeSdgFilter();
         this.setQueryParam();
         window.location.reload();
@@ -308,6 +339,7 @@ frappe.ready(() => {
         localStorage.setItem("filter_location_lng", "");
         localStorage.setItem("filter_location_range", "");
         localStorage.setItem("filter_beneficiaries", "");
+        localStorage.setItem("filter_personas", "");
         localStorage.setItem("filter_sdgs", "");
         localStorage.setItem("filter_sectors", "");
 

@@ -29,18 +29,20 @@
     margin-bottom: .5rem;
   }
 
-  #sector-sel_itemList,#beneficiary-sel_itemList, #sdg-sel_itemList{
+  #sector-sel_itemList,#beneficiary-sel_itemList,#persona-sel_itemList, #sdg-sel_itemList{
     margin-top: 1rem;
   }
 
   #sector-sel_itemList label, 
   #beneficiary-sel_itemList label, 
+  #persona-sel_itemList label, 
   #sdg-sel_itemList label {
     font-size: 1.4rem;
   }
  
   #sector-sel_itemList li,
   #beneficiary-sel_itemList li,
+  #persona-sel_itemList li,
   #sdg-sel_itemList li {
     padding: .2rem .7rem;
   }
@@ -55,6 +57,7 @@
 
   #sector-sel_inputCount,
   #beneficiary-sel_inputCount,
+  #persona-sel_inputCount,
   #sdg-sel_inputCount {
     top: -3.2rem;
     left: 85% !important;
@@ -127,9 +130,17 @@
     {% endif %}
 
     {% if available_beneficiaries | length %}
-    <div class="mt-4 mt-sm-0 in-mob" id="beneficiary-sel-div" v-show="show_beneficiary">
+    <div class="mt-4 mt-sm-0 in-mob" id="beneficiary-sel-div">
       <select class="pattern1" multiple id="beneficiary-sel" >
         <option v-for="option in available_beneficiaries" :value="option.name">[[option.title]]</option>
+      </select>
+    </div>
+    {% endif %}
+
+    {% if available_personas | length %}
+    <div class="mt-4 mt-sm-0 in-mob" id="persona-sel-div">
+      <select class="pattern1" multiple id="persona-sel" >
+        <option v-for="option in available_personas" :value="option.name">[[option.title]]</option>
       </select>
     </div>
     {% endif %}
@@ -140,11 +151,7 @@
     </div>
     <div class="mt-4 mt-sm-0 in-mob" id="range-sel-div" v-show="searched_location">
       <select class="pattern1" @change="storeRangeFilter" v-model="selected_range" id="range-sel">
-        <option value="0">0 km</option>
-        <option value="25">25 km</option>
-        <option value="50">50 km</option>
-        <option value="100">100 km</option>
-        <option value="200">200 km</option>
+        <option v-for="op of range_options" :value="op">[[op]] km</option>
       </select>
     </div>
   </div>
