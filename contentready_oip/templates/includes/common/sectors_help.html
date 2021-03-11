@@ -1,0 +1,18 @@
+<table class="table sectors-description-table">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Title</th>
+        <th scope="col">Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for sector in available_sectors %}
+    <tr>
+        <th scope="row">{{ loop.index }}</th>
+        <td>{{ sector.title }}</td>
+        <td>{{ sector.description }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>

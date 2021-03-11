@@ -1,10 +1,11 @@
 $('*[data-fieldname="sectors"]').before(
-    '<label class="control-label" style="padding-right: 0px;">Sectors</label><br/><div id="sectorsComp"></div>'
+    '<div id="sectorsComp"></div>'
 );
 
 const sectorsComp = new Vue({
     name: 'Sectors',
     el: '#sectorsComp',
+    delimiters: ["[[", "]]"],
     data: function () {
         return {
             available_sectors: [],
@@ -38,6 +39,7 @@ const sectorsComp = new Vue({
                 },
             });
         },
+
         updateSectorToDoc: function (sectorClicked) {
             if (!frappe.web_form.doc.sectors) {
                 frappe.web_form.doc.sectors = [];
@@ -57,6 +59,7 @@ const sectorsComp = new Vue({
 
             this.getAvailableSectors();
         },
+
         toggleClass: function (sector) {
             let is_present = this.selected_sectors.find((s) => sector === s);
             if (is_present) {
@@ -65,35 +68,49 @@ const sectorsComp = new Vue({
                 return false;
             }
         },
-        showDescription: function(description) {
-            frappe.msgprint({
-                title: __('Description'),
-                indicator: 'blue',
-                message: description
-            })
+
+        showHelp: function() {
+            frappe.call({
+                method: "contentready_oip.api.get_sectors_help",
+                args: {},
+                callback: function ( r ) {
+                    if (r.message) {
+                        frappe.msgprint({
+                            title: __('Description'),
+                            indicator: 'blue',
+                            message: r.message,
+                        })
+                    }
+                }
+            });
         }
     },
     template: `
-      {% raw %}
-        <div class="row">
-          <div class="col d-flex flex-wrap">
-            <div class="btn-group" role="group" v-for="sector in available_sectors">
-                <button 
-                class="btn btn-lg btnHover" 
-                :title="sector['label']"
-                :class="{
-                    'btn-primary': toggleClass(sector['value']),
-                    'text-white': toggleClass(sector['value']),
-                    'btn-outline-primary' :!toggleClass(sector['value']) 
-                }"
-                v-on:click="updateSectorToDoc(sector['value'])"
-                >
-                {{sector['label']}}
-                </button>
-                <button type="button" class="btn btn-outline-primary" @click="showDescription(sector['description'])"><i class="octicon octicon-question actions"></i></button>
+      <div class="pb-2">
+            <div class="clearfix">
+                <label class="control-label label-styles" style="padding-right: 0px;">
+                    Sectors
+                    <i class="pl-1 octicon octicon-question text-muted actions" @click="showHelp"></i>
+                </label>
             </div>
-          </div>
+            
+            <div class="row">
+            <div class="col d-flex flex-wrap">
+            <button 
+            v-for="sector in available_sectors"
+            class="btn btn-lg btnHover" 
+            :title="sector['label']"
+            :class="{
+                'btn-primary': toggleClass(sector['value']),
+                'text-white': toggleClass(sector['value']),
+                'btn-outline-primary' :!toggleClass(sector['value']) 
+            }"
+            v-on:click="updateSectorToDoc(sector['value'])"
+            >
+            [[sector.label]]
+            </button>
+            </div>
+            </div>
         </div>
-      {% endraw %}
     `,
 });

@@ -1381,6 +1381,13 @@ def get_beneficiaries_from_sectors(sectors):
     except Exception as e:
         print(str(e))
 
+@frappe.whitelist(allow_guest=True)
+def get_sectors_help():
+    available_sectors = get_available_sectors()
+    template = "templates/includes/common/sectors_help.html"
+    html = frappe.render_template(template, {"available_sectors": available_sectors})
+    return html
+
 @frappe.whitelist(allow_guest=False)
 def upload_file():
     IMAGE_TYPES = ('image/png', 'image/jpeg')
