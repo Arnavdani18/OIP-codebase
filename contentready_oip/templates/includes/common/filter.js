@@ -44,11 +44,11 @@ frappe.ready(() => {
 
       const query_params = frappe.utils.get_query_params();
       // if no qp exist, set qp and reload
-      if (!Object.keys(query_params).length) {
-        this.setQueryParam();
-        window.location.reload();
-        return;
-      }
+      // if (!Object.keys(query_params).length) {
+      //   this.setQueryParam();
+      //   window.location.reload();
+      //   return;
+      // }
 
       const { sectors , sdgs, beneficiaries } = query_params;
 

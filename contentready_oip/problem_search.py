@@ -105,8 +105,8 @@ class ProblemSearch(FullTextSearch):
 			title_highlights=title_highlights,
 			description_highlights=description_highlights,
 		)
-	
-	def search(self, text, scope=None, limit=20):
+
+	def search(self, text, scope=None, limit=20, title_only=False):
 		"""Search from the current index
 
 		Args:
@@ -130,8 +130,17 @@ class ProblemSearch(FullTextSearch):
 		# for now we replace with a space but we need a better solution
 		text = text.replace('@', ' ')
 
+		# title_only search is used for search-as-you-type
+
+		if title_only:
+			fieldname = 'title'
+			fields = [fieldname]
+		else:
+			fieldname = 'name'
+			fields = search_fields
+
 		with ix.searcher() as searcher:
-			parser = MultifieldParser(search_fields, ix.schema)
+			parser = MultifieldParser(fields, ix.schema)
 			parser.remove_plugin_class(FieldsPlugin)
 			# We are going to actively use wildcards unless there are performance issues.
 			# parser.remove_plugin_class(WildcardPlugin)
@@ -164,9 +173,9 @@ class ProblemSearch(FullTextSearch):
 						terms.append(Or(beneficiary_filters))
 			filter_scoped = And(terms)
 			results = searcher.search(query, limit=limit, filter=filter_scoped, terms=True)
+			
 			for r in results:
-				# out.append(self.parse_result(r))
-				out.append({'name': r['name']})
+				out.append({fieldname: r[fieldname]})
 		return out
 
 
@@ -185,3 +194,7 @@ def build_index_for_all_ids():
 def search_index(text, scope=None, limit=20):
 	ws = ProblemSearch(INDEX_NAME)
 	return ws.search(text=text, scope=scope, limit=limit)
+
+def search_title(text, scope=None, limit=10):
+	ws = ProblemSearch(INDEX_NAME)
+	return ws.search(text=text, scope=scope, limit=limit, title_only=True)

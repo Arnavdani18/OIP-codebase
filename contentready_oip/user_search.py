@@ -137,7 +137,8 @@ class UserSearch(FullTextSearch):
 				if type(sectors) == list:
 					for s in sectors:
 						sector_filters.append(Term('sectors', s))
-					terms.append(Or(sector_filters))
+					if len(sector_filters):
+						terms.append(Or(sector_filters))
 				personas = scope.get('personas')
 				if type(personas) == list:
 					for s in personas:

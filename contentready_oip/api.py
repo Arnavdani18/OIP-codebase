@@ -70,7 +70,7 @@ def set_sector_filter(filter_sectors=[]):
     if not isinstance(filter_sectors, list):
         filter_sectors = json.loads(filter_sectors)
     if not filter_sectors:
-        filter_sectors = ['all']
+        filter_sectors = []
     frappe.session.data['filter_sectors'] = filter_sectors
     return frappe.session.data['filter_sectors']
 

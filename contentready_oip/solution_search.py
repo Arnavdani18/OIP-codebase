@@ -103,7 +103,7 @@ class SolutionSearch(FullTextSearch):
 			description_highlights=description_highlights,
 		)
 	
-	def search(self, text, scope=None, limit=20):
+	def search(self, text, scope=None, limit=20, title_only=False):
 		"""Search from the current index
 
 		Args:
@@ -127,8 +127,15 @@ class SolutionSearch(FullTextSearch):
 		# for now we replace with a space but we need a better solution
 		text = text.replace('@', ' ')
 
+		if title_only:
+			fieldname = 'title'
+			fields = [fieldname]
+		else:
+			fieldname = 'name'
+			fields = search_fields
+
 		with ix.searcher() as searcher:
-			parser = MultifieldParser(search_fields, ix.schema)
+			parser = MultifieldParser(fields, ix.schema)
 			parser.remove_plugin_class(FieldsPlugin)
 			# We are going to actively use wildcards unless there are performance issues.
 			# parser.remove_plugin_class(WildcardPlugin)
@@ -144,7 +151,8 @@ class SolutionSearch(FullTextSearch):
 				if type(sectors) == list:
 					for s in sectors:
 						sector_filters.append(Term('sectors', s))
-					terms.append(Or(sector_filters))
+					if len(sector_filters):
+						terms.append(Or(sector_filters))
 				sdg = scope.get('sdgs')
 				if type(sdg) == list:
 					for s in sdg:
@@ -154,8 +162,7 @@ class SolutionSearch(FullTextSearch):
 			filter_scoped = And(terms)
 			results = searcher.search(query, limit=limit, filter=filter_scoped, terms=True)
 			for r in results:
-				# out.append(self.parse_result(r))
-				out.append({'name': r['name']})
+				out.append({fieldname: r[fieldname]})
 		return out
 
 
