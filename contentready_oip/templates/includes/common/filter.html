@@ -117,7 +117,7 @@
   <div class="row justify-content-sm-start justify-content-md-end flex-wrap" id="filter-section">
     {% if available_sectors | length %}
     <div class="in-mob" id="sector-sel-div">
-      <select class="pattern1" multiple id="sector-sel">
+      <select class="pattern1" multiple id="sector-sel" @input="storeSectorFilter">
         <option v-for="sector in available_sectors" :value="sector.name">[[sector.title]]</option>
       </select>
     </div>
@@ -125,7 +125,7 @@
 
     {% if available_sdg | length %}
     <div class="mt-4 mt-sm-0 in-mob" id="sdg-sel-div">
-      <select class="pattern1" multiple id="sdg-sel" >
+      <select class="pattern1" multiple id="sdg-sel" @input="storeSdgFilter">
         <option v-for="option in available_sdg" :value="option.title">[[option.title]]</option>
       </select>
     </div>
@@ -133,7 +133,7 @@
 
     {% if available_beneficiaries | length %}
     <div class="mt-4 mt-sm-0 in-mob" id="beneficiary-sel-div">
-      <select class="pattern1" multiple id="beneficiary-sel" >
+      <select class="pattern1" multiple id="beneficiary-sel" @input="storeBeneficiaryFilter">
         <option v-for="option in available_beneficiaries" :value="option.name">[[option.title]]</option>
       </select>
     </div>
@@ -141,7 +141,7 @@
 
     {% if available_personas | length %}
     <div class="mt-4 mt-sm-0 in-mob" id="persona-sel-div">
-      <select class="pattern1" multiple id="persona-sel" >
+      <select class="pattern1" multiple id="persona-sel" @input="storePersonaFilter">
         <option v-for="option in available_personas" :value="option.name">[[option.title]]</option>
       </select>
     </div>
@@ -152,7 +152,7 @@
         @input="clearLocationIfEmpty" />
     </div>
     <div class="mt-4 mt-sm-0 in-mob" id="range-sel-div" v-show="searched_location">
-      <select class="pattern1" @change="storeRangeFilter" v-model="selected_range" id="range-sel">
+      <select class="pattern1" @input="storeRangeFilter" v-model="selected_range" id="range-sel">
         <option v-for="op of range_options" :value="op">[[op]] km</option>
       </select>
     </div>

@@ -1178,5 +1178,7 @@ def index_document(doc=None, event_name=None):
         print(str(e))
     
 @frappe.whitelist(allow_guest=False)
-def get_suggested_titles(text):
-    return [r['title'] for r in problem_search.search_title(text) + solution_search.search_title(text)]
+def get_suggested_titles(text, scope=None):
+    if type(scope) == type('hello'):
+        scope = json.loads(scope)
+    return [r['title'] for r in problem_search.search_title(text, scope=scope) + solution_search.search_title(text, scope=scope)]

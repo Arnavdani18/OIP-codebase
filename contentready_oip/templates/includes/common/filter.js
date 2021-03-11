@@ -21,6 +21,8 @@ frappe.ready(() => {
         selected_range: 25,
         range_options: [0, 25, 50, 100, 200],
         suggested_titles: [],
+        scope: {},
+        selected_sectors: [],
       };
     },
     created() {
@@ -92,9 +94,13 @@ frappe.ready(() => {
 
       get_search_suggestions() {
         if (this.key) {
+          this.storeSectorFilter();
+          this.storeBeneficiaryFilter();
+          this.storePersonaFilter();
+          this.storeSdgFilter();
           frappe.call({
             method: "contentready_oip.api.get_suggested_titles",
-            args: { text: this.key },
+            args: { text: this.key, scope: this.loadFilters() },
             callback: function ( r ) {
               this.suggested_titles = r.message;
               this.$forceUpdate();
@@ -318,8 +324,7 @@ frappe.ready(() => {
 
           let sectors = localStorage.getItem("filter_sectors");
           if (sectors) {
-            sectors = JSON.parse(sectors); // since we stringify while storing
-            query_obj["sectors"] = sectors;
+            query_obj["sectors"] = JSON.parse(sectors);
           }
 
           let sdgs = localStorage.getItem("filter_sdgs");
