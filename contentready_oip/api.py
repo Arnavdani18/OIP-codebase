@@ -1176,3 +1176,7 @@ def index_document(doc=None, event_name=None):
             user_search.update_index_for_id(doc.name)
     except Exception as e:
         print(str(e))
+    
+@frappe.whitelist(allow_guest=False)
+def get_suggested_titles(text):
+    return [r['title'] for r in problem_search.search_title(text) + solution_search.search_title(text)]

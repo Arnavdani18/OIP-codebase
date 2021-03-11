@@ -99,9 +99,12 @@
             </span>
         </div> -->
         <input type="search" class="form-control form-control-lg style1"
-            aria-label="Search the Open Innovation Platform"
-            placeholder="Search for problems, solutions and contributors" name='key' v-model="key"
+            aria-label="Search the Open Innovation Platform" autocomplete="off" list="suggestions"
+            placeholder="Search for problems, solutions and contributors" name='key' v-model="key" v-on:keyup="get_search_suggestions"
             id="search-input">
+            <datalist id="suggestions">
+              <option v-for="title of suggested_titles" v-bind:value="title"></option>
+            </datalist>
         <div class="input-group-append style1">
             <button type="submit" data-enabled=1 class="btn active-btn" 
                 id="search-btn"><img src="/assets/contentready_oip/svg/search-solid.svg" style="opacity: .4;"
@@ -115,7 +118,6 @@
     {% if available_sectors | length %}
     <div class="in-mob" id="sector-sel-div">
       <select class="pattern1" multiple id="sector-sel">
-        <!-- <option value="all">All Sectors</option> -->
         <option v-for="sector in available_sectors" :value="sector.name">[[sector.title]]</option>
       </select>
     </div>

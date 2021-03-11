@@ -20,6 +20,7 @@ frappe.ready(() => {
         persona_multiselect_instance: null,
         selected_range: 25,
         range_options: [0, 25, 50, 100, 200],
+        suggested_titles: [],
       };
     },
     created() {
@@ -88,6 +89,22 @@ frappe.ready(() => {
       },
     },
     methods: {
+
+      get_search_suggestions() {
+        if (this.key) {
+          frappe.call({
+            method: "contentready_oip.api.get_suggested_titles",
+            args: { text: this.key },
+            callback: function ( r ) {
+              this.suggested_titles = r.message;
+              this.$forceUpdate();
+            }.bind(this)
+          });
+        } else {
+          return [];
+        }
+
+      },
 
       initializeMultiselect() {
         // init Sector

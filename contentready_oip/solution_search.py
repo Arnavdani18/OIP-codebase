@@ -181,3 +181,7 @@ def build_index_for_all_ids():
 def search_index(text, scope=None, limit=20):
 	ws = SolutionSearch(INDEX_NAME)
 	return ws.search(text=text, scope=scope, limit=limit)
+
+def search_title(text, scope=None, limit=10):
+	ws = SolutionSearch(INDEX_NAME)
+	return ws.search(text=text, scope=scope, limit=limit, title_only=True)
