@@ -20,35 +20,15 @@ def nudge_guests():
     if not frappe.session.user or frappe.session.user == 'Guest':
         frappe.throw('Please login to collaborate.')
 
-
-# def new_user_tasks(doc=None, event_name=None, email=None):
-#     ''' Only run these tasks for self-sign up.'''
-#     try:
-#         if email == 'Guest':
-#             return False
-#         if email:
-#             doc = frappe.get_doc('User', email)
-#             doc.enabled = False
-#         create_user_profile_if_missing(doc, event_name, email)
-#     except Exception as e:
-#         print(str(e))
-
-def create_user_profile_if_missing(doc=None, event_name=None, email=None):
-    try:
-        if email == 'Guest':
-            return False
-        if email:
-            doc = frappe.get_doc('User', email)
-        if not frappe.db.exists('User Profile', doc.email):
-            profile = frappe.get_doc({
-                'doctype': 'User Profile',
-                'user': doc.email,
-                'owner': doc.email
-            })
-            profile.save()
-            frappe.db.commit()
-    except Exception as e:
-        print(str(e))
+def create_user_profile_if_missing():
+    if not frappe.db.exists('User Profile', frappe.session.user):
+        profile = frappe.get_doc({
+            'doctype': 'User Profile',
+            'user': frappe.session.user,
+            'owner': frappe.session.user
+        })
+        profile.save()
+        frappe.db.commit()
 
 @frappe.whitelist(allow_guest = True)
 def set_location_filter(filter_location_name=None, filter_location_lat=None,filter_location_lng=None, filter_location_range=25):
@@ -989,10 +969,7 @@ def complete_linkedin_login(code, state):
     if not (info.get("email_verified") or info.get("email")):
         frappe.throw(_("Email not verified with {0}").format(provider.title()))
     oauth.login_oauth_user(info, provider=provider, state=state)
-    # print('once logged in, we create the profile')
-    doc = frappe.get_doc('User', info.get('email'))
-    # create user profile because social login does not seem to trigger frappe hook
-    create_user_profile_if_missing(doc, 'social_login')
+    
 
 def unpack_linkedin_response(info, profile=None):
     # print(profile)
