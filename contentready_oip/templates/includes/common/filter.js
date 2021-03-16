@@ -8,6 +8,7 @@ frappe.ready(() => {
     template: "#filter-script",
     data: function () {
       return {
+        key: "",
         qp_page: "",
         selected_range: null,
         show_beneficiary: true,
@@ -16,15 +17,20 @@ frappe.ready(() => {
         sdg_multiselect_instance: null,
         sector_multiselect_instance: null,
         beneficiary_multiselect_instance: null,
+        persona_multiselect_instance: null,
+        selected_range: 25,
+        range_options: [0, 25, 50, 100, 200],
+        suggested_titles: [],
+        scope: {},
+        selected_sectors: [],
       };
     },
     created() {
       this.selected_range = localStorage.getItem("filter_location_range");
       this.searched_location = localStorage.getItem("filter_location_name");
-      this.update_show_beneficiary();
     },
     mounted() {
-      // Sector, SDG, Beneficiary multiselect initialization
+      // Sector, SDG, Beneficiary, Persona multiselect initialization
       this.initializeMultiselect();
 
       const { location } = this.$refs;
@@ -43,17 +49,15 @@ frappe.ready(() => {
       );
 
       const query_params = frappe.utils.get_query_params();
-      // if no qp exist, set qp and reload
-      if (!Object.keys(query_params).length) {
-        this.setQueryParam();
-        window.location.reload();
-        return;
+
+      const { key, sectors , sdgs, beneficiaries, personas } = query_params;
+      
+      this.key = key;
+
+      if (sectors) {
+        const parsed_sectors = JSON.parse(sectors);
+        this.prefillMultiselect(parsed_sectors, this.sector_multiselect_instance);
       }
-
-      const { sectors , sdgs, beneficiaries } = query_params;
-
-      const parsed_sectors = sectors ? JSON.parse(sectors) : ["all"];
-      this.prefillMultiselect(parsed_sectors, this.sector_multiselect_instance);
       
       if (sdgs) {
         const parsed_sdgs = JSON.parse(sdgs);
@@ -63,6 +67,11 @@ frappe.ready(() => {
       if (beneficiaries) {
         const parsed_beneficiaries = JSON.parse(beneficiaries);
         this.prefillMultiselect(parsed_beneficiaries, this.beneficiary_multiselect_instance);
+      }
+
+      if (personas) {
+        const parsed_personas = JSON.parse(personas);
+        this.prefillMultiselect(parsed_personas, this.persona_multiselect_instance);
       }
 
 
@@ -77,8 +86,32 @@ frappe.ready(() => {
       available_beneficiaries() {
         return JSON.parse(`{{ available_beneficiaries | json }}`) || [];
       },
+      available_personas() {
+        return JSON.parse(`{{ available_personas | json }}`) || [];
+      },
     },
     methods: {
+
+      get_search_suggestions() {
+        if (this.key) {
+          this.storeSectorFilter();
+          this.storeBeneficiaryFilter();
+          this.storePersonaFilter();
+          this.storeSdgFilter();
+          frappe.call({
+            method: "contentready_oip.api.get_suggested_titles",
+            args: { text: this.key, scope: this.loadFilters() },
+            callback: function ( r ) {
+              this.suggested_titles = r.message;
+              this.$forceUpdate();
+            }.bind(this)
+          });
+        } else {
+          return [];
+        }
+
+      },
+
       initializeMultiselect() {
         // init Sector
         this.sector_multiselect_instance = document.multiselect("#sector-sel");
@@ -88,8 +121,12 @@ frappe.ready(() => {
         this.beneficiary_multiselect_instance = document.multiselect(
           "#beneficiary-sel"
         );
+        // init Personas
+        this.persona_multiselect_instance = document.multiselect(
+          "#persona-sel"
+        );
 
-        $("#sector-sel_input, #sdg-sel_input, #beneficiary-sel_input")
+        $("#sector-sel_input, #sdg-sel_input, #beneficiary-sel_input, #persona-sel_input")
           .addClass("filter-select m-0 filter-input");
 
         $("#sector-sel_input")
@@ -99,11 +136,15 @@ frappe.ready(() => {
         $("#beneficiary-sel_input")
           .attr("placeholder", "Beneficiary Filter");
 
+        $("#persona-sel_input")
+          .attr("placeholder", "Persona Filter");
+
         $(".multiselect-dropdown-arrow").attr(
           "style",
           "display:none !important;"
         );
       },
+
       prefillMultiselect(values, instance) {
         if (!values || !instance) {
           return;
@@ -113,8 +154,7 @@ frappe.ready(() => {
       },
 
       storeSdgFilter(){
-        const sdg_list = $("#sdg-sel").val() ?? "";
-        
+        const sdg_list = $("#sdg-sel").val() ?? [];
         if(typeof sdg_list === 'string'){
           localStorage.setItem("filter_sdgs", sdg_list);
         }
@@ -122,26 +162,29 @@ frappe.ready(() => {
       },
       
       storeBeneficiaryFilter(){
-        const beneficiary_list = $("#beneficiary-sel").val() ?? "";
-
+        const beneficiary_list = $("#beneficiary-sel").val() ?? [];
         if (typeof beneficiary_list === 'string') {
           localStorage.setItem("filter_beneficiaries", beneficiary_list);
         }
         localStorage.setItem("filter_beneficiaries", JSON.stringify(beneficiary_list));
       },
 
+      storePersonaFilter(){
+        const persona_list = $("#persona-sel").val() ?? [];
+        if (typeof persona_list === 'string') {
+          localStorage.setItem("filter_personas", persona_list);
+        }
+        localStorage.setItem("filter_personas", JSON.stringify(persona_list));
+      },
+
       storeSectorFilter() {
         const sectors_list = $("#sector-sel").val() ?? [];
-
-        // sectors filter cannot be null, set to default
-        if (!sectors_list.length) {
-          document.multiselect("#sector-sel").select("all");
-          sectors_list.push("all");
+        if(typeof sectors_list === 'string'){
+          localStorage.setItem("filter_sectors", sectors_list);
         }
-
-        const filter_sectors = JSON.stringify(sectors_list);
-        localStorage.setItem("filter_sectors", filter_sectors);
+        localStorage.setItem("filter_sectors", JSON.stringify(sectors_list));
       },
+
       clearLocationIfEmpty() {
         if (this.searched_location) {
           return false; // don't do anything
@@ -211,7 +254,6 @@ frappe.ready(() => {
 
       getLocation() {
         const place = this.google_map_instance.getPlace();
-        console.log("place: ", place);
 
         const addressMapping = {
           locality: {
@@ -276,18 +318,13 @@ frappe.ready(() => {
             query_obj["loc_name"] = loc_name;
           }
 
-          let search_str = localStorage.getItem("search_query");
-          if (search_str && window.location.pathname.includes("search")) {
-            query_obj["key"] = search_str;
+          if (this.key && window.location.pathname.includes("search")) {
+            query_obj["key"] = this.key;
           }
 
           let sectors = localStorage.getItem("filter_sectors");
-          if (!sectors) {
-            sectors = JSON.stringify(["all"]);
-          }
           if (sectors) {
-            sectors = JSON.parse(sectors); // since we stringify while storing
-            query_obj["sectors"] = sectors;
+            query_obj["sectors"] = JSON.parse(sectors);
           }
 
           let sdgs = localStorage.getItem("filter_sdgs");
@@ -300,33 +337,37 @@ frappe.ready(() => {
             query_obj['beneficiaries'] = JSON.parse(beneficiaries);
           }
 
+          let personas = localStorage.getItem("filter_personas");
+          if (personas) {
+            query_obj['personas'] = JSON.parse(personas);
+          }
+
           return query_obj;
         }
       },
-      applyFilter() {
+      
+      searchWithFilters() {
         this.storeSectorFilter();
         this.storeBeneficiaryFilter();
+        this.storePersonaFilter();
         this.storeSdgFilter();
         this.setQueryParam();
         window.location.reload();
       },
+
       resetFilter() {
         localStorage.setItem("filter_location_name", "");
         localStorage.setItem("filter_location_lat", "");
         localStorage.setItem("filter_location_lng", "");
         localStorage.setItem("filter_location_range", "");
         localStorage.setItem("filter_beneficiaries", "");
+        localStorage.setItem("filter_personas", "");
         localStorage.setItem("filter_sdgs", "");
-        localStorage.setItem("filter_sectors", JSON.stringify(['all']));
+        localStorage.setItem("filter_sectors", "");
 
         this.setQueryParam();
         window.location.reload();
       },
-
-      update_show_beneficiary(){
-        const {pathname} = window.location;
-        this.show_beneficiary = !pathname.includes('solution');
-      }
     },
   });
 

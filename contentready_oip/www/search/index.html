@@ -11,34 +11,6 @@
     </div>
 {%- endmacro %}
 
-<div class="p-0">
-    <form id="searchInput">
-        <div class="input-group input-section">
-            <div class="input-group-prepend style1">
-                <span class="input-group-text">
-                    <img src="/assets/contentready_oip/svg/search-solid.svg" alt="" width="20" style="opacity: .3;" />
-                </span>
-            </div>
-            <input type="search" class="form-control form-control-lg style1"
-                aria-label="Search the Open Innovation Platform"
-                placeholder="Search for problems, solutions and contributors" name='key' value='{{key}}'
-                id="search-input">
-            <div class="input-group-append style1">
-                <button type="submit" data-enabled=1 class="btn active-btn" 
-                    id="search-btn"><img src="/assets/contentready_oip/svg/search-solid.svg" style="opacity: .4;"
-                        class="" width="30" height="20"></button>
-                <!--{# <button type="button" data-enabled=1 class="btn active-btn rounded-right" onclick="toggleSolutions()" id="solution-selector">Solutions</button> -->
-                <!-- <select class="search-mode" id="">
-                    <option selected value="all">All</option>
-                    <option value="problem">Problem</option>
-                    <option value="solution">Solution</option>
-                    <option value="profile">Profile</option>
-                </select> #}-->
-            </div>
-        </div>
-    </form>
-</div>
-
 <div class="container mt-4">
     {% include "templates/includes/common/filter.html" %}
 </div>
@@ -135,39 +107,6 @@
     </div>
 </div>
 {% endif %}
-
-
-<script>
-    frappe.ready(async () => {
-        // Simple sleep(ms) function from https://stackoverflow.com/a/48882182
-        const sleep = m => new Promise(r => setTimeout(r,m));
-
-        // Look for similar problems and solutions when text is entered
-        // $('#search-input').val('');
-
-        $('#searchInput').submit(function(event) {
-            event.preventDefault();
-            triggerSearch();
-        });
-
-        function triggerSearch() {
-            const key = $('#search-input').val().trim();
-            // if (key) {
-                const search_query = {key: key};
-                localStorage.setItem('search_query',key);
-                const existing_query = frappe.utils.get_query_params();
-                const combined_query = {...existing_query,...search_query};
-                console.log(search_query,existing_query,combined_query);
-                let qp = frappe.utils.make_query_string(combined_query);
-                if (qp) {
-                    const clean_url = window.location.href.split('?')[0];
-                    console.log(clean_url + qp);
-                    window.location.href = clean_url + qp;
-                }
-            // }
-        }
-    })
-</script>
 
 <style>
     em{

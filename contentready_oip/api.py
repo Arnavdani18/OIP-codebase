@@ -1,20 +1,14 @@
 import frappe
 import json
+import mimetypes
+import platform
 from frappe import _
 from frappe.utils.html_utils import clean_html
-import platform
-from elasticsearch_dsl import Document, Date, Integer, Keyword, Text, Object
-from elasticsearch_dsl.connections import connections
-from elasticsearch import Elasticsearch
-from elasticsearch_dsl import Search
-from elasticsearch_dsl import Q
 from frappe.email.doctype.email_template.email_template import get_email_template
-import meilisearch
 from contentready_oip.google_vision import is_content_explicit
-import mimetypes
+from contentready_oip import problem_search, solution_search, user_search
 
 python_version_2 = platform.python_version().startswith('2')
-CLIENT = meilisearch.Client('http://localhost:7700/', 'test123')
 
 def nudge_guests():
     if not frappe.session.user or frappe.session.user == 'Guest':
@@ -56,7 +50,7 @@ def set_sector_filter(filter_sectors=[]):
     if not isinstance(filter_sectors, list):
         filter_sectors = json.loads(filter_sectors)
     if not filter_sectors:
-        filter_sectors = ['all']
+        filter_sectors = []
     frappe.session.data['filter_sectors'] = filter_sectors
     return frappe.session.data['filter_sectors']
 
@@ -69,7 +63,7 @@ def get_available_sectors():
         assert len(sectors) > 0, 'Need at least 1 sector per domain. Reverting to defaults.'
         return sectors
     except Exception as e:
-        print(str(e))
+        # print(str(e))
         return frappe.get_list('Sector', ['name', 'title', 'description'])
 
 @frappe.whitelist(allow_guest = True)
@@ -98,33 +92,6 @@ def get_domain_theme():
 @frappe.whitelist(allow_guest = True)
 def get_url():
     return frappe.utils.get_host_name_from_request()
-
-@frappe.whitelist(allow_guest = True)
-def get_filters():
-    filter_sectors = ['all']
-    filter_location_name = ''
-    filter_location_lat = None
-    filter_location_lng = None
-    filter_location_range = None
-    if 'filter_location_name' in frappe.session.data:
-        filter_location_name = frappe.session.data.filter_location_name
-    if 'filter_location_lat' in frappe.session.data:
-        filter_location_lat = frappe.session.data.filter_location_lat
-    if 'filter_location_lng' in frappe.session.data:
-        filter_location_lng = frappe.session.data.filter_location_lng
-    if 'filter_location_range' in frappe.session.data:
-        filter_location_range = frappe.session.data.filter_location_range
-    if 'filter_sectors' in frappe.session.data:
-        filter_sectors = frappe.session.data.filter_sectors
-    available_sectors = get_available_sectors()
-    return {
-        'filter_location_name': filter_location_name,
-        'filter_location_lat': filter_location_lat,
-        'filter_location_lng': filter_location_lng,
-        'filter_location_range': filter_location_range,
-        'filter_sectors': filter_sectors,
-        'available_sectors': available_sectors
-    }
 
 @frappe.whitelist(allow_guest = True)
 def get_doc_by_type_name(doctype, name):
@@ -162,116 +129,6 @@ def convert_if_json(value):
         value = json.loads(value)
     return value
 
-def get_filtered_paginated_content(context, doctype, key, limit_page_length=20):
-    payload = {}
-    try:
-        payload['available_sectors'] = get_available_sectors()
-        payload['available_sdg'] = frappe.get_list('Sustainable Development Goal', fields=['title','name'])
-        payload['available_beneficiaries'] = frappe.get_list('Beneficiary',fields=['title','name'])
-        parameters = frappe.form_dict
-        # page
-        try:
-            payload['page'] = int(parameters['page'])
-        except:
-            payload['page'] = 1
-        limit_start = payload['page'] - 1
-        # limit_page_length = 20
-        if doctype == 'User Profile':
-            parameters = frappe.form_dict
-            try:
-                filter_sectors = json.loads(parameters['sectors'])
-            except Exception as e:
-                filter_sectors = ['all']
-                # filter_sectors = []
-            filtered_content = get_content_recommended_for_user('User Profile', filter_sectors, limit_page_length=limit_page_length)
-            # filtered_content = search_contributors_by_text('', limit_page_length=200, html=False)
-        else:
-            filtered_content = get_filtered_content(doctype)
-        payload['start'] = limit_start*limit_page_length
-        payload['end'] = payload['start'] + limit_page_length
-        payload['total_count'] = len(filtered_content)
-        if payload['end'] > payload['total_count']:
-            payload['end'] = payload['total_count']
-        payload['has_next_page'] = False
-        if payload['total_count'] > limit_page_length*payload['page']:
-            payload['has_next_page'] = True
-        payload[key] = filtered_content[payload['start']:payload['end']]
-    except Exception as e:
-        print(str(e))
-    return payload
-
-
-@frappe.whitelist(allow_guest = True)
-def get_filtered_content(doctype):
-    content = []
-    try:
-        parameters = frappe.form_dict
-        # filter_location_name
-        try:
-            filter_location_name = parameters['loc']
-        except:
-            filter_location_name = None
-        # filter_location_lat
-        try:
-            filter_location_lat = float(parameters['lat'])
-        except:
-            filter_location_lat = None
-        # filter_location_lng
-        try:
-            filter_location_lng = float(parameters['lng'])
-        except:
-            filter_location_lng = None
-        # filter_location_range
-        try:
-            filter_location_range = int(parameters['rng'])
-        except:
-            filter_location_range = None
-        # filter_sectors
-        try:
-            filter_sectors = json.loads(parameters['sectors'])
-        except Exception as e:
-            # filter_sectors = ['all']
-            filter_sectors = []
-        # if not filter_sectors:
-            # filter_sectors = ['all']
-        # print('\n\n\n', filter_sectors, len(filter_sectors), '\n\n\n')
-        if 'all' in filter_sectors:
-            available_sectors = get_available_sectors()
-            filter_sectors = {a['name'] for a in available_sectors}
-        filtered = frappe.get_list('Sector Table', fields=['parent'], filters={'parenttype': doctype, 'sector': ['in', filter_sectors]})
-        content_set = {f['parent'] for f in filtered}
-        try:
-            user = frappe.get_doc('User Profile', frappe.session.user)
-            user_sectors = {sector.sector for sector in user.sectors}
-        except:
-            user_sectors = set()
-        # TODO: Implement location filtering using Elasticsearch
-        from geopy import distance
-        for c in content_set:
-            try:
-                doc = frappe.get_doc(doctype, c)
-                if doc.is_published:
-                    if (doc.latitude != None) and (doc.longitude != None) and (filter_location_lat != None) and (filter_location_lng != None) and (filter_location_range != None):
-                        distance_km = distance.distance((filter_location_lat, filter_location_lng), (float(doc.latitude), float(doc.longitude))).km
-                        if distance_km > filter_location_range:
-                            # skip this document as it's outside our bounds
-                            continue
-                    doc_sectors = {sector.sector for sector in doc.sectors}
-                    relevant_sectors = doc_sectors.intersection(user_sectors)
-                    if doctype == 'Problem':
-                        # disabling scores until we migrate all child tables
-                        doc.score = 1
-                        # doc.score = 0.3 * len(doc.validations) + 0.1 * len(doc.likes) + 0.1 * len(doc.enrichments) + 0.1 * len(doc.watchers) + 0.05 * len(doc.discussions) + 0.3 * len(relevant_sectors)
-                    else:
-                        doc.score = 1
-                        # doc.score = 0.3 * len(doc.validations) + 0.1 * len(doc.likes) + 0.1 * len(doc.watchers) + 0.05 * len(doc.discussions) + 0.3 * len(relevant_sectors)
-                    content.append(doc)
-            except Exception as e:
-                print(str(e))
-    except Exception as e:
-        print(str(e))
-    content.sort(key=lambda x: x.score, reverse=True)
-    return content
 
 @frappe.whitelist(allow_guest = True)
 def search_content_by_text(doctype, text, limit_page_length=5, html=True):
@@ -1136,28 +993,6 @@ def get_searched_content(index_name,search_str,filters=None):
     else:
         apply_range_filter = filter_content_by_range(result['hits'], index_name)
         return apply_range_filter
-
-@frappe.whitelist(allow_guest=False)
-def get_searched_content_es(index_name,search_str,filters=None):
-    client = Elasticsearch('https://search-contentready-es-knpak5szkr5ljrj2kvgfu36qz4.ap-south-1.es.amazonaws.com')
-    index_name = index_name.replace(' ', '_').lower()
-    search_str = '*{}*'.format(search_str)
-    q = Q("wildcard", doc__title=search_str) | Q("wildcard", doc__description=search_str)
-    s = Search(using=client, index=index_name).query(q)
-    response = s.execute()
-    results = []
-    for r in response:
-        try:
-            doctype = r.doc.doctype
-            docname = r.doc.name
-            doc = refactor_2_list_str(frappe.get_doc(doctype, docname).as_dict(), 'sectors','sector')
-            results.append(doc)
-        except:
-            pass
-    if index_name == 'user_profile':
-        return results
-    else:
-        return filter_content_by_range(results, doctype)
          
 
 def filter_content_by_range(searched_content,doctype):
@@ -1219,87 +1054,12 @@ def filter_content_by_range(searched_content,doctype):
     content.sort(key=lambda x: x["score"], reverse=True)
     return content
 
-def replace_space(name):
-    """
-    replace white space with _
-    """
-    name_list = name.split(" ")
-    if len(name_list) > 1:
-        name = "_".join(name_list)
-
-    return name.lower()
-
-def refactor_2_list_str(doc_dict, p_key, c_key):
-    """
-    Refactor sector or persona to list of strings.
-
-    Parameters: 
-    doc_dict (dict): Dictionary of doctype. \n
-    p_key (str): primary key of doctype.\n
-    c_key (str): child key of primary key's value.
-
-    Returns: 
-    doc_dict (dict): Updated dictionary of doctype.
-    """
-    try:
-        refactor_list = doc_dict[p_key]
-        new_key = "meili_{}".format(p_key)
-        doc_dict[new_key] = []
-
-        for item in refactor_list:
-            doc_dict[new_key].append(item[c_key])
-    except Exception as _e:
-        print(str(_e))
-
-    return doc_dict
-
-def update_doc_to_meilisearch(doc, hook_action):
-    try:
-        if doc.is_published:
-            index_name = replace_space(doc.doctype)
-            j = doc.as_json()
-            document = refactor_2_list_str(json.loads(j), 'sectors','sector')
-            index = CLIENT.get_index(index_name)
-            index.add_documents([document])
-    except Exception as _e:
-        print(str(_e))
-
-def update_user_profile_to_meilisearch(doc, hook_action):
-    try:
-        document = doc.as_dict()
-        index_name = replace_space(document['doctype'])
-        # https://docs.python.org/3/library/stdtypes.html#str.isalnum
-        document['meili_idx'] = "".join(v for v in document['name'] if v.isalnum())
-        document = refactor_2_list_str(document, 'sectors','sector')
-        document = refactor_2_list_str(document, 'personas', 'persona')
-        index = CLIENT.get_index(index_name)
-        index.add_documents([document])
-    except Exception as _e:
-        print(str(_e))
-
-
-def add_doc_to_elasticsearch(doc, hook_action='on_update'):
-    try:
-        connections.create_connection(hosts=['https://search-contentready-es-knpak5szkr5ljrj2kvgfu36qz4.ap-south-1.es.amazonaws.com'])
-        doctype = doc.doctype.replace(' ', '_').lower()
-        class Content(Document):
-            doc = Object()
-            class Index:
-                name = doctype
-        Content.init()
-        if doc.is_published:
-            content = Content(meta={'id': doc.name})
-            content.doc = refactor_2_list_str(doc.as_dict(), 'sectors','sector')
-            if doctype == 'User Profile':
-                content.doc = refactor_2_list_str(content.doc, 'personas','persona')
-            content.save()
-    except Exception as _e:
-        print(str(_e))
-
 
 @frappe.whitelist(allow_guest=True)
-def has_admin_role():
-    roles = frappe.get_roles(frappe.session.user)
+def has_admin_role(user=None):
+    if not user:
+        user = frappe.session.user
+    roles = frappe.get_roles(user)
     allowed_roles = ["Administrator", "System Manager"]
     is_allowed = False
     for role in allowed_roles:
@@ -1310,8 +1070,10 @@ def has_admin_role():
 
 
 @frappe.whitelist(allow_guest=True)
-def has_collaborator_role():
-    roles = frappe.get_roles(frappe.session.user)
+def has_collaborator_role(user=None):
+    if not user:
+        user = frappe.session.user
+    roles = frappe.get_roles(user)
     allowed_roles = ["Collaborator"]
     is_allowed = False
     for role in allowed_roles:
@@ -1387,3 +1149,20 @@ def upload_file():
             return ret
     else:
         frappe.throw('No file detected.')
+
+def index_document(doc=None, event_name=None):
+    try:
+        if doc.doctype == 'Problem':
+            problem_search.update_index_for_id(doc.name)
+        elif doc.doctype == 'Solution':
+            solution_search.update_index_for_id(doc.name)
+        elif doc.doctype == 'User Profile':
+            user_search.update_index_for_id(doc.name)
+    except Exception as e:
+        print(str(e))
+    
+@frappe.whitelist(allow_guest=False)
+def get_suggested_titles(text, scope=None):
+    if type(scope) == type('hello'):
+        scope = json.loads(scope)
+    return [r['title'] for r in problem_search.search_title(text, scope=scope) + solution_search.search_title(text, scope=scope)]

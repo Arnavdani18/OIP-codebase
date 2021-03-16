@@ -1,5 +1,3 @@
 frappe
 geopy
-meilisearch
-elasticsearch_dsl
 google-cloud-vision
