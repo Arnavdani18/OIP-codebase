@@ -220,6 +220,11 @@ def get_orgs_list():
     return [{'label': o['title'], 'value': o['name']} for o in all_orgs]
 
 @frappe.whitelist(allow_guest = True)
+def get_service_categories():
+    all_categories = frappe.get_list('Service Category', fields=['title', 'name'])
+    return [{'label': o['title'], 'value': o['name']} for o in all_categories]
+
+@frappe.whitelist(allow_guest = True)
 def get_sdg_list():
     sdgs = frappe.get_list('Sustainable Development Goal', fields=['title','name'])
     return [{'label': o['title'], 'value': o['name']} for o in sdgs]
