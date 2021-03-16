@@ -5,7 +5,6 @@ import json
 RESULTS_PER_PAGE = 5
 
 def get_context(context):
-    api.create_user_profile_if_missing(None,None,frappe.session.user)
     context.full_width = True
     context.stats = api.get_homepage_stats()
     parameters = frappe.form_dict

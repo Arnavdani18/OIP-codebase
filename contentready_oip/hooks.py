@@ -51,6 +51,7 @@ home_page = "home"
 
 # runs after login
 on_session_creation = [
+   "contentready_oip.api.create_user_profile_if_missing",
 ]
 
 # automatically create page for each record of this doctype
@@ -89,7 +90,7 @@ after_install = "contentready_oip.install.after_install"
 
 doc_events = {
 	"User": {
-		"after_insert": "contentready_oip.api.create_user_profile_if_missing",
+		# "after_insert": "contentready_oip.api.create_user_profile_if_missing",
 		# "on_cancel": "method",
 		# "on_trash": "method"
 	},

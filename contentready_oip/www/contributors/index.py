@@ -5,7 +5,6 @@ from contentready_oip import api, user_search
 RESULTS_PER_PAGE = 20
 
 def get_context(context):
-    api.create_user_profile_if_missing(None,None,frappe.session.user)
     context.available_sectors = api.get_available_sectors()
     context.available_beneficiaries = []
     context.available_sdg = []

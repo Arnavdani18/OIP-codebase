@@ -5,7 +5,6 @@ import json
 RESULTS_PER_PAGE = 20
 
 def get_context(context):
-    api.create_user_profile_if_missing(None,None,frappe.session.user)
     context.available_sectors = api.get_available_sectors()
     context.available_beneficiaries = frappe.get_list('Beneficiary',fields=['title','name'])
     context.available_sdg = frappe.get_list('Sustainable Development Goal', fields=['title','name'])

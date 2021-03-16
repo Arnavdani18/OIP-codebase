@@ -5,7 +5,6 @@ import json
 RESULTS_PER_PAGE = 20
 
 def get_context(context):
-    api.create_user_profile_if_missing(None,None,frappe.session.user)
     # To hide any of these filters, set the available list to an empty list, []
     context.available_sectors = api.get_available_sectors()
     context.available_beneficiaries = []

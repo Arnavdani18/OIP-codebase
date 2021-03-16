@@ -24,8 +24,6 @@ def get_context(context):
     """
     This will execute while page load. default to get context of the page.
     """
-    api.create_user_profile_if_missing(None, None, frappe.session.user)
-    context.show_search = True
     context.matched_problems = []
     context.matched_solutions = []
     context.matched_contributors = []
