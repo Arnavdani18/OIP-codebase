@@ -3,6 +3,7 @@ import json
 import mimetypes
 import platform
 from frappe import _
+from frappe.utils.background_jobs import enqueue
 from frappe.utils.html_utils import clean_html
 from frappe.email.doctype.email_template.email_template import get_email_template
 from contentready_oip.google_vision import is_content_explicit
@@ -872,7 +873,6 @@ def send_sms_to_recipients(recipients, message):
 
 @frappe.whitelist(allow_guest=True)
 def deploy_apps():
-    from frappe.utils.background_jobs import enqueue
     try:
         enqueue(update_apps_via_git, timeout=1200)
         return True
@@ -1166,3 +1166,24 @@ def get_suggested_titles(text, scope=None):
     if type(scope) == type('hello'):
         scope = json.loads(scope)
     return [r['title'] for r in problem_search.search_title(text, scope=scope) + solution_search.search_title(text, scope=scope)]
+
+
+@frappe.whitelist(allow_guest=True)
+def enqueue_log_route_visit(route, user_agent=None):
+    enqueue(log_route_visit, timeout=1200, route=route, user_agent=user_agent)
+
+@frappe.whitelist(allow_guest=True)
+def log_route_visit(route, user_agent=None):
+    if frappe.db.exists('User Profile', frappe.session.user):
+        organisation = frappe.get_value('User Profile', frappe.session.user, 'org')
+    else:
+        organisation = None
+    doc = frappe.get_doc({
+        'doctype': 'OIP Route Log',
+        'route': route,
+        'user_agent': user_agent,
+        'user': frappe.session.user,
+        'organisation': organisation,
+    })
+    doc.save()
+    frappe.db.commit()

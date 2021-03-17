@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 import frappe
 from frappe.website.website_generator import WebsiteGenerator
 from frappe.utils.html_utils import clean_html
+from contentready_oip import api
 
 class Solution(WebsiteGenerator):
 	def make_route(self):
@@ -66,3 +67,8 @@ class Solution(WebsiteGenerator):
 				'route': content_route + '#' + self.doctype.lower() + 's',
 			})
 			notification.save()
+
+	def get_context(self, context):
+		# Log visit
+		api.enqueue_log_route_visit(route=context.route, user_agent=frappe.request.headers.get('User-Agent'))
+		return context

@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.website.website_generator import WebsiteGenerator
-
+from contentready_oip import api
 
 class UserProfile(WebsiteGenerator):
     def make_route(self):
@@ -50,3 +50,8 @@ class UserProfile(WebsiteGenerator):
             r = self.append('personas', {})
             r.persona = persona
         frappe.db.commit()
+
+    def get_context(self, context):
+        # Log visit
+        api.enqueue_log_route_visit(route=context.route, user_agent=frappe.request.headers.get('User-Agent'))
+        return context
