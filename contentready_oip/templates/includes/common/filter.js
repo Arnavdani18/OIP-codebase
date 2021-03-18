@@ -10,6 +10,7 @@ frappe.ready(() => {
       return {
         key: "",
         qp_page: "",
+        selected_service_category: "",
         selected_range: null,
         show_beneficiary: true,
         searched_location: "",
@@ -50,7 +51,7 @@ frappe.ready(() => {
 
       const query_params = frappe.utils.get_query_params();
 
-      const { key, sectors , sdgs, beneficiaries, personas } = query_params;
+      const { key, sectors , sdgs, beneficiaries, personas, service_category } = query_params;
       
       this.key = key;
 
@@ -74,6 +75,10 @@ frappe.ready(() => {
         this.prefillMultiselect(parsed_personas, this.persona_multiselect_instance);
       }
 
+      if (service_category) {
+        this.selected_service_category = service_category;
+      }
+
 
     },
     computed: {
@@ -88,6 +93,9 @@ frappe.ready(() => {
       },
       available_personas() {
         return JSON.parse(`{{ available_personas | json }}`) || [];
+      },
+      available_service_categories() {
+        return JSON.parse(`{{ available_service_categories | json }}`) || [];
       },
     },
     methods: {
@@ -183,6 +191,11 @@ frappe.ready(() => {
           localStorage.setItem("filter_sectors", sectors_list);
         }
         localStorage.setItem("filter_sectors", JSON.stringify(sectors_list));
+      },
+
+      storeServiceCategoryFilter() {
+        const service_category = $("#service-category-sel").val() ?? '';
+        localStorage.setItem("filter_service_category", service_category);
       },
 
       clearLocationIfEmpty() {
@@ -342,6 +355,11 @@ frappe.ready(() => {
             query_obj['personas'] = JSON.parse(personas);
           }
 
+          let service_category = localStorage.getItem("filter_service_category");
+          if (service_category) {
+            query_obj['service_category'] = service_category;
+          }
+
           return query_obj;
         }
       },
@@ -351,6 +369,7 @@ frappe.ready(() => {
         this.storeBeneficiaryFilter();
         this.storePersonaFilter();
         this.storeSdgFilter();
+        this.storeServiceCategoryFilter();
         this.setQueryParam();
         window.location.reload();
       },
@@ -364,6 +383,7 @@ frappe.ready(() => {
         localStorage.setItem("filter_personas", "");
         localStorage.setItem("filter_sdgs", "");
         localStorage.setItem("filter_sectors", "");
+        localStorage.setItem("filter_service_category", "");
 
         this.setQueryParam();
         window.location.reload();

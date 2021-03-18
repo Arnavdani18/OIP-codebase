@@ -146,6 +146,14 @@
       </select>
     </div>
     {% endif %}
+
+    {% if available_service_categories | length %}
+    <div class="mt-4 mt-sm-0 in-mob" id="service-category-sel-div">
+      <select class="pattern1" id="service-category-sel" @input="storeServiceCategoryFilter" v-model="selected_service_category">
+        <option v-for="option in available_service_categories" :value="option.name">[[option.title]]</option>
+      </select>
+    </div>
+    {% endif %}
     
     <div class="mt-4 mt-sm-0" id="location-input-div">
       <input class="pattern1 pl-2 in-mob" type="text" ref="location" v-model="searched_location" id="autocomplete" placeholder="Search for location..."
