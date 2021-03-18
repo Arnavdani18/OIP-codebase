@@ -8,6 +8,7 @@ from frappe.utils.html_utils import clean_html
 from frappe.email.doctype.email_template.email_template import get_email_template
 from contentready_oip.google_vision import is_content_explicit
 from contentready_oip import problem_search, solution_search, user_search
+from user_agents import parse as ua_parse
 
 python_version_2 = platform.python_version().startswith('2')
 
@@ -1169,21 +1170,50 @@ def get_suggested_titles(text, scope=None):
 
 
 @frappe.whitelist(allow_guest=True)
-def enqueue_log_route_visit(route, user_agent=None):
-    enqueue(log_route_visit, timeout=1200, route=route, user_agent=user_agent)
+def enqueue_log_route_visit(route, user_agent=None, parent_doctype=None, parent_name=None):
+    enqueue(log_route_visit, timeout=1200, route=route, user_agent=user_agent, parent_doctype=parent_doctype, parent_name=parent_name)
 
 @frappe.whitelist(allow_guest=True)
-def log_route_visit(route, user_agent=None):
+def log_route_visit(route, user_agent=None, parent_doctype=None, parent_name=None):
     if frappe.db.exists('User Profile', frappe.session.user):
         organisation = frappe.get_value('User Profile', frappe.session.user, 'org')
     else:
         organisation = None
+    ua_string = user_agent
+    user_agent = ua_parse(ua_string)
     doc = frappe.get_doc({
         'doctype': 'OIP Route Log',
         'route': route,
-        'user_agent': user_agent,
         'user': frappe.session.user,
         'organisation': organisation,
+        'parent_doctype': parent_doctype,
+        'parent_name': parent_name,
+        'user_agent': ua_string,
+        'browser': user_agent.browser.family,
+        'os': user_agent.os.family,
+        'device': user_agent.device.family,
     })
     doc.save()
+    frappe.db.commit()
+
+
+def enqueue_aggregate_analytics(doc, event_name):
+    enqueue(aggregate_analytics, timeout=1200, doc=doc, event_name=event_name)
+
+def aggregate_analytics(doc, event_name):
+    frappe.set_user('Administrator')
+    existing = frappe.get_list('OIP Route Aggregate', {'parent_doctype': doc.parent_doctype, 'parent_name': doc.parent_name})
+    if len(existing) > 0:
+        agg = frappe.get_doc('OIP Route Aggregate', existing[0])
+    else:
+        agg = frappe.get_doc({
+            'doctype': 'OIP Route Aggregate',
+            'route': doc.route,
+            'parent_doctype': doc.parent_doctype,
+            'parent_name': doc.parent_name,
+            'owner': frappe.db.get_value(doc.parent_doctype, doc.parent_name, 'owner')
+        })
+    query = '''select count(name), count(distinct user), count(distinct organisation) from `tabOIP Route Log` where parent_doctype='{}' and parent_name='{}';'''.format(doc.parent_doctype, doc.parent_name)
+    agg.total_visits, agg.unique_visitors, agg.unique_organisations = frappe.db.sql(query)[0]
+    agg.save()
     frappe.db.commit()

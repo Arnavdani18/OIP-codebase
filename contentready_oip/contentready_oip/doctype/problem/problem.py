@@ -52,5 +52,5 @@ class Problem(WebsiteGenerator):
         solution_ids = [s['parent'] for s in solution_ids]
         context.solutions = frappe.get_list('Solution', filters={'name': ['in', solution_ids], 'is_published': True})
         # Log visit
-        api.enqueue_log_route_visit(route=context.route, user_agent=frappe.request.headers.get('User-Agent'))
+        api.enqueue_log_route_visit(route=context.route, user_agent=frappe.request.headers.get('User-Agent'), parent_doctype=self.doctype, parent_name=self.name)
         return context

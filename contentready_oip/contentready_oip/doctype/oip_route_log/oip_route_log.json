@@ -6,9 +6,15 @@
  "engine": "InnoDB",
  "field_order": [
   "route",
-  "user_agent",
+  "parent_doctype",
+  "parent_name",
   "user",
-  "organisation"
+  "organisation",
+  "column_break_6",
+  "user_agent",
+  "browser",
+  "os",
+  "device"
  ],
  "fields": [
   {
@@ -34,11 +40,43 @@
   {
    "fieldname": "user_agent",
    "fieldtype": "Data",
-   "label": "User Agent"
+   "label": "User Agent",
+   "length": 600
+  },
+  {
+   "fieldname": "parent_doctype",
+   "fieldtype": "Link",
+   "label": "Parent Doctype",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "parent_name",
+   "fieldtype": "Dynamic Link",
+   "label": "Parent Name",
+   "options": "parent_doctype"
+  },
+  {
+   "fieldname": "column_break_6",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "browser",
+   "fieldtype": "Data",
+   "label": "Browser"
+  },
+  {
+   "fieldname": "os",
+   "fieldtype": "Data",
+   "label": "OS"
+  },
+  {
+   "fieldname": "device",
+   "fieldtype": "Data",
+   "label": "Device"
   }
  ],
  "links": [],
- "modified": "2021-03-17 15:29:54.334744",
+ "modified": "2021-03-18 17:39:56.766317",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP Route Log",
@@ -75,7 +113,6 @@
    "share": 1
   }
  ],
- "quick_entry": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
  "track_changes": 1

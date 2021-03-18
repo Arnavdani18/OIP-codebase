@@ -107,6 +107,9 @@ doc_events = {
 	},
 	"User Profile":{
 		"on_update": "contentready_oip.api.index_document"
+	},
+	"OIP Route Log":{
+		"on_update": "contentready_oip.api.enqueue_aggregate_analytics"
 	}
 }
 

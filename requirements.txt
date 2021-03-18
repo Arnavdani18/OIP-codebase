@@ -1,3 +1,6 @@
 frappe
 geopy
 google-cloud-vision
+pyyaml
+ua-parser
+user-agents
