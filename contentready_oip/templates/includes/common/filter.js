@@ -75,10 +75,7 @@ frappe.ready(() => {
         this.prefillMultiselect(parsed_personas, this.persona_multiselect_instance);
       }
 
-      if (service_category) {
-        this.selected_service_category = service_category;
-      }
-
+      this.selected_service_category = service_category;
 
     },
     computed: {
@@ -356,10 +353,8 @@ frappe.ready(() => {
           }
 
           let service_category = localStorage.getItem("filter_service_category");
-          if (service_category) {
-            query_obj['service_category'] = service_category;
-          }
-
+          query_obj['service_category'] = service_category;
+          
           return query_obj;
         }
       },
@@ -384,6 +379,7 @@ frappe.ready(() => {
         localStorage.setItem("filter_sdgs", "");
         localStorage.setItem("filter_sectors", "");
         localStorage.setItem("filter_service_category", "");
+        this.selected_service_category = '';
 
         this.setQueryParam();
         window.location.reload();

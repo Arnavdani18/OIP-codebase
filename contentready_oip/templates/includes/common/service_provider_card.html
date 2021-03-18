@@ -43,7 +43,8 @@
       {{ service_provider.org_title }}
     </p>
     <p class="company">
-      {{ service_provider.service_category }}
+      {% set service_category_title = frappe.db.get_value('Service Category', service_provider.service_category, 'title') %}
+      {{ service_category_title }}
     </p>
   </div>
 </div>

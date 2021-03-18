@@ -14,6 +14,7 @@
   "photo",
   "org_title",
   "linkedin_profile",
+  "website",
   "service_category",
   "column_break_4",
   "is_published",
@@ -201,13 +202,18 @@
    "fieldname": "country_code",
    "fieldtype": "Data",
    "label": "Country Code"
+  },
+  {
+   "fieldname": "website",
+   "fieldtype": "Data",
+   "label": "Website"
   }
  ],
  "has_web_view": 1,
  "image_field": "photo",
  "is_published_field": "is_published",
  "links": [],
- "modified": "2021-03-16 17:12:14.508245",
+ "modified": "2021-03-18 11:55:07.701027",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Service Provider",
@@ -256,7 +262,6 @@
    "share": 1
   }
  ],
- "quick_entry": 1,
  "route": "list_profiles",
  "search_fields": "full_name, org_title",
  "show_preview_popup": 1,

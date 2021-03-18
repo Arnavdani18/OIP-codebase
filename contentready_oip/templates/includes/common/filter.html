@@ -150,6 +150,7 @@
     {% if available_service_categories | length %}
     <div class="mt-4 mt-sm-0 in-mob" id="service-category-sel-div">
       <select class="pattern1" id="service-category-sel" @input="storeServiceCategoryFilter" v-model="selected_service_category">
+        <option value="" disabled>Select Category</option>
         <option v-for="option in available_service_categories" :value="option.name">[[option.title]]</option>
       </select>
     </div>

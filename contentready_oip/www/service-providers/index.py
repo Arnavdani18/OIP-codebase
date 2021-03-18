@@ -13,7 +13,7 @@ def get_context(context):
     parameters = frappe.form_dict
     context.page = int(parameters.get('page')) if parameters.get('page') else 1
     scope = {}
-    scope['service_category'] = json.loads(parameters['service_category']) if parameters.get("service_category") else []
+    scope['service_category'] = parameters.get("service_category")
     # For the search we match everything and set limit very high as 
     # we handle pagination locally
     matched = service_provider_search.search_index('*', scope=scope, limit=1000000)
@@ -21,5 +21,5 @@ def get_context(context):
     context.end = context.start + RESULTS_PER_PAGE
     context.total_count = len(matched)
     context.has_next_page = context.total_count > context.end
-    context.users = [frappe.get_doc('Service Provider', d['name']) for d in matched[context.start:context.end]]
+    context.service_providers = [frappe.get_doc('Service Provider', d['name']) for d in matched[context.start:context.end]]
     return context
