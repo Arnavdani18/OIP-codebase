@@ -1,0 +1,272 @@
+{
+ "actions": [],
+ "allow_guest_to_view": 1,
+ "autoname": "field:user",
+ "creation": "2021-03-16 16:16:29.170251",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "user",
+  "first_name",
+  "last_name",
+  "full_name",
+  "photo",
+  "org_title",
+  "linkedin_profile",
+  "website",
+  "service_category",
+  "column_break_4",
+  "is_published",
+  "is_email_allowed",
+  "is_sms_allowed",
+  "is_first_login",
+  "phone",
+  "skills",
+  "qualifications",
+  "route",
+  "section_break_11",
+  "city",
+  "latitude",
+  "longitude",
+  "column_break_15",
+  "state",
+  "state_code",
+  "column_break_18",
+  "country",
+  "country_code"
+ ],
+ "fields": [
+  {
+   "fieldname": "user",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "User",
+   "options": "User",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "depends_on": " ",
+   "fetch_from": "user.first_name",
+   "fieldname": "first_name",
+   "fieldtype": "Data",
+   "label": "First Name"
+  },
+  {
+   "fetch_from": "user.last_name",
+   "fetch_if_empty": 1,
+   "fieldname": "last_name",
+   "fieldtype": "Data",
+   "label": "Last Name"
+  },
+  {
+   "fetch_from": "user.full_name",
+   "fetch_if_empty": 1,
+   "fieldname": "full_name",
+   "fieldtype": "Data",
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Full Name",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "user.user_image",
+   "fetch_if_empty": 1,
+   "fieldname": "photo",
+   "fieldtype": "Attach Image",
+   "in_preview": 1,
+   "label": "Photo",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "org.title",
+   "fetch_if_empty": 1,
+   "fieldname": "org_title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_preview": 1,
+   "label": "Organisation Name"
+  },
+  {
+   "fieldname": "linkedin_profile",
+   "fieldtype": "Data",
+   "label": "Linkedin Profile"
+  },
+  {
+   "fieldname": "service_category",
+   "fieldtype": "Link",
+   "label": "Service Category",
+   "options": "Service Category"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "1",
+   "fieldname": "is_published",
+   "fieldtype": "Check",
+   "label": "Published",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_email_allowed",
+   "fieldtype": "Check",
+   "label": "Email Notifications",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_sms_allowed",
+   "fieldtype": "Check",
+   "label": "SMS Notifications",
+   "reqd": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "is_first_login",
+   "fieldtype": "Check",
+   "label": "First Login"
+  },
+  {
+   "fieldname": "phone",
+   "fieldtype": "Data",
+   "label": "Phone"
+  },
+  {
+   "fieldname": "skills",
+   "fieldtype": "Table",
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Skills",
+   "options": "Skill Table"
+  },
+  {
+   "fieldname": "qualifications",
+   "fieldtype": "Table",
+   "in_preview": 1,
+   "in_standard_filter": 1,
+   "label": "Qualifications",
+   "options": "Qualification Table"
+  },
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "label": "route"
+  },
+  {
+   "fieldname": "section_break_11",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Data",
+   "label": "Latitude"
+  },
+  {
+   "fieldname": "longitude",
+   "fieldtype": "Data",
+   "label": "Longitude"
+  },
+  {
+   "fieldname": "column_break_15",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Data",
+   "label": "State"
+  },
+  {
+   "fieldname": "state_code",
+   "fieldtype": "Data",
+   "label": "State Code"
+  },
+  {
+   "fieldname": "column_break_18",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "country",
+   "fieldtype": "Data",
+   "label": "Country"
+  },
+  {
+   "fieldname": "country_code",
+   "fieldtype": "Data",
+   "label": "Country Code"
+  },
+  {
+   "fieldname": "website",
+   "fieldtype": "Data",
+   "label": "Website"
+  }
+ ],
+ "has_web_view": 1,
+ "image_field": "photo",
+ "is_published_field": "is_published",
+ "links": [],
+ "modified": "2021-03-18 11:55:07.701027",
+ "modified_by": "Administrator",
+ "module": "ContentReady OIP",
+ "name": "Service Provider",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Guest",
+   "share": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Collaborator",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1
+  }
+ ],
+ "route": "list_profiles",
+ "search_fields": "full_name, org_title",
+ "show_preview_popup": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "user",
+ "track_changes": 1
+}

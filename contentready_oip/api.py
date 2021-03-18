@@ -7,8 +7,9 @@ from frappe.utils.background_jobs import enqueue
 from frappe.utils.html_utils import clean_html
 from frappe.email.doctype.email_template.email_template import get_email_template
 from contentready_oip.google_vision import is_content_explicit
-from contentready_oip import problem_search, solution_search, user_search
+from contentready_oip import problem_search, solution_search, user_search, service_provider_search
 from user_agents import parse as ua_parse
+
 
 python_version_2 = platform.python_version().startswith('2')
 
@@ -220,6 +221,11 @@ def search_contributors_by_text(text, limit_page_length=5, html=True):
 def get_orgs_list():
     all_orgs = frappe.get_list('Organisation', fields=['title', 'name'])
     return [{'label': o['title'], 'value': o['name']} for o in all_orgs]
+
+@frappe.whitelist(allow_guest = True)
+def get_service_categories():
+    all_categories = frappe.get_list('Service Category', fields=['title', 'name'])
+    return [{'label': o['title'], 'value': o['name']} for o in all_categories]
 
 @frappe.whitelist(allow_guest = True)
 def get_sdg_list():
@@ -1159,6 +1165,8 @@ def index_document(doc=None, event_name=None):
             solution_search.update_index_for_id(doc.name)
         elif doc.doctype == 'User Profile':
             user_search.update_index_for_id(doc.name)
+        elif doc.doctype == 'Service Provider':
+            service_provider_search.update_index_for_id(doc.name)
     except Exception as e:
         print(str(e))
     
