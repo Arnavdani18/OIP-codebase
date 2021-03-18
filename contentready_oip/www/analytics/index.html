@@ -2,57 +2,39 @@
 <!-- no-breadcrumbs -->
 <!-- no-cache -->
 
-<table class="table collaborations-table">
+<table class="table logs-table">
   <thead>
     <tr>
       <th scope="col">#</th>
-      <th scope="col">Type</th>
       <th scope="col">Title</th>
-      <th scope="col">Comment</th>
-      <th scope="col">Personas</th>
-      <th scope="col">Collaborator</th>
-      <th scope="col">Action</th>
+      <th scope="col">Total Visits</th>
+      <th scope="col">Unique Visitors</th>
+      <th scope="col">Unique Organisations</th>
+      <th scope="col">Last Visit</th>
     </tr>
   </thead>
   <tbody>
-    {% for collaboration in collaborations %}
-    {% set title, content_route = frappe.db.get_value(collaboration.parent_doctype, collaboration.parent_name, ['title', 'route']) %}
-    {% set full_name, user_route = frappe.db.get_value('User Profile', collaboration.owner, ['full_name', 'route']) %}
+    {% for doctype in logs %}
     <tr>
-      <th scope="row">{{ loop.index }}</th>
-      <td>{{ collaboration.parent_doctype }}</td>
-      <td><a href="{{ content_route }}" target="_blank">{{ title }}</a></td>
-      <td>{{ collaboration.comment }}</td>
-      <td>{{ collaboration.personas_list }}</td>
-      <td><a href="{{ user_route }}" target="_blank">{{ full_name }}</a></td>
-      <td>
-        <select name="status" value="{{collaboration.status}}" onchange="change_status('{{collaboration.name}}', event.target.value)">
-          <option value="New">New</option>
-          <option value="Accept">Accept</option>
-          <option value="Ignore">Ignore</option>
-        </select>
-      </td>
-    </tr>
+      <td colspan="5"><b>{{doctype}}</b></td>
+     </tr>
+      {% for log in logs[doctype] %}
+        {% set title, content_route = frappe.db.get_value(log.parent_doctype, log.parent_name, ['title', 'route']) %}
+      <tr>
+        <th scope="row">{{ loop.index }}</th>
+        <td><a href="{{ content_route }}" target="_blank">{{ title }}</a></td>
+        <td>{{ log.total_visits }}</td>
+        <td>{{ log.unique_visitors }}</td>
+        <td>{{ log.unique_organisations }}</td>
+        <td>{{ frappe.format_date(log.modified) }}</td>
+      </tr>
+      {% endfor %}
     {% endfor %}
   </tbody>
 </table>
 
 <style>
-  .collaborations-table {
+  .logs-table {
     font-size: 1.3rem;
   }
 </style>
-
-<script>
-  const change_status = (docname, status) => {
-    frappe.call({
-      method: "contentready_oip.api.change_collaboration_status",
-      args: { docname, status },
-      callback: function ( r ) {
-        if (r.message) {
-          frappe.show_alert('Updated');
-        }
-      }
-      });
-  }
-</script>

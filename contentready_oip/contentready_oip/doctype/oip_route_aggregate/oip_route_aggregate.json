@@ -1,5 +1,6 @@
 {
  "actions": [],
+ "autoname": "format:{parent_doctype}-{parent_name}",
  "creation": "2021-03-18 15:30:26.960961",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -87,7 +88,7 @@
   }
  ],
  "links": [],
- "modified": "2021-03-18 17:44:10.692231",
+ "modified": "2021-03-18 18:35:00.995850",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP Route Aggregate",
