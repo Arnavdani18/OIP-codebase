@@ -38,7 +38,7 @@
    "label": "Type"
   },
   {
-   "default": "/files/image_placeholder.jpg",
+   "default": "/assets/contentready_oip/images/image_placeholder.jpg",
    "fieldname": "thumbnail",
    "fieldtype": "Attach",
    "label": "Thumbnail"

@@ -106,7 +106,7 @@
                     <a class="nav-link profile-icon dropdown-toggle" href="#" id="profileDropdown" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         {% set profile = frappe.get_doc('User Profile', frappe.session.user) %}
-                        <img src="{{profile.photo|default('/files/default-avatar.jpg', true)}}" alt="profile photo" class="profile-photo"
+                        <img src="{{profile.photo|default('/assets/contentready_oip/images/default-avatar.jpg', true)}}" alt="profile photo" class="profile-photo"
                              onerror="javascript:this.src='/assets/contentready_oip/images/default-avatar.jpg'" />
 
                         <span class="d-lg-none text-capitalize ml-3" style="color: var(--secondary1);">Profile</span>
