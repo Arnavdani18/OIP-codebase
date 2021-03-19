@@ -4,7 +4,13 @@ Backend for search route
 import json
 from geopy.distance import distance
 import frappe
-from contentready_oip import api
+from contentready_oip import api, problem_search, solution_search, user_search
+
+modules = {
+    'Problem': problem_search,
+    'Solution': solution_search,
+    'User Profile': user_search,
+}
 
 def get_lat_lng_by_rng(lat, lng, rng):
     """
@@ -18,46 +24,41 @@ def get_context(context):
     """
     This will execute while page load. default to get context of the page.
     """
-    api.create_user_profile_if_missing(None, None, frappe.session.user)
+    context.show_search = True
     context.matched_problems = []
     context.matched_solutions = []
     context.matched_contributors = []
-    context.available_sectors = api.get_available_sectors()
     context.key = ''
+    context.available_sectors = api.get_available_sectors()
+    context.available_beneficiaries = frappe.get_list('Beneficiary',fields=['title','name'])
+    context.available_sdg = frappe.get_list('Sustainable Development Goal', fields=['title','name'])
     parameters = frappe.form_dict
+    scope = {}
     try:
-        key = parameters['key'].lower()
-        sector_list = json.loads(parameters['sectors']) if "sectors" in parameters else []
+        context.key = parameters['key'].lower()
+        scope['sectors'] = json.loads(parameters['sectors']) if "sectors" in parameters else []
+        scope['sdgs'] = json.loads(parameters['sdgs']) if parameters.get("sdgs") else []
+        scope['beneficiaries'] = json.loads(parameters['beneficiaries']) if parameters.get("beneficiaries") else []
     except:
-        key = ''
-    if not key:
+        pass
+    if not context.key:
         return False
-    context.key = key
-    sectors = set()
-
-    prepare_sector_filter = ''
-    filter_str = " AND meili_sectors=".join(sector_list) if not "all" in sector_list else ''
-    if filter_str:
-        prepare_sector_filter = "meili_sectors=" + filter_str
-
-    # problems
-    _r = api.get_filtered_paginated_content(context, 'Problem', 'problems')
-    context.update(_r)
-    context.matched_problems = api.get_searched_content_es('Problem', key, prepare_sector_filter)
-
-    # solutions
-    _s = api.get_filtered_paginated_content(context, 'Solution', 'solutions')
-    context.update(_s)
-    context.matched_solutions = api.get_searched_content_es('Solution', key, prepare_sector_filter)
-
-    sectors_4_contributors = set()
-    for document in context.matched_problems:
-        sectors_4_contributors.update(document["meili_sectors"])
     
-    for document in context.matched_solutions:
-        sectors_4_contributors.update(document["meili_sectors"])
-        
-    # User-Profile
-    # context.matched_contributors = api.get_content_recommended_for_user('User Profile', sectors_4_contributors)
-    context.matched_contributors = api.get_searched_content_es('User Profile', key, prepare_sector_filter)
-    # print('\n\n\n>>>>>>>', len(context.matched_contributors), '\n\n\n')
+    context.matched_problems = search_doctype('Problem', context.key, scope)
+    context.matched_solutions = search_doctype('Solution', context.key, scope)
+    # For contributors, we filter by sectors across the matched problems and solutions
+    sectors = set()
+    for doc in context.matched_problems + context.matched_solutions:
+        for s in doc.sectors:
+            sectors.add(s.sector)
+    scope['sectors'] = sectors
+    # An empty sector list will match every user so we pre-empt this search
+    if len(scope['sectors']):
+        context.matched_contributors = search_doctype('User Profile', '*', scope)
+    return context
+    
+
+def search_doctype(doctype, key, scope=None):
+    matched = modules[doctype].search_index(key, scope=scope)
+    return [frappe.get_doc(doctype, d['name']) for d in matched]
+    

@@ -5,7 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.website.website_generator import WebsiteGenerator
-
+from contentready_oip import api
 
 class UserProfile(WebsiteGenerator):
     def make_route(self):
@@ -27,17 +27,17 @@ class UserProfile(WebsiteGenerator):
             self.name = self.scrubbed_title()+'-'+frappe.generate_hash("", 3)
 
     def on_update(self):
-        if self.org_title:
-            orgs = frappe.get_all('Organisation', {'title': self.org_title})
-            if len(orgs) > 0:
-                org = frappe.get_doc('Organisation', orgs[0])
-            else:
-                org = frappe.get_doc({
-                    'doctype': 'Organisation',
-                    'title': self.org_title
-                })
-                org.insert()
-            self.org = org.name
+        # if self.org_title:
+        #     orgs = frappe.get_all('Organisation', {'title': self.org_title})
+        #     if len(orgs) > 0:
+        #         org = frappe.get_doc('Organisation', orgs[0])
+        #     else:
+        #         org = frappe.get_doc({
+        #             'doctype': 'Organisation',
+        #             'title': self.org_title
+        #         })
+        #         org.insert()
+        #     self.org = org.name
         # use sets for sectors and personas
         sectors = {s.sector for s in self.sectors}
         self.sectors = []
@@ -50,3 +50,8 @@ class UserProfile(WebsiteGenerator):
             r = self.append('personas', {})
             r.persona = persona
         frappe.db.commit()
+
+    def get_context(self, context):
+        # Log visit
+        api.enqueue_log_route_visit(route=context.route, user_agent=frappe.request.headers.get('User-Agent'), parent_doctype=self.doctype, parent_name=self.name)
+        return context

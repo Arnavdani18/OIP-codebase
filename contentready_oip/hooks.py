@@ -51,7 +51,7 @@ home_page = "home"
 
 # runs after login
 on_session_creation = [
-#    "contentready_oip.initialize_meilisearch.main_fn",
+   "contentready_oip.api.create_user_profile_if_missing",
 ]
 
 # automatically create page for each record of this doctype
@@ -89,24 +89,23 @@ after_install = "contentready_oip.install.after_install"
 # Hook on document methods and events
 
 doc_events = {
-	"User": {
-		"after_insert": "contentready_oip.api.create_user_profile_if_missing",
-		# "on_cancel": "method",
-		# "on_trash": "method"
-	},
 	"OIP White Label Domain": {
 		"after_insert": "contentready_oip.api.setup_domain_hook",
-		# "on_cancel": "method",
-		# "on_trash": "method"
 	},
 	"Problem":{
-		"on_update": "contentready_oip.api.add_doc_to_elasticsearch"
+		"on_update": "contentready_oip.api.index_document"
 	},
 	"Solution":{
-		"on_update": "contentready_oip.api.add_doc_to_elasticsearch"
+		"on_update": "contentready_oip.api.index_document"
 	},
 	"User Profile":{
-		"on_update": "contentready_oip.api.add_doc_to_elasticsearch"
+		"on_update": "contentready_oip.api.index_document"
+	},
+	"Service Provider": {
+		"on_update": "contentready_oip.api.index_document"
+	},
+	"OIP Route Log":{
+		"on_update": "contentready_oip.api.enqueue_aggregate_analytics"
 	}
 }
 

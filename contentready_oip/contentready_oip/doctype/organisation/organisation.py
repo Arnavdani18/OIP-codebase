@@ -3,8 +3,9 @@
 # For license information, please see license.txt
 
 from __future__ import unicode_literals
-# import frappe
+import frappe
 from frappe.website.website_generator import WebsiteGenerator
+from contentready_oip import api
 
 class Organisation(WebsiteGenerator):
     def make_route(self):
@@ -14,3 +15,8 @@ class Organisation(WebsiteGenerator):
         route/title'''
         from_title = self.scrubbed_title()
         return 'organisations' + '/' + from_title
+    
+    def get_context(self, context):
+        # Log visit
+        api.enqueue_log_route_visit(route=context.route, user_agent=frappe.request.headers.get('User-Agent'), parent_doctype=self.doctype, parent_name=self.name)
+        return context

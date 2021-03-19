@@ -43,7 +43,7 @@ frappe.ready( async () => {
 
 
   getProblemCard = () => {
-    frappe.call( {
+    frappe.call({
       method: "contentready_oip.api.get_problem_overview",
       args: { name: frappe.web_form.doc.problem },
       callback: function ( r ) {
@@ -51,7 +51,7 @@ frappe.ready( async () => {
         // r.message[1] is the doc_name in case we need to do any processing client side
         $( "#parent-problem" ).append( r.message[ 0 ] );
       }
-    } );
+    });
   };
 
   const pageHeadingSection = () => {

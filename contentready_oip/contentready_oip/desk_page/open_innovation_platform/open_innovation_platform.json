@@ -1,0 +1,67 @@
+{
+ "cards": [
+  {
+   "hidden": 0,
+   "label": "Content",
+   "links": "[\n    {\n        \"label\": \"Enrichments\",\n        \"name\": \"Enrichment\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Validations\",\n        \"name\": \"Validation\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Collaborations\",\n        \"name\": \"Collaboration\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Discussions\",\n        \"name\": \"Discussion\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"FAQs\",\n        \"name\": \"FAQ\",\n        \"type\": \"doctype\"\n    }\n]"
+  },
+  {
+   "hidden": 0,
+   "label": "Collaborators",
+   "links": "[\n    {\n        \"label\": \"User Profiles\",\n        \"name\": \"User Profile\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Organisations\",\n        \"name\": \"Organisation\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Service Providers\",\n        \"name\": \"Service Provider\",\n        \"type\": \"doctype\"\n    }\n]"
+  },
+  {
+   "hidden": 0,
+   "label": "Configuration",
+   "links": "[\n    {\n        \"label\": \"OIP Configuration\",\n        \"name\": \"OIP Configuration\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"White Label Domains\",\n        \"name\": \"OIP White Label Domain\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Sectors\",\n        \"name\": \"Sector\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Personas\",\n        \"name\": \"Persona\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Beneficiary\",\n        \"name\": \"Beneficiary\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Resource\",\n        \"name\": \"Resource\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Sustainable Development Goals\",\n        \"name\": \"Sustainable Development Goal\",\n        \"type\": \"doctype\"\n    }\n]"
+  }
+ ],
+ "cards_label": "Sections",
+ "category": "Modules",
+ "charts": [],
+ "creation": "2021-03-19 12:57:51.994335",
+ "developer_mode_only": 0,
+ "disable_user_customization": 0,
+ "docstatus": 0,
+ "doctype": "Desk Page",
+ "extends_another_page": 0,
+ "hide_custom": 0,
+ "idx": 0,
+ "is_default": 0,
+ "is_standard": 1,
+ "label": "Open Innovation Platform",
+ "modified": "2021-03-19 13:20:05.422166",
+ "modified_by": "Administrator",
+ "module": "ContentReady OIP",
+ "name": "Open Innovation Platform",
+ "owner": "Administrator",
+ "pin_to_bottom": 0,
+ "pin_to_top": 1,
+ "shortcuts": [
+  {
+   "doc_view": "List",
+   "label": "Problems",
+   "link_to": "Problem",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Solutions",
+   "link_to": "Solution",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Users",
+   "link_to": "User",
+   "type": "DocType"
+  },
+  {
+   "doc_view": "List",
+   "label": "Organisation",
+   "link_to": "Organisation",
+   "type": "DocType"
+  }
+ ],
+ "shortcuts_label": "Shortcuts"
+}

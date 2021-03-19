@@ -35,7 +35,7 @@
   "description",
   "short_description",
   "media",
-  "sustainable_development_goal"
+  "sdgs"
  ],
  "fields": [
   {
@@ -203,7 +203,7 @@
    "options": "\n&lt;100\n&lt;1,000\n&lt;10,000\n&lt;100,000\n&gt;100,000"
   },
   {
-   "fieldname": "sustainable_development_goal",
+   "fieldname": "sdgs",
    "fieldtype": "Table",
    "label": "Sustainable Development Goal",
    "options": "Sustainable Development Goal Table"
@@ -216,7 +216,7 @@
  "has_web_view": 1,
  "is_published_field": "is_published",
  "links": [],
- "modified": "2021-03-02 14:37:15.345295",
+ "modified": "2021-03-02 15:37:15.345295",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Problem",

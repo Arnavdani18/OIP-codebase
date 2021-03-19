@@ -1,0 +1,124 @@
+{
+ "actions": [],
+ "autoname": "format:{parent_doctype}-{parent_name}",
+ "creation": "2021-03-18 15:30:26.960961",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "route",
+  "column_break_2",
+  "parent_doctype",
+  "parent_name",
+  "section_break_5",
+  "total_visits",
+  "total_mobile_visits",
+  "total_desktop_visits",
+  "column_break_9",
+  "unique_visitors",
+  "unique_organisations"
+ ],
+ "fields": [
+  {
+   "fieldname": "route",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Route",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "parent_doctype",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Parent Doctype",
+   "options": "DocType",
+   "reqd": 1
+  },
+  {
+   "fieldname": "parent_name",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Parent Name",
+   "options": "parent_doctype",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_5",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "total_visits",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Total Visits"
+  },
+  {
+   "fieldname": "total_mobile_visits",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Total Mobile Visits"
+  },
+  {
+   "fieldname": "total_desktop_visits",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Total Desktop Visits"
+  },
+  {
+   "fieldname": "column_break_9",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "unique_visitors",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Unique Visitors"
+  },
+  {
+   "fieldname": "unique_organisations",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Unique Organisations"
+  }
+ ],
+ "links": [],
+ "modified": "2021-03-18 18:35:00.995850",
+ "modified_by": "Administrator",
+ "module": "ContentReady OIP",
+ "name": "OIP Route Aggregate",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Collaborator",
+   "share": 1
+  }
+ ],
+ "quick_entry": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}

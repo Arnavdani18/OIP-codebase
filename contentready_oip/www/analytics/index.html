@@ -1,0 +1,40 @@
+<!-- jinja -->
+<!-- no-breadcrumbs -->
+<!-- no-cache -->
+
+<table class="table logs-table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Title</th>
+      <th scope="col">Total Visits</th>
+      <th scope="col">Unique Visitors</th>
+      <th scope="col">Unique Organisations</th>
+      <th scope="col">Last Visit</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for doctype in logs %}
+    <tr>
+      <td colspan="5"><b>{{doctype}}</b></td>
+     </tr>
+      {% for log in logs[doctype] %}
+        {% set title, content_route = frappe.db.get_value(log.parent_doctype, log.parent_name, ['title', 'route']) %}
+      <tr>
+        <th scope="row">{{ loop.index }}</th>
+        <td><a href="{{ content_route }}" target="_blank">{{ title }}</a></td>
+        <td>{{ log.total_visits }}</td>
+        <td>{{ log.unique_visitors }}</td>
+        <td>{{ log.unique_organisations }}</td>
+        <td>{{ frappe.format_date(log.modified) }}</td>
+      </tr>
+      {% endfor %}
+    {% endfor %}
+  </tbody>
+</table>
+
+<style>
+  .logs-table {
+    font-size: 1.3rem;
+  }
+</style>

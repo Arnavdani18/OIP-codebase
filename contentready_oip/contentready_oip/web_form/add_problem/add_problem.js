@@ -64,16 +64,14 @@ frappe.ready(async () => {
 
   formatMultiSelectValues = () => {
     // sdg
-    const sdg_select = $('select[data-fieldname="sustainable_development_goal"]');
-    const sdgVal = sdg_select.val()?.map(v => ({sustainable_development_goal: v}));
-    frappe.web_form.doc.sustainable_development_goal = sdgVal;
-    // frappe.web_form.set_value('sustainable_development_goal', sdgVal);
+    const sdg_select = $('select[data-fieldname="sdgs"]');
+    const sdgVal = sdg_select.val()?.map(v => ({sdg: v}));
+    frappe.web_form.doc.sdgs = sdgVal;
 
     // beneficiary
     const beneficiary_select = $('select[data-fieldname="beneficiaries"]');
     const beneficiariesVal = beneficiary_select.val()?.map(v => ({beneficiary: v}));
     frappe.web_form.doc.beneficiaries = beneficiariesVal;
-    // frappe.web_form.set_value('beneficiaries', beneficiariesVal);
   }
 
   const problemDetails = () => {
