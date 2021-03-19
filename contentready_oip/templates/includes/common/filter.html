@@ -90,14 +90,9 @@
 </style>
 
 <script type="text/x-template" id="filter-script">
-    <form id="searchInput" @submit.prevent="searchWithFilters">
+    <form @submit.prevent="searchWithFilters">
       {% if show_search %}
-      <div class="input-group input-section">
-        <!-- <div class="input-group-prepend style1">
-            <span class="input-group-text">
-                <img src="/assets/contentready_oip/svg/search-solid.svg" alt="" width="20" style="opacity: .3;" />
-            </span>
-        </div> -->
+      <div class="input-group input-section mb-4">
         <input type="search" class="form-control form-control-lg style1"
             aria-label="Search the Open Innovation Platform" autocomplete="off" list="suggestions"
             placeholder="Search for problems, solutions and contributors" name='key' v-model="key" v-on:keyup="get_search_suggestions"
@@ -113,7 +108,7 @@
       </div>
       {% endif %}
     
-  <div class="d-flex flex-column">
+  <div class="container d-flex flex-column">
   <div class="row justify-content-sm-start justify-content-md-end flex-wrap" id="filter-section">
     {% if available_sectors | length %}
     <div class="in-mob" id="sector-sel-div">
