@@ -118,6 +118,7 @@
                         </a>
                         <div class="dropdown-menu mt-2 dropdown-menu-right dropdown-section">
                             <div id="deskRoute"></div>
+                            <div id="serviceProviderRoute"></div>
                             <a class="dropdown-item nullActive" href="/update-profile">
                                 <img src="../assets/contentready_oip/svg/profile.svg" alt="" width="16" height="16" />
                                 <span> Profile</span>
@@ -278,6 +279,25 @@
             } );
         }
 
+        add_service_provider_route = () =>{
+            frappe.call( {
+                method: 'contentready_oip.api.has_service_provider_role',
+                callback: function( r ) {
+                    if (r.message) {
+                        new Vue({
+                            el: '#serviceProviderRoute',
+                            template:`
+                                <a class="dropdown-item" href="/update-service-provider">
+                                    <img src="../assets/contentready_oip/svg/user-tie-solid.svg" alt="" width="16" height="16" />
+                                    <span>Service Provider Profile</span>
+                                </a>
+                            `
+                        }) 
+                    }
+                }
+            } );
+        }
+
         add_content_actions = () =>{
             frappe.call( {
                 method: 'contentready_oip.api.has_collaborator_role',
@@ -310,6 +330,7 @@
         }
     
         add_desk_route();
+        add_service_provider_route();
         add_content_actions();
     })
 

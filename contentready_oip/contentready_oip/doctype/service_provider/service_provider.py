@@ -33,5 +33,6 @@ class ServiceProvider(WebsiteGenerator):
 		if ok:
 			self.user = self.email
 			self.is_published = True
+			self.owner = self.user
 			self.save()
 		return ok
