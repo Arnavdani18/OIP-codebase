@@ -27,8 +27,11 @@ class ServiceProvider(WebsiteGenerator):
 			self.name = self.scrubbed_title()+'-'+frappe.generate_hash("", 3)
 
 	def approve(self):
-		print('\n\n\nApproving user', self.as_dict())
 		if not api.has_admin_role():
 			frappe.throw('This method can only be run by a system manager')
-		api.invite_user(self.email, first_name=self.first_name, last_name=self.last_name, roles=['Service Provider'])
-		return True
+		ok = api.invite_user(self.email, first_name=self.first_name, last_name=self.last_name, roles=['Service Provider'])
+		if ok:
+			self.user = self.email
+			self.is_published = True
+			self.save()
+		return ok

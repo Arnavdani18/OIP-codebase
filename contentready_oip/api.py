@@ -17,12 +17,21 @@ def nudge_guests():
     if not frappe.session.user or frappe.session.user == 'Guest':
         frappe.throw('Please login to collaborate.')
 
-def create_user_profile_if_missing():
-    if not frappe.db.exists('User Profile', frappe.session.user):
+def create_profile_from_user(doc, event_name):
+    if doc.doctype == 'User' and doc.email:
+        print("\n\n\ncreate_profile_from_user", doc.as_dict())
+        create_user_profile_if_missing(doc.email)
+
+
+def create_user_profile_if_missing(email=None):
+    print("\n\n\create_user_profile_if_missing", email)
+    if not email:
+        email = frappe.session.user
+    if not frappe.db.exists('User Profile', email):
         profile = frappe.get_doc({
             'doctype': 'User Profile',
-            'user': frappe.session.user,
-            'owner': frappe.session.user
+            'user': email,
+            'owner': email
         })
         profile.save()
         frappe.db.commit()
@@ -1259,3 +1268,5 @@ def invite_user(email, first_name=None, last_name=None, roles=[]):
             roles.append(default_role)
         for role in roles:
             user.add_roles(role)
+        return True
+    return False
