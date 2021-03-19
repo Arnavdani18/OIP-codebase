@@ -362,7 +362,7 @@ def get_problem_overview(name, html=True):
     else:
         return doc
 
-@frappe.whitelist(allow_guest = False)
+@frappe.whitelist(allow_guest = True)
 def add_primary_content(doctype, doc, is_draft=False):
     doc = json.loads(doc)
     if isinstance(is_draft,str):
