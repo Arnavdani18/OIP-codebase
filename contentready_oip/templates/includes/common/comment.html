@@ -5,7 +5,7 @@
     <div class="">
       {% set doc = frappe.get_doc('User Profile', comment.owner) %}
       <img
-        src="{{doc.photo|default('/files/default-avatar.jpg', true)}}"
+        src="{{doc.photo|default('/assets/contentready_oip/images/default-avatar.jpg', true)}}"
         alt="profile photo"
         class=""
         style="object-fit: cover; overflow: hidden; border-radius: 50%;"
@@ -42,7 +42,7 @@
     <div class="">
       {% set doc = frappe.get_doc('User Profile', comment.owner) %}
       <img
-        src="{{doc.photo|default('/files/default-avatar.jpg', true)}}"
+        src="{{doc.photo|default('/assets/contentready_oip/images/default-avatar.jpg', true)}}"
         alt="profile photo"
         class=""
         style="object-fit: cover; overflow: hidden; border-radius: 50%;"
