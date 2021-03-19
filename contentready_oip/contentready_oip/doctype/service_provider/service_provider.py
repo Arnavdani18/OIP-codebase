@@ -35,4 +35,7 @@ class ServiceProvider(WebsiteGenerator):
 			self.is_published = True
 			self.owner = self.user
 			self.save()
+			user_profile = frappe.get_doc('User Profile', self.user)
+			user_profile.append('personas',{'persona': 'service_provider'})
+			user_profile.save()
 		return ok

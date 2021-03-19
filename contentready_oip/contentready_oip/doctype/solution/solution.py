@@ -69,6 +69,8 @@ class Solution(WebsiteGenerator):
 			notification.save()
 
 	def get_context(self, context):
+		context.is_collaborator = api.has_collaborator_role()
+		context.is_service_provider = api.has_service_provider_role()
 		# Log visit
 		api.enqueue_log_route_visit(route=context.route, user_agent=frappe.request.headers.get('User-Agent'), parent_doctype=self.doctype, parent_name=self.name)
 		return context

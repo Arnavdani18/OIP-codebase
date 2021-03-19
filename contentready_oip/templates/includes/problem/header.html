@@ -60,36 +60,49 @@
           </div>
 
           <div class="col-sm-12 col-md-8 pr-0 action-btn-section mt-3">
-            <div class="d-flex justify-content-between flex-wrap">
+            {% if is_collaborator %}
+              <div class="d-flex justify-content-between flex-wrap">
+                  <button
+                    type="button"
+                    class="card-btn mt-2 mt-lg-0"
+                    onclick="openEnrichmentForm('{{doctype}}', '{{name}}')"
+                  >
+                    Enrich
+                  </button>
+                  <button
+                    type="button"
+                    class="card-btn mt-2 mt-lg-0"
+                    onclick="openValidationForm('{{doctype}}', '{{name}}')"
+                  >
+                    Validate
+                  </button>
+                  <button
+                    type="button"
+                    class="card-btn mt-2 mt-lg-0"
+                    onclick="openCollaborationForm('{{doctype}}', '{{name}}')"
+                  >
+                    Collaborate
+                  </button>
+                  <button
+                    type="button"
+                    class="card-btn mt-2 mt-lg-0 add-solution-btn"
+                    onclick="openSolutionForm('{{name}}')"
+                  >
+                    Add Solution
+                  </button>
+              </div>
+            {% elif is_service_provider %}
+            <div class="d-flex justify-content-end flex-wrap">
               <button
                 type="button"
-                class="card-btn mt-2 mt-lg-0"
-                onclick="openEnrichmentForm('{{doctype}}', '{{name}}')"
-              >
-                Enrich
-              </button>
-              <button
-                type="button"
-                class="card-btn mt-2 mt-lg-0"
-                onclick="openValidationForm('{{doctype}}', '{{name}}')"
-              >
-                Validate
-              </button>
-              <button
-                type="button"
-                class="card-btn mt-2 mt-lg-0"
+                class="card-btn mt-2 mt-lg-0 add-solution-btn"
+                style="margin-left: auto"
                 onclick="openCollaborationForm('{{doctype}}', '{{name}}')"
               >
                 Collaborate
               </button>
-              <button
-                type="button"
-                class="card-btn mt-2 mt-lg-0 add-solution-btn"
-                onclick="openSolutionForm('{{name}}')"
-              >
-                Add Solution
-              </button>
             </div>
+            {% endif %}
           </div>
         </div>
       </div>

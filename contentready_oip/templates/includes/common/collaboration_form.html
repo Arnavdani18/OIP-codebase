@@ -34,8 +34,10 @@
                 required
               ></textarea>
             </div>
-            <label for="personaSelect" class="modal-label">Persona</label>
-            <div id="personaVueComp"></div>
+            {% if not is_service_provider %}
+              <label for="personaSelect" class="modal-label">Persona</label>
+              <div id="personaVueComp"></div>
+            {% endif %}
           </div>
         </form>
       </div>
@@ -117,7 +119,7 @@
         } catch (error) {
           this.user_personas = [];
         }
-
+        console.log('user_personas', this.user_personas);
         frappe.collaboration_persona = [...this.user_personas];
       },
       beforeCreate: function () {

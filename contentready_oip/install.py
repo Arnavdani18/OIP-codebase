@@ -5,6 +5,7 @@ from contentready_oip.utils import try_method
 def after_install():
     try_method(seed_white_label_domain)
     try_method(seed_user_profiles)
+    try_method(seed_personas)
 
 def insert_documents(doctype, rows):
     for row in rows:
@@ -30,6 +31,15 @@ def seed_user_profiles():
     rows = [
         {
             'user': 'Administrator',
+        },
+    ]
+    insert_documents(doctype, rows)
+
+def seed_personas():
+    doctype = "Persona"
+    rows = [
+        {
+            'title': 'Service Provider',
         },
     ]
     insert_documents(doctype, rows)
