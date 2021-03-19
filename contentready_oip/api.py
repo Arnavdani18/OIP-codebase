@@ -9,7 +9,7 @@ from frappe.email.doctype.email_template.email_template import get_email_templat
 from contentready_oip.google_vision import is_content_explicit
 from contentready_oip import problem_search, solution_search, user_search, service_provider_search
 from user_agents import parse as ua_parse
-
+from frappe.utils import random_string
 
 python_version_2 = platform.python_version().startswith('2')
 
@@ -1072,7 +1072,6 @@ def has_admin_role(user=None):
     for role in allowed_roles:
         if role in roles:
             is_allowed = True
-    
     return is_allowed
 
 
@@ -1086,8 +1085,20 @@ def has_collaborator_role(user=None):
     for role in allowed_roles:
         if role in roles:
             is_allowed = True
-    
     return is_allowed
+
+@frappe.whitelist(allow_guest=True)
+def has_service_provider_role(user=None):
+    if not user:
+        user = frappe.session.user
+    roles = frappe.get_roles(user)
+    allowed_roles = ["Service Provider"]
+    is_allowed = False
+    for role in allowed_roles:
+        if role in roles:
+            is_allowed = True
+    return is_allowed
+
 
 @frappe.whitelist(allow_guest=True)
 def get_url_metadata(url):
@@ -1225,3 +1236,26 @@ def aggregate_analytics(doc, event_name):
     agg.total_visits, agg.unique_visitors, agg.unique_organisations = frappe.db.sql(query)[0]
     agg.save()
     frappe.db.commit()
+
+
+def invite_user(email, first_name=None, last_name=None, roles=[]):
+    if not frappe.db.exists('User', email):
+        user = frappe.get_doc({
+            "doctype":"User",
+            "email": email,
+            "first_name": first_name or email,
+            "last_name": last_name,
+            "enabled": 1,
+            # "new_password": random_string(10),
+            "user_type": "Website User",
+            "send_welcome_email": True
+        })
+        user.flags.ignore_permissions = True
+        user.insert()
+        frappe.db.commit()
+        # set if roles is empty add default signup role as per Portal Settings
+        default_role = frappe.db.get_value("Portal Settings", None, "default_role")
+        if default_role and len(roles) == 0:
+            roles.append(default_role)
+        for role in roles:
+            user.add_roles(role)

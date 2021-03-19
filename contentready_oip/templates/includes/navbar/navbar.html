@@ -106,25 +106,42 @@
                     </div>
                 </li>
                 <li class="nav-item dropdown profile-btn-li">
-                    <a class="nav-link profile-icon dropdown-toggle" href="#" id="profileDropdown" role="button"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {% set matched = frappe.get_list('User Profile', filters={'user': frappe.session.user}) %}
+                    {% if matched | length %}
                         {% set profile = frappe.get_doc('User Profile', frappe.session.user) %}
-                        <img src="{{profile.photo|default('/assets/contentready_oip/images/default-avatar.jpg', true)}}" alt="profile photo" class="profile-photo"
-                             onerror="javascript:this.src='/assets/contentready_oip/images/default-avatar.jpg'" />
+                        <a class="nav-link profile-icon dropdown-toggle" href="#" id="profileDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img src="{{profile.photo|default('/assets/contentready_oip/images/default-avatar.jpg', true)}}" alt="profile photo" class="profile-photo"
+                                onerror="javascript:this.src='/assets/contentready_oip/images/default-avatar.jpg'" />
 
-                        <span class="d-lg-none text-capitalize ml-3" style="color: var(--secondary1);">Profile</span>
-                    </a>
-                    <div class="dropdown-menu mt-2 dropdown-menu-right dropdown-section">
-                        <div id="deskRoute"></div>
-                        <a class="dropdown-item nullActive" href="/update-profile">
-                            <img src="../assets/contentready_oip/svg/profile.svg" alt="" width="16" height="16" />
-                            <span> Profile</span>
+                            <span class="d-lg-none text-capitalize ml-3" style="color: var(--secondary1);">Profile</span>
                         </a>
-                        <a href="javascript:void(0);" class="dropdown-item d-none d-lg-block" onclick="logout()">
-                            <img src="../assets/contentready_oip/svg/logout.svg" alt="" width="16" height="16" />
-                            <span>Log Out</span>
+                        <div class="dropdown-menu mt-2 dropdown-menu-right dropdown-section">
+                            <div id="deskRoute"></div>
+                            <a class="dropdown-item nullActive" href="/update-profile">
+                                <img src="../assets/contentready_oip/svg/profile.svg" alt="" width="16" height="16" />
+                                <span> Profile</span>
+                            </a>
+                            <a href="javascript:void(0);" class="dropdown-item d-none d-lg-block" onclick="logout()">
+                                <img src="../assets/contentready_oip/svg/logout.svg" alt="" width="16" height="16" />
+                                <span>Log Out</span>
+                            </a>
+                        </div>
+                    {% else %}
+                        <a class="nav-link profile-icon dropdown-toggle" href="#" id="profileDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img src="/assets/contentready_oip/images/default-avatar.jpg" alt="profile photo" class="profile-photo"/>
+
+                            <span class="d-lg-none text-capitalize ml-3" style="color: var(--secondary1);">Profile</span>
                         </a>
-                    </div>
+                        <div class="dropdown-menu mt-2 dropdown-menu-right dropdown-section">
+                            <div id="deskRoute"></div>
+                            <a href="javascript:void(0);" class="dropdown-item d-none d-lg-block" onclick="logout()">
+                                <img src="../assets/contentready_oip/svg/logout.svg" alt="" width="16" height="16" />
+                                <span>Log Out</span>
+                            </a>
+                        </div>
+                    {% endif %}
                 </li>
                 <li class="nav-item d-block d-lg-none">
                     <button (click)="logout()" class="">
