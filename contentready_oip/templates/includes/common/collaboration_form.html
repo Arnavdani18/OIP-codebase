@@ -119,7 +119,6 @@
         } catch (error) {
           this.user_personas = [];
         }
-        console.log('user_personas', this.user_personas);
         frappe.collaboration_persona = [...this.user_personas];
       },
       beforeCreate: function () {

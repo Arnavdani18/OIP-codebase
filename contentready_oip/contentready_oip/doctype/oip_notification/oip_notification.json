@@ -75,7 +75,7 @@
   }
  ],
  "links": [],
- "modified": "2020-04-23 20:22:16.213666",
+ "modified": "2021-03-20 10:36:22.432547",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP Notification",
@@ -98,10 +98,24 @@
    "delete": 1,
    "email": 1,
    "export": 1,
+   "if_owner": 1,
    "print": 1,
    "read": 1,
    "report": 1,
    "role": "Collaborator",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Service Provider",
    "share": 1,
    "write": 1
   }

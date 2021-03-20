@@ -484,6 +484,8 @@ def add_or_edit_collaboration(doctype, name, collaboration, html=True):
             'parent_doctype': doctype,
             'parent_name': name
         })
+        if has_service_provider_role():
+            collaboration['personas'].append('service_provider')
         for p in collaboration['personas']:
             row = doc.append('personas', {})
             row.persona = p

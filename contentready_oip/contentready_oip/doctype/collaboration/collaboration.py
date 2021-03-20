@@ -10,9 +10,9 @@ from contentready_oip import api
 class Collaboration(Document):
 	def before_save(self):
 		self.recipient = frappe.db.get_value(self.parent_doctype, self.parent_name, 'owner')
-		if frappe.session.user not in [self.owner, self.recipient] or not api.has_admin_role():
+		if frappe.session.user not in [self.owner, self.recipient] and not api.has_admin_role():
 			frappe.throw('Insufficient privileges to modify this document.')
-		personas_list = [p.persona.title() for p in self.personas]
+		personas_list = [p.title for p in self.personas]
 		self.personas_list = ', '.join(personas_list)
 		self.maybe_notify_owner()
 	
