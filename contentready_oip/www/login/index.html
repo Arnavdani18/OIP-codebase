@@ -161,7 +161,14 @@
                                     placeholder="{{ _('Email Address') }}" required>
                             </div>
 
-                            <button type="submit" class="btn btn-primary btn-block register-button">
+                            <div class="email mt-5 form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="termsCheckBox" onchange="toggleRegisterButton()" checked>
+                                <label class="ml-3 form-check-label" for="termsCheckBox">
+                                  Accept <a href="/terms">Terms & Conditions</a>
+                                </label>
+                              </div>
+
+                            <button type="submit" id="signupButton" class="btn btn-primary btn-block register-button">
                                 {{ _("Register") }}
                             </button>
                         </form>
@@ -209,6 +216,11 @@
 <script>{% include "templates/includes/login/login.js" %}</script>
 
 <script>
+    const toggleRegisterButton = () => {
+        const accepted = $('#termsCheckBox').is(":checked");
+        $('#signupButton').prop("disabled", !accepted);
+    }
+
     // Eye for login
     new Vue({
         el: '#eye-container',
