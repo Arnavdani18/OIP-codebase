@@ -18,7 +18,7 @@
  "is_standard": 1,
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2021-03-19 20:57:39.005411",
+ "modified": "2021-03-20 11:30:49.673859",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "update-service-provider",
@@ -271,7 +271,7 @@
   {
    "allow_read_on_all_link_options": 0,
    "fieldname": "latitude",
-   "fieldtype": "Data",
+   "fieldtype": "Float",
    "hidden": 1,
    "label": "Latitude",
    "max_length": 0,
@@ -283,7 +283,7 @@
   {
    "allow_read_on_all_link_options": 0,
    "fieldname": "longitude",
-   "fieldtype": "Data",
+   "fieldtype": "Float",
    "hidden": 1,
    "label": "Longitude",
    "max_length": 0,

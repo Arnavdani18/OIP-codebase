@@ -14,6 +14,7 @@ def get_context(context):
     context.page = int(parameters.get('page')) if parameters.get('page') else 1
     scope = {}
     scope['service_category'] = parameters.get("service_category")
+    scope['center'] = json.loads(parameters['center']) if parameters.get("center") else [0, 0]
     # For the search we match everything and set limit very high as 
     # we handle pagination locally
     matched = service_provider_search.search_index('*', scope=scope, limit=1000000)

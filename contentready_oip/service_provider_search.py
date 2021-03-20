@@ -20,6 +20,8 @@ search_fields = [
 	"city",
 	"state",
 	"country",
+	"latitude",
+	"longitude",
 ]
 
 class ServiceProviderSearch(FullTextSearch):
@@ -33,8 +35,8 @@ class ServiceProviderSearch(FullTextSearch):
 			city=TEXT(stored=True, field_boost=2.0),
 			state=TEXT(stored=True, field_boost=2.0),
 			country=TEXT(stored=True, field_boost=2.0),
-			# latitude=NUMERIC(numtype=float, stored=True, sortable=True, field_boost=2.0),
-			# longitude=NUMERIC(numtype=float, stored=True, sortable=True, field_boost=2.0),
+			latitude=NUMERIC(numtype=float, stored=True),
+			longitude=NUMERIC(numtype=float, stored=True),
 			service_category=TEXT(stored=True, field_boost=1.0),
 			modified=DATETIME(stored=True, sortable=True),
 			doctype=STORED(),
@@ -75,8 +77,8 @@ class ServiceProviderSearch(FullTextSearch):
 				city=service_provider.city,
 				state=service_provider.state,
 				country=service_provider.country,
-				# latitude=service_provider.latitude,
-				# longitude=service_provider.longitude,
+				latitude=service_provider.latitude,
+				longitude=service_provider.longitude,
 				service_category=service_provider.service_category,
 				modified=service_provider.modified,
 				doctype=service_provider.doctype,
@@ -125,6 +127,7 @@ class ServiceProviderSearch(FullTextSearch):
 			# We are going to actively use wildcards unless there are performance issues.
 			# parser.remove_plugin_class(WildcardPlugin)
 			query = parser.parse(text)
+			center = (0, 0)
 
 			# if scope is provided, then we construct a query from the filters
 			filter_scoped = None
@@ -132,9 +135,10 @@ class ServiceProviderSearch(FullTextSearch):
 				service_category = scope.get('service_category')
 				if service_category:
 					filter_scoped = Term('service_category', service_category)
+				if type(scope.get('center')) == list:
+					center = scope.get('center')
 			results = searcher.search(query, limit=limit, filter=filter_scoped)
-			for r in results:
-				out.append({'name': r['name']})
+			out = api.sort_by_distance(results, center)
 		return out
 
 

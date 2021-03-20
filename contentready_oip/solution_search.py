@@ -8,6 +8,7 @@ from whoosh.fields import TEXT, ID, Schema, STORED, DATETIME, NUMERIC
 from whoosh.qparser import MultifieldParser, FieldsPlugin, WildcardPlugin
 from frappe.search.full_text_search import FullTextSearch
 import json
+from contentready_oip import api
 
 INDEX_NAME = "solution"
 
@@ -17,6 +18,8 @@ search_fields = [
 	"city",
 	"state",
 	"country",
+	"latitude",
+	"longitude",
 ]
 
 class SolutionSearch(FullTextSearch):
@@ -30,8 +33,8 @@ class SolutionSearch(FullTextSearch):
 			city=TEXT(stored=True, field_boost=2.0),
 			state=TEXT(stored=True, field_boost=2.0),
 			country=TEXT(stored=True, field_boost=2.0),
-			# latitude=NUMERIC(numtype=float, stored=True, sortable=True, field_boost=2.0),
-			# longitude=NUMERIC(numtype=float, stored=True, sortable=True, field_boost=2.0),
+			latitude=NUMERIC(numtype=float, stored=True),
+			longitude=NUMERIC(numtype=float, stored=True),
 			sectors=TEXT(stored=True, field_boost=1.0),
 			sdg=TEXT(stored=True, field_boost=1.0),
 			modified=DATETIME(stored=True, sortable=True),
@@ -77,8 +80,8 @@ class SolutionSearch(FullTextSearch):
 				city=solution.city,
 				state=solution.state,
 				country=solution.country,
-				# latitude=solution.latitude,
-				# longitude=solution.longitude,
+				latitude=solution.latitude,
+				longitude=solution.longitude,
 				sectors=sectors,
 				sdg=sdg,
 				modified=solution.modified,
@@ -128,10 +131,8 @@ class SolutionSearch(FullTextSearch):
 		text = text.replace('@', ' ')
 
 		if title_only:
-			fieldname = 'title'
-			fields = [fieldname]
+			fields = ['title']
 		else:
-			fieldname = 'name'
 			fields = search_fields
 
 		with ix.searcher() as searcher:
@@ -146,6 +147,7 @@ class SolutionSearch(FullTextSearch):
 			terms = []
 			sector_filters = []
 			sdg_filters = []
+			center = (0, 0)
 			if type(scope) == dict:
 				sectors = scope.get('sectors')
 				if type(sectors) == list:
@@ -159,10 +161,14 @@ class SolutionSearch(FullTextSearch):
 						sdg_filters.append(Term('sdg', s))
 					if len(sdg_filters):
 						terms.append(Or(sdg_filters))
+				if type(scope.get('center')) == list:
+					center = scope.get('center')
 			filter_scoped = And(terms)
 			results = searcher.search(query, limit=limit, filter=filter_scoped, terms=True)
-			for r in results:
-				out.append({fieldname: r[fieldname]})
+			if title_only:
+				out = [{'title': r['title']} for r in results]
+			else:
+				out = api.sort_by_distance(results, center)
 		return out
 
 

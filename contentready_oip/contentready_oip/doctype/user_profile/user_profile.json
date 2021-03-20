@@ -126,12 +126,12 @@
   },
   {
    "fieldname": "latitude",
-   "fieldtype": "Data",
+   "fieldtype": "Float",
    "label": "Latitude"
   },
   {
    "fieldname": "longitude",
-   "fieldtype": "Data",
+   "fieldtype": "Float",
    "label": "Longitude"
   },
   {
@@ -224,7 +224,7 @@
  "image_field": "photo",
  "is_published_field": "is_published",
  "links": [],
- "modified": "2021-03-19 20:10:28.960058",
+ "modified": "2021-03-20 11:29:32.327731",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "User Profile",
