@@ -27,7 +27,7 @@ frappe.ready(() => {
       };
     },
     created() {
-      this.selected_range = localStorage.getItem("filter_location_range");
+      this.selected_range = localStorage.getItem("filter_range");
       this.searched_location = localStorage.getItem("filter_location_name");
     },
     mounted() {
@@ -201,16 +201,16 @@ frappe.ready(() => {
         }
         if (localStorage) {
           localStorage.setItem("filter_location_name", "");
-          localStorage.setItem("filter_location_lat", "");
-          localStorage.setItem("filter_location_lng", "");
-          localStorage.setItem("filter_location_range", "");
+          localStorage.setItem("filter_lat", "");
+          localStorage.setItem("filter_lng", "");
+          localStorage.setItem("filter_range", "");
         }
       },
 
       storeRangeFilter() {
-        const filter_location_range = Number(this.selected_range); // Read range from the select dropdown
+        const filter_range = Number(this.selected_range); // Read range from the select dropdown
         if (localStorage) {
-          localStorage.setItem("filter_location_range", filter_location_range);
+          localStorage.setItem("filter_range", filter_range);
         }
       },
 
@@ -249,16 +249,16 @@ frappe.ready(() => {
         ];
         name_components = name_components.filter((c) => c); // remove falsy values
         const filter_location_name = name_components.join(", ");
-        const filter_location_lat = selectedLocation.latitude;
-        const filter_location_lng = selectedLocation.longitude;
-        const filter_location_range = Number(this.selected_range); // Read range from the select dropdown
+        const filter_lat = selectedLocation.latitude;
+        const filter_lng = selectedLocation.longitude;
+        const filter_range = Number(this.selected_range); // Read range from the select dropdown
         this.searched_location = filter_location_name;
 
         if (localStorage) {
           localStorage.setItem("filter_location_name", filter_location_name);
-          localStorage.setItem("filter_location_lat", filter_location_lat);
-          localStorage.setItem("filter_location_lng", filter_location_lng);
-          localStorage.setItem("filter_location_range", filter_location_range);
+          localStorage.setItem("filter_lat", filter_lat);
+          localStorage.setItem("filter_lng", filter_lng);
+          localStorage.setItem("filter_range", filter_range);
         }
       },
 
@@ -309,15 +309,12 @@ frappe.ready(() => {
           // guest user so we don't have filters stored on the server.
           // retrieve from localStorage and get our content
           let query_obj = {};
-          const lat = localStorage.getItem("filter_location_lat");
-          if (lat) {
-            query_obj["lat"] = Number(lat);
+          const lat = localStorage.getItem("filter_lat");
+          const lng = localStorage.getItem("filter_lng");
+          if (lat && lng) {
+            query_obj["center"] = [Number(lat), Number(lng)];
           }
-          const lng = localStorage.getItem("filter_location_lng");
-          if (lng) {
-            query_obj["lng"] = Number(lng);
-          }
-          let rng = localStorage.getItem("filter_location_range");
+          let rng = localStorage.getItem("filter_range");
           if (rng) {
             rng = Number(rng);
             query_obj["rng"] = rng;
@@ -371,9 +368,9 @@ frappe.ready(() => {
 
       resetFilter() {
         localStorage.setItem("filter_location_name", "");
-        localStorage.setItem("filter_location_lat", "");
-        localStorage.setItem("filter_location_lng", "");
-        localStorage.setItem("filter_location_range", "");
+        localStorage.setItem("filter_lat", "");
+        localStorage.setItem("filter_lng", "");
+        localStorage.setItem("filter_range", "");
         localStorage.setItem("filter_beneficiaries", "");
         localStorage.setItem("filter_personas", "");
         localStorage.setItem("filter_sdgs", "");
