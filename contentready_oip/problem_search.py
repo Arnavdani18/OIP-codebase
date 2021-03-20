@@ -9,6 +9,7 @@ from whoosh.fields import TEXT, ID, Schema, STORED, DATETIME, NUMERIC
 from whoosh.qparser import MultifieldParser, FieldsPlugin, WildcardPlugin
 from frappe.search.full_text_search import FullTextSearch
 import json
+from contentready_oip import api
 
 INDEX_NAME = "problem"
 
@@ -18,6 +19,8 @@ search_fields = [
 	"city",
 	"state",
 	"country",
+	"latitude",
+	"longitude",
 ]
 
 class ProblemSearch(FullTextSearch):
@@ -32,8 +35,8 @@ class ProblemSearch(FullTextSearch):
 			city=TEXT(stored=True, field_boost=2.0),
 			state=TEXT(stored=True, field_boost=2.0),
 			country=TEXT(stored=True, field_boost=2.0),
-			# latitude=NUMERIC(numtype=float, stored=True, sortable=True, field_boost=2.0),
-			# longitude=NUMERIC(numtype=float, stored=True, sortable=True, field_boost=2.0),
+			latitude=NUMERIC(numtype=float, stored=True),
+			longitude=NUMERIC(numtype=float, stored=True),
 			sectors=TEXT(stored=True, field_boost=1.0),
 			sdg=TEXT(stored=True, field_boost=1.0),
 			beneficiaries=TEXT(stored=True, field_boost=1.0),
@@ -79,8 +82,8 @@ class ProblemSearch(FullTextSearch):
 				city=problem.city,
 				state=problem.state,
 				country=problem.country,
-				# latitude=problem.latitude,
-				# longitude=problem.longitude,
+				latitude=problem.latitude,
+				longitude=problem.longitude,
 				sectors=json.dumps(sectors),
 				sdg=json.dumps(sdg),
 				beneficiaries=json.dumps(beneficiaries),
@@ -133,10 +136,8 @@ class ProblemSearch(FullTextSearch):
 		# title_only search is used for search-as-you-type
 
 		if title_only:
-			fieldname = 'title'
-			fields = [fieldname]
+			fields = ['title']
 		else:
-			fieldname = 'name'
 			fields = search_fields
 
 		with ix.searcher() as searcher:
@@ -145,13 +146,13 @@ class ProblemSearch(FullTextSearch):
 			# We are going to actively use wildcards unless there are performance issues.
 			# parser.remove_plugin_class(WildcardPlugin)
 			query = parser.parse(text)
-
 			# if scope is provided, then we construct a query from the filters
 			filter_scoped = None
 			terms = []
 			sector_filters = []
 			sdg_filters = []
 			beneficiary_filters = []
+			center = (0, 0)
 			if type(scope) == dict:
 				sectors = scope.get('sectors')
 				if type(sectors) == list:
@@ -171,11 +172,14 @@ class ProblemSearch(FullTextSearch):
 						beneficiary_filters.append(Term('beneficiaries', s))
 					if len(beneficiary_filters):
 						terms.append(Or(beneficiary_filters))
+				if type(scope.get('center')) == list:
+					center = scope.get('center')
 			filter_scoped = And(terms)
 			results = searcher.search(query, limit=limit, filter=filter_scoped, terms=True)
-			
-			for r in results:
-				out.append({fieldname: r[fieldname]})
+			if title_only:
+				out = [{'title': r['title']} for r in results]
+			else:
+				out = api.sort_by_distance(results, center)
 		return out
 
 

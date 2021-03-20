@@ -19,6 +19,8 @@ search_fields = [
 	"city",
 	"state",
 	"country",
+	"latitude",
+	"longitude",
 ]
 
 class UserSearch(FullTextSearch):
@@ -31,8 +33,8 @@ class UserSearch(FullTextSearch):
 			city=TEXT(stored=True, field_boost=2.0),
 			state=TEXT(stored=True, field_boost=2.0),
 			country=TEXT(stored=True, field_boost=2.0),
-			# latitude=NUMERIC(numtype=float, stored=True, sortable=True, field_boost=2.0),
-			# longitude=NUMERIC(numtype=float, stored=True, sortable=True, field_boost=2.0),
+			latitude=NUMERIC(numtype=float, stored=True),
+			longitude=NUMERIC(numtype=float, stored=True),
 			sectors=TEXT(stored=True, field_boost=1.0),
 			personas=TEXT(stored=True, field_boost=1.0),
 			modified=DATETIME(stored=True, sortable=True),
@@ -76,8 +78,8 @@ class UserSearch(FullTextSearch):
 				city=user.city,
 				state=user.state,
 				country=user.country,
-				# latitude=user.latitude,
-				# longitude=user.longitude,
+				latitude=user.latitude,
+				longitude=user.longitude,
 				sectors=sectors,
 				personas=personas,
 				modified=user.modified,
@@ -132,6 +134,7 @@ class UserSearch(FullTextSearch):
 			terms = []
 			sector_filters = []
 			persona_filters = []
+			center = (0, 0)
 			if type(scope) == dict:
 				sectors = scope.get('sectors')
 				if type(sectors) == list:
@@ -145,10 +148,11 @@ class UserSearch(FullTextSearch):
 						persona_filters.append(Term('personas', s))
 					if len(persona_filters):
 						terms.append(Or(persona_filters))
+				if type(scope.get('center')) == list:
+					center = scope.get('center')
 			filter_scoped = And(terms)
 			results = searcher.search(query, limit=limit, filter=filter_scoped)
-			for r in results:
-				out.append({'name': r['name']})
+			out = api.sort_by_distance(results, center)
 		return out
 
 
