@@ -290,6 +290,8 @@ def toggle_contribution(child_doctype, parent_doctype, parent_name):
 
 @frappe.whitelist(allow_guest = False)
 def add_comment(doctype, name, text, media=None, html=True):
+    # Remove double quotes from text
+    text = json.loads(text)
     doc = frappe.get_doc({
         'doctype': 'Discussion',
         'text': text,
