@@ -30,27 +30,6 @@ def create_user_profile_if_missing():
         frappe.db.commit()
 
 @frappe.whitelist(allow_guest = True)
-def set_location_filter(filter_location_name=None, filter_location_lat=None,filter_location_lng=None, filter_location_range=25):
-    if filter_location_name != None:
-        frappe.session.data['filter_location_name'] = filter_location_name
-    if filter_location_lat != None:
-        frappe.session.data['filter_location_lat'] = float(filter_location_lat)
-    if filter_location_lng != None:
-        frappe.session.data['filter_location_lng'] = float(filter_location_lng)
-    if filter_location_range != None:
-        frappe.session.data['filter_location_range'] = int(filter_location_range)
-    return filter_location_lat, filter_location_lng, filter_location_range
-
-@frappe.whitelist(allow_guest = True)
-def clear_location_filter():
-    frappe.session.data['filter_location_name'] = ''
-    frappe.session.data['filter_location_lat'] = None
-    frappe.session.data['filter_location_lng'] = None
-    frappe.session.data['filter_location_range'] = None
-    return True
-
-
-@frappe.whitelist(allow_guest = True)
 def set_sector_filter(filter_sectors=[]):
     if not isinstance(filter_sectors, list):
         filter_sectors = json.loads(filter_sectors)
@@ -67,8 +46,7 @@ def get_available_sectors():
         sectors = [{'name': s.sector, 'title': s.sector_title, 'description': s.description} for s in domain.sectors]
         assert len(sectors) > 0, 'Need at least 1 sector per domain. Reverting to defaults.'
         return sectors
-    except Exception as e:
-        # print(str(e))
+    except:
         return frappe.get_list('Sector', ['name', 'title', 'description'])
 
 @frappe.whitelist(allow_guest = True)
@@ -80,19 +58,6 @@ def get_partners():
         return partners
     except Exception as e:
         print(str(e))
-
-@frappe.whitelist(allow_guest = True)
-def get_domain_theme():
-    hostname = get_url()
-    theme_url = ''
-    try:
-        assert True==False, 'Impossible'
-    except Exception as e:
-        print(str(e))
-        default_theme = frappe.get_value('Website Settings','', 'website_theme')
-        if default_theme:
-            theme_url = frappe.get_value('Website Theme', default_theme, 'theme_url')
-    return theme_url
 
 @frappe.whitelist(allow_guest = True)
 def get_url():
@@ -125,15 +90,6 @@ def get_doc_field(doctype, name, field):
 @frappe.whitelist(allow_guest = True)
 def get_child_table(child_table_doctype, parent_doctype, parent_name):
     return frappe.get_all(child_table_doctype, filters={'parenttype': parent_doctype, 'parent': parent_name})
-
-def convert_if_json(value):
-    cmp_type = str
-    if python_version_2:
-        cmp_type = basestring
-    if isinstance(value, cmp_type):
-        value = json.loads(value)
-    return value
-
 
 @frappe.whitelist(allow_guest = True)
 def search_content_by_text(doctype, text, limit_page_length=5, html=True):
@@ -189,7 +145,6 @@ def get_persona_list():
 @frappe.whitelist(allow_guest = True)
 def get_sector_list():
     available_sectors = get_available_sectors()
-    # all_sectors = frappe.get_list('Sector', fields=['title', 'name'])
     return [{'label': o['title'], 'value': o['name'], 'description': o['description']} for o in available_sectors]
 
 @frappe.whitelist(allow_guest = True)
@@ -208,7 +163,6 @@ def has_user_contributed(child_doctype, parent_doctype, parent_name):
 @frappe.whitelist(allow_guest = True)
 def can_user_contribute(child_doctype, parent_doctype, parent_name):
     doc_owner = frappe.get_value(parent_doctype, parent_name, 'owner')
-    # print(doc_owner, frappe.session.user)
     return has_user_contributed(child_doctype, parent_doctype, parent_name), doc_owner == frappe.session.user
 
 @frappe.whitelist(allow_guest = False)
@@ -338,7 +292,6 @@ def add_primary_content(doctype, doc, is_draft=False):
 @frappe.whitelist(allow_guest = False)
 def add_enrichment(doc,is_draft=False):
     doc = json.loads(doc)
-    print(doc)
     if isinstance(is_draft,str):
         is_draft = json.loads(is_draft)
     if not ('problem' in doc or doc['problem']):
@@ -501,7 +454,6 @@ def get_content_by_user(doctype, limit_page_length=5):
 
 @frappe.whitelist(allow_guest = False)
 def get_contributions_by_user(parent_doctype, child_doctypes, limit_page_length=5):
-    # content_set = set()
     content = []
     try:
         content_dict = {}
@@ -511,10 +463,7 @@ def get_contributions_by_user(parent_doctype, child_doctypes, limit_page_length=
                 if f['parent_name'] not in content_dict:
                     content_dict[f['parent_name']] = []
                 content_dict[f['parent_name']].append({'type': child_doctype, 'modified': f['modified']})
-                # content_set.add(f['parent'])
         content = []
-        # print(content_dict)
-        # for c in content_set:
         for c in content_dict:
             try:
                 doc = frappe.get_doc(parent_doctype, c)
@@ -686,14 +635,6 @@ def delete_contribution(child_doctype, name):
         frappe.throw('{} not found in {}.'.format(name, child_doctype))
 
 @frappe.whitelist(allow_guest = False)
-def delete_collaboration(name):
-    try:
-        frappe.delete_doc('Collaboration', name)
-        return True
-    except:
-        frappe.throw('Collaboration not found.')
-
-@frappe.whitelist(allow_guest = False)
 def delete_reply(reply):
     try:
         reply = json.loads(reply)
@@ -702,14 +643,6 @@ def delete_reply(reply):
         return True
     except:
         frappe.throw('Discussion not found.')
-
-@frappe.whitelist(allow_guest = False)
-def delete_enrichment(name):
-    try:
-        frappe.delete_doc('Enrichment', name)
-        return True
-    except:
-        frappe.throw('Enrichment not found.')
 
 @frappe.whitelist(allow_guest=False)
 def set_notification_as_read(notification_name):
@@ -779,33 +712,7 @@ def unpack_linkedin_response(info, profile=None):
 @frappe.whitelist(allow_guest=True)
 def send_sms_to_recipients(recipients, message):
     from frappe.core.doctype.sms_settings.sms_settings import send_sms
-    # hostname = 'https://openinnovationplatform.org'
-    # Strip out + when sending SMS
     send_sms(recipients, message)
-
-
-@frappe.whitelist(allow_guest=True)
-def deploy_apps():
-    try:
-        enqueue(update_apps_via_git, timeout=1200)
-        return True
-    except Exception as e:
-        print(str(e))
-        raise
-
-@frappe.whitelist(allow_guest=True)
-def update_apps_via_git():
-    import shlex, subprocess, os
-    os.chdir('/home/cr/frappe-bench/apps/contentready_oip')
-    cmds = ['git pull', 'bench --site openinnovationplatform.org migrate', 'find . -iname *.pyc -delete', 'bench restart']
-    try:
-        for cmd in cmds:
-            cmd = shlex.split(cmd)
-            subprocess.check_output(cmd)
-        return True
-    except Exception as e:
-        print(str(e))
-        raise
 
 @frappe.whitelist(allow_guest=True)
 def share_doctype(recipients,doctype,docname,mode='email'):
@@ -911,7 +818,6 @@ def has_admin_role(user=None):
             is_allowed = True
     
     return is_allowed
-
 
 @frappe.whitelist(allow_guest=True)
 def has_collaborator_role(user=None):
@@ -1040,7 +946,6 @@ def log_route_visit(route, user_agent=None, parent_doctype=None, parent_name=Non
     })
     doc.save()
     frappe.db.commit()
-
 
 def enqueue_aggregate_analytics(doc, event_name):
     enqueue(aggregate_analytics, timeout=1200, doc=doc, event_name=event_name)

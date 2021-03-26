@@ -135,7 +135,7 @@
       </div>
       {% if frappe.session.user == enrichment.owner %}
       <div class="modal-footer enrichment-modal-footer">
-        <button type="button" class="btn btn-text" onclick="deleteEnrichment('{{name}}')">
+        <button type="button" class="btn btn-text" onclick="deleteEnrichment('{{doctype}}', '{{name}}')">
           Delete
         </button>
         <button type="button" class="btn solid-btn" onclick="window.location.href = `/add-enrichment?name={{name}}`">
@@ -148,11 +148,14 @@
 </div>
 
 <script>
-  deleteEnrichment = (name) => {
+  deleteEnrichment = (doctype, name) => {
     if (confirm('Are you sure you want to delete this enrichment?')) {
       frappe.call({
-        method: 'contentready_oip.api.delete_enrichment',
-        args: { name: name },
+        method: 'contentready_oip.api.delete_contribution',
+        args: {
+            child_doctype: doctype,
+            name: name
+        },
         callback: (r) => {
           // console.log(r);
           window.location.reload();
