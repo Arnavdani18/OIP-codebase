@@ -162,64 +162,6 @@ def search_content_by_text(doctype, text, limit_page_length=5, html=True):
     return content
 
 @frappe.whitelist(allow_guest = True)
-def global_search_content_by_text(text, limit_page_length=5, html=True):
-    sectors = set()
-    payload = {}
-    try:
-        for doctype in ['Problem', 'Solution']:
-            payload[doctype] = []
-            content = search_content_by_text(doctype, text, limit_page_length, html=False)
-            for c in content:
-                content_type = doctype.lower()
-                template = "templates/includes/{}/{}_card.html".format(content_type, content_type)
-                context = {
-                    content_type: c
-                }
-                html = frappe.render_template(template, context)
-                payload[doctype].append(html)
-                for s in c.sectors:
-                    sectors.add(s.sector)
-        contributors = get_content_recommended_for_user('User Profile', sectors, limit_page_length=limit_page_length)
-        doctype = 'User Profile'
-        payload[doctype] = []
-        for c in contributors:
-            template = "templates/includes/common/user_card.html"
-            context = {
-                'user': c
-            }
-            html = frappe.render_template(template, context)
-            payload[doctype].append(html)
-    except Exception as e:
-        print(str(e))
-    return payload
-
-@frappe.whitelist(allow_guest = True)
-def search_contributors_by_text(text, limit_page_length=5, html=True):
-    content = []
-    try:
-        doctype = 'User Profile'
-        names = frappe.db.get_list(doctype, or_filters={'full_name': ['like', '%{}%'.format(text)]}, limit_page_length=limit_page_length)
-        names = {n['name'] for n in names}
-        for p in names:
-            try:
-                doc = frappe.get_doc(doctype, p)
-                doc.photo = frappe.get_value('User Profile', doc.owner, 'photo')
-                if html:
-                    template = "templates/includes/common/user_card.html"
-                    context = {
-                        'user': doc
-                    }
-                    html = frappe.render_template(template, context)
-                    content.append(html)
-                else:
-                    content.append(doc)
-            except Exception as e:
-                print(str(e))
-    except Exception as e:
-        print(str(e))
-    return content
-
-@frappe.whitelist(allow_guest = True)
 def get_orgs_list():
     all_orgs = frappe.get_list('Organisation', fields=['title', 'name'])
     return [{'label': o['title'], 'value': o['name']} for o in all_orgs]
@@ -769,44 +711,6 @@ def delete_enrichment(name):
     except:
         frappe.throw('Enrichment not found.')
 
-@frappe.whitelist(allow_guest=True)
-def register(form=None):
-    if not form:
-        form = dict(frappe.form_dict)
-    frappe.set_user('Administrator')
-    form['doctype'] = 'User'
-    user_by_email = frappe.db.get("User", {"email": form['email']})
-    if not user_by_email:
-        from frappe.utils import random_string
-        user = frappe.get_doc({
-            "doctype":"User",
-            "email": form['email'],
-            "first_name": form['first_name'],
-            "last_name": form['last_name'],
-            "enabled": 1,
-            "user_type": "Website User",
-            "send_welcome_email": False
-        })
-        user.flags.ignore_permissions = True
-        user.insert()
-        # set default signup role as per Portal Settings
-        default_role = frappe.db.get_value("Portal Settings", None, "default_role")
-        if default_role:
-            user.add_roles(default_role)
-        frappe.db.commit()
-        success_msg = "You will shortly receive a verification email with a link to set your password and start the application process."
-        frappe.respond_as_web_page(_("Sign up successful"),
-            _(success_msg),
-            http_status_code=200, indicator_color='green', fullpage = True, primary_action='/')
-        return frappe.website.render.render("message", http_status_code=200)
-    else:
-        error_msg = 'You have already signed up with this email. Try logging in instead.'
-        # frappe.throw(error_msg)
-        frappe.respond_as_web_page(_("Sign up error"),
-            _(error_msg),
-            http_status_code=400, indicator_color='red', fullpage = True, primary_action='/')
-        return frappe.website.render.render("message", http_status_code=400)
-
 @frappe.whitelist(allow_guest=False)
 def set_notification_as_read(notification_name):
     frappe.set_value('OIP Notification', notification_name, 'is_read', True)
@@ -841,8 +745,6 @@ def complete_linkedin_login(code, state):
     
 
 def unpack_linkedin_response(info, profile=None):
-    # print(profile)
-    # print(info)
     # info = {'elements': [{'handle~': {'emailAddress': 'tej@iotready.co'}, 'handle': 'urn:li:emailAddress:7957229897'}]}
     payload = {}
     payload['email'] = info['elements'][0]['handle~']['emailAddress']
@@ -987,83 +889,6 @@ def setup_domain_hook(doc=None, event_name=None):
 @frappe.whitelist(allow_guest=False)
 def set_document_value(doctype, docname, fieldname, fieldvalue):
     return frappe.set_value(doctype, docname, fieldname, fieldvalue)
-
-@frappe.whitelist(allow_guest=False)
-def get_searched_content(index_name,search_str,filters=None):
-    options = {
-        "attributesToHighlight" : ["*"]
-    }
-    if filters:
-        options["filters"] = filters
-    
-    index = CLIENT.get_index(index_name.lower())
-    result = index.search(search_str,options)
-    
-    if index_name == 'user_profile':
-        return result['hits']
-    else:
-        apply_range_filter = filter_content_by_range(result['hits'], index_name)
-        return apply_range_filter
-         
-
-def filter_content_by_range(searched_content,doctype):
-    content = []
-    try:
-        parameters = frappe.form_dict
-        # filter_location_name
-        try:
-            filter_location_name = parameters['loc']
-        except:
-            filter_location_name = None
-        # filter_location_lat
-        try:
-            filter_location_lat = float(parameters['lat'])
-        except:
-            filter_location_lat = None
-        # filter_location_lng
-        try:
-            filter_location_lng = float(parameters['lng'])
-        except:
-            filter_location_lng = None
-        # filter_location_range
-        try:
-            filter_location_range = int(parameters['rng'])
-        except:
-            filter_location_range = None
-        try:
-            user = frappe.get_doc('User Profile', frappe.session.user)
-            user_sectors = {sector.sector for sector in user.sectors}
-        except:
-            user_sectors = set()
-
-        from geopy import distance
-        for doc in searched_content:    
-            try:
-                if doc["is_published"]:
-                    if (doc["latitude"] != None) and (doc["longitude"] != None) and (filter_location_lat != None) and (filter_location_lng != None) and (filter_location_range != None):
-                        distance_km = distance.distance((filter_location_lat, filter_location_lng), (float(doc["latitude"]), float(doc["longitude"]))).km
-                        if distance_km > filter_location_range:
-                            # skip this document as it's outside our bounds
-                            continue
-                    
-                    if user_sectors:
-                        doc_sectors = {sector["sector"] for sector in doc["sectors"]}
-                        relevant_sectors = doc_sectors.intersection(user_sectors)
-                        if doctype == 'Problem':
-                            doc['score'] = 1
-                            # doc["score"] = 0.3 * len(doc["validations"]) + 0.1 * len(doc["likes"]) + 0.1 * len(doc["enrichments"]) + 0.1 * len(doc["watchers"]) + 0.05 * len(doc["discussions"]) + 0.3 * len(relevant_sectors)
-                        else:
-                            doc['score'] = 1
-                            # doc["score"] = 0.3 * len(doc["validations"]) + 0.1 * len(doc["likes"]) + 0.1 * len(doc["watchers"]) + 0.05 * len(doc["discussions"]) + 0.3 * len(relevant_sectors)
-                    else:
-                        doc["score"] = 1
-                    content.append(doc)
-            except Exception as e:
-                print(str(e))    
-    except Exception as e:
-        print(str(e))
-    content.sort(key=lambda x: x["score"], reverse=True)
-    return content
 
 def calc_distance(result, center):
     d = distance.distance(center, (result['latitude'], result['longitude'])).km
