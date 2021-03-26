@@ -12,7 +12,7 @@ class Enrichment(Document):
 	def before_save(self):
 		if self.short_description:
 			self.short_description = clean_html(self.description)[:500]
-			if len(self.description) > 1000:
+			if len(self.description) > 500:
 				self.short_description += '...'
 		if not self.parent_doctype:
 			self.parent_doctype = 'Problem'
