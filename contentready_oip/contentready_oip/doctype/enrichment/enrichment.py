@@ -20,7 +20,7 @@ class Enrichment(Document):
 			self.parent_doctype = 'Problem'
 			self.parent_name = self.problem
 		old = self.get_doc_before_save()
-		if not old.is_published and self.is_published:
+		if old and not old.is_published and self.is_published:
 			self.maybe_create_insert_notifications()
 	
 	def maybe_create_insert_notifications(self):
