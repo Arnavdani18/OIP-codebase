@@ -10,13 +10,13 @@ from whoosh.qparser import MultifieldParser, FieldsPlugin, WildcardPlugin
 from frappe.search.full_text_search import FullTextSearch
 from contentready_oip import api
 
-INDEX_NAME = "service_provider"
+INDEX_NAME = "organisation"
 
-DOCTYPE = 'Service Provider'
+DOCTYPE = 'Organisation'
 
 search_fields = [
-	"full_name",
-	"org_title",
+	"title",
+	"website",
 	"city",
 	"state",
 	"country",
@@ -24,20 +24,20 @@ search_fields = [
 	"longitude",
 ]
 
-class ServiceProviderSearch(FullTextSearch):
-	""" Wrapper for ServiceProviderSearch """
+class OrganisationSearch(FullTextSearch):
+	""" Wrapper for OrganisationSearch """
 
 	def get_schema(self):
 		return Schema(
 			name=ID(stored=True), 
-			full_name=TEXT(stored=True, sortable=True, field_boost=5.0),
-			org_title=TEXT(stored=True, sortable=True, field_boost=5.0),
+			title=TEXT(stored=True, sortable=True, field_boost=5.0),
+			website=TEXT(stored=True, sortable=True, field_boost=5.0),
 			city=TEXT(stored=True, field_boost=2.0),
 			state=TEXT(stored=True, field_boost=2.0),
 			country=TEXT(stored=True, field_boost=2.0),
 			latitude=NUMERIC(numtype=float, stored=True),
 			longitude=NUMERIC(numtype=float, stored=True),
-			service_category=TEXT(stored=True, field_boost=1.0),
+			sectors=TEXT(stored=True, field_boost=1.0),
 			modified=DATETIME(stored=True, sortable=True),
 			doctype=STORED(),
 		)
@@ -50,35 +50,37 @@ class ServiceProviderSearch(FullTextSearch):
 		Returns:
 			self (object): FullTextSearch Instance
 		"""
-		service_providers = frappe.get_list(DOCTYPE)
+		organisations = frappe.get_list(DOCTYPE)
 
-		documents = [self.get_document_to_index(service_provider['name']) for service_provider in service_providers]
+		documents = [self.get_document_to_index(organisation['name']) for organisation in organisations]
 		return documents
 
 	def get_document_to_index(self, name):
-		"""Grab all data related to a service_provider and index the JSON
+		"""Grab all data related to a organisation and index the JSON
 
 		Args:
-			name (str): docname of the service_provider to index
+			name (str): docname of the organisation to index
 
 		Returns:
-			document (_dict): A dictionary with business_name, name and service_provider
+			document (_dict): A dictionary with business_name, name and organisation
 		"""
 		frappe.local.no_cache = True
 		try:
-			service_provider = frappe.get_doc(DOCTYPE, name)
+			organisation = frappe.get_doc(DOCTYPE, name)
+			sectors = [c.sector for c in organisation.sectors]
+			sectors = json.dumps(sectors)
 			return frappe._dict(
 				name=name, 
-				full_name=service_provider.full_name,
-				org_title=service_provider.org_title,
-				city=service_provider.city,
-				state=service_provider.state,
-				country=service_provider.country,
-				latitude=service_provider.latitude,
-				longitude=service_provider.longitude,
-				service_category=service_provider.service_category,
-				modified=service_provider.modified,
-				doctype=service_provider.doctype,
+				title=organisation.title,
+				website=organisation.website,
+				city=organisation.city,
+				state=organisation.state,
+				country=organisation.country,
+				latitude=organisation.latitude,
+				longitude=organisation.longitude,
+				sectors=sectors,
+				modified=organisation.modified,
+				doctype=organisation.doctype,
 			)
 		except Exception as e:
 			print(str(e))
@@ -87,8 +89,8 @@ class ServiceProviderSearch(FullTextSearch):
 	def parse_result(self, result):
 		return frappe._dict(
 			name=result["name"],
-			full_name=result["full_name"],
-			org_title=result["org_title"],
+			title=result["title"],
+			website=result["website"],
 			city=result.get('city'),
 			state=result.get("state"),
 			country=result.get("country"),
@@ -124,33 +126,38 @@ class ServiceProviderSearch(FullTextSearch):
 			# We are going to actively use wildcards unless there are performance issues.
 			# parser.remove_plugin_class(WildcardPlugin)
 			query = parser.parse(text)
-			center = (0, 0)
-
 			# if scope is provided, then we construct a query from the filters
 			filter_scoped = None
+			terms = []
+			sector_filters = []
+			center = (0, 0)
 			if type(scope) == dict:
-				service_category = scope.get('service_category')
-				if service_category:
-					filter_scoped = Term('service_category', service_category)
+				sectors = scope.get('sectors')
+				if type(sectors) == list:
+					for s in sectors:
+						sector_filters.append(Term('sectors', s))
+					if len(sector_filters):
+						terms.append(Or(sector_filters))
 				if type(scope.get('center')) == list:
 					center = scope.get('center')
+			filter_scoped = And(terms)
 			results = searcher.search(query, limit=limit, filter=filter_scoped)
 			out = api.sort_by_distance(results, center)
 		return out
 
 
 def update_index_for_id(name):
-	ws = ServiceProviderSearch(INDEX_NAME)
+	ws = OrganisationSearch(INDEX_NAME)
 	return ws.update_index_by_name(name)
 
 def remove_document_from_index(name):
-	ws = ServiceProviderSearch(INDEX_NAME)
+	ws = OrganisationSearch(INDEX_NAME)
 	return ws.remove_document_from_index(name)
 
 def build_index_for_all_ids():
-	ws = ServiceProviderSearch(INDEX_NAME)
+	ws = OrganisationSearch(INDEX_NAME)
 	return ws.build()
 
 def search_index(text, scope=None, limit=20):
-	ws = ServiceProviderSearch(INDEX_NAME)
+	ws = OrganisationSearch(INDEX_NAME)
 	return ws.search(text=text, scope=scope, limit=limit)

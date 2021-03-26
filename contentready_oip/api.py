@@ -9,6 +9,8 @@ from frappe.email.doctype.email_template.email_template import get_email_templat
 from contentready_oip.google_vision import is_content_explicit
 from contentready_oip import problem_search, solution_search, user_search, service_provider_search
 from user_agents import parse as ua_parse
+from geopy import distance
+from functools import cmp_to_key
 
 
 python_version_2 = platform.python_version().startswith('2')
@@ -288,6 +290,8 @@ def toggle_contribution(child_doctype, parent_doctype, parent_name):
 
 @frappe.whitelist(allow_guest = False)
 def add_comment(doctype, name, text, media=None, html=True):
+    # Remove double quotes from text
+    text = json.loads(text)
     doc = frappe.get_doc({
         'doctype': 'Discussion',
         'text': text,
@@ -1061,6 +1065,14 @@ def filter_content_by_range(searched_content,doctype):
     content.sort(key=lambda x: x["score"], reverse=True)
     return content
 
+def calc_distance(result, center):
+    d = distance.distance(center, (result['latitude'], result['longitude'])).km
+    return {'name': result['name'], 'distance': d}
+
+def sort_by_distance(results, center=(0, 0), range=None):
+    results = [calc_distance(r, center) for r in results]
+    results.sort(key=lambda r: r['distance'])
+    return results
 
 @frappe.whitelist(allow_guest=True)
 def has_admin_role(user=None):

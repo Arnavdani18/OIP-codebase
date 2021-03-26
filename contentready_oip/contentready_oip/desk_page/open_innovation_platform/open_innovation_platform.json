@@ -30,7 +30,7 @@
  "is_default": 0,
  "is_standard": 1,
  "label": "Open Innovation Platform",
- "modified": "2021-03-19 13:20:05.422166",
+ "modified": "2021-03-19 17:08:59.856895",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Open Innovation Platform",
@@ -58,7 +58,7 @@
   },
   {
    "doc_view": "List",
-   "label": "Organisation",
+   "label": "Organisations",
    "link_to": "Organisation",
    "type": "DocType"
   }

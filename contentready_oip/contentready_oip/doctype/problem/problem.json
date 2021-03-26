@@ -148,12 +148,12 @@
   },
   {
    "fieldname": "latitude",
-   "fieldtype": "Data",
+   "fieldtype": "Float",
    "label": "Latitude"
   },
   {
    "fieldname": "longitude",
-   "fieldtype": "Data",
+   "fieldtype": "Float",
    "label": "Longitude"
   },
   {
@@ -216,7 +216,7 @@
  "has_web_view": 1,
  "is_published_field": "is_published",
  "links": [],
- "modified": "2021-03-02 15:37:15.345295",
+ "modified": "2021-03-20 11:29:22.167358",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Problem",
