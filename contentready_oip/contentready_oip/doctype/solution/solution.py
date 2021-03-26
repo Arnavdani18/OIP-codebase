@@ -69,6 +69,10 @@ class Solution(WebsiteGenerator):
 			notification.save()
 
 	def get_context(self, context):
+		context.collaborations = frappe.get_list('Collaboration', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
+		context.validations = frappe.get_list('Validation', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
+		context.likes = frappe.get_list('Like', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
+		context.watchers = frappe.get_list('Watch', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
 		# Log visit
 		api.enqueue_log_route_visit(route=context.route, user_agent=frappe.request.headers.get('User-Agent'), parent_doctype=self.doctype, parent_name=self.name)
 		return context

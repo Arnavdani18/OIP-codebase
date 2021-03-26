@@ -1,9 +1,3 @@
-{% set validations = frappe.get_list('Validation', filters={'parent_doctype': doctype, 'parent_name': name}) %}
-{% set collaborations = frappe.get_list('Collaboration', filters={'parent_doctype': doctype, 'parent_name': name}) %}
-{% set enrichments = frappe.get_list('Enrichment', filters={'parent_doctype': doctype, 'parent_name': name}) %}
-{% set likes = frappe.get_list('Like', filters={'parent_doctype': doctype, 'parent_name': name}) %} 
-{% set watchers = frappe.get_list('Watch', filters={'parent_doctype': doctype, 'parent_name': name}) %} 
-
 {% extends "templates/web.html" %} {% block page_content %} {% include
 "templates/includes/problem/header.html" %}
 

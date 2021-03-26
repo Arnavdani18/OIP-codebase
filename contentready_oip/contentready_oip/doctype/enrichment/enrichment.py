@@ -10,10 +10,12 @@ from frappe.utils.html_utils import clean_html
 
 class Enrichment(Document):
 	def before_save(self):
-		if self.short_description:
+		try:
 			self.short_description = clean_html(self.description)[:500]
 			if len(self.description) > 1000:
 				self.short_description += '...'
+		except:
+			pass
 		if not self.parent_doctype:
 			self.parent_doctype = 'Problem'
 			self.parent_name = self.problem
