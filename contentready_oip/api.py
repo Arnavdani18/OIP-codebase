@@ -12,6 +12,7 @@ from contentready_oip import (
     solution_search,
     user_search,
     service_provider_search,
+    organisation_search
 )
 from user_agents import parse as ua_parse
 from frappe.utils import random_string
@@ -1152,15 +1153,18 @@ def upload_file():
 
 
 def index_document(doc=None, event_name=None):
+    search_modules = {
+        "Problem": problem_search,
+        "Solution": solution_search,
+        "User Profile": user_search,
+        "Service Provider": service_provider_search,
+        "Organisation": organisation_search,
+    }
     try:
-        if doc.doctype == "Problem":
-            problem_search.update_index_for_id(doc.name)
-        elif doc.doctype == "Solution":
-            solution_search.update_index_for_id(doc.name)
-        elif doc.doctype == "User Profile":
-            user_search.update_index_for_id(doc.name)
-        elif doc.doctype == "Service Provider":
-            service_provider_search.update_index_for_id(doc.name)
+        if doc.is_published:
+            search_modules[doc.doctype].update_index_for_id(doc.name)
+        else:
+            search_modules[doc.doctype].remove_document_from_index(doc.name)
     except Exception as e:
         print(str(e))
 
