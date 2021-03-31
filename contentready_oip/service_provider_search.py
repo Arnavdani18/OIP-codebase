@@ -50,7 +50,7 @@ class ServiceProviderSearch(FullTextSearch):
 		Returns:
 			self (object): FullTextSearch Instance
 		"""
-		service_providers = frappe.get_list(DOCTYPE)
+		service_providers = frappe.get_list(DOCTYPE, filters={'is_published': True})
 
 		documents = [self.get_document_to_index(service_provider['name']) for service_provider in service_providers]
 		return documents
@@ -67,6 +67,9 @@ class ServiceProviderSearch(FullTextSearch):
 		frappe.local.no_cache = True
 		try:
 			service_provider = frappe.get_doc(DOCTYPE, name)
+			# Should be unnecessary but in case we call this in published flows...
+			if not service_provider.is_published:
+				return False
 			return frappe._dict(
 				name=name, 
 				full_name=service_provider.full_name,

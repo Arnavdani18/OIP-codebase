@@ -72,6 +72,8 @@ class Solution(WebsiteGenerator):
 			pass
 
 	def get_context(self, context):
+		context.is_collaborator = api.has_collaborator_role()
+		context.is_service_provider = api.has_service_provider_role()
 		context.collaborations = frappe.get_list('Collaboration', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
 		context.validations = frappe.get_list('Validation', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
 		context.likes = frappe.get_list('Like', filters={'parent_doctype': self.doctype, 'parent_name': self.name})

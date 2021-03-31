@@ -6,5 +6,5 @@ def get_context(context):
 	try:
 		context.title = context.doc.full_name
 	except:
-		pass
+		context.title = 'Update Service Provider Profile'
 	return context

@@ -89,6 +89,10 @@ after_install = "contentready_oip.install.after_install"
 # Hook on document methods and events
 
 doc_events = {
+	"User": {
+		"after_insert": "contentready_oip.api.create_profile_from_user",
+		"on_update": "contentready_oip.api.create_profile_from_user",
+	},
 	"OIP White Label Domain": {
 		"after_insert": "contentready_oip.api.setup_domain_hook",
 	},

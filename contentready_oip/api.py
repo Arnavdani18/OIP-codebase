@@ -14,6 +14,7 @@ from contentready_oip import (
     service_provider_search,
 )
 from user_agents import parse as ua_parse
+from frappe.utils import random_string
 from geopy import distance
 from functools import cmp_to_key
 
@@ -26,15 +27,22 @@ def nudge_guests():
         frappe.throw("Please login to collaborate.")
 
 
-def create_user_profile_if_missing():
-    if not frappe.db.exists("User Profile", frappe.session.user):
-        profile = frappe.get_doc(
-            {
-                "doctype": "User Profile",
-                "user": frappe.session.user,
-                "owner": frappe.session.user,
-            }
-        )
+def create_profile_from_user(doc, event_name):
+    if doc.doctype == 'User' and doc.email:
+        print("\n\n\ncreate_profile_from_user", doc.as_dict())
+        create_user_profile_if_missing(doc.email)
+
+
+def create_user_profile_if_missing(email=None):
+    print("\n\n\create_user_profile_if_missing", email)
+    if not email:
+        email = frappe.session.user
+    if not frappe.db.exists('User Profile', email):
+        profile = frappe.get_doc({
+            'doctype': 'User Profile',
+            'user': email,
+            'owner': email
+        })
         profile.save()
         frappe.db.commit()
 
@@ -347,8 +355,7 @@ def get_problem_overview(name, html=True):
     else:
         return doc
 
-
-@frappe.whitelist(allow_guest=False)
+@frappe.whitelist(allow_guest = True)
 def add_primary_content(doctype, doc, is_draft=False):
     doc = json.loads(doc)
     if isinstance(is_draft, str):
@@ -463,22 +470,18 @@ def add_or_edit_collaboration(doctype, name, collaboration, html=True):
         )
     else:
         # creating new collaboration
-        if has_user_contributed("Collaboration", doctype, name):
-            frappe.throw(
-                "You have already added your collaboration intent on this {}.".format(
-                    doctype
-                ).capitalize()
-            )
-        doc = frappe.get_doc(
-            {
-                "doctype": "Collaboration",
-                "comment": collaboration["comment"],
-                "parent_doctype": doctype,
-                "parent_name": name,
-            }
-        )
-        for p in collaboration["personas"]:
-            row = doc.append("personas", {})
+        if has_user_contributed('Collaboration', doctype, name):
+            frappe.throw('You have already added your collaboration intent on this {}.'.format(doctype).capitalize())
+        doc = frappe.get_doc({
+            'doctype': 'Collaboration',
+            'comment': collaboration['comment'],
+            'parent_doctype': doctype,
+            'parent_name': name
+        })
+        if has_service_provider_role():
+            collaboration['personas'].append('service_provider')
+        for p in collaboration['personas']:
+            row = doc.append('personas', {})
             row.persona = p
         doc.save()
         frappe.db.commit()
@@ -1039,7 +1042,6 @@ def has_admin_role(user=None):
     for role in allowed_roles:
         if role in roles:
             is_allowed = True
-
     return is_allowed
 
 
@@ -1053,7 +1055,19 @@ def has_collaborator_role(user=None):
     for role in allowed_roles:
         if role in roles:
             is_allowed = True
+    return is_allowed
 
+
+@frappe.whitelist(allow_guest=True)
+def has_service_provider_role(user=None):
+    if not user:
+        user = frappe.session.user
+    roles = frappe.get_roles(user)
+    allowed_roles = ["Service Provider"]
+    is_allowed = False
+    for role in allowed_roles:
+        if role in roles:
+            is_allowed = True
     return is_allowed
 
 
@@ -1234,3 +1248,28 @@ def aggregate_analytics(doc, event_name):
     )[0]
     agg.save()
     frappe.db.commit()
+
+
+def invite_user(email, first_name=None, last_name=None, roles=[]):
+    if not frappe.db.exists('User', email):
+        user = frappe.get_doc({
+            "doctype":"User",
+            "email": email,
+            "first_name": first_name or email,
+            "last_name": last_name,
+            "enabled": 1,
+            # "new_password": random_string(10),
+            "user_type": "Website User",
+            "send_welcome_email": True
+        })
+        user.flags.ignore_permissions = True
+        user.insert()
+        frappe.db.commit()
+        # set if roles is empty add default signup role as per Portal Settings
+        default_role = frappe.db.get_value("Portal Settings", None, "default_role")
+        if default_role and len(roles) == 0:
+            roles.append(default_role)
+        for role in roles:
+            user.add_roles(role)
+        return True
+    return False

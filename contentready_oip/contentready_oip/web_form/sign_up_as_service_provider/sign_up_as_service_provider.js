@@ -60,7 +60,7 @@ frappe.ready(async function () {
         if (r.message && r.message.route) {
           window.location.href = r.message.route;
         } else {
-          window.location.href = '/dashboard';
+          window.location.href = '/thank-you';
         }
       },
     });
@@ -100,11 +100,11 @@ frappe.ready(async function () {
     add_action_buttons();
     moveDivs();
     arrangeDivs();
-	create_service_provider_options();
+	  create_service_provider_options();
     fixOuterDivForMobile();
     control_labels();
     style_form_headings();
-    style_fields();
+    // style_fields();
     pageHeadingSection();
   });
 
