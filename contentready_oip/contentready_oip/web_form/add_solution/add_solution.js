@@ -477,6 +477,7 @@ frappe.ready(async () => {
   addAttributesToFields();
   add_help_icon();
   updateTimeline();
+  $('.ql-image').hide();
 
   {% include "contentready_oip/public/js/form_actions.js" %}
   {% include "contentready_oip/public/js/resources_needed.js" %}

@@ -136,6 +136,7 @@ frappe.ready(async () => {
   prefill_org_field();
   addAsterisk(mandatory_fields);
   add_help_icon();
+  $('.ql-image').hide();
   // End UI Fixes
 
   {% include "contentready_oip/public/js/form_actions.js" %}

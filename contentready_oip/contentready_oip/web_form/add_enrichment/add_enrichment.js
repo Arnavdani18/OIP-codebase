@@ -89,6 +89,7 @@ frappe.ready( async () => {
   hide_attachments_section();
   add_beneficiary_select2();
   addAsterisk(mandatory_fields);
+  $('.ql-image').hide();
 
   {% include "contentready_oip/public/js/form_actions.js" %}
   {% include "contentready_oip/public/js/resources_needed.js" %}
