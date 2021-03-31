@@ -1,6 +1,5 @@
 const addSdgOptions = () => {
     const sdg_select = $('select[data-fieldname="sdgs"]');
-    console.log(sdg_select);
     // add multiple attr 
     sdg_select.attr('multiple',true);
 

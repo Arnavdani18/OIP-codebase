@@ -18,7 +18,6 @@ frappe.ready(async () => {
   {% include "contentready_oip/public/js/google_maps_autocomplete.js" %}
   {% include "contentready_oip/public/js/dropzone_media.js" %}
   {% include "contentready_oip/public/js/video_url_attachments.js" %}
-  {% include "contentready_oip/public/js/form_actions.js" %}
 
 
   // Fix layout - without this, the entire form occupies col-2 due to custom CSS.
@@ -96,9 +95,34 @@ frappe.ready(async () => {
     <br /><br />
     `;
     $('[data-fieldname="solver_team"][data-fieldtype="Table"]').before(el);
-    // $('#solver-team-select').select2({
-    //   width: '100%'
-    // });
+    
+    function matchCustom(params, data) {
+        // If there are no search terms, return all of the data
+        if ($.trim(params.term) === '') {
+          return data;
+        }
+    
+        // Do not display the item if there is no 'text' property
+        if (!data.text || typeof data.text === 'undefined') {
+          return null;
+        }
+    
+        // `params.term` should be the term that is used for searching
+        // `data.text` is the text that is displayed for the data object
+        if (data.text.toLowerCase().indexOf(params.term.toLowerCase()) > -1) {
+          var modifiedData = $.extend({}, data, true);
+          modifiedData.text += ' (matched)';
+    
+          // You can return modified objects from here
+          // This includes matching the `children` how you want in nested data sets
+          return modifiedData;
+        }
+    
+        // Return `null` if the term should not be displayed
+        return null;
+    }
+  
+
     frappe.call({
       method: 'contentready_oip.api.get_user_list',
       args: {},
@@ -106,6 +130,7 @@ frappe.ready(async () => {
         $('#solver-team-select').select2({
           width: '100%',
           data: r.message,
+          matcher: matchCustom
         });
         setSolversMultiselectFromDoc();
       },
@@ -402,7 +427,7 @@ frappe.ready(async () => {
     const orgRef = $('select[data-fieldname="org"]');
 
     if (!frappe.web_form.doc.org) {
-      set_org_from_profile(orgRef);
+      // set_org_from_profile(orgRef);
     } else{
       await sleep(500);
       orgRef.attr('disabled',true);
@@ -452,6 +477,9 @@ frappe.ready(async () => {
   addAttributesToFields();
   add_help_icon();
   updateTimeline();
+  $('.ql-image').hide();
+
+  {% include "contentready_oip/public/js/form_actions.js" %}
   {% include "contentready_oip/public/js/resources_needed.js" %}
   {% include "contentready_oip/public/js/sector_component.js" %}
   prefill_org_field();

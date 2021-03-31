@@ -18,7 +18,7 @@
  "is_standard": 1,
  "login_required": 1,
  "max_attachment_size": 0,
- "modified": "2021-03-20 11:31:13.978235",
+ "modified": "2021-03-31 17:19:25.878458",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "add-solution",
@@ -362,7 +362,7 @@
   {
    "allow_read_on_all_link_options": 0,
    "fieldname": "sdgs",
-   "fieldtype": "Table",
+   "fieldtype": "Select",
    "hidden": 0,
    "label": "Sustainable Development Goal",
    "max_length": 0,

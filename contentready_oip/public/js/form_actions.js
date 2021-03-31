@@ -129,6 +129,8 @@ const vue_delete_button = new Vue({
             btnText: this.getBtnText(),
         };
     },
+    created: function() {
+    },
     methods: {
         deleteDocument: async function () {
             const vm = this;

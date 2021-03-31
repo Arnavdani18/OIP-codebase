@@ -136,3 +136,17 @@ def seed_service_categories():
         {"title": "Web Development Services"},
     ]
     insert_documents(doctype, rows)
+
+def seed_resources():
+    doctype = "Resource"
+    rows = [
+        {"title": "Funding to Start (CapEx)"},
+        {"title": "Funding to Operate (OpEx)"},
+        {"title": "Immersion / (Better) Access to the affected community"},
+        {"title": "Service-based innovation"},
+        {"title": "Product-based innovation"},
+        {"title": "Stakeholders"},
+        {"title": "Government Intervention (Apart from funding)"},
+        {"title": "Volunteers"},
+    ]
+    insert_documents(doctype, rows)

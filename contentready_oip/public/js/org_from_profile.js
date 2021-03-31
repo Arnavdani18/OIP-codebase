@@ -21,7 +21,7 @@ const set_org_from_profile = (orgRef)=>{
   async function prefill_org_field() {
     const orgRef = $('select[data-fieldname="org"]');
     if (!frappe.web_form.doc.org) {
-      set_org_from_profile(orgRef);
+      // set_org_from_profile(orgRef);
     } else{
       await sleep(500);
       orgRef.attr('disabled',true);
