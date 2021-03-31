@@ -1055,6 +1055,8 @@ def has_collaborator_role(user=None):
     for role in allowed_roles:
         if role in roles:
             is_allowed = True
+    return is_allowed
+
 
 @frappe.whitelist(allow_guest=True)
 def has_service_provider_role(user=None):
