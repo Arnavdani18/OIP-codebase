@@ -46,31 +46,47 @@ class Solution(WebsiteGenerator):
 			r.sector = sector
 		old = self.get_doc_before_save()
 		if old and not old.is_published and self.is_published:
-			self.create_insert_notifications()
+			self.maybe_create_insert_notifications()
 
-	def create_insert_notifications(self):
-		source_full_name = frappe.db.get_value('User Profile', self.owner, 'full_name')
-		parent_doctype = 'Problem'
-		for problem in self.problems_addressed:
-			parent_name = problem.problem
-			content_title, content_route = frappe.db.get_value(parent_doctype, parent_name, ['title', 'route'])
-			recipient = frappe.db.get_value(parent_doctype, parent_name, 'owner')
-			notification = frappe.get_doc({
-				'doctype': 'OIP Notification',
-				'source_user': self.owner,
-				'target_user': recipient,
-				'parent_doctype': parent_doctype,
-				'parent_name': parent_name,
-				'child_doctype': self.doctype,
-				'child_name': self.name,
-				'text': '{} added a solution to your {}: {}'.format(source_full_name, parent_doctype.lower(), content_title),
-				'route': content_route + '#' + self.doctype.lower() + 's',
-			})
-			notification.save()
+	def maybe_create_insert_notifications(self):
+		try:
+			source_full_name = frappe.db.get_value('User Profile', self.owner, 'full_name')
+			parent_doctype = 'Problem'
+			for problem in self.problems_addressed:
+				parent_name = problem.problem
+				content_title, content_route = frappe.db.get_value(parent_doctype, parent_name, ['title', 'route'])
+				recipient = frappe.db.get_value(parent_doctype, parent_name, 'owner')
+				notification = frappe.get_doc({
+					'doctype': 'OIP Notification',
+					'source_user': self.owner,
+					'target_user': recipient,
+					'parent_doctype': parent_doctype,
+					'parent_name': parent_name,
+					'child_doctype': self.doctype,
+					'child_name': self.name,
+					'text': '{} added a solution to your {}: {}'.format(source_full_name, parent_doctype.lower(), content_title),
+					'route': content_route + '#' + self.doctype.lower() + 's',
+				})
+				notification.save()
+		except:
+			pass
 
 	def get_context(self, context):
 		context.is_collaborator = api.has_collaborator_role()
 		context.is_service_provider = api.has_service_provider_role()
+		context.collaborations = frappe.get_list('Collaboration', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
+		context.validations = frappe.get_list('Validation', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
+		context.likes = frappe.get_list('Like', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
+		context.watchers = frappe.get_list('Watch', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
 		# Log visit
 		api.enqueue_log_route_visit(route=context.route, user_agent=frappe.request.headers.get('User-Agent'), parent_doctype=self.doctype, parent_name=self.name)
+		try:
+			context.analytics = frappe.get_doc('OIP Route Aggregate', {'route': self.route})
+		except:
+			context.analytics = {
+				'total_visits': 0,
+				'unique_visitors': 0,
+				'unique_organisations': 0,
+				'modified': None
+			}
 		return context

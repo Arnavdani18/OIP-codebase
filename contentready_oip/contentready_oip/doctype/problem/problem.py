@@ -47,12 +47,26 @@ class Problem(WebsiteGenerator):
             r.sector = sector
 
     def get_context(self, context):
-        context.enrichment_count = frappe.db.count("Enrichment", {'parent_name': context.name ,'is_published': True})
         solution_ids = frappe.get_list('Problem Table', filters={'problem': self.name, 'parenttype': 'Solution'}, fields=['parent'])
         solution_ids = [s['parent'] for s in solution_ids]
         context.solutions = frappe.get_list('Solution', filters={'name': ['in', solution_ids], 'is_published': True})
+        context.enrichments = frappe.get_list('Enrichment', filters={'parent_doctype': self.doctype, 'parent_name': self.name, 'is_published': True})
+        context.collaborations = frappe.get_list('Collaboration', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
+        context.validations = frappe.get_list('Validation', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
+        context.likes = frappe.get_list('Like', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
+        context.watchers = frappe.get_list('Watch', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
+        context.enrichment_count = len(context.enrichments)
         # Log visit
         api.enqueue_log_route_visit(route=context.route, user_agent=frappe.request.headers.get('User-Agent'), parent_doctype=self.doctype, parent_name=self.name)
         context.is_collaborator = api.has_collaborator_role()
         context.is_service_provider = api.has_service_provider_role()
+        try:
+			context.analytics = frappe.get_doc('OIP Route Aggregate', {'route': self.route})
+		except:
+			context.analytics = {
+				'total_visits': 0,
+				'unique_visitors': 0,
+				'unique_organisations': 0,
+				'modified': None
+			}
         return context

@@ -153,8 +153,11 @@
 
   deleteCollaboration = (doctype, name) => {
     frappe.call({
-      method: 'contentready_oip.api.delete_collaboration',
-      args: { name: name },
+      method: 'contentready_oip.api.delete_contribution',
+      args: {
+          child_doctype: doctype,
+          name: name
+      },
       callback: (r) => {
         if (r.message) {
           window.location.reload();
