@@ -1,0 +1,43 @@
+<table class="table logs-table">
+    <tbody>
+        <tr>
+            <td>
+                Total Visits
+            </td>
+            <td>
+                {{ analytics.total_visits }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Unique Visitors
+            </td>
+            <td>
+                {{ analytics.unique_visitors }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Unique Organisations
+            </td>
+            <td>
+                {{ analytics.unique_organisations }}
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Last Visit
+            </td>
+            <td>
+                {{ frappe.format_date(analytics.modified) }}
+            </td>
+        </tr>
+    </tbody>
+  </table>
+  
+  <style>
+    .logs-table {
+      font-size: 1.3rem;
+    }
+  </style>
+  

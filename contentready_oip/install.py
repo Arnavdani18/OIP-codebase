@@ -9,7 +9,8 @@ def after_install():
     try_method(seed_sectors)
     try_method(seed_personas)
     try_method(seed_sdgs)
-
+    try_method(seed_service_categories)
+    
 
 def insert_documents(doctype, rows):
     for row in rows:
@@ -112,5 +113,26 @@ def seed_sdgs():
         {"title": "Life on Land", "number": 15},
         {"title": "Peace and Justice Strong Institutions", "number": 16},
         {"title": "Partnerships to achieve the Goal", "number": 17},
+    ]
+    insert_documents(doctype, rows)
+
+
+def seed_service_categories():
+    doctype = "Service Category"
+    rows = [
+        {"title": "Banking Services"},
+        {"title": "Credit and Financial Services"},
+        {"title": "Insurance Services"},
+        {"title": "Accounting & Audit Services"},
+        {"title": "Legal & Compliance Services"},
+        {"title": "Manufacturing Services"},
+        {"title": "Product Design Services"},
+        {"title": "HR Support Services"},
+        {"title": "Marketing Services"},
+        {"title": "Sales & Distribution Services"},
+        {"title": "Supply Chain & Logistics Solutions"},
+        {"title": "Testing and Certification Services"},
+        {"title": "Software Development Services"},
+        {"title": "Web Development Services"},
     ]
     insert_documents(doctype, rows)

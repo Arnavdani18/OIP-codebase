@@ -78,4 +78,13 @@ class Solution(WebsiteGenerator):
 		context.watchers = frappe.get_list('Watch', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
 		# Log visit
 		api.enqueue_log_route_visit(route=context.route, user_agent=frappe.request.headers.get('User-Agent'), parent_doctype=self.doctype, parent_name=self.name)
+		try:
+			context.analytics = frappe.get_doc('OIP Route Aggregate', {'route': self.route})
+		except:
+			context.analytics = {
+				'total_visits': 0,
+				'unique_visitors': 0,
+				'unique_organisations': 0,
+				'modified': None
+			}
 		return context
