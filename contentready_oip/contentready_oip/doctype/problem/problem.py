@@ -58,4 +58,5 @@ class Problem(WebsiteGenerator):
         context.enrichment_count = len(context.enrichments)
         # Log visit
         api.enqueue_log_route_visit(route=context.route, user_agent=frappe.request.headers.get('User-Agent'), parent_doctype=self.doctype, parent_name=self.name)
+        context.analytics = frappe.get_doc('OIP Route Aggregate', {'route': self.route})
         return context

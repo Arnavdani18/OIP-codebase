@@ -12,6 +12,10 @@
             <a class="nav-link" id="collaborations-tab" data-toggle="tab" href="#collaborations" role="tab"
                 aria-controls="collaborations" aria-selected="false">Collaborated (<span id="collaboration-count">{{ collaborations | length }}</span>)</a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" id="analytics-tab" data-toggle="tab" href="#analytics" role="tab"
+                aria-controls="analytics" aria-selected="false">Analytics</a>
+        </li>
     </ul>
     <div id="leftTabGroup" class="pb-2">
         <div class="tab-content" id="leftTabContent">
@@ -62,6 +66,11 @@
                         {% include "templates/includes/common/empty_card.html" %}
                         {% endif %}
                     {% endif %}
+                </div>
+            </div>
+            <div class="tab-pane fade" id="analytics" role="tabpanel" aria-labelledby="analytics-tab">
+                <div class="col pb-4">
+                    {% include "templates/includes/common/content_analytics.html" %}
                 </div>
             </div>
         </div>
