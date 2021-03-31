@@ -180,41 +180,13 @@ login.login_handlers = (function() {
         200: function(data) {
             if (data.message == 'Logged In') {
                 login.set_indicator('{{ _("Success") }}','green');
-
-                // custom modification based on requirement
                 let home_route = "/dashboard";
-                getUserProfile(data.name)
-                    .then(v => {
-                        if (v.message.is_published !== +1) {
-                            home_route = `/update-profile`;
-                        }
-                        window.location.href = home_route;
-                    })
-                    .catch(e => window.location.href = home_route);
-
-                // original code
-                // window.location.href = frappe.utils.get_url_arg("redirect-to") || data.home_page;
+                window.location.href = home_route;
             } else if (data.message == 'Password Reset') {
                 window.location.href = data.redirect_to;
             } else if (data.message == "No App") {
                 login.set_indicator("{{ _('Success') }}",'green');
-                // if (localStorage) {
-                //     var last_visited =
-                //         localStorage.getItem("last_visited")
-                //         || frappe.utils.get_url_arg("redirect-to");
-                //     localStorage.removeItem("last_visited");
-                // }
-
-                // if (data.redirect_to) {
-                //     window.location.href = data.redirect_to;
-                // }
-
-                // if (last_visited && last_visited != "/login") {
-                //     window.location.href = last_visited;
-                // } else {
-                //     window.location.href = data.home_page;
-                // }
-
+                
                 // custom modification based on requirement
                 let home_route = "/dashboard";
                 getUserProfile(data.name)
@@ -245,7 +217,6 @@ login.login_handlers = (function() {
                     login.set_indicator('{{ _("Success") }}','green');
                     frappe.msgprint(data.message[1])
                 }
-                //login.set_indicator(__(data.message), 'green');
             }
 
             //OTP verification

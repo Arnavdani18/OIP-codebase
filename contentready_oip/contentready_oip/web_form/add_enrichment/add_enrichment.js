@@ -19,7 +19,6 @@ frappe.ready( async () => {
   {% include "contentready_oip/public/js/google_maps_autocomplete.js" %}
   {% include "contentready_oip/public/js/dropzone_media.js" %}
   {% include "contentready_oip/public/js/video_url_attachments.js" %}
-  {% include "contentready_oip/public/js/form_actions.js" %}
 
   // Fix layout - without this, the entire form occupies col-2 due to custom CSS.
   moveDivs = () => {
@@ -90,6 +89,8 @@ frappe.ready( async () => {
   hide_attachments_section();
   add_beneficiary_select2();
   addAsterisk(mandatory_fields);
+
+  {% include "contentready_oip/public/js/form_actions.js" %}
   {% include "contentready_oip/public/js/resources_needed.js" %}
   {% include "contentready_oip/public/js/sector_component.js" %}
   // End UI Fixes

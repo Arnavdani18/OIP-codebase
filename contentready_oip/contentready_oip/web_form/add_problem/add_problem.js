@@ -18,7 +18,6 @@ frappe.ready(async () => {
   {% include "contentready_oip/public/js/google_maps_autocomplete.js" %}
   {% include "contentready_oip/public/js/dropzone_media.js" %}
   {% include "contentready_oip/public/js/video_url_attachments.js" %}
-  {% include "contentready_oip/public/js/form_actions.js" %}
 
 
   // Fix layout - without this, the entire form occupies col-2 due to custom CSS.
@@ -33,8 +32,6 @@ frappe.ready(async () => {
     $('#similar-problems').append('<div></div>');
     $('.attached-file').parent().hide();
   };  
-
-  
 
   lookForSimilarProblems = async () => {
     // Delay as the user is probably still typing
@@ -65,7 +62,17 @@ frappe.ready(async () => {
   formatMultiSelectValues = () => {
     // sdg
     const sdg_select = $('select[data-fieldname="sdgs"]');
-    const sdgVal = sdg_select.val()?.map(v => ({sdg: v}));
+    let sdgVal = [];
+    const selected_values = sdg_select.val();
+    if (selected_values) {
+      if (Array.isArray(selected_values)) {
+        sdgVal = selected_values.val()?.map(v => ({sdg: v}));
+      } else {
+        // console.log(selected_values);
+        sdgVal = [{sdg: selected_values}];
+      }
+    }
+    
     frappe.web_form.doc.sdgs = sdgVal;
 
     // beneficiary
@@ -130,6 +137,8 @@ frappe.ready(async () => {
   addAsterisk(mandatory_fields);
   add_help_icon();
   // End UI Fixes
+
+  {% include "contentready_oip/public/js/form_actions.js" %}
 
   {% include "contentready_oip/public/js/resources_needed.js" %}
 

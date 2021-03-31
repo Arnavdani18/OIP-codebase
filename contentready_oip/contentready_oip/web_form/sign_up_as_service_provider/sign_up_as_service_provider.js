@@ -3,6 +3,7 @@ frappe.provide('Vue');
 frappe.ready(async function () {
   
   const doctype = 'Service Provider';
+  const mandatory_fields = ['org_title', 'service_category', 'city', 'country', 'website', 'first_name', 'last_name'];
 
   // Start Helpers
   // Only write form specific helpers here. Use includes for common use cases.
@@ -106,6 +107,7 @@ frappe.ready(async function () {
     style_form_headings();
     // style_fields();
     pageHeadingSection();
+    addAsterisk(mandatory_fields);
   });
 
   // Start Google Maps Autocomplete

@@ -1221,7 +1221,7 @@ def enqueue_aggregate_analytics(doc, event_name):
 
 
 def aggregate_analytics(doc, event_name):
-    frappe.set_user("Administrator")
+    # frappe.set_user("Administrator")
     existing = frappe.get_list(
         "OIP Route Aggregate",
         {"parent_doctype": doc.parent_doctype, "parent_name": doc.parent_name},
@@ -1246,7 +1246,7 @@ def aggregate_analytics(doc, event_name):
     agg.total_visits, agg.unique_visitors, agg.unique_organisations = frappe.db.sql(
         query
     )[0]
-    agg.save()
+    agg.save(ignore_permissions=True)
     frappe.db.commit()
 
 

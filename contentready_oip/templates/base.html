@@ -26,8 +26,7 @@
     {% if head_html is defined -%}
     {{ head_html or "" }}
     {%- endif %}
-    <link as="style" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css"
-        rel="stylesheet prefetch" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
     {%- for link in web_include_css %}
     <link type="text/css" rel="stylesheet" href="{{ link|abs_url }}">
@@ -92,7 +91,7 @@
 
         gtag( 'config', 'UA-142610152-2' );
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <link as="style" rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css" />
     <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js"></script>
