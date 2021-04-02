@@ -18,5 +18,6 @@ class Organisation(WebsiteGenerator):
     
     def get_context(self, context):
         # Log visit
-        api.enqueue_log_route_visit(route=context.route, user_agent=frappe.request.headers.get('User-Agent'), parent_doctype=self.doctype, parent_name=self.name)
+        if frappe.session.user != self.owner:
+            api.enqueue_log_route_visit(route=context.route, user_agent=frappe.request.headers.get('User-Agent'), parent_doctype=self.doctype, parent_name=self.name)
         return context

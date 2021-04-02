@@ -68,7 +68,7 @@ class ServiceProviderSearch(FullTextSearch):
 		try:
 			service_provider = frappe.get_doc(DOCTYPE, name)
 			# Should be unnecessary but in case we call this in published flows...
-			if not service_provider.is_published:
+			if not service_provider.is_published or not service_provider.route:
 				return False
 			return frappe._dict(
 				name=name, 

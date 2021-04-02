@@ -16,7 +16,9 @@
   "total_desktop_visits",
   "column_break_9",
   "unique_visitors",
-  "unique_organisations"
+  "unique_organisations",
+  "section_break_12",
+  "location_route_aggregates"
  ],
  "fields": [
   {
@@ -85,10 +87,20 @@
    "fieldtype": "Int",
    "in_list_view": 1,
    "label": "Unique Organisations"
+  },
+  {
+   "fieldname": "section_break_12",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "location_route_aggregates",
+   "fieldtype": "Table",
+   "label": "Location Route Aggregates",
+   "options": "Location Route Aggregate Table"
   }
  ],
  "links": [],
- "modified": "2021-03-18 18:35:00.995850",
+ "modified": "2021-04-02 20:26:33.043747",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP Route Aggregate",
