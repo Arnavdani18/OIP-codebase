@@ -2,6 +2,9 @@ import frappe
 from contentready_oip import api
 
 def get_context(context):
+    if frappe.session.user == 'Guest' or not api.has_collaborator_role():
+        frappe.local.flags.redirect_location = '/'
+        raise frappe.Redirect
     context.logs = {
         'Problem': [],
         'Solution': [],
