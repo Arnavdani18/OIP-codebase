@@ -4,3 +4,4 @@ google-cloud-vision
 pyyaml
 ua-parser
 user-agents
+IP2Location

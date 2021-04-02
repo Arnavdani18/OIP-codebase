@@ -12,7 +12,8 @@ from contentready_oip import (
     solution_search,
     user_search,
     service_provider_search,
-    organisation_search
+    organisation_search,
+    ip_location_lookup
 )
 from user_agents import parse as ua_parse
 from frappe.utils import random_string
@@ -1188,11 +1189,12 @@ def enqueue_log_route_visit(
         user_agent=user_agent,
         parent_doctype=parent_doctype,
         parent_name=parent_name,
+        ip_address=frappe.request.remote_addr
     )
 
 
 @frappe.whitelist(allow_guest=True)
-def log_route_visit(route, user_agent=None, parent_doctype=None, parent_name=None):
+def log_route_visit(route, user_agent=None, parent_doctype=None, parent_name=None, ip_address=None):
     if frappe.db.exists("User Profile", frappe.session.user):
         organisation = frappe.get_value("User Profile", frappe.session.user, "org")
     else:
@@ -1213,6 +1215,17 @@ def log_route_visit(route, user_agent=None, parent_doctype=None, parent_name=Non
             "device": user_agent.device.family,
         }
     )
+    if ip_address:
+        geo = ip_location_lookup.get_location(ip_address)
+        doc.ip_address = ip_address
+        doc.country_short = geo.country_short
+        doc.country_long = geo.country_long
+        doc.region = geo.region
+        doc.city = geo.city
+        doc.latitude = geo.latitude
+        doc.longitude = geo.longitude
+        doc.zipcode = geo.zipcode
+        doc.timezone = geo.timezone
     doc.save()
     frappe.db.commit()
 

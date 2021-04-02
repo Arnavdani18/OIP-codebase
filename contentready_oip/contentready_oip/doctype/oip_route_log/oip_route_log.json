@@ -14,7 +14,18 @@
   "user_agent",
   "browser",
   "os",
-  "device"
+  "device",
+  "geoip_data_section",
+  "country_short",
+  "country_long",
+  "region",
+  "city",
+  "zipcode",
+  "column_break_16",
+  "ip_address",
+  "latitude",
+  "longitude",
+  "timezone"
  ],
  "fields": [
   {
@@ -73,10 +84,64 @@
    "fieldname": "device",
    "fieldtype": "Data",
    "label": "Device"
+  },
+  {
+   "fieldname": "geoip_data_section",
+   "fieldtype": "Section Break",
+   "label": "GeoIP Data"
+  },
+  {
+   "fieldname": "country_short",
+   "fieldtype": "Data",
+   "label": "Country Code"
+  },
+  {
+   "fieldname": "country_long",
+   "fieldtype": "Data",
+   "label": "Country"
+  },
+  {
+   "fieldname": "region",
+   "fieldtype": "Data",
+   "label": "Region"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "label": "City"
+  },
+  {
+   "fieldname": "column_break_16",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "latitude",
+   "fieldtype": "Float",
+   "label": "Latitude"
+  },
+  {
+   "fieldname": "longitude",
+   "fieldtype": "Float",
+   "label": "Longitude"
+  },
+  {
+   "fieldname": "zipcode",
+   "fieldtype": "Data",
+   "label": "Zipcode"
+  },
+  {
+   "fieldname": "timezone",
+   "fieldtype": "Data",
+   "label": "Timezone"
+  },
+  {
+   "fieldname": "ip_address",
+   "fieldtype": "Data",
+   "label": "IP Address"
   }
  ],
  "links": [],
- "modified": "2021-03-18 17:39:56.766317",
+ "modified": "2021-04-02 20:01:45.367949",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP Route Log",
