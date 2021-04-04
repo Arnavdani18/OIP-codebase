@@ -1155,7 +1155,6 @@ def index_document(doc=None, event_name=None):
         "Problem": problem_search,
         "Solution": solution_search,
         "User Profile": user_search,
-        "Service Provider": service_provider_search,
         "Organisation": organisation_search,
     }
     try:

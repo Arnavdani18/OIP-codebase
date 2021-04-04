@@ -2,7 +2,7 @@ frappe.provide('Vue');
 
 frappe.ready(async function () {
   
-  const doctype = 'Service Provider';
+  const doctype = 'Organisation';
   const mandatory_fields = ['org_title', 'service_category', 'city', 'country', 'website', 'first_name', 'last_name'];
 
   // Start Helpers
@@ -54,7 +54,7 @@ frappe.ready(async function () {
     frappe.call({
       method: 'contentready_oip.api.add_primary_content',
       args: {
-        doctype: 'Service Provider',
+        doctype: 'Organisation',
         doc: frappe.web_form.doc,
       },
       callback: function (r) {
