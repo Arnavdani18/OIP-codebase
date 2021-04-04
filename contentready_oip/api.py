@@ -1181,6 +1181,11 @@ def get_suggested_titles(text, scope=None):
 def enqueue_log_route_visit(
     route, user_agent=None, parent_doctype=None, parent_name=None
 ):
+    # if frappe.request.remote_addr and frappe.request.remote_addr != '127.0.0.1':
+    #     ip_address = frappe.request.remote_addr
+    # else:
+    #     ip_address = None
+    ip_address = frappe.request.headers.get('X-Forwarded-For')
     enqueue(
         log_route_visit,
         timeout=1200,
@@ -1188,7 +1193,7 @@ def enqueue_log_route_visit(
         user_agent=user_agent,
         parent_doctype=parent_doctype,
         parent_name=parent_name,
-        ip_address=frappe.request.remote_addr
+        ip_address=ip_address
     )
 
 
@@ -1217,8 +1222,8 @@ def log_route_visit(route, user_agent=None, parent_doctype=None, parent_name=Non
     if ip_address:
         geo = ip_location_lookup.get_location(ip_address)
         doc.ip_address = ip_address
-        doc.country_short = geo.country_short
-        doc.country_long = geo.country_long
+        doc.country_code = geo.country_short
+        doc.country = geo.country_long
         doc.region = geo.region
         doc.city = geo.city
         doc.latitude = geo.latitude
@@ -1234,7 +1239,7 @@ def enqueue_aggregate_analytics(doc, event_name):
 
 
 def aggregate_analytics(doc, event_name):
-    # frappe.set_user("Administrator")
+    frappe.set_user("Administrator")
     existing = frappe.get_list(
         "OIP Route Aggregate",
         {"parent_doctype": doc.parent_doctype, "parent_name": doc.parent_name},
@@ -1253,12 +1258,19 @@ def aggregate_analytics(doc, event_name):
                 ),
             }
         )
-    query = """select count(name), count(distinct user), count(distinct organisation) from `tabOIP Route Log` where parent_doctype='{}' and parent_name='{}';""".format(
+    query = """select count(name), count(distinct ip_address), count(distinct organisation) from `tabOIP Route Log` where parent_doctype='{}' and parent_name='{}';""".format(
         doc.parent_doctype, doc.parent_name
     )
     agg.total_visits, agg.unique_visitors, agg.unique_organisations = frappe.db.sql(
         query
     )[0]
+    loc_query = """select city, region, country, country_code, count(*) as num from `tabOIP Route Log` where parent_doctype='{}' and parent_name='{}' group by city;""".format(doc.parent_doctype, doc.parent_name)
+    results = frappe.db.sql(loc_query)
+    agg.location_route_aggregates = []
+    for r in results:
+        if r[2] and r[2] != '-':
+            row = agg.append('location_route_aggregates', {})
+            row.city, row.region, row.country, row.country_code, row.count = r
     agg.save(ignore_permissions=True)
     frappe.db.commit()
 

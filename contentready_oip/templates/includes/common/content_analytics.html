@@ -33,11 +33,31 @@
             </td>
         </tr>
     </tbody>
-  </table>
-  
-  <style>
+</table>
+
+{% if analytics.location_route_aggregates | length %}
+
+<h6>By Location</h6>
+
+<table class="table logs-table">
+    <tbody>
+        {% for row in analytics.location_route_aggregates %}
+        <tr>
+            <td>
+                {{ row.city }}, {{ row.region }}, {{ row.country }}
+            </td>
+            <td>
+                {{ row.count }}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endif %}
+
+<style>
     .logs-table {
-      font-size: 1.3rem;
+        font-size: 1.3rem;
     }
-  </style>
-  
+</style>
