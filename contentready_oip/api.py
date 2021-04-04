@@ -1182,10 +1182,11 @@ def get_suggested_titles(text, scope=None):
 def enqueue_log_route_visit(
     route, user_agent=None, parent_doctype=None, parent_name=None
 ):
-    if frappe.request.remote_addr and frappe.request.remote_addr != '127.0.0.1':
-        ip_address = frappe.request.remote_addr
-    else:
-        ip_address = None
+    # if frappe.request.remote_addr and frappe.request.remote_addr != '127.0.0.1':
+    #     ip_address = frappe.request.remote_addr
+    # else:
+    #     ip_address = None
+    ip_address = frappe.request.headers.get('X-Forwarded-For')
     enqueue(
         log_route_visit,
         timeout=1200,
