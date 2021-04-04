@@ -16,8 +16,8 @@
   "os",
   "device",
   "geoip_data_section",
-  "country_short",
-  "country_long",
+  "country_code",
+  "country",
   "region",
   "city",
   "zipcode",
@@ -91,12 +91,12 @@
    "label": "GeoIP Data"
   },
   {
-   "fieldname": "country_short",
+   "fieldname": "country_code",
    "fieldtype": "Data",
    "label": "Country Code"
   },
   {
-   "fieldname": "country_long",
+   "fieldname": "country",
    "fieldtype": "Data",
    "label": "Country"
   },
@@ -141,7 +141,7 @@
   }
  ],
  "links": [],
- "modified": "2021-04-02 20:01:45.367949",
+ "modified": "2021-04-04 19:51:28.700665",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP Route Log",
