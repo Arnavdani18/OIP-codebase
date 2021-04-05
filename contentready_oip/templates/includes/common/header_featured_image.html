@@ -1,12 +1,66 @@
+{% macro placeholder_icon(type) -%}
+{% if type and type.find('video') >= 0 or type | lower == 'link' %}
+<!-- prettier-ignore -->
+<div class="position-absolute overlay-icon">
+      {% include "public/svg/video.svg" %}
+    </div>
+{% else %}
+<div class="position-absolute overlay-icon">
+  {% include "public/svg/image.svg" %}
+</div>
+{% endif %}
+<!-- prettier-ignore -->
+{%- endmacro %}
+
 {% set id = 'header' %}
 <div class="img-wrapper">
     <!-- {# https://jinja.palletsprojects.com/en/2.11.x/templates/#assignments #} -->
     {% set ns = namespace(found=False) %}
     {% for item in media %}
         {% if item['is_featured'] == 1 %}
-            <img src="{{item.attachment}}" alt="image" onerror="javascript:this.src='../assets/contentready_oip/images/image_placeholder.jpg'"
-            class="rounded img-responsive" style="object-fit: cover; cursor: pointer;" data-toggle="modal"
-            data-target="#attachment-modal-{{id}}" />
+            {% if item.type.startswith('image') %}
+                <img src="{{item.attachment}}" alt="image" onerror="javascript:this.src='../assets/contentready_oip/images/image_placeholder.jpg'"
+                class="rounded img-responsive" style="object-fit: cover; cursor: pointer;" data-toggle="modal"
+                data-target="#attachment-modal-{{id}}" />
+            {% elif item.type and item.type.startswith('video') %}
+                <video class="video-thumbnail">
+                    <source src="{{item.attachment}}" type="{{item.type}}" />
+                </video>
+            {% elif item.type and item.type.startswith('link') %}
+            <script>
+                function getThumbnail(url) {
+                  frappe.ready(() => {
+                    frappe.call({
+                      type: 'GET',
+                      method: 'contentready_oip.api.get_url_metadata',
+                      args: { url },
+                      callback: function (r) {
+                        const { provider, data } = r.message;
+                        if (provider === 'youtube') {
+                          const { thumbnail_url } = data;
+                          document.getElementById(
+                            `header-{{name}}`
+                          ).src = thumbnail_url;
+                        } else {
+                          const { thumbnail_large } = data;
+                          document.getElementById(
+                            `header-{{name}}`
+                          ).src = thumbnail_large;
+                        }
+                      },
+                    });
+                  });
+                }
+                getThumbnail(`{{item.attachment}}`);
+              </script>
+              <img
+                onerror="javascript:this.src='../assets/contentready_oip/images/image_placeholder.jpg'"
+                class="small-img-attachment-modal"
+                alt="{{ item.description }}"
+                id="header-{{name}}"
+                />
+                {{ placeholder_icon(item.type) }}
+            {% endif %}
         {% set ns.found = True %}
         {% endif %}
     {% endfor %}
