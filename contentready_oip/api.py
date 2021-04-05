@@ -11,7 +11,6 @@ from contentready_oip import (
     problem_search,
     solution_search,
     user_search,
-    service_provider_search,
     organisation_search,
     ip_location_lookup
 )
