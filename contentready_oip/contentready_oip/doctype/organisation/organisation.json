@@ -81,7 +81,7 @@
   {
    "fieldname": "route",
    "fieldtype": "Data",
-   "label": "route"
+   "label": "Route"
   },
   {
    "fieldname": "section_break_11",
@@ -170,7 +170,7 @@
  "image_field": "photo",
  "is_published_field": "is_published",
  "links": [],
- "modified": "2021-04-04 19:09:07.586623",
+ "modified": "2021-04-06 13:16:17.164818",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Organisation",
