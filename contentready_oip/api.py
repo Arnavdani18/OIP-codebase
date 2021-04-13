@@ -210,10 +210,12 @@ def get_sector_list():
 
 @frappe.whitelist(allow_guest=True)
 def get_homepage_stats():
+    available_sectors = {s['name'] for s in get_available_sectors()}
+
     return {
-        "problems": frappe.db.count("Problem", filters={"is_published": True}),
-        "solutions": frappe.db.count("Solution", filters={"is_published": True}),
-        "collaborators": frappe.db.count("User Profile"),
+        "problems": frappe.db.count("Sector Table", filters={"parenttype": 'Problem', 'sector': ['in', available_sectors]}),
+        "solutions": frappe.db.count("Sector Table", filters={"parenttype": 'Solution', 'sector': ['in', available_sectors]}),
+        "collaborators": frappe.db.count("User Profile", filters={"is_published": True}),
     }
 
 
