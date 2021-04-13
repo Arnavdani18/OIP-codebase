@@ -1180,10 +1180,6 @@ def get_suggested_titles(text, scope=None):
 def enqueue_log_route_visit(
     route, user_agent=None, parent_doctype=None, parent_name=None
 ):
-    # if frappe.request.remote_addr and frappe.request.remote_addr != '127.0.0.1':
-    #     ip_address = frappe.request.remote_addr
-    # else:
-    #     ip_address = None
     ip_address = frappe.request.headers.get('X-Forwarded-For')
     enqueue(
         log_route_visit,
@@ -1282,7 +1278,6 @@ def invite_user(email, first_name=None, last_name=None, roles=[]):
             "first_name": first_name or email,
             "last_name": last_name,
             "enabled": 1,
-            # "new_password": random_string(10),
             "user_type": "Website User",
             "send_welcome_email": True
         })
@@ -1297,3 +1292,7 @@ def invite_user(email, first_name=None, last_name=None, roles=[]):
             user.add_roles(role)
         return True
     return False
+
+
+def add_user_to_org(email, org_id):
+    pass

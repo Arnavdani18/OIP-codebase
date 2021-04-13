@@ -17,8 +17,7 @@
   "route",
   "column_break_4",
   "sectors",
-  "skills",
-  "qualifications",
+  "team_members",
   "section_break_11",
   "city",
   "latitude",
@@ -61,22 +60,6 @@
    "fieldname": "phone",
    "fieldtype": "Data",
    "label": "Phone"
-  },
-  {
-   "fieldname": "skills",
-   "fieldtype": "Table",
-   "in_preview": 1,
-   "in_standard_filter": 1,
-   "label": "Skills",
-   "options": "Skill Table"
-  },
-  {
-   "fieldname": "qualifications",
-   "fieldtype": "Table",
-   "in_preview": 1,
-   "in_standard_filter": 1,
-   "label": "Qualifications",
-   "options": "Qualification Table"
   },
   {
    "fieldname": "route",
@@ -164,13 +147,19 @@
    "fieldtype": "Select",
    "label": "Type",
    "options": "Contributor\nService Provider"
+  },
+  {
+   "fieldname": "team_members",
+   "fieldtype": "Table",
+   "label": "Team Members",
+   "options": "User Table"
   }
  ],
  "has_web_view": 1,
  "image_field": "photo",
  "is_published_field": "is_published",
  "links": [],
- "modified": "2021-04-06 13:16:17.164818",
+ "modified": "2021-04-12 13:08:55.322925",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Organisation",
