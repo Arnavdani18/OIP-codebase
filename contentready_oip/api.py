@@ -12,8 +12,11 @@ from contentready_oip import (
     solution_search,
     user_search,
     service_provider_search,
+    organisation_search,
+    ip_location_lookup
 )
 from user_agents import parse as ua_parse
+from frappe.utils import random_string
 from geopy import distance
 from functools import cmp_to_key
 
@@ -26,15 +29,22 @@ def nudge_guests():
         frappe.throw("Please login to collaborate.")
 
 
-def create_user_profile_if_missing():
-    if not frappe.db.exists("User Profile", frappe.session.user):
-        profile = frappe.get_doc(
-            {
-                "doctype": "User Profile",
-                "user": frappe.session.user,
-                "owner": frappe.session.user,
-            }
-        )
+def create_profile_from_user(doc, event_name):
+    if doc.doctype == 'User' and doc.email:
+        print("\n\n\ncreate_profile_from_user", doc.as_dict())
+        create_user_profile_if_missing(doc.email)
+
+
+def create_user_profile_if_missing(email=None):
+    print("\n\n\create_user_profile_if_missing", email)
+    if not email:
+        email = frappe.session.user
+    if not frappe.db.exists('User Profile', email):
+        profile = frappe.get_doc({
+            'doctype': 'User Profile',
+            'user': email,
+            'owner': email
+        })
         profile.save()
         frappe.db.commit()
 
@@ -347,8 +357,7 @@ def get_problem_overview(name, html=True):
     else:
         return doc
 
-
-@frappe.whitelist(allow_guest=False)
+@frappe.whitelist(allow_guest = True)
 def add_primary_content(doctype, doc, is_draft=False):
     doc = json.loads(doc)
     if isinstance(is_draft, str):
@@ -463,22 +472,18 @@ def add_or_edit_collaboration(doctype, name, collaboration, html=True):
         )
     else:
         # creating new collaboration
-        if has_user_contributed("Collaboration", doctype, name):
-            frappe.throw(
-                "You have already added your collaboration intent on this {}.".format(
-                    doctype
-                ).capitalize()
-            )
-        doc = frappe.get_doc(
-            {
-                "doctype": "Collaboration",
-                "comment": collaboration["comment"],
-                "parent_doctype": doctype,
-                "parent_name": name,
-            }
-        )
-        for p in collaboration["personas"]:
-            row = doc.append("personas", {})
+        if has_user_contributed('Collaboration', doctype, name):
+            frappe.throw('You have already added your collaboration intent on this {}.'.format(doctype).capitalize())
+        doc = frappe.get_doc({
+            'doctype': 'Collaboration',
+            'comment': collaboration['comment'],
+            'parent_doctype': doctype,
+            'parent_name': name
+        })
+        if has_service_provider_role():
+            collaboration['personas'].append('service_provider')
+        for p in collaboration['personas']:
+            row = doc.append('personas', {})
             row.persona = p
         doc.save()
         frappe.db.commit()
@@ -984,26 +989,23 @@ def send_weekly_updates(emails=[]):
 @frappe.whitelist(allow_guest=False)
 def add_custom_domain(domain):
     import shlex, subprocess
-
+    from subprocess import Popen, PIPE
     site = frappe.get_site_path()
-    cmds = [
-        "bench setup add-domain {} --site {}".format(domain, site),
-        "sudo -H bench setup lets-encrypt -n {} --custom-domain {}".format(
-            site, domain
-        ),
-        "sudo systemctl restart nginx",
-    ]
-    try:
-        for cmd in cmds:
-            cmd = shlex.split(cmd)
-            subprocess.check_output(cmd)
-        doc = frappe.get_doc("OIP White Label Domain", domain)
-        doc.url = "https://{}".format(domain)
-        doc.save()
-        return True
-    except Exception as e:
-        print(str(e))
-        raise
+    # Add domain to site_config.json
+    cmd = shlex.split("bench setup add-domain {} --site {}".format(domain, site))
+    subprocess.check_output(cmd)
+    # Generate SSL certs and nginx config
+    # The command waits for a response from the user before generating the nginx config
+    cmd = shlex.split("sudo -H bench setup lets-encrypt -n {} --custom-domain {}".format(site, domain))
+    foo_proc = Popen(cmd, stdin=PIPE, stdout=PIPE)
+    foo_proc.communicate(input=b"y")
+    # Restart nginx
+    cmd = shlex.split("sudo systemctl restart nginx")
+    subprocess.check_output(cmd)
+    doc = frappe.get_doc("OIP White Label Domain", domain)
+    doc.url = "https://{}".format(domain)
+    doc.save()
+    frappe.db.commit()
 
 
 def setup_domain_hook(doc=None, event_name=None):
@@ -1039,7 +1041,6 @@ def has_admin_role(user=None):
     for role in allowed_roles:
         if role in roles:
             is_allowed = True
-
     return is_allowed
 
 
@@ -1053,7 +1054,19 @@ def has_collaborator_role(user=None):
     for role in allowed_roles:
         if role in roles:
             is_allowed = True
+    return is_allowed
 
+
+@frappe.whitelist(allow_guest=True)
+def has_service_provider_role(user=None):
+    if not user:
+        user = frappe.session.user
+    roles = frappe.get_roles(user)
+    allowed_roles = ["Service Provider"]
+    is_allowed = False
+    for role in allowed_roles:
+        if role in roles:
+            is_allowed = True
     return is_allowed
 
 
@@ -1138,15 +1151,18 @@ def upload_file():
 
 
 def index_document(doc=None, event_name=None):
+    search_modules = {
+        "Problem": problem_search,
+        "Solution": solution_search,
+        "User Profile": user_search,
+        "Service Provider": service_provider_search,
+        "Organisation": organisation_search,
+    }
     try:
-        if doc.doctype == "Problem":
-            problem_search.update_index_for_id(doc.name)
-        elif doc.doctype == "Solution":
-            solution_search.update_index_for_id(doc.name)
-        elif doc.doctype == "User Profile":
-            user_search.update_index_for_id(doc.name)
-        elif doc.doctype == "Service Provider":
-            service_provider_search.update_index_for_id(doc.name)
+        if doc.is_published:
+            search_modules[doc.doctype].update_index_for_id(doc.name)
+        else:
+            search_modules[doc.doctype].remove_document_from_index(doc.name)
     except Exception as e:
         print(str(e))
 
@@ -1166,6 +1182,11 @@ def get_suggested_titles(text, scope=None):
 def enqueue_log_route_visit(
     route, user_agent=None, parent_doctype=None, parent_name=None
 ):
+    # if frappe.request.remote_addr and frappe.request.remote_addr != '127.0.0.1':
+    #     ip_address = frappe.request.remote_addr
+    # else:
+    #     ip_address = None
+    ip_address = frappe.request.headers.get('X-Forwarded-For')
     enqueue(
         log_route_visit,
         timeout=1200,
@@ -1173,11 +1194,12 @@ def enqueue_log_route_visit(
         user_agent=user_agent,
         parent_doctype=parent_doctype,
         parent_name=parent_name,
+        ip_address=ip_address
     )
 
 
 @frappe.whitelist(allow_guest=True)
-def log_route_visit(route, user_agent=None, parent_doctype=None, parent_name=None):
+def log_route_visit(route, user_agent=None, parent_doctype=None, parent_name=None, ip_address=None):
     if frappe.db.exists("User Profile", frappe.session.user):
         organisation = frappe.get_value("User Profile", frappe.session.user, "org")
     else:
@@ -1198,6 +1220,17 @@ def log_route_visit(route, user_agent=None, parent_doctype=None, parent_name=Non
             "device": user_agent.device.family,
         }
     )
+    if ip_address:
+        geo = ip_location_lookup.get_location(ip_address)
+        doc.ip_address = ip_address
+        doc.country_code = geo.country_short
+        doc.country = geo.country_long
+        doc.region = geo.region
+        doc.city = geo.city
+        doc.latitude = geo.latitude
+        doc.longitude = geo.longitude
+        doc.zipcode = geo.zipcode
+        doc.timezone = geo.timezone
     doc.save()
     frappe.db.commit()
 
@@ -1226,11 +1259,43 @@ def aggregate_analytics(doc, event_name):
                 ),
             }
         )
-    query = """select count(name), count(distinct user), count(distinct organisation) from `tabOIP Route Log` where parent_doctype='{}' and parent_name='{}';""".format(
+    query = """select count(name), count(distinct ip_address), count(distinct organisation) from `tabOIP Route Log` where parent_doctype='{}' and parent_name='{}';""".format(
         doc.parent_doctype, doc.parent_name
     )
     agg.total_visits, agg.unique_visitors, agg.unique_organisations = frappe.db.sql(
         query
     )[0]
-    agg.save()
+    loc_query = """select city, region, country, country_code, count(*) as num from `tabOIP Route Log` where parent_doctype='{}' and parent_name='{}' group by city;""".format(doc.parent_doctype, doc.parent_name)
+    results = frappe.db.sql(loc_query)
+    agg.location_route_aggregates = []
+    for r in results:
+        if r[2] and r[2] != '-':
+            row = agg.append('location_route_aggregates', {})
+            row.city, row.region, row.country, row.country_code, row.count = r
+    agg.save(ignore_permissions=True)
     frappe.db.commit()
+
+
+def invite_user(email, first_name=None, last_name=None, roles=[]):
+    if not frappe.db.exists('User', email):
+        user = frappe.get_doc({
+            "doctype":"User",
+            "email": email,
+            "first_name": first_name or email,
+            "last_name": last_name,
+            "enabled": 1,
+            # "new_password": random_string(10),
+            "user_type": "Website User",
+            "send_welcome_email": True
+        })
+        user.flags.ignore_permissions = True
+        user.insert()
+        frappe.db.commit()
+        # set if roles is empty add default signup role as per Portal Settings
+        default_role = frappe.db.get_value("Portal Settings", None, "default_role")
+        if default_role and len(roles) == 0:
+            roles.append(default_role)
+        for role in roles:
+            user.add_roles(role)
+        return True
+    return False

@@ -68,6 +68,8 @@ class UserSearch(FullTextSearch):
 			if not api.has_collaborator_role(name):
 				return False
 			user = frappe.get_doc(DOCTYPE, name)
+			if not user.is_published or not user.route:
+				return False
 			sectors = [c.sector for c in user.sectors]
 			personas = [c.persona for c in user.personas]
 			sectors = json.dumps(sectors)

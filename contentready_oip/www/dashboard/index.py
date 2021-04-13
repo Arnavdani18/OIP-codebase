@@ -23,7 +23,7 @@ def mix_two_list(list1, list2):
 
 def get_context(context):
     # check if collaborator
-    context.is_collaborator = api.has_collaborator_role()
+    context.is_collaborator = api.has_collaborator_role() or api.has_service_provider_role()
 
     # catch all
     context.recommended_problems = []

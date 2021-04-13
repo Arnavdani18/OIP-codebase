@@ -67,6 +67,8 @@ class OrganisationSearch(FullTextSearch):
 		frappe.local.no_cache = True
 		try:
 			organisation = frappe.get_doc(DOCTYPE, name)
+			if not organisation.is_published or not organisation.route:
+				return False
 			sectors = [c.sector for c in organisation.sectors]
 			sectors = json.dumps(sectors)
 			return frappe._dict(

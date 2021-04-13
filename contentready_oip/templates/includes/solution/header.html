@@ -65,11 +65,13 @@
 
                     <div class="col-md-12 col-lg-8 pr-0 action-btn-section mt-3">
                         <div class="d-flex justify-content-sm-start justify-content-lg-end flex-wrap">
+                            {% if is_collaborator %}
                             <button type="button" class="card-btn mr-4"
                                 onclick="openValidationForm('{{doctype}}', '{{name}}')">
                                 Validate
                             </button>
-                            <button type="button" class="card-btn"
+                            {% endif %}
+                            <button type="button" class="card-btn add-solution-btn"
                                 onclick="openCollaborationForm('{{doctype}}', '{{name}}')">
                                 Collaborate
                             </button>

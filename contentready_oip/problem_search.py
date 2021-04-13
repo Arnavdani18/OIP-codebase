@@ -70,7 +70,7 @@ class ProblemSearch(FullTextSearch):
 		try:
 			problem = frappe.get_doc('Problem', name)
 			# Should be unnecessary but in case we call this in published flows...
-			if not problem.is_published:
+			if not problem.is_published or not problem.route:
 				return False
 			sectors = [c.sector for c in problem.sectors]
 			sdg = [c.sdg for c in problem.sdgs]

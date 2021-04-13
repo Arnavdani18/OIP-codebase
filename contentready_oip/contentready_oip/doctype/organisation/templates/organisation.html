@@ -18,12 +18,14 @@
 
   <div class="row">
     <div class="col-sm-12 col-md-6">
+      {% if photo %}
       <div class="row">
         <div class="col">
           <h3 class="black-local">Brandmark</h3>
           <img src="{{photo}}" class="default-profile-photo" alt="" />
         </div>
       </div>
+      {% endif %}
 
       <div class="row mt-5 mb-3">
         <div class="col">
@@ -32,20 +34,24 @@
       </div>
 
       <div class="row">
+        {% if website %}
         <div class="col-6">
           <p class="heading">Website</p>
           <h5><a href="{{website}}">{{website}}</a></h5>
         </div>
+        {% endif %}
         <div class="col-6">
           
         </div>
       </div>
 
       <div class="row my-4">
+        {% if city or state or country %}
         <div class="col-6">
           <p class="heading">Location</p>
-          <h5>{{city}}, {{state}}, {{country}}</h5>
+          <h5>{{city or ''}}, {{state or ''}}, {{country or ''}}</h5>
         </div>
+        {% endif %}
         <div class="col-6">
           
         </div>

@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.website.website_generator import WebsiteGenerator
+from contentready_oip import api
 
 class ServiceProvider(WebsiteGenerator):
 	def make_route(self):
@@ -24,3 +25,17 @@ class ServiceProvider(WebsiteGenerator):
 		# We add a randomised suffix to distinguish service providers with the same name.
 		if frappe.db.exists('Service Provider', self.scrubbed_title()):
 			self.name = self.scrubbed_title()+'-'+frappe.generate_hash("", 3)
+
+	def approve(self):
+		if not api.has_admin_role():
+			frappe.throw('This method can only be run by a system manager')
+		ok = api.invite_user(self.email, first_name=self.first_name, last_name=self.last_name, roles=['Service Provider'])
+		if ok:
+			self.user = self.email
+			self.is_published = True
+			self.owner = self.user
+			self.save()
+			user_profile = frappe.get_doc('User Profile', self.user)
+			user_profile.append('personas',{'persona': 'service_provider'})
+			user_profile.save()
+		return ok

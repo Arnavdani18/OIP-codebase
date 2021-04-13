@@ -67,7 +67,7 @@ class SolutionSearch(FullTextSearch):
 		try:
 			solution = frappe.get_doc('Solution', name)
 			# Should be unnecessary but in case we call this in published flows...
-			if not solution.is_published:
+			if not solution.is_published or not solution.route:
 				return False
 			sectors = [c.sector for c in solution.sectors]
 			sdg = [c.sdg for c in solution.sdgs]
