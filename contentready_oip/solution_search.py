@@ -148,6 +148,11 @@ class SolutionSearch(FullTextSearch):
 			sector_filters = []
 			sdg_filters = []
 			center = (0, 0)
+			domain_filters = []
+			available_sectors = {s['name'] for s in api.get_available_sectors()}
+			for s in available_sectors:
+				domain_filters.append(Term('sectors', s))
+			terms.append(Or(domain_filters))
 			if type(scope) == dict:
 				sectors = scope.get('sectors')
 				if type(sectors) == list:
