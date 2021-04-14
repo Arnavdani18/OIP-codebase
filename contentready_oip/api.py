@@ -391,6 +391,10 @@ def add_enrichment(doc, is_draft=False):
         is_draft = json.loads(is_draft)
     if not ("problem" in doc or doc["problem"]):
         return False
+    # loop over all fields and call clean_html
+    # to sanitize the input by removing html, css and JS
+    for fieldname, value in doc.items():
+        doc[fieldname] = clean_html(value)
     doctype = "Enrichment"
     if doc.get("name"):
         # edit
@@ -420,6 +424,7 @@ def add_enrichment(doc, is_draft=False):
 @frappe.whitelist(allow_guest=False)
 def add_or_edit_validation(doctype, name, validation, html=True):
     validation = json.loads(validation)
+    validation['comment'] = clean_html(validation['comment'])
     if doctype == "Validation":
         # in edit mode
         doc = frappe.get_doc("Validation", name)
@@ -458,7 +463,7 @@ def add_or_edit_collaboration(doctype, name, collaboration, html=True):
     if doctype == "Collaboration":
         # in edit mode
         doc = frappe.get_doc("Collaboration", name)
-        doc.comment = collaboration["comment"]
+        doc.comment = clean_html(collaboration["comment"])
         doc.personas = []
         doc.personas_list = ",".join(collaboration["personas"])
         for p in collaboration["personas"]:
@@ -478,7 +483,7 @@ def add_or_edit_collaboration(doctype, name, collaboration, html=True):
             frappe.throw('You have already added your collaboration intent on this {}.'.format(doctype).capitalize())
         doc = frappe.get_doc({
             'doctype': 'Collaboration',
-            'comment': collaboration['comment'],
+            'comment': clean_html(collaboration['comment']),
             'parent_doctype': doctype,
             'parent_name': name
         })
