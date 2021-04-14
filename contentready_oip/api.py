@@ -280,7 +280,7 @@ def add_comment(doctype, name, text, media=None, html=True):
     doc = frappe.get_doc(
         {
             "doctype": "Discussion",
-            "text": text,
+            "text": clean_html(text),
             "owner": frappe.session.user,
             "parent_doctype": doctype,
             "parent_name": name,
