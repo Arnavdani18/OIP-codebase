@@ -895,25 +895,27 @@ def unpack_linkedin_response(info, profile=None):
         lang = list(profile["firstName"]["localized"].keys())[0]
         payload["first_name"] = profile["firstName"]["localized"][lang]
         payload["last_name"] = profile["lastName"]["localized"][lang]
-        # The last element of the pictures array is the largest image
-        picture_element = profile["profilePicture"]["displayImage~"]["elements"][-1]
-        picture_url = picture_element["identifiers"][0]["identifier"]
-        try:
-            r = requests.get(picture_url)
-            new_file = frappe.get_doc(
-                {
-                    "doctype": "File",
-                    "file_name": "{}_profile.jpg".format(payload["email"]),
-                    "content": r.content,
-                    "decode": False,
-                }
-            )
-            new_file.save()
-            frappe.db.commit()
-            payload["picture"] = new_file.file_url
-        except Exception as e:
-            print(str(e))
-            payload["picture"] = picture_url
+        if profile.get('profilePicture'):
+            # The last element of the pictures array is the largest image
+            picture_element = profile["profilePicture"]["displayImage~"]["elements"][-1]
+            picture_url = picture_element["identifiers"][0]["identifier"]
+            try:
+                r = requests.get(picture_url)
+                new_file = frappe.get_doc(
+                    {
+                        "doctype": "File",
+                        "file_name": "{}_profile.jpg".format(payload["email"]),
+                        "content": r.content,
+                        "decode": False,
+                    }
+                )
+                new_file.save()
+                frappe.db.commit()
+                payload["picture"] = new_file.file_url
+            except Exception as e:
+                # If we are unable to download the photo, use the remote url as the url
+                print(str(e))
+                payload["picture"] = picture_url
     return payload
 
 
