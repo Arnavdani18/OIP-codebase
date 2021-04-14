@@ -361,6 +361,8 @@ def get_problem_overview(name, html=True):
 
 @frappe.whitelist(allow_guest = True)
 def add_primary_content(doctype, doc, is_draft=False):
+    if doctype == 'Enrichment':
+        add_enrichment(doc, is_draft)
     doc = json.loads(doc)
     if isinstance(is_draft, str):
         is_draft = json.loads(is_draft)
@@ -404,8 +406,11 @@ def add_enrichment(doc, is_draft=False):
         content.save()
     else:
         # create
-        if has_user_contributed("Enrichment", "Problem", doc["problem"]):
+        has_contributed, is_owner = can_user_contribute("Enrichment", "Problem", doc["problem"])
+        if has_contributed:
             frappe.throw("You have already enriched this problem.")
+        if is_owner:
+            frappe.throw("You cannot enrich your own problem.")
         content = frappe.get_doc(
             {
                 "doctype": doctype,
@@ -432,13 +437,14 @@ def add_or_edit_validation(doctype, name, validation, html=True):
         doc.save()
         total_count = frappe.db.count(
             "Validation",
-            filters={"parent_doctype": v.parent_doctype, "parent_name": v.parent_name},
+            filters={"parent_doctype": doc.parent_doctype, "parent_name": doc.parent_name},
         )
     else:
-        if has_user_contributed("Validation", doctype, name):
-            frappe.throw(
-                "You have already validated this {}.".format(doctype).capitalize()
-            )
+        has_contributed, is_owner = can_user_contribute("Validation", doctype, name)
+        if has_contributed:
+            frappe.throw("You have already validated this {}.".format(doctype).capitalize())
+        if is_owner:
+            frappe.throw("You cannot validate your own {}.".format(doctype).capitalize())
         doc = frappe.get_doc(
             {"doctype": "Validation", "parent_doctype": doctype, "parent_name": name}
         )
@@ -479,6 +485,11 @@ def add_or_edit_collaboration(doctype, name, collaboration, html=True):
         )
     else:
         # creating new collaboration
+        has_contributed, is_owner = can_user_contribute('Collaboration', doctype, name)
+        if has_contributed:
+            frappe.throw("You have already collaborated on this {}.".format(doctype).capitalize())
+        if is_owner:
+            frappe.throw("You cannot collaborate on your own {}.".format(doctype).capitalize())
         if has_user_contributed('Collaboration', doctype, name):
             frappe.throw('You have already added your collaboration intent on this {}.'.format(doctype).capitalize())
         doc = frappe.get_doc({
