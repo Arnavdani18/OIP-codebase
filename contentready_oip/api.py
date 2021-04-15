@@ -1140,6 +1140,10 @@ def get_sectors_help():
 
 @frappe.whitelist(allow_guest=False)
 def upload_file():
+    ALLOWED_MIMETYPES = ('image/png', 'image/jpeg', 'application/pdf', 'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.oasis.opendocument.text', 'application/vnd.oasis.opendocument.spreadsheet')
     IMAGE_TYPES = ("image/png", "image/jpeg")
     should_check_explicit = int(
         frappe.get_value("OIP Configuration", "", "enable_explicit_content_detection")
@@ -1149,6 +1153,8 @@ def upload_file():
         content = file.stream.read()
         filename = file.filename
         filetype = mimetypes.guess_type(filename)[0]
+        if filetype not in ALLOWED_MIMETYPES:
+            frappe.throw(_("You can only upload JPG, PNG, PDF, or Microsoft documents."))
         if (
             filetype in IMAGE_TYPES
             and should_check_explicit
