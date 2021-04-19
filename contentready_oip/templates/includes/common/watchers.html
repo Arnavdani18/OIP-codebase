@@ -15,25 +15,15 @@
                 }
             },
             computed: {
-                clickable: function() {
-                    let isClickable = `{{isClickable}}`
-                    isClickable = isClickable.toLowerCase();
-
-                    if ( isClickable.includes( 'false' ) ) {
-                        const bool = JSON.parse( isClickable );
-
-                        if ( bool === false ) {
-                            return false
-                        }
-                    } else {
-                        return true
-                    }
-                }
+                disabled: function () {
+                    const isClickable = `{{isClickable}}`;
+                    return isClickable.toLowerCase() === 'false';
+                },
             },
             methods: {
                 toggleWatcher( doctype, name ) {
 
-                    if ( !this.clickable ) {
+                    if ( this.disabled ) {
                         // disble the click on card
                         return;
                     }
@@ -51,11 +41,11 @@
                                 frappe.throw( `You cannot watch your own ${doctype}` );
                             } else {
 
-                                // initial values
+                                // watched is the previous state (pre-toggling)
                                 if ( this.watched ) {
-                                    this.numOfWatchers -= this.numOfWatchers;
+                                    this.numOfWatchers = Number(this.numOfWatchers - 1);
                                 } else {
-                                    this.numOfWatchers += this.numOfWatchers;
+                                    this.numOfWatchers = Number(this.numOfWatchers + 1);
                                 }
 
                                 this.watched = !this.watched;
@@ -71,8 +61,8 @@
                                     callback: ( r ) => {
                                         // console.log(r);
                                         // server is the source of truth so we change the UI to reflect that.
-                                        this.watched = r.message[ 0 ];
-                                        this.numOfWatchers = r.message[ 1 ].length;
+                                        // this.watched = r.message[ 0 ];
+                                        // this.numOfWatchers = r.message[ 1 ].length;
                                     }
                                 } );
                             }
@@ -101,11 +91,12 @@
                         class="btn social-icon-btn"
                         :class="{
                             'selected': watched,
-                            'detail_watch_btn': clickable,
-                            'card_watch_btn': !clickable
+                            'detail_watch_btn': !disabled,
+                            'card_watch_btn': disabled
                         }"
                         v-on:click="toggleWatcher(doctype,name)"
-                        role="button">
+                        role="button"
+                    >
                         <i>{% include "public/svg/eye-regular.svg" %}</i>
                     </button>
                     <span class="social-stats">[[numOfWatchers]]</span>
