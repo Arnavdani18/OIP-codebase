@@ -1,54 +1,39 @@
 <div class="container">
-    <div class="row my-2">
-        <div id="associated_partners"></div>
+    <div class="row my-3">
+        <div class="col-3">
+            <h3 class="mb-3">Curated by</h3>
+            
+            <a  
+                target="_blank"
+                href="https://socialalpha.org"
+                title="Social Alpha">
+                <img
+                    src="/assets/contentready_oip/images/socialalpha.png"
+                    alt="Social Alpha"
+                    class="partner-image"
+                    style="max-width: 12rem;"
+                />
+            </a>
+        </div>
+        <div class="col-9">
+            <h3 class="mb-3">Supported by</h3>
+            <div class="row">
+                {% for partner in partners %}
+                    <div class="col-4">
+                        <a  
+                            target="_blank"
+                            href="{{partner.url}}"
+                            title="{{partner.title}}">
+                            <img
+                                src="{{partner.brandmark}}"
+                                alt="{{partner.title}}"
+                                class="partner-image"
+                                style="max-width: 12rem;"
+                            />
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 </div>
-
-<script>
-
-    frappe.ready( () => {
-        new Vue( {
-            el: '#associated_partners',
-            delimiters: [ '[[', ']]' ],
-            data: function () {
-                return {
-                    partners_list: []
-                }
-            },
-            created: function () {
-                const self = this;
-                frappe.ready( () => {
-                    frappe.call( {
-                        method: 'contentready_oip.api.get_partners',
-                        args: {},
-                        callback: function ( r ) {
-                            self.partners_list = r.message;
-                        }
-                    } )
-                } )
-
-            },
-            template: `
-              <div class="col-12">
-                  <div class="col d-flex flex-wrap"
-                      v-for="partner in partners_list" >
-                      <a  
-                          target="_blank"
-                          :href="partner.url"
-                          :title="partner.title">
-                          <img
-                              v-bind:src="partner.brandmark"
-                              alt="Partner Logo"
-                              class="partner-image"
-                              style="max-width: 15rem;"
-                              height="123"
-                          />
-                      </a>
-                  </div>
-                  <h4 class="text-center text-md-right">Curated by Social Alpha</h4> 
-              </div>
-          `
-        } );
-    } );
-
-</script>
