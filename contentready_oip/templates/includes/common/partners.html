@@ -15,6 +15,7 @@
                 />
             </a>
         </div>
+        {% if partners and partners | length %}
         <div class="col-9">
             <h3 class="mb-3">Supported by</h3>
             <div class="row">
@@ -35,5 +36,6 @@
                 {% endfor %}
             </div>
         </div>
+        {% endif %}
     </div>
 </div>
