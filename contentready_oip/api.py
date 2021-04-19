@@ -610,7 +610,7 @@ def get_contributions_by_user(parent_doctype, child_doctypes, limit_page_length=
             filtered = frappe.get_list(
                 child_doctype,
                 fields=["parent_name", "modified"],
-                filters={"user": frappe.session.user, "parent_doctype": parent_doctype},
+                filters={"owner": frappe.session.user, "parent_doctype": parent_doctype},
             )
             for f in filtered:
                 if f["parent_name"] not in content_dict:
@@ -651,11 +651,11 @@ def get_content_watched_by_user(doctype, limit_page_length=5):
     try:
         filtered = frappe.get_list(
             "Watch",
-            fields=["parent"],
-            filters={"parenttype": doctype, "user": frappe.session.user},
+            fields=["parent_name"],
+            filters={"parent_doctype": doctype, "owner": frappe.session.user},
             limit_page_length=limit_page_length,
         )
-        content_set = {f["parent"] for f in filtered}
+        content_set = {f["parent_name"] for f in filtered}
         for c in content_set:
             try:
                 doc = frappe.get_doc(doctype, c)
@@ -818,10 +818,12 @@ def get_dashboard_content(limit_page_length=5, content_list=None):
         payload["watched_problems"] = get_content_watched_by_user(
             "Problem", limit_page_length=limit_page_length
         )
+        print(payload["watched_problems"])
     if "watched_solutions" in content_list:
         payload["watched_solutions"] = get_content_watched_by_user(
             "Solution", limit_page_length=limit_page_length
         )
+        print(payload["watched_solutions"])
     if "contributed_problems" in content_list:
         payload["contributed_problems"] = get_contributions_by_user(
             "Problem",
