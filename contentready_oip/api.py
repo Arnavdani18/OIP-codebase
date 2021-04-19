@@ -1185,10 +1185,13 @@ def index_document(doc=None, event_name=None):
         "Organisation": organisation_search,
     }
     try:
-        if doc.is_published:
-            search_modules[doc.doctype].update_index_for_id(doc.name)
-        else:
+        if event_name == 'on_trash':
             search_modules[doc.doctype].remove_document_from_index(doc.name)
+        else:
+            if doc.is_published:
+                search_modules[doc.doctype].update_index_for_id(doc.name)
+            else:
+                search_modules[doc.doctype].remove_document_from_index(doc.name)
     except Exception as e:
         print(str(e))
 
