@@ -97,16 +97,20 @@ doc_events = {
 		"after_insert": "contentready_oip.api.setup_domain_hook",
 	},
 	"Problem":{
-		"on_update": "contentready_oip.api.index_document"
+		"on_update": "contentready_oip.api.index_document",
+		"on_trash": "contentready_oip.api.index_document"
 	},
 	"Solution":{
-		"on_update": "contentready_oip.api.index_document"
+		"on_update": "contentready_oip.api.index_document",
+		"on_trash": "contentready_oip.api.index_document"
 	},
 	"User Profile":{
-		"on_update": "contentready_oip.api.index_document"
+		"on_update": "contentready_oip.api.index_document",
+		"on_trash": "contentready_oip.api.index_document"
 	},
 	"Service Provider": {
-		"on_update": "contentready_oip.api.index_document"
+		"on_update": "contentready_oip.api.index_document",
+		"on_trash": "contentready_oip.api.index_document"
 	},
 	"OIP Route Log":{
 		"on_update": "contentready_oip.api.enqueue_aggregate_analytics"
