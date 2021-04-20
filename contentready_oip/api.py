@@ -1355,7 +1355,7 @@ def remove_user_from_org(org_id, email):
     share.remove('Organisation', org_id, email)
     return org.as_json()
 
-@frappe.whitelist(allow_guest=False)
+@frappe.whitelist(allow_guest=True)
 def get_user_orgs():
     filtered = [o['parent'] for o in frappe.get_list('User Table', fields=['parent'], filters={'parenttype': 'Organisation', 'user': frappe.session.user})]
     return frappe.get_list('Organisation', fields=['name', 'title'], filters={'name': ['in', filtered]})
