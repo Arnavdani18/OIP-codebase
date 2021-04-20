@@ -26,6 +26,11 @@ class Organisation(WebsiteGenerator):
 		# Log visit
 		if frappe.session.user != self.owner:
 			api.enqueue_log_route_visit(route=context.route, user_agent=frappe.request.headers.get('User-Agent'), parent_doctype=self.doctype, parent_name=self.name)
+		try:
+			self.check_permission("write", "save")
+			context.can_edit = True
+		except:
+			context.can_edit = False
 		return context
 	
 	def approve(self):

@@ -194,6 +194,7 @@
             country_code: "",
             latitude: "",
             longitude: "",
+            is_published: true,
           },
           new_team_member: "",
           org_members: [],
@@ -202,7 +203,16 @@
         };
       },
       created() {
-        
+        const urlParams = new URLSearchParams(location.search);
+        for (const [key, value] of urlParams) {
+            if (key === 'name') {
+              // console.log('org name', value);
+              let doc = `{{doc}}`;
+              if (doc.length) {
+                $.extend(this.form, JSON.parse(doc));
+              }
+            }
+        }
         
       },
       mounted() {
@@ -276,23 +286,18 @@
         },
 
         publish_content() {
+          this.form.is_published = true;
           frappe.call({
               method: 'contentready_oip.api.add_primary_content',
               args: {
                   doctype: "Organisation",
                   doc: this.form,
-                  is_draft: true,
+                  is_draft: false,
               },
               callback: function (r) {
-                  console.log( r );
-                  // $(window).off('beforeunload');
-                  // clearInterval(autoSave);
-
-                  // if (r.message && r.message.is_published && r.message.route) {
-                  //     window.location.href = r.message.route;
-                  // } else {
-                  //     window.location.href = '/dashboard';
-                  // }
+                if (r.message && r.message.is_published) {
+                  window.location.reload();
+                }
               },
           });
         }
