@@ -209,10 +209,16 @@ def get_sector_list():
 
 @frappe.whitelist(allow_guest=True)
 def get_homepage_stats():
+    available_sectors = {s['name'] for s in get_available_sectors()}
+
+    filtered_problems = [p['parent'] for p in frappe.get_list("Sector Table", filters={"parenttype": 'Problem', 'sector': ['in', available_sectors]}, fields=['parent'])]
+
+    filtered_solutions = [p['parent'] for p in frappe.get_list("Sector Table", filters={"parenttype": 'Solution', 'sector': ['in', available_sectors]}, fields=['parent'])]
+
     return {
-        "problems": frappe.db.count("Problem", filters={"is_published": True}),
-        "solutions": frappe.db.count("Solution", filters={"is_published": True}),
-        "collaborators": frappe.db.count("User Profile"),
+        "problems": frappe.db.count("Problem", filters={"is_published": True, 'name': ['in', filtered_problems]}),
+        "solutions": frappe.db.count("Solution", filters={"is_published": True, 'name': ['in', filtered_solutions]}),
+        "collaborators": frappe.db.count("Sector Table", filters={"parenttype": 'User Profile', 'sector': ['in', available_sectors]}),
     }
 
 
@@ -277,7 +283,7 @@ def add_comment(doctype, name, text, media=None, html=True):
     doc = frappe.get_doc(
         {
             "doctype": "Discussion",
-            "text": text,
+            "text": clean_html(text),
             "owner": frappe.session.user,
             "parent_doctype": doctype,
             "parent_name": name,
@@ -358,6 +364,8 @@ def get_problem_overview(name, html=True):
 
 @frappe.whitelist(allow_guest = True)
 def add_primary_content(doctype, doc, is_draft=False):
+    if doctype == 'Enrichment':
+        add_enrichment(doc, is_draft)
     doc = json.loads(doc)
     if isinstance(is_draft, str):
         is_draft = json.loads(is_draft)
@@ -388,6 +396,10 @@ def add_enrichment(doc, is_draft=False):
         is_draft = json.loads(is_draft)
     if not ("problem" in doc or doc["problem"]):
         return False
+    # loop over all fields and call clean_html
+    # to sanitize the input by removing html, css and JS
+    for fieldname, value in doc.items():
+        doc[fieldname] = clean_html(value)
     doctype = "Enrichment"
     if doc.get("name"):
         # edit
@@ -397,8 +409,11 @@ def add_enrichment(doc, is_draft=False):
         content.save()
     else:
         # create
-        if has_user_contributed("Enrichment", "Problem", doc["problem"]):
+        has_contributed, is_owner = can_user_contribute("Enrichment", "Problem", doc["problem"])
+        if has_contributed:
             frappe.throw("You have already enriched this problem.")
+        if is_owner:
+            frappe.throw("You cannot enrich your own problem.")
         content = frappe.get_doc(
             {
                 "doctype": doctype,
@@ -417,6 +432,7 @@ def add_enrichment(doc, is_draft=False):
 @frappe.whitelist(allow_guest=False)
 def add_or_edit_validation(doctype, name, validation, html=True):
     validation = json.loads(validation)
+    validation['comment'] = clean_html(validation['comment'])
     if doctype == "Validation":
         # in edit mode
         doc = frappe.get_doc("Validation", name)
@@ -424,13 +440,14 @@ def add_or_edit_validation(doctype, name, validation, html=True):
         doc.save()
         total_count = frappe.db.count(
             "Validation",
-            filters={"parent_doctype": v.parent_doctype, "parent_name": v.parent_name},
+            filters={"parent_doctype": doc.parent_doctype, "parent_name": doc.parent_name},
         )
     else:
-        if has_user_contributed("Validation", doctype, name):
-            frappe.throw(
-                "You have already validated this {}.".format(doctype).capitalize()
-            )
+        has_contributed, is_owner = can_user_contribute("Validation", doctype, name)
+        if has_contributed:
+            frappe.throw("You have already validated this {}.".format(doctype).capitalize())
+        if is_owner:
+            frappe.throw("You cannot validate your own {}.".format(doctype).capitalize())
         doc = frappe.get_doc(
             {"doctype": "Validation", "parent_doctype": doctype, "parent_name": name}
         )
@@ -455,7 +472,7 @@ def add_or_edit_collaboration(doctype, name, collaboration, html=True):
     if doctype == "Collaboration":
         # in edit mode
         doc = frappe.get_doc("Collaboration", name)
-        doc.comment = collaboration["comment"]
+        doc.comment = clean_html(collaboration["comment"])
         doc.personas = []
         doc.personas_list = ",".join(collaboration["personas"])
         for p in collaboration["personas"]:
@@ -471,11 +488,16 @@ def add_or_edit_collaboration(doctype, name, collaboration, html=True):
         )
     else:
         # creating new collaboration
+        has_contributed, is_owner = can_user_contribute('Collaboration', doctype, name)
+        if has_contributed:
+            frappe.throw("You have already collaborated on this {}.".format(doctype).capitalize())
+        if is_owner:
+            frappe.throw("You cannot collaborate on your own {}.".format(doctype).capitalize())
         if has_user_contributed('Collaboration', doctype, name):
             frappe.throw('You have already added your collaboration intent on this {}.'.format(doctype).capitalize())
         doc = frappe.get_doc({
             'doctype': 'Collaboration',
-            'comment': collaboration['comment'],
+            'comment': clean_html(collaboration['comment']),
             'parent_doctype': doctype,
             'parent_name': name
         })
@@ -587,7 +609,7 @@ def get_contributions_by_user(parent_doctype, child_doctypes, limit_page_length=
             filtered = frappe.get_list(
                 child_doctype,
                 fields=["parent_name", "modified"],
-                filters={"user": frappe.session.user, "parent_doctype": parent_doctype},
+                filters={"owner": frappe.session.user, "parent_doctype": parent_doctype},
             )
             for f in filtered:
                 if f["parent_name"] not in content_dict:
@@ -628,11 +650,11 @@ def get_content_watched_by_user(doctype, limit_page_length=5):
     try:
         filtered = frappe.get_list(
             "Watch",
-            fields=["parent"],
-            filters={"parenttype": doctype, "user": frappe.session.user},
+            fields=["parent_name"],
+            filters={"parent_doctype": doctype, "owner": frappe.session.user},
             limit_page_length=limit_page_length,
         )
-        content_set = {f["parent"] for f in filtered}
+        content_set = {f["parent_name"] for f in filtered}
         for c in content_set:
             try:
                 doc = frappe.get_doc(doctype, c)
@@ -795,10 +817,12 @@ def get_dashboard_content(limit_page_length=5, content_list=None):
         payload["watched_problems"] = get_content_watched_by_user(
             "Problem", limit_page_length=limit_page_length
         )
+        print(payload["watched_problems"])
     if "watched_solutions" in content_list:
         payload["watched_solutions"] = get_content_watched_by_user(
             "Solution", limit_page_length=limit_page_length
         )
+        print(payload["watched_solutions"])
     if "contributed_problems" in content_list:
         payload["contributed_problems"] = get_contributions_by_user(
             "Problem",
@@ -887,25 +911,27 @@ def unpack_linkedin_response(info, profile=None):
         lang = list(profile["firstName"]["localized"].keys())[0]
         payload["first_name"] = profile["firstName"]["localized"][lang]
         payload["last_name"] = profile["lastName"]["localized"][lang]
-        # The last element of the pictures array is the largest image
-        picture_element = profile["profilePicture"]["displayImage~"]["elements"][-1]
-        picture_url = picture_element["identifiers"][0]["identifier"]
-        try:
-            r = requests.get(picture_url)
-            new_file = frappe.get_doc(
-                {
-                    "doctype": "File",
-                    "file_name": "{}_profile.jpg".format(payload["email"]),
-                    "content": r.content,
-                    "decode": False,
-                }
-            )
-            new_file.save()
-            frappe.db.commit()
-            payload["picture"] = new_file.file_url
-        except Exception as e:
-            print(str(e))
-            payload["picture"] = picture_url
+        if profile.get('profilePicture'):
+            # The last element of the pictures array is the largest image
+            picture_element = profile["profilePicture"]["displayImage~"]["elements"][-1]
+            picture_url = picture_element["identifiers"][0]["identifier"]
+            try:
+                r = requests.get(picture_url)
+                new_file = frappe.get_doc(
+                    {
+                        "doctype": "File",
+                        "file_name": "{}_profile.jpg".format(payload["email"]),
+                        "content": r.content,
+                        "decode": False,
+                    }
+                )
+                new_file.save()
+                frappe.db.commit()
+                payload["picture"] = new_file.file_url
+            except Exception as e:
+                # If we are unable to download the photo, use the remote url as the url
+                print(str(e))
+                payload["picture"] = picture_url
     return payload
 
 
@@ -1119,6 +1145,10 @@ def get_sectors_help():
 
 @frappe.whitelist(allow_guest=False)
 def upload_file():
+    ALLOWED_MIMETYPES = ('image/png', 'image/jpeg', 'application/pdf', 'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'application/vnd.oasis.opendocument.text', 'application/vnd.oasis.opendocument.spreadsheet')
     IMAGE_TYPES = ("image/png", "image/jpeg")
     should_check_explicit = int(
         frappe.get_value("OIP Configuration", "", "enable_explicit_content_detection")
@@ -1128,6 +1158,8 @@ def upload_file():
         content = file.stream.read()
         filename = file.filename
         filetype = mimetypes.guess_type(filename)[0]
+        if filetype not in ALLOWED_MIMETYPES:
+            frappe.throw(_("You can only upload JPG, PNG, PDF, or Microsoft documents."))
         if (
             filetype in IMAGE_TYPES
             and should_check_explicit
@@ -1157,10 +1189,13 @@ def index_document(doc=None, event_name=None):
         "Organisation": organisation_search,
     }
     try:
-        if doc.is_published:
-            search_modules[doc.doctype].update_index_for_id(doc.name)
-        else:
+        if event_name == 'on_trash':
             search_modules[doc.doctype].remove_document_from_index(doc.name)
+        else:
+            if doc.is_published:
+                search_modules[doc.doctype].update_index_for_id(doc.name)
+            else:
+                search_modules[doc.doctype].remove_document_from_index(doc.name)
     except Exception as e:
         print(str(e))
 

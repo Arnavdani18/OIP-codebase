@@ -15,24 +15,14 @@
       };
     },
     computed: {
-      clickable: function () {
-        let isClickable = `{{isClickable}}`;
-        isClickable = isClickable.toLowerCase();
-
-        if (isClickable.includes("false")) {
-          const bool = JSON.parse(isClickable);
-
-          if (bool === false) {
-            return false;
-          }
-        } else {
-          return true;
-        }
+      disabled: function () {
+        const isClickable = `{{isClickable}}`;
+        return isClickable.toLowerCase() === 'false';
       },
     },
     methods: {
       toggleLike(doctype, name) {
-        if (!this.clickable) {
+        if (this.disabled) {
           // disabling the click based on context
           return;
         }
@@ -53,15 +43,14 @@
             if (is_owner) {
               frappe.throw(`You cannot like your own ${doctype}`);
             } else {
-              // initial values
-
+              // isLiked is the previous state (pre-toggling)
               if (this.isLiked) {
-                this.numOflikes -= this.numOflikes;
+                this.numOflikes = Number(this.numOflikes - 1);
               } else {
-                this.numOflikes += this.numOflikes;
+                this.numOflikes = Number(this.numOflikes + 1);
               }
-
               this.isLiked = !this.isLiked;
+
               // TODO: Fix incorrect counts issue when making UI change before sending to server.
               // change UI first, then send to server -
               frappe.call({
@@ -73,8 +62,8 @@
                 },
                 callback: (r) => {
                   // server is the source of truth so we change the UI to reflect that.
-                  this.isLiked = r.message[0];
-                  this.numOflikes = r.message[1].length;
+                  // this.isLiked = r.message[0];
+                  // this.numOflikes = r.message[1].length;
                 },
               });
             }
@@ -104,11 +93,12 @@
           class="btn social-icon-btn" 
           :class="{
                       'selected': isLiked,
-                      'detail_like_btn': clickable,
-                      'card_like_btn': !clickable
+                      'detail_like_btn': !disabled,
+                      'card_like_btn': disabled
                     }" 
           v-on:click="toggleLike(doctype,name)" 
-          role="button">
+          role="button"
+        >
           <i>{% include "public/svg/thumbs-up-regular.svg" %}</i>
         </button>
         <span class="social-stats">[[numOflikes]]</span>
