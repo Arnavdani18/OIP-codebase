@@ -30,12 +30,10 @@ def nudge_guests():
 
 def create_profile_from_user(doc, event_name):
     if doc.doctype == 'User' and doc.email:
-        print("\n\n\ncreate_profile_from_user", doc.as_dict())
         create_user_profile_if_missing(doc.email)
 
 
 def create_user_profile_if_missing(email=None):
-    print("\n\n\create_user_profile_if_missing", email)
     if not email:
         email = frappe.session.user
     if not frappe.db.exists('User Profile', email):
@@ -1330,6 +1328,7 @@ def invite_user(email, first_name=None, last_name=None, roles=[]):
 
 @frappe.whitelist(allow_guest=False)
 def add_user_to_org(org_id, email):
+    invite_user(email, roles=frappe.get_roles())
     org = frappe.get_doc('Organisation', org_id)
     team = {t.user for t in org.team_members}
     team.add(email)
@@ -1338,6 +1337,7 @@ def add_user_to_org(org_id, email):
         org.append('team_members', {'user': u})
     org.save()
     frappe.db.commit()
+    frappe.share.add('Organisation', org_id, email, write=1)
     return org.as_json()
 
 @frappe.whitelist(allow_guest=False)
@@ -1350,4 +1350,5 @@ def remove_user_from_org(org_id, email):
         org.append('team_members', {'user': u})
     org.save()
     frappe.db.commit()
+    frappe.share.remove('Organisation', org_id, email)
     return org.as_json()
