@@ -168,7 +168,8 @@
             <tbody>
               <tr v-for="member of form.team_members" :key="member.user">
                 <td data-toggle="tooltip" data-placement="top" :title="member.user">{{member.full_name}}</td>
-                <td @click.prevent="remove_user_from_org(member.user)" style="cursor: pointer;">Remove</td>
+                <td @click.prevent="remove_user_from_org(member.user)" style="cursor: pointer;" v-if="is_owner && member.user !== form.owner">Remove</td>
+                <td v-if="member.user === form.owner">Org Manager</td>
               </tr>
             </tbody>
           </table>
@@ -197,6 +198,7 @@
             is_published: true,
             team_members: [],
           },
+          is_owner: false,
           new_team_member: "",
           available_service_categories: available_service_categories,
           location_autocomplete: null
@@ -209,6 +211,7 @@
               let doc = `{{doc}}`;
               if (doc.length) {
                 this.form = JSON.parse(doc);
+                this.is_owner = frappe.session.user === this.form.owner;
               }
             }
         }

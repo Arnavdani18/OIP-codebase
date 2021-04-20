@@ -16,6 +16,9 @@ class Organisation(WebsiteGenerator):
 		from_title = self.scrubbed_title()
 		return 'organisations' + '/' + from_title
 	
+	def before_insert(self):
+		self.append('team_members', {'user': frappe.session.user})
+	
 	def autoname(self):
 		# Override autoname from parent class to allow creation of organisations with the same name.
 		# We add a randomised suffix to distinguish organisations with the same name.

@@ -1328,6 +1328,7 @@ def invite_user(email, first_name=None, last_name=None, roles=[]):
 
 @frappe.whitelist(allow_guest=False)
 def add_user_to_org(org_id, email):
+    from frappe import share
     invite_user(email, roles=frappe.get_roles())
     org = frappe.get_doc('Organisation', org_id)
     team = {t.user for t in org.team_members}
@@ -1337,11 +1338,12 @@ def add_user_to_org(org_id, email):
         org.append('team_members', {'user': u})
     org.save()
     frappe.db.commit()
-    frappe.share.add('Organisation', org_id, email, write=1)
+    share.add('Organisation', org_id, email, write=1, share=1, notify=0)
     return org.as_json()
 
 @frappe.whitelist(allow_guest=False)
 def remove_user_from_org(org_id, email):
+    from frappe import share
     org = frappe.get_doc('Organisation', org_id)
     team = {t.user for t in org.team_members}
     team.remove(email)
@@ -1350,5 +1352,5 @@ def remove_user_from_org(org_id, email):
         org.append('team_members', {'user': u})
     org.save()
     frappe.db.commit()
-    frappe.share.remove('Organisation', org_id, email)
+    share.remove('Organisation', org_id, email)
     return org.as_json()
