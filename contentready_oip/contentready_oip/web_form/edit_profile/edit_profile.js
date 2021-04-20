@@ -9,7 +9,6 @@ frappe.ready(async function () {
 
   {% include "contentready_oip/public/js/utils.js" %}
   {% include "contentready_oip/public/js/org_options.js" %}
-  {% include "contentready_oip/public/js/org_from_profile.js" %}
   {% include "contentready_oip/public/js/google_maps_autocomplete.js" %}
   {% include "contentready_oip/public/js/dropzone_photo.js" %}
 
@@ -84,6 +83,15 @@ frappe.ready(async function () {
     $('#introduction').addClass('d-none');
   };
 
+  const addNewOrgButton = () => {
+    const button = `<a class="btn btn-primary text-light ml-3 mb-2 btn-xs" href="/organisation">
+      <i class="octicon octicon-plus"></i>
+    </a>`;
+
+    $('label:contains("Organisation")').parent().append(button);
+
+  }
+
 
   // End Helpers
   // Delay until page is fully rendered
@@ -105,8 +113,9 @@ frappe.ready(async function () {
     fixOuterDivForMobile();
     control_labels();
     style_form_headings();
-    style_fields();
+    // style_fields();
     pageHeadingSection();
+    addNewOrgButton();
     {% include "contentready_oip/public/js/sector_component.js" %}
     {% include "contentready_oip/public/js/personas_component.js" %}
   });
@@ -121,9 +130,4 @@ frappe.ready(async function () {
   const dScriptUrl = 'assets/contentready_oip/js/dropzone.js';
   $.getScript(dScriptUrl, addDropzone);
   // End dropzone.js integration
-
-  // set email field
-  // frappe.web_form.set_df_property('user', 'read_only', 1);
-  // frappe.web_form.set_value('user', frappe.session.user);
-  // frappe.web_form.doc.user = frappe.session.user;
 });

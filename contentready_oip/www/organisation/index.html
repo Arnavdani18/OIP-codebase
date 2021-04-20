@@ -295,8 +295,8 @@
                   is_draft: false,
               },
               callback: function (r) {
-                if (r.message && r.message.is_published) {
-                  window.location.reload();
+                if (r.message && r.message.route) {
+                  window.location.href = r.message.route;
                 }
               },
           });
