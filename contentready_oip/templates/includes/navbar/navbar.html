@@ -121,11 +121,13 @@
                         </a>
                         <div class="dropdown-menu mt-2 dropdown-menu-right dropdown-section">
                             <div id="deskRoute"></div>
-                            <div id="serviceProviderRoute"></div>
+                            <hr/>
                             <a class="dropdown-item nullActive" href="/update-profile">
                                 <img src="../assets/contentready_oip/svg/profile.svg" alt="" width="16" height="16" />
                                 <span> Profile</span>
                             </a>
+                            <div id="orgList"></div>
+                            <hr/>
                             <a href="javascript:void(0);" class="dropdown-item d-none d-lg-block" onclick="logout()">
                                 <img src="../assets/contentready_oip/svg/logout.svg" alt="" width="16" height="16" />
                                 <span>Log Out</span>
@@ -272,7 +274,7 @@
                             el: '#deskRoute',
                             template:`
                                 <a class="dropdown-item" href="/desk">
-                                    <img src="../assets/contentready_oip/svg/user-tie-solid.svg" alt="" width="16" height="16" />
+                                    <img src="../assets/contentready_oip/svg/settings.svg" alt="Admin" width="16" height="16" />
                                     <span>Admin</span>
                                 </a>
                             `
@@ -282,20 +284,15 @@
             } );
         }
 
-        add_service_provider_route = () =>{
+        add_org_list = () =>{
             frappe.call( {
-                method: 'contentready_oip.api.has_service_provider_role',
+                method: 'contentready_oip.api.get_user_orgs',
                 callback: function( r ) {
                     if (r.message) {
-                        new Vue({
-                            el: '#serviceProviderRoute',
-                            template:`
-                                <a class="dropdown-item" href="/update-service-provider">
-                                    <img src="../assets/contentready_oip/svg/user-tie-solid.svg" alt="" width="16" height="16" />
-                                    <span>Service Provider Profile</span>
-                                </a>
-                            `
-                        }) 
+                        r.message.map(o => {
+                            const el = `<a class="dropdown-item" href="/organisation?name=${o.name}"><img src="../assets/contentready_oip/svg/org.svg" alt="Org" width="16" height="16" class="mr-1" /><span>${o.title}</span></a>`;
+                            $('#orgList').append(el);
+                        })
                     }
                 }
             } );
@@ -333,7 +330,7 @@
         }
     
         add_desk_route();
-        add_service_provider_route();
+        add_org_list();
         add_content_actions();
     })
 

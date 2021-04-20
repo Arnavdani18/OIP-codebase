@@ -6,12 +6,14 @@
     </div>
     
     <div class="col text-right">
+      {% if can_edit %}
       <button
         class="btn btn-outline-primary outline-primary-btn"
         onclick="navigateToEditOrg()"
       >
         Edit Organisation
       </button>
+      {% endif %}
     </div>
   </div>
   <hr class="hr-border" />
@@ -108,10 +110,8 @@
 </style>
 
 <script>
-    {% include "public/js/global.js" %}
-
     navigateToEditOrg = ()=> {
-      location.href = '/update-organisation';
+      location.href = '/organisation?name={{name}}';
   };
 </script>
 

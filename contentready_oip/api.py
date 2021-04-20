@@ -11,7 +11,6 @@ from contentready_oip import (
     problem_search,
     solution_search,
     user_search,
-    service_provider_search,
     organisation_search,
     ip_location_lookup
 )
@@ -31,12 +30,10 @@ def nudge_guests():
 
 def create_profile_from_user(doc, event_name):
     if doc.doctype == 'User' and doc.email:
-        print("\n\n\ncreate_profile_from_user", doc.as_dict())
         create_user_profile_if_missing(doc.email)
 
 
 def create_user_profile_if_missing(email=None):
-    print("\n\n\create_user_profile_if_missing", email)
     if not email:
         email = frappe.session.user
     if not frappe.db.exists('User Profile', email):
@@ -1187,7 +1184,6 @@ def index_document(doc=None, event_name=None):
         "Problem": problem_search,
         "Solution": solution_search,
         "User Profile": user_search,
-        "Service Provider": service_provider_search,
         "Organisation": organisation_search,
     }
     try:
@@ -1217,10 +1213,6 @@ def get_suggested_titles(text, scope=None):
 def enqueue_log_route_visit(
     route, user_agent=None, parent_doctype=None, parent_name=None
 ):
-    # if frappe.request.remote_addr and frappe.request.remote_addr != '127.0.0.1':
-    #     ip_address = frappe.request.remote_addr
-    # else:
-    #     ip_address = None
     ip_address = frappe.request.headers.get('X-Forwarded-For')
     enqueue(
         log_route_visit,
@@ -1319,7 +1311,6 @@ def invite_user(email, first_name=None, last_name=None, roles=[]):
             "first_name": first_name or email,
             "last_name": last_name,
             "enabled": 1,
-            # "new_password": random_string(10),
             "user_type": "Website User",
             "send_welcome_email": True
         })
@@ -1334,3 +1325,37 @@ def invite_user(email, first_name=None, last_name=None, roles=[]):
             user.add_roles(role)
         return True
     return False
+
+@frappe.whitelist(allow_guest=False)
+def add_user_to_org(org_id, email):
+    from frappe import share
+    invite_user(email, roles=frappe.get_roles())
+    org = frappe.get_doc('Organisation', org_id)
+    team = {t.user for t in org.team_members}
+    team.add(email)
+    org.team_members = []
+    for u in team:
+        org.append('team_members', {'user': u})
+    org.save()
+    frappe.db.commit()
+    share.add('Organisation', org_id, email, write=1, share=1, notify=0)
+    return org.as_json()
+
+@frappe.whitelist(allow_guest=False)
+def remove_user_from_org(org_id, email):
+    from frappe import share
+    org = frappe.get_doc('Organisation', org_id)
+    team = {t.user for t in org.team_members}
+    team.remove(email)
+    org.team_members = []
+    for u in team:
+        org.append('team_members', {'user': u})
+    org.save()
+    frappe.db.commit()
+    share.remove('Organisation', org_id, email)
+    return org.as_json()
+
+@frappe.whitelist(allow_guest=False)
+def get_user_orgs():
+    filtered = [o['parent'] for o in frappe.get_list('User Table', fields=['parent'], filters={'parenttype': 'Organisation', 'user': frappe.session.user})]
+    return frappe.get_list('Organisation', fields=['name', 'title'], filters={'name': ['in', filtered]})
