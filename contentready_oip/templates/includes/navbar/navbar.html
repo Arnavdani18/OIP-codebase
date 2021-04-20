@@ -121,7 +121,6 @@
                         </a>
                         <div class="dropdown-menu mt-2 dropdown-menu-right dropdown-section">
                             <div id="deskRoute"></div>
-                            <hr/>
                             <a class="dropdown-item nullActive" href="/update-profile">
                                 <img src="../assets/contentready_oip/svg/profile.svg" alt="" width="16" height="16" />
                                 <span> Profile</span>
@@ -273,10 +272,13 @@
                         new Vue({
                             el: '#deskRoute',
                             template:`
+                                <div>
                                 <a class="dropdown-item" href="/desk">
                                     <img src="../assets/contentready_oip/svg/settings.svg" alt="Admin" width="16" height="16" />
                                     <span>Admin</span>
                                 </a>
+                                <hr/>
+                                </div>
                             `
                         }) 
                     }
