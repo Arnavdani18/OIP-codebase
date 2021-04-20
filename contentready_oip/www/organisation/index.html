@@ -161,14 +161,14 @@
           <div class="input-group mb-3">
             <input type="text" class="form-control" placeholder="Organisation Member" aria-label="Member's Email" aria-describedby="basic-addon2" v-model="new_team_member">
             <div class="input-group-append">
-              <button class="btn btn-outline-primary" type="button" @click="add_or_invite(new_team_member)" :disabled="!isEmail(new_team_member)">Add/Invite</button>
+              <button class="btn btn-outline-primary" type="button" @click="add_user_to_org(new_team_member)" :disabled="!isEmail(new_team_member)">Add/Invite</button>
             </div>
           </div>
           <table class="table table-striped">
             <tbody>
-              <tr v-for="member of org_members" :key="member.email">
-                <td data-toggle="tooltip" data-placement="top" :title="member.email">{{member.full_name}}</td>
-                <td>Remove</td>
+              <tr v-for="member of form.team_members" :key="member.user">
+                <td data-toggle="tooltip" data-placement="top" :title="member.user">{{member.full_name}}</td>
+                <td @click.prevent="remove_user_from_org(member.user)" style="cursor: pointer;">Remove</td>
               </tr>
             </tbody>
           </table>
@@ -195,9 +195,9 @@
             latitude: "",
             longitude: "",
             is_published: true,
+            team_members: [],
           },
           new_team_member: "",
-          org_members: [],
           available_service_categories: available_service_categories,
           location_autocomplete: null
         };
@@ -206,10 +206,9 @@
         const urlParams = new URLSearchParams(location.search);
         for (const [key, value] of urlParams) {
             if (key === 'name') {
-              // console.log('org name', value);
               let doc = `{{doc}}`;
               if (doc.length) {
-                $.extend(this.form, JSON.parse(doc));
+                this.form = JSON.parse(doc);
               }
             }
         }
@@ -278,11 +277,37 @@
           return true;
         },
 
-        add_or_invite(email) {
-          this.org_members.push({
-            email: email,
-            full_name: "Team Member"
-          })
+        add_user_to_org(email) {
+          frappe.call({
+              method: 'contentready_oip.api.add_user_to_org',
+              args: {
+                  org_id: this.form.name,
+                  email: email,
+              },
+              callback: function (r) {
+                if (r.message) {
+                  const doc = JSON.parse(r.message);
+                  this.form = doc;
+                  this.new_team_member = '';
+                }
+              }.bind(this),
+          });
+        },
+
+        remove_user_from_org(email) {
+          frappe.call({
+              method: 'contentready_oip.api.remove_user_from_org',
+              args: {
+                  org_id: this.form.name,
+                  email: email,
+              },
+              callback: function (r) {
+                if (r.message) {
+                  const doc = JSON.parse(r.message);
+                  this.form = doc;
+                }
+              }.bind(this),
+          });
         },
 
         publish_content() {

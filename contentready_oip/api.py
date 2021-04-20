@@ -1328,6 +1328,26 @@ def invite_user(email, first_name=None, last_name=None, roles=[]):
         return True
     return False
 
+@frappe.whitelist(allow_guest=False)
+def add_user_to_org(org_id, email):
+    org = frappe.get_doc('Organisation', org_id)
+    team = {t.user for t in org.team_members}
+    team.add(email)
+    org.team_members = []
+    for u in team:
+        org.append('team_members', {'user': u})
+    org.save()
+    frappe.db.commit()
+    return org.as_json()
 
-def add_user_to_org(email, org_id):
-    pass
+@frappe.whitelist(allow_guest=False)
+def remove_user_from_org(org_id, email):
+    org = frappe.get_doc('Organisation', org_id)
+    team = {t.user for t in org.team_members}
+    team.remove(email)
+    org.team_members = []
+    for u in team:
+        org.append('team_members', {'user': u})
+    org.save()
+    frappe.db.commit()
+    return org.as_json()
