@@ -32,12 +32,11 @@
    "reqd": 1
   },
   {
-   "description": "E.g. https://accessibility.openinnovationplatform.org",
    "fieldname": "url",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "URL",
-   "unique": 1
+   "read_only": 1
   },
   {
    "fieldname": "brandmark",
@@ -85,6 +84,7 @@
    "options": "Partner Table"
   },
   {
+   "description": "Domain name without http or https (e.g. agri.openinnovationplatform.org). Please ensure that you have already pointed the domain name to the server IP address in your DNS settings.",
    "fieldname": "domain",
    "fieldtype": "Data",
    "label": "Domain",
@@ -108,7 +108,7 @@
   }
  ],
  "links": [],
- "modified": "2021-04-26 10:58:42.952406",
+ "modified": "2021-04-26 12:00:14.389455",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP White Label Domain",

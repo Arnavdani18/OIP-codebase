@@ -2,9 +2,16 @@
     <div class="row my-3">
         <div class="col-3">
             <h3 class="mb-3">Curated by</h3>
-            
+        </div>
+        <div class="col-9">
+            <h3 class="mb-3">Supported by</h3>
+        </div>
+    </div>
+    <div class="row my-3">
+        <div class="col-3 my-auto">
             <a  
                 target="_blank"
+                class="my-auto"
                 href="https://socialalpha.org"
                 title="Social Alpha">
                 <img
@@ -17,10 +24,9 @@
         </div>
         {% if partners and partners | length %}
         <div class="col-9">
-            <h3 class="mb-3">Supported by</h3>
             <div class="row">
                 {% for partner in partners %}
-                    <div class="col-4">
+                    <div class="col-4 my-auto">
                         <a  
                             target="_blank"
                             href="{{partner.url}}"
