@@ -45,7 +45,7 @@ def create_user_profile_if_missing(email=None):
             'user': email,
             'owner': email
         })
-        profile.save()
+        profile.save(ignore_permissions=True)
         frappe.db.commit()
 
 
