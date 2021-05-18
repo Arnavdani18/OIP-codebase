@@ -1,0 +1,336 @@
+<div id="org-form">
+  
+</div>
+
+<style>
+  .page-breadcrumbs {
+  display: none;
+  }
+
+  .hide-control {
+  display: none;
+  }
+
+  .form-layout {
+  background-color: white;
+  padding: 2rem;
+  }
+
+  .ql-container {
+  background-color: white;
+  }
+
+  .web-form-actions {
+  display: none;
+  }
+
+  .form-group label {
+  font-size: 1.2rem;
+  font-weight: bolder;
+  }
+
+  .form-control {
+  font-size: 1.2rem;
+  }
+
+  .control-label {
+  font-weight: bolder;
+  }
+
+  .web-form-footer {
+  display: none;
+  }
+
+  .label-styles {
+  font-size: 1.4rem !important;
+  font-weight: 500 !important;
+  }
+
+  .edit-profile-subheadings {
+  font-size: 2rem;
+  line-height: 2.2rem;
+  font-weight: 400;
+  margin-bottom: 2rem;
+  }
+
+  .field-styles {
+  padding: 1.5rem 1rem;
+  font-size: 1.4rem;
+  font-weight: normal;
+  margin-bottom: 2rem;
+  }
+
+  .frappe-control[data-fieldname='org_title'] {
+  margin-top: 0.5rem;
+  }
+
+  .frappe-control[data-fieldname='user'],
+  .frappe-control[data-fieldtype='Check'] > div > label {
+  font-weight: normal;
+  font-size: 1.4rem;
+  }
+
+  #sector-options > .form-check-inline,
+  #persona-options > .form-check-inline {
+  font-size: var(--f14);
+  }
+
+  input[type=text]{
+  background-color: transparent !important;
+  padding: 1.8rem 1rem;
+  }
+
+  .input-group-append > .btn {
+    margin-top: -0.3rem;
+  }
+  .select {
+    padding: 2rem;
+    background-color: var(--secondary5);
+    margin-top: -0.3rem;
+  }
+</style>
+
+<script>
+  frappe.ready(() => {
+    const available_service_categories = JSON.parse(`{{available_service_categories}}`);
+    new Vue({
+      el: '#org-form',
+      name: "OrgForm",
+      template: `
+      {% raw %}
+      <div class="row">
+        <div class="col">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="page-header d-flex align-items-center" style="width: 70%;"><img
+                src="/assets/contentready_oip/svg/org.svg" height="24px" class="org-icon mr-2">
+              <h2 class="text-truncate" title="Organisation" style="margin-bottom: 0px;">Organisation</h2>
+            </div>
+            <div class="page-header-actions-block d-flex align-items-center">
+              <button class="btn btn-primary ml-2 solid-primary-btn" @click="publish_content()">
+                Publish
+              </button>
+            </div>
+          </div>
+          <form>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputTitle">Organisation Name</label>
+                <input type="text" class="form-control" id="inputTitle" placeholder="Org Name" v-model="form.title">
+              </div>
+              <div class="form-group col-md-6">
+                <label for="inputEmail">Email</label>
+                <input type="email" class="form-control" id="inputEmail" placeholder="Email" v-model="form.email">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputWebsite">Website</label>
+                <input type="text" class="form-control" id="inputWebsite" placeholder="Website" v-model="form.website">
+              </div>
+              <div class="form-group col-md-6">
+                <label for="inputPhone">Phone</label>
+                <input type="text" class="form-control" id="inputPhone" placeholder="Phone" v-model="form.phone">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputCategory">Category</label>
+                <select id="inputCategory" class="form-control" v-model="form.service_category">
+                  <option disabled>Select Category</option>
+                  <option v-for="category of available_service_categories" :value="category.name" :key="category.name">{{category.title}}</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-4">
+                <label for="inputCity">City</label>
+                <input type="text" class="form-control" id="inputCity" placeholder="City" ref="locationInput" v-model="form.city">
+              </div>
+              <div class="form-group col-md-4">
+                <label for="inputState">State</label>
+                <input type="text" class="form-control" id="inputState" placeholder="State" v-model="form.state">
+              </div>
+              <div class="form-group col-md-4">
+                <label for="inputCountry">Country</label>
+                <input type="text" class="form-control" id="inputCountry" placeholder="Country" v-model="form.country">
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="col-3" style="margin-top: 0.3rem" v-if="form.name">
+          <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Organisation Member" aria-label="Member's Email" aria-describedby="basic-addon2" v-model="new_team_member">
+            <div class="input-group-append">
+              <button class="btn btn-outline-primary" type="button" @click="add_user_to_org(new_team_member)" :disabled="!isEmail(new_team_member)">Add/Invite</button>
+            </div>
+          </div>
+          <table class="table table-striped">
+            <tbody>
+              <tr v-for="member of form.team_members" :key="member.user">
+                <td data-toggle="tooltip" data-placement="top" :title="member.user">{{member.full_name}}</td>
+                <td @click.prevent="remove_user_from_org(member.user)" style="cursor: pointer;" v-if="is_owner && member.user !== form.owner">Remove</td>
+                <td v-if="member.user === form.owner">Org Manager</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      {% endraw %}
+      `,
+      data() {
+        return {
+          form: {
+            title: "",
+            email: "",
+            photo: "",
+            website: "",
+            phone: "",
+            service_category: "",
+            type: "",
+            sectors: "",
+            city: "",
+            state: "",
+            state_code: "",
+            country: "",
+            country_code: "",
+            latitude: "",
+            longitude: "",
+            is_published: true,
+            team_members: [],
+          },
+          is_owner: false,
+          new_team_member: "",
+          available_service_categories: available_service_categories,
+          location_autocomplete: null
+        };
+      },
+      created() {
+        const urlParams = new URLSearchParams(location.search);
+        for (const [key, value] of urlParams) {
+            if (key === 'name') {
+              let doc = `{{doc}}`;
+              if (doc.length) {
+                this.form = JSON.parse(doc);
+                this.is_owner = frappe.session.user === this.form.owner;
+              }
+            }
+        }
+        
+      },
+      mounted() {
+        const inputBox = this.$refs.locationInput;
+        $.getScript(
+          "https://maps.googleapis.com/maps/api/js?key=AIzaSyAxSPvgric8Zn54pYneG9NondiINqdvb-w&libraries=places",
+          () => {
+            this.location_autocomplete = new google.maps.places.Autocomplete(inputBox, {
+              types: ['(cities)'],
+              componentRestrictions: {
+                  country: 'in'
+            }});
+            this.location_autocomplete.setFields(['address_component', 'geometry']);
+            this.location_autocomplete.addListener("place_changed", this.getPlaces);
+          }
+        );
+      },
+      methods: {
+
+        getPlaces() {
+          const place = this.location_autocomplete.getPlace();
+
+          const address_mapping = {
+            locality: {
+              long_name: "city",
+            },
+            administrative_area_level_1: {
+              long_name: "state",
+              short_name: "state_code",
+            },
+            country: {
+              long_name: "country",
+              short_name: "country_code",
+            },
+          };
+
+          // Get each component of the address from the place details,
+          // and then fill-in the corresponding field on the form.
+          for (let i = 0; i < place.address_components.length; i++) {
+            const address_type = place.address_components[i].types[0];
+            if (address_mapping[address_type]) {
+              if (address_mapping[address_type]["short_name"]) {
+                this.form[address_mapping[address_type]["short_name"]] =
+                  place.address_components[i]["short_name"];
+              }
+              if (address_mapping[address_type]["long_name"]) {
+                this.form[address_mapping[address_type]["long_name"]] =
+                  place.address_components[i]["long_name"];
+              }
+            }
+          }
+
+          this.form.latitude = place.geometry.location.lat();
+          this.form.longitude = place.geometry.location.lng();
+        },
+
+        isEmail(email){
+          const at_pos = email.indexOf("@");
+          const dot_pos = email.lastIndexOf(".");
+          if (email && !(at_pos > 0 && dot_pos > at_pos && email.length - at_pos > 4 && email.length - dot_pos >= 2)){
+              return false;
+          };
+          return true;
+        },
+
+        add_user_to_org(email) {
+          frappe.call({
+              method: 'contentready_oip.api.add_user_to_org',
+              args: {
+                  org_id: this.form.name,
+                  email: email,
+              },
+              callback: function (r) {
+                if (r.message) {
+                  const doc = JSON.parse(r.message);
+                  this.form = doc;
+                  this.new_team_member = '';
+                }
+              }.bind(this),
+          });
+        },
+
+        remove_user_from_org(email) {
+          frappe.call({
+              method: 'contentready_oip.api.remove_user_from_org',
+              args: {
+                  org_id: this.form.name,
+                  email: email,
+              },
+              callback: function (r) {
+                if (r.message) {
+                  const doc = JSON.parse(r.message);
+                  this.form = doc;
+                }
+              }.bind(this),
+          });
+        },
+
+        publish_content() {
+          this.form.is_published = true;
+          frappe.call({
+              method: 'contentready_oip.api.add_primary_content',
+              args: {
+                  doctype: "Organisation",
+                  doc: this.form,
+                  is_draft: false,
+              },
+              callback: function (r) {
+                if (r.message && r.message.route) {
+                  window.location.href = r.message.route;
+                }
+              },
+          });
+        }
+      },
+    })
+  });
+
+</script>

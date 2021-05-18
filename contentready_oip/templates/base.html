@@ -18,7 +18,7 @@
     <title>{% block title %} {{ title | striptags }} {% endblock %}</title>
 
     {% block favicon %}
-    <link rel="shortcut icon" href="{{ (domain_settings.favicon or favicon or " /assets/frappe/images/favicon.png") |
+    <link rel="shortcut icon" href="{{ (domain_settings.favicon or '/assets/contentready_oip/images/favicon.png') |
         abs_url }}" type="image/x-icon">
     {% endblock %}
 

@@ -4,10 +4,15 @@
 <div class="poster jumbo">
   <div class="container">
     <div class="banner-text">
-      <h1 class="text-white">Mission to create social impact</h1>
+      {% set default_homepage_slogan = frappe.db.get_single_value('OIP Configuration',
+      'homepage_slogan') %}
+      {% set default_homepage_description = frappe.db.get_single_value('OIP Configuration',
+      'homepage_description') %}
+      {% set default_homepage_background = frappe.db.get_single_value('OIP Configuration',
+      'homepage_background') %}
+      <h1 class="text-white">{{ (domain_settings.homepage_slogan or default_homepage_slogan) | striptags }}</h1>
       <p class="left-bar text-white">
-        {% set about_us = frappe.db.get_single_value('About Us Settings',
-        'company_introduction') %} {{ about_us | striptags }}
+        {{ (domain_settings.homepage_description or default_homepage_description) | striptags }}
       </p>
     </div>
   </div>
@@ -19,3 +24,9 @@
 "templates/includes/common/partners.html" %}
 
 <div class="d-none">{% include "templates/includes/common/filter.html" %}</div>
+
+<style>
+  .poster{
+    background-image: url("{{(domain_settings.homepage_background or default_homepage_background or '/assets/contentready_oip/images/background.jpg') | abs_url}}");
+  }
+</style>

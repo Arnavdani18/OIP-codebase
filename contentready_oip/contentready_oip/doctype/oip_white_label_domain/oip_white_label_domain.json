@@ -1,4 +1,5 @@
 {
+ "actions": [],
  "allow_rename": 1,
  "autoname": "field:domain",
  "creation": "2020-03-30 18:24:18.929832",
@@ -14,6 +15,9 @@
   "column_break_3",
   "website_theme",
   "theme_url",
+  "homepage_background",
+  "homepage_slogan",
+  "homepage_description",
   "section_break_6",
   "sectors",
   "partners"
@@ -28,22 +32,21 @@
    "reqd": 1
   },
   {
-   "description": "E.g. https://accessibility.openinnovationplatform.org",
    "fieldname": "url",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "URL",
-   "unique": 1
+   "read_only": 1
   },
   {
    "fieldname": "brandmark",
-   "fieldtype": "Attach",
-   "in_list_view": 1,
+   "fieldtype": "Attach Image",
    "label": "Brandmark"
   },
   {
    "fieldname": "website_theme",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Website Theme",
    "options": "Website Theme"
   },
@@ -65,12 +68,13 @@
    "fetch_from": "website_theme.theme_url",
    "fieldname": "theme_url",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Theme URL",
    "read_only": 1
   },
   {
    "fieldname": "favicon",
-   "fieldtype": "Attach",
+   "fieldtype": "Attach Image",
    "label": "Favicon"
   },
   {
@@ -80,14 +84,31 @@
    "options": "Partner Table"
   },
   {
+   "description": "Domain name without http or https (e.g. agri.openinnovationplatform.org). Please ensure that you have already pointed the domain name to the server IP address in your DNS settings.",
    "fieldname": "domain",
    "fieldtype": "Data",
    "label": "Domain",
    "reqd": 1,
    "unique": 1
+  },
+  {
+   "fieldname": "homepage_background",
+   "fieldtype": "Attach Image",
+   "label": "Homepage Background"
+  },
+  {
+   "fieldname": "homepage_description",
+   "fieldtype": "Text",
+   "label": "Homepage Description"
+  },
+  {
+   "fieldname": "homepage_slogan",
+   "fieldtype": "Data",
+   "label": "Homepage Slogan"
   }
  ],
- "modified": "2020-05-14 19:35:25.088109",
+ "links": [],
+ "modified": "2021-04-26 12:00:14.389455",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP White Label Domain",
