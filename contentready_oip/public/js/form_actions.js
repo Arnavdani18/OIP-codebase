@@ -39,6 +39,7 @@ const submit_form = (is_draft) => {
 
 
 const auto_save_draft = () => {
+    console.log('autosave');
     if (doctype === 'Problem') {
         formatMultiSelectValues();
     } else if (doctype === 'Solution') {
@@ -197,7 +198,7 @@ const vue_delete_button = new Vue({
       </button>`,
 });
 
-const autoSave = setInterval(auto_save_draft, 5000);
+const autoSave = setInterval(auto_save_draft, 10000);
   $(window).on('beforeunload', function (e) {
     e.preventDefault();
     auto_save_draft();

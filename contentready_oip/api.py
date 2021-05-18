@@ -363,7 +363,7 @@ def get_problem_overview(name, html=True):
 @frappe.whitelist(allow_guest = True)
 def add_primary_content(doctype, doc, is_draft=False):
     if doctype == 'Enrichment':
-        add_enrichment(doc, is_draft)
+        return add_enrichment(doc, is_draft)
     doc = json.loads(doc)
     if isinstance(is_draft, str):
         is_draft = json.loads(is_draft)
@@ -423,8 +423,7 @@ def add_enrichment(doc, is_draft=False):
         content.insert(ignore_mandatory=is_draft)
     frappe.db.commit()
     content = frappe.get_doc(doctype, content.name)
-    route = frappe.get_value("Problem", content.problem, "route")
-    return content, route
+    return content
 
 
 @frappe.whitelist(allow_guest=False)
