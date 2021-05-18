@@ -213,10 +213,13 @@ def get_homepage_stats():
 
     filtered_solutions = [p['parent'] for p in frappe.get_list("Sector Table", filters={"parenttype": 'Solution', 'sector': ['in', available_sectors]}, fields=['parent'])]
 
+    users_with_sectors = frappe.get_all("Sector Table", filters={"parenttype": 'User Profile', 'sector': ['in', available_sectors]}, fields=['parent'])
+    unique_users = {r['parent'] for r in users_with_sectors}
+
     return {
         "problems": frappe.db.count("Problem", filters={"is_published": True, 'name': ['in', filtered_problems]}),
         "solutions": frappe.db.count("Solution", filters={"is_published": True, 'name': ['in', filtered_solutions]}),
-        "collaborators": frappe.db.count("Sector Table", filters={"parenttype": 'User Profile', 'sector': ['in', available_sectors]}),
+        "collaborators": len(unique_users),
     }
 
 
