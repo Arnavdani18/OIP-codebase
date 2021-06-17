@@ -3,9 +3,11 @@
         <div class="col-3">
             <h3 class="mb-3">Curated by</h3>
         </div>
+        {% if partners and partners | length %}
         <div class="col-9">
             <h3 class="mb-3">Supported by</h3>
         </div>
+        {% endif %}
     </div>
     <div class="row my-3">
         <div class="col-3 my-auto">
