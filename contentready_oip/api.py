@@ -207,19 +207,26 @@ def get_sector_list():
 
 @frappe.whitelist(allow_guest=True)
 def get_homepage_stats():
+    hostname = get_url()
+    domain = frappe.get_doc("OIP White Label Domain", {"url": hostname})
+
     available_sectors = {s['name'] for s in get_available_sectors()}
 
     filtered_problems = [p['parent'] for p in frappe.get_list("Sector Table", filters={"parenttype": 'Problem', 'sector': ['in', available_sectors]}, fields=['parent'])]
 
     filtered_solutions = [p['parent'] for p in frappe.get_list("Sector Table", filters={"parenttype": 'Solution', 'sector': ['in', available_sectors]}, fields=['parent'])]
 
-    users_with_sectors = frappe.get_all("Sector Table", filters={"parenttype": 'User Profile', 'sector': ['in', available_sectors]}, fields=['parent'])
-    unique_users = {r['parent'] for r in users_with_sectors}
+    if domain.is_primary_domain:
+        collaborator_count = frappe.db.count("User")
+    else:
+        users_with_sectors = frappe.get_all("Sector Table", filters={"parenttype": 'User Profile', 'sector': ['in', available_sectors]}, fields=['parent'])
+        unique_users = {r['parent'] for r in users_with_sectors}
+        collaborator_count = len(unique_users)
 
     return {
         "problems": frappe.db.count("Problem", filters={"is_published": True, 'name': ['in', filtered_problems]}),
         "solutions": frappe.db.count("Solution", filters={"is_published": True, 'name': ['in', filtered_solutions]}),
-        "collaborators": len(unique_users),
+        "collaborators": collaborator_count,
     }
 
 
