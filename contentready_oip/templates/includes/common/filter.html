@@ -119,7 +119,7 @@
     {% endif %}
 
     {% if available_sdg | length %}
-    <div class="mt-4 mt-sm-0 in-mob" id="sdg-sel-div">
+    <div class="mt-4 mt-sm-3 in-mob" id="sdg-sel-div">
       <select class="pattern1" multiple id="sdg-sel" @input="storeSdgFilter">
         <option v-for="option in available_sdg" :value="option.name">[[option.title]]</option>
       </select>
@@ -127,7 +127,7 @@
     {% endif %}
 
     {% if available_beneficiaries | length %}
-    <div class="mt-4 mt-sm-0 in-mob" id="beneficiary-sel-div">
+    <div class="mt-4 mt-sm-3 in-mob" id="beneficiary-sel-div">
       <select class="pattern1" multiple id="beneficiary-sel" @input="storeBeneficiaryFilter">
         <option v-for="option in available_beneficiaries" :value="option.name">[[option.title]]</option>
       </select>
@@ -135,7 +135,7 @@
     {% endif %}
 
     {% if available_personas | length %}
-    <div class="mt-4 mt-sm-0 in-mob" id="persona-sel-div">
+    <div class="mt-4 mt-sm-3 in-mob" id="persona-sel-div">
       <select class="pattern1" multiple id="persona-sel" @input="storePersonaFilter">
         <option v-for="option in available_personas" :value="option.name">[[option.title]]</option>
       </select>
@@ -143,7 +143,7 @@
     {% endif %}
 
     {% if available_service_categories | length %}
-    <div class="mt-4 mt-sm-0 in-mob" id="service-category-sel-div">
+    <div class="mt-4 mt-sm-3 in-mob" id="service-category-sel-div">
       <select class="pattern1" id="service-category-sel" @input="storeServiceCategoryFilter" v-model="selected_service_category">
         <option value="" disabled>Select Category</option>
         <option v-for="option in available_service_categories" :value="option.name">[[option.title]]</option>
@@ -151,11 +151,11 @@
     </div>
     {% endif %}
     
-    <div class="mt-4 mt-sm-0" id="location-input-div">
+    <div class="mt-4 mt-sm-3" id="location-input-div">
       <input class="pattern1 pl-2 in-mob" type="text" ref="location" v-model="searched_location" id="autocomplete" placeholder="Search for location..."
         @input="clearLocationIfEmpty" />
     </div>
-    <div class="mt-4 mt-sm-0 in-mob" id="range-sel-div" v-show="searched_location">
+    <div class="mt-4 mt-sm-3 in-mob" id="range-sel-div" v-show="searched_location">
       <select class="pattern1" @input="storeRangeFilter" v-model="selected_range" id="range-sel">
         <option v-for="op of range_options" :value="op">[[op]] km</option>
       </select>
