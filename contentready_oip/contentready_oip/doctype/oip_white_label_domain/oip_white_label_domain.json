@@ -12,6 +12,7 @@
   "url",
   "brandmark",
   "favicon",
+  "is_primary_domain",
   "column_break_3",
   "website_theme",
   "theme_url",
@@ -105,10 +106,17 @@
    "fieldname": "homepage_slogan",
    "fieldtype": "Data",
    "label": "Homepage Slogan"
+  },
+  {
+   "default": "0",
+   "description": "Enabling this will show the complete count of users as collaborators. Otherwise, users filtered by sectors are counted as collaborators.",
+   "fieldname": "is_primary_domain",
+   "fieldtype": "Check",
+   "label": "Is Primary Domain"
   }
  ],
  "links": [],
- "modified": "2021-04-26 12:00:14.389455",
+ "modified": "2021-06-17 14:36:51.001916",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP White Label Domain",
