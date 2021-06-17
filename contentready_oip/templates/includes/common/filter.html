@@ -111,7 +111,7 @@
   <div class="container d-flex flex-column">
   <div class="row justify-content-sm-start justify-content-md-end flex-wrap" id="filter-section">
     {% if available_sectors | length %}
-    <div class="in-mob" id="sector-sel-div">
+    <div class="mt-4 mt-sm-3 in-mob" id="sector-sel-div">
       <select class="pattern1" multiple id="sector-sel" @input="storeSectorFilter">
         <option v-for="sector in available_sectors" :value="sector.name">[[sector.title]]</option>
       </select>
@@ -151,8 +151,8 @@
     </div>
     {% endif %}
     
-    <div class="mt-4 mt-sm-3" id="location-input-div">
-      <input class="pattern1 pl-2 in-mob" type="text" ref="location" v-model="searched_location" id="autocomplete" placeholder="Search for location..."
+    <div class="mt-4 mt-sm-3 in-mob" id="location-input-div">
+      <input class="pattern1 in-mob" type="text" ref="location" v-model="searched_location" id="autocomplete" placeholder="Search for location..."
         @input="clearLocationIfEmpty" />
     </div>
     <div class="mt-4 mt-sm-3 in-mob" id="range-sel-div" v-show="searched_location">
