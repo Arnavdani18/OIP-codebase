@@ -69,11 +69,11 @@ const sectorsComp = new Vue({
             }
         },
 
-        showHelp: function() {
+        showHelp: function () {
             frappe.call({
                 method: "contentready_oip.api.get_sectors_help",
                 args: {},
-                callback: function ( r ) {
+                callback: function (r) {
                     if (r.message) {
                         frappe.msgprint({
                             title: __('Description'),
@@ -98,7 +98,7 @@ const sectorsComp = new Vue({
             <div class="col d-flex flex-wrap">
             <button 
             v-for="sector in available_sectors"
-            class="btn btn-lg btnHover" 
+            class="btn btn-lg btnHover mb-3 mr-3"
             :title="sector['label']"
             :class="{
                 'btn-primary': toggleClass(sector['value']),
