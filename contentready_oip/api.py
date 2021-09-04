@@ -204,6 +204,10 @@ def get_sector_list():
         for o in available_sectors
     ]
 
+@frappe.whitelist(allow_guest=True)
+def get_resource_list():
+    all_resources = frappe.get_list("Resource", fields=["title", "name"])
+    return [{"label": o["title"], "value": o["name"]} for o in all_resources]
 
 @frappe.whitelist(allow_guest=True)
 def get_homepage_stats():
