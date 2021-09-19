@@ -1372,3 +1372,9 @@ def remove_user_from_org(org_id, email):
 def get_user_orgs():
     filtered = [o['parent'] for o in frappe.get_list('User Table', fields=['parent'], filters={'parenttype': 'Organisation', 'user': frappe.session.user})]
     return frappe.get_list('Organisation', fields=['name', 'title'], filters={'name': ['in', filtered]})
+
+
+@frappe.whitelist(allow_guest=True)
+def is_collaboration_in_progress(doctype, docname):
+    collaborations = frappe.get_list('Collaboration', filters={'parent_doctype': doctype, 'parent_name': docname, "status": "Accept"}, limit=1)
+    return len(collaborations) > 0
