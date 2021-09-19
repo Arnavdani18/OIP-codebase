@@ -17,5 +17,8 @@ def get_context(context):
     context.problems = [frappe.get_doc('Problem', d['name']) for d in matched]
     matched = solution_search.search_index('*', scope=scope, limit=RESULTS_PER_PAGE)
     context.solutions = [frappe.get_doc('Solution', d['name']) for d in matched]
+    oip_configuration = frappe.get_doc('OIP Configuration', '')
+    context.slideshow = frappe.as_json(oip_configuration.slideshow)
+    context.slideshow_delay = oip_configuration.slideshow_delay
     return context
     

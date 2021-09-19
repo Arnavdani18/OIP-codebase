@@ -4,16 +4,10 @@
 <div class="poster jumbo">
   <div class="container">
     <div class="banner-text">
-      {% set default_homepage_slogan = frappe.db.get_single_value('OIP Configuration',
-      'homepage_slogan') %}
-      {% set default_homepage_description = frappe.db.get_single_value('OIP Configuration',
-      'homepage_description') %}
-      {% set default_homepage_background = frappe.db.get_single_value('OIP Configuration',
-      'homepage_background') %}
-      <h1 class="text-white">{{ (domain_settings.homepage_slogan or default_homepage_slogan) | striptags }}</h1>
-      <p class="left-bar text-white">
-        {{ (domain_settings.homepage_description or default_homepage_description) | striptags }}
+      <h1 class="text-white" id="slideshow-heading"></h1>
+      <p class="left-bar text-white" id="slideshow-description">
       </p>
+      <video autoplay muted src="" onloadedmetadata="onVideoLoaded()" onended="onVideoEnded()" id="videoBackground"></video>
     </div>
   </div>
 </div>
@@ -25,8 +19,70 @@
 
 <div class="d-none">{% include "templates/includes/common/filter.html" %}</div>
 
+<script>
+  let delay = 1000 * Number(`{{slideshow_delay}}`);
+  let videoCompleted = false;
+  function onVideoLoaded() {
+    const duration = $('#videoBackground')[0].duration;
+    console.log("duration", duration);
+    videoCompleted = false;
+  }
+  function onVideoEnded() {
+    videoCompleted = true;
+    console.log("Video completed");
+  }
+  frappe.ready(function () {
+    function isImage(url) {
+      return (url.match(/\.(jpeg|jpg|gif|png)$/) != null);
+    }
+
+    function isVideo(url) {
+      return (url.match(/\.(avi|mp4|mpg|mpeg)$/) != null);
+    }
+
+    function loopThroughSlideshow(slideshow) {
+      let index = 0;
+      function delayedOutput() {
+        const row = slideshow[index];
+        if (index < slideshow.length - 1) {
+          index++;
+        } else {
+          index = 0;
+        }
+        $("#slideshow-heading").text(row.heading);
+        $("#slideshow-description").text(row.description);
+        const url = row.image;
+        if (isImage(url)) {
+          $("#videoBackground").attr("src", null);
+          $("#videoBackground").hide();
+          $('.poster').css("background-image", `url(${url})`).css('background-size', 'cover');
+          setTimeout(delayedOutput, delay);
+        } else if (isVideo(url)) {
+          $('.poster').css("background-image", "");
+          $("#videoBackground").show();
+          $("#videoBackground").attr("src", url);
+          const intervalTimer = setInterval(() => {
+            if (videoCompleted) {
+              clearInterval(intervalTimer);
+              setTimeout(delayedOutput, delay);    
+            }
+          }, 1000);
+        }
+      }
+      delayedOutput();
+    }
+    const slideshow = JSON.parse(`{{slideshow}}`);
+    loopThroughSlideshow(slideshow);
+  });
+</script>
+
 <style>
-  .poster{
-    background-image: url("{{(domain_settings.homepage_background or default_homepage_background or '/assets/contentready_oip/images/background.jpg') | abs_url}}");
+  #videoBackground {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;
+    z-index: -1;
   }
 </style>
