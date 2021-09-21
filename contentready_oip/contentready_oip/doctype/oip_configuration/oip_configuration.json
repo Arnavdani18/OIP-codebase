@@ -110,13 +110,13 @@
    "default": "10",
    "fieldname": "slideshow_delay",
    "fieldtype": "Int",
-   "label": "Slideshow Delay"
+   "label": "Slideshow Delay (s)"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-09-19 12:43:26.432636",
+ "modified": "2021-09-21 14:10:47.877694",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP Configuration",

@@ -64,13 +64,14 @@
           const intervalTimer = setInterval(() => {
             if (videoCompleted) {
               clearInterval(intervalTimer);
-              setTimeout(delayedOutput, delay);    
+              delayedOutput();
             }
           }, 1000);
         }
       }
       delayedOutput();
     }
+    console.log(`{{slideshow}}`);
     const slideshow = JSON.parse(`{{slideshow}}`);
     loopThroughSlideshow(slideshow);
   });

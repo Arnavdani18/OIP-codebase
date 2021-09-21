@@ -7,4 +7,7 @@ from __future__ import unicode_literals
 from frappe.model.document import Document
 
 class OIPConfiguration(Document):
-	pass
+	def before_save(self):
+		for row in self.slideshow:
+			row.heading = row.heading.strip()
+			row.description = row.description.strip()
