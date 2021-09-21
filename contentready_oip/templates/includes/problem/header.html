@@ -7,8 +7,13 @@
     <div class="col-md-8 card-detail-section">
       <div>
         <div class="row align-items-center pb-2">
-          <div class="col-sm-12 col-md-4 px-0 px-md-4">
+          <div class="col-sm-12 col-md-2 px-0 px-md-4">
             {% include "templates/includes/problem/problem_label.html" %}
+          </div>
+          <div class="col-sm-6 col-md-3 px-0">
+            {% if collaboration_in_progress %}
+              {% include "templates/includes/common/collaboration_label.html" %}
+            {% endif %}
           </div>
           <div class="col-sm-12 col-md text-left text-md-right px-0">
             <a href="#solutions" class="see-solutions">
