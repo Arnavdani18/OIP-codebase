@@ -9,5 +9,7 @@ from frappe.model.document import Document
 class OIPConfiguration(Document):
 	def before_save(self):
 		for row in self.slideshow:
-			row.heading = row.heading.strip()
-			row.description = row.description.strip()
+			if row.heading:
+				row.heading = row.heading.strip()
+			if row.description:
+				row.description = row.description.strip()
