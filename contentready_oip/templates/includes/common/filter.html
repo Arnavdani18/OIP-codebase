@@ -94,7 +94,7 @@
 </style>
 
 <script type="text/x-template" id="filter-script">
-    <form @submit.prevent="searchWithFilters">
+  <form>
       {% if show_search %}
       <div class="input-group input-section mb-4">
         <input type="search" class="form-control form-control-lg style1"
@@ -166,9 +166,9 @@
     </div>
   </div>
   <div class="row flex-row-reverse mt-3 actions">
-    <button class="btn btn-primary btn-lg text-white" @click="searchWithFilters">Search With Filters</button>
+    <button class="btn btn-primary btn-lg text-white" @click="searchWithFilters" type="button">Search With Filters</button>
     &nbsp;&nbsp;
-    <button class="btn btn-outline-danger btn-lg" @click="resetFilter">Clear Filters</button>
+    <button class="btn btn-outline-danger btn-lg" @click="resetFilter" type="button">Clear Filters</button>
   </div>
 </div>
 </form>
