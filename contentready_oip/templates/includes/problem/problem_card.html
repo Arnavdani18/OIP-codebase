@@ -38,7 +38,8 @@
         {% include "templates/includes/common/validations.html" %}
       </div>
       <div class="collaborations-container">
-        {% if problem.collaboration_in_progress %}
+        {% if problem.collaborations_in_progress %}
+          {% set collaborations_in_progress = problem.collaborations_in_progress %}
           {% include "templates/includes/common/collaboration_label.html" %}
         {% endif %}
       </div>

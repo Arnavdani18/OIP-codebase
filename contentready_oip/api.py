@@ -603,7 +603,7 @@ def get_content_by_user(doctype, limit_page_length=5):
             try:
                 doc = frappe.get_doc(doctype, f["name"])
                 if doc.is_published:
-                    doc.collaboration_in_progress = is_collaboration_in_progress(doc.doctype, doc.name)
+                    doc.collaborations_in_progress = get_collaborations_in_progress(doc.doctype, doc.name)
                     content.append(doc)
             except Exception as e:
                 print(str(e))
@@ -638,7 +638,7 @@ def get_contributions_by_user(parent_doctype, child_doctypes, limit_page_length=
                     doc.validated = False
                     doc.collaborated = False
                     doc.discussed = False
-                    doc.collaboration_in_progress = is_collaboration_in_progress(doc.doctype, doc.name)
+                    doc.collaborations_in_progress = get_collaborations_in_progress(doc.doctype, doc.name)
                     for e in content_dict[c]:
                         contribution_type = e["type"]
                         if contribution_type == "Enrichment":
@@ -672,7 +672,7 @@ def get_content_watched_by_user(doctype, limit_page_length=5):
             try:
                 doc = frappe.get_doc(doctype, c)
                 if doc.is_published:
-                    doc.collaboration_in_progress = is_collaboration_in_progress(doc.doctype, doc.name)
+                    doc.collaborations_in_progress = get_collaborations_in_progress(doc.doctype, doc.name)
                     content.append(doc)
             except Exception as e:
                 print(str(e))
@@ -729,7 +729,7 @@ def get_content_recommended_for_user(
                     and not has_user_contributed("Enrichment", doctype, c)
                 ):
                     doc.photo = frappe.get_value("User Profile", doc.owner, "photo")
-                    doc.collaboration_in_progress = is_collaboration_in_progress(doc.doctype, doc.name)
+                    doc.collaborations_in_progress = get_collaborations_in_progress(doc.doctype, doc.name)
                     if html:
                         if doctype == "Problem":
                             context = {"problem": doc}
@@ -1379,6 +1379,11 @@ def get_user_orgs():
 
 
 @frappe.whitelist(allow_guest=True)
-def is_collaboration_in_progress(doctype, docname):
+def get_collaborations_in_progress(doctype, docname):
     collaborations = frappe.get_list('Collaboration', filters={'parent_doctype': doctype, 'parent_name': docname, "status": "Accept"}, limit=1)
     return len(collaborations) > 0
+
+@frappe.whitelist(allow_guest=True)
+def get_collaborations_in_progress(doctype, docname):
+    collaborations = frappe.get_list('Collaboration', filters={'parent_doctype': doctype, 'parent_name': docname, "status": "Accept"})
+    return len(collaborations)

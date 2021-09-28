@@ -75,7 +75,7 @@ class Solution(WebsiteGenerator):
 		context.is_collaborator = api.has_collaborator_role()
 		context.is_service_provider = api.has_service_provider_role()
 		context.collaborations = frappe.get_list('Collaboration', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
-		context.collaboration_in_progress = api.is_collaboration_in_progress(self.doctype, self.name)
+		context.collaborations_in_progress = api.get_collaborations_in_progress(self.doctype, self.name)
 		context.validations = frappe.get_list('Validation', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
 		context.likes = frappe.get_list('Like', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
 		context.watchers = frappe.get_list('Watch', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
