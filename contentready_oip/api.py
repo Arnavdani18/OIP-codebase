@@ -316,7 +316,7 @@ def add_comment(doctype, name, text, media=None, html=True):
         return doc
 
 
-@frappe.whitelist(allow_guest=False)
+@frappe.whitelist(allow_guest=True)
 def get_problem_detail_modal(name, html=True):
     # Get problem detail modal on add solution and edit solution.
     # { param: string } eg. 'Problem001'
@@ -335,7 +335,7 @@ def get_problem_detail_modal(name, html=True):
         return doc
 
 
-@frappe.whitelist(allow_guest=False)
+@frappe.whitelist(allow_guest=True)
 def get_problem_card(name, html=True):
     doc = frappe.get_doc("Problem", name)
     if html:
@@ -350,13 +350,13 @@ def get_problem_card(name, html=True):
         return doc
 
 
-@frappe.whitelist(allow_guest=False)
+@frappe.whitelist(allow_guest=True)
 def get_problem_details(name):
     doc = frappe.get_doc("Problem", name)
     return doc
 
 
-@frappe.whitelist(allow_guest=False)
+@frappe.whitelist(allow_guest=True)
 def get_problem_overview(name, html=True):
     doc = frappe.get_doc("Problem", name)
     if html:
@@ -1131,7 +1131,7 @@ def get_url_metadata(url):
         return response
 
 
-@frappe.whitelist(allow_guest=False)
+@frappe.whitelist(allow_guest=True)
 def get_beneficiaries_from_sectors(sectors):
     beneficiary_list = set()
     try:
@@ -1211,7 +1211,7 @@ def index_document(doc=None, event_name=None):
         print(str(e))
 
 
-@frappe.whitelist(allow_guest=False)
+@frappe.whitelist(allow_guest=True)
 def get_suggested_titles(text, scope=None):
     if type(scope) == type("hello"):
         scope = json.loads(scope)
