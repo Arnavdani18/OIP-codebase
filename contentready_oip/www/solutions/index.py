@@ -27,7 +27,7 @@ def get_context(context):
     context.solutions = []
     for d in matched[context.start:context.end]:
         p = frappe.get_doc('Solution', d['name'])
-        p.collaboration_in_progress = api.is_collaboration_in_progress(p.doctype, p.name)
+        p.collaborations_in_progress = api.get_collaborations_in_progress(p.doctype, p.name)
         context.solutions.append(p)
     return context
     
