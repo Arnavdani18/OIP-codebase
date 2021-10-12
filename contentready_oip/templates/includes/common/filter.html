@@ -94,7 +94,7 @@
 </style>
 
 <script type="text/x-template" id="filter-script">
-  <form>
+    <form @submit.prevent="searchWithFilters">
       {% if show_search %}
       <div class="input-group input-section mb-4">
         <input type="search" class="form-control form-control-lg style1"
@@ -105,7 +105,7 @@
               <option v-for="title of suggested_titles" v-bind:value="title"></option>
             </datalist>
         <div class="input-group-append style1">
-            <button @click="searchWithFilters" type="button" data-enabled=1 class="btn active-btn" 
+            <button type="submit" data-enabled=1 class="btn active-btn" 
                 id="search-btn"><img src="/assets/contentready_oip/svg/search-solid.svg" style="opacity: .4;"
                     class="" width="30" height="20"></button>
         </div>
@@ -166,9 +166,9 @@
     </div>
   </div>
   <div class="row flex-row-reverse mt-3 actions">
-    <button class="btn btn-primary btn-lg text-white" @click="searchWithFilters" type="button">Search With Filters</button>
+    <button class="btn btn-primary btn-lg text-white" @click="searchWithFilters">Search With Filters</button>
     &nbsp;&nbsp;
-    <button class="btn btn-outline-danger btn-lg" @click="resetFilter" type="button">Clear Filters</button>
+    <button class="btn btn-outline-danger btn-lg" @click="resetFilter">Clear Filters</button>
   </div>
 </div>
 </form>

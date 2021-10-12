@@ -18,9 +18,10 @@
   "enable_geoip_lookup",
   "column_break_12",
   "ip2location_database",
-  "slideshow_section",
-  "slideshow_delay",
-  "slideshow"
+  "default_content_section",
+  "homepage_background",
+  "homepage_slogan",
+  "homepage_description"
  ],
  "fields": [
   {
@@ -96,27 +97,30 @@
    "fieldtype": "Column Break"
   },
   {
-   "fieldname": "slideshow",
-   "fieldtype": "Table",
-   "label": "Slideshow",
-   "options": "Website Slideshow Item"
-  },
-  {
-   "fieldname": "slideshow_section",
+   "fieldname": "default_content_section",
    "fieldtype": "Section Break",
-   "label": "Slideshow"
+   "label": "Default Content"
   },
   {
-   "default": "10",
-   "fieldname": "slideshow_delay",
-   "fieldtype": "Int",
-   "label": "Slideshow Delay (s)"
+   "fieldname": "homepage_background",
+   "fieldtype": "Attach Image",
+   "label": "Homepage Background"
+  },
+  {
+   "fieldname": "homepage_slogan",
+   "fieldtype": "Data",
+   "label": "Homepage Slogan"
+  },
+  {
+   "fieldname": "homepage_description",
+   "fieldtype": "Text",
+   "label": "Homepage Description"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-09-21 14:10:47.877694",
+ "modified": "2021-04-26 11:02:35.865270",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP Configuration",
