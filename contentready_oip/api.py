@@ -70,7 +70,7 @@ def get_available_sectors():
         ), "Need at least 1 sector per domain. Reverting to defaults."
         return sectors
     except:
-        return frappe.get_list("Sector", ["name", "title", "description"])
+        return frappe.get_list("Sector", ["name", "title", "description", "image"])
 
 
 @frappe.whitelist(allow_guest=True)
@@ -200,7 +200,7 @@ def get_persona_list():
 def get_sector_list():
     available_sectors = get_available_sectors()
     return [
-        {"label": o["title"], "value": o["name"], "description": o["description"]}
+        {"label": o["title"], "value": o["name"], "description": o["description"], "image": o["image"]}
         for o in available_sectors
     ]
 

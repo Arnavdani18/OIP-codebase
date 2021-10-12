@@ -23651,3 +23651,7 @@ input[type='password'] {
     color: var(--secondary6);
     background-color: var(--primary2)
 }
+
+.sector-icon {
+    height: 1.5rem !important;
+}
