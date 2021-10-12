@@ -41,7 +41,7 @@
 
             <ul class="navbar-nav mt-lg-0 nav-right-list pattern1">
                 <li class="nav-item ml-lg-3 search-icon-li d-flex align-items-center ">
-                    <button onclick="onClickSearch()">
+                    <button onclick="onClickSearch()" title="Search">
                         <span class="nav-icon">
                             {% include "public/svg/search-solid.svg" %}
                         </span>
@@ -51,7 +51,7 @@
                 {% if frappe.session.user != 'Guest' %}
                 <li class="nav-item dropdown ml-lg-3 mr-lg-4 message-icon-li d-flex align-items-center">
                     {% set notifications = frappe.get_all('OIP Notification', fields=['text', 'route', 'name'], filters={'target_user': frappe.session.user, 'is_read': False}) %}
-                    <button role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                    <button role="button" data-toggle="dropdown" title="Notifications" aria-haspopup="true" aria-expanded="false"
                         class="icon-btn">
                         <span class="nav-icon envelopeIcon">
                             {% include "public/svg/envelope-regular.svg" %}
@@ -112,7 +112,7 @@
                     {% set matched = frappe.get_list('User Profile', filters={'user': frappe.session.user}) %}
                     {% if matched | length %}
                         {% set profile = frappe.get_doc('User Profile', frappe.session.user) %}
-                        <a class="nav-link profile-icon dropdown-toggle" href="#" id="profileDropdown" role="button"
+                        <a class="nav-link profile-icon dropdown-toggle" title="Profile" href="#" id="profileDropdown" role="button"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img src="{{profile.photo|default('/assets/contentready_oip/images/default-avatar.jpg', true)}}" alt="profile photo" class="profile-photo"
                                 onerror="javascript:this.src='/assets/contentready_oip/images/default-avatar.jpg'" />

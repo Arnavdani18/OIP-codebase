@@ -37,6 +37,12 @@
         {% set validations = frappe.get_list('Validation', filters={'parent_doctype': doctype, 'parent_name': name}) %} 
         {% include "templates/includes/common/validations.html" %}
       </div>
+      <div class="collaborations-container">
+        {% if problem.collaborations_in_progress %}
+          {% set collaborations_in_progress = problem.collaborations_in_progress %}
+          {% include "templates/includes/common/collaboration_label.html" %}
+        {% endif %}
+      </div>
     </div>
   </div>
 

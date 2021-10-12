@@ -1,5 +1,5 @@
 $('*[data-fieldname="personas"]').before(
-  '<label class="form-group control-label">Personas</label><br/><div id="personasComp"></div>'
+  '<div class="clearfix"><label class="control-label label-styles" style="padding-right: 0px;">Personas</label></div><div id="personasComp"></div>'
 );
 const personaVueComp = new Vue({
     name: 'Personas',

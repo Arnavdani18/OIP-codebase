@@ -70,7 +70,7 @@ def get_available_sectors():
         ), "Need at least 1 sector per domain. Reverting to defaults."
         return sectors
     except:
-        return frappe.get_list("Sector", ["name", "title", "description"])
+        return frappe.get_list("Sector", ["name", "title", "description", "image"])
 
 
 @frappe.whitelist(allow_guest=True)
@@ -200,7 +200,7 @@ def get_persona_list():
 def get_sector_list():
     available_sectors = get_available_sectors()
     return [
-        {"label": o["title"], "value": o["name"], "description": o["description"]}
+        {"label": o["title"], "value": o["name"], "description": o["description"], "image": o["image"]}
         for o in available_sectors
     ]
 
@@ -316,7 +316,7 @@ def add_comment(doctype, name, text, media=None, html=True):
         return doc
 
 
-@frappe.whitelist(allow_guest=False)
+@frappe.whitelist(allow_guest=True)
 def get_problem_detail_modal(name, html=True):
     # Get problem detail modal on add solution and edit solution.
     # { param: string } eg. 'Problem001'
@@ -335,7 +335,7 @@ def get_problem_detail_modal(name, html=True):
         return doc
 
 
-@frappe.whitelist(allow_guest=False)
+@frappe.whitelist(allow_guest=True)
 def get_problem_card(name, html=True):
     doc = frappe.get_doc("Problem", name)
     if html:
@@ -350,13 +350,13 @@ def get_problem_card(name, html=True):
         return doc
 
 
-@frappe.whitelist(allow_guest=False)
+@frappe.whitelist(allow_guest=True)
 def get_problem_details(name):
     doc = frappe.get_doc("Problem", name)
     return doc
 
 
-@frappe.whitelist(allow_guest=False)
+@frappe.whitelist(allow_guest=True)
 def get_problem_overview(name, html=True):
     doc = frappe.get_doc("Problem", name)
     if html:
@@ -603,6 +603,7 @@ def get_content_by_user(doctype, limit_page_length=5):
             try:
                 doc = frappe.get_doc(doctype, f["name"])
                 if doc.is_published:
+                    doc.collaborations_in_progress = get_collaborations_in_progress(doc.doctype, doc.name)
                     content.append(doc)
             except Exception as e:
                 print(str(e))
@@ -637,6 +638,7 @@ def get_contributions_by_user(parent_doctype, child_doctypes, limit_page_length=
                     doc.validated = False
                     doc.collaborated = False
                     doc.discussed = False
+                    doc.collaborations_in_progress = get_collaborations_in_progress(doc.doctype, doc.name)
                     for e in content_dict[c]:
                         contribution_type = e["type"]
                         if contribution_type == "Enrichment":
@@ -670,6 +672,7 @@ def get_content_watched_by_user(doctype, limit_page_length=5):
             try:
                 doc = frappe.get_doc(doctype, c)
                 if doc.is_published:
+                    doc.collaborations_in_progress = get_collaborations_in_progress(doc.doctype, doc.name)
                     content.append(doc)
             except Exception as e:
                 print(str(e))
@@ -726,6 +729,7 @@ def get_content_recommended_for_user(
                     and not has_user_contributed("Enrichment", doctype, c)
                 ):
                     doc.photo = frappe.get_value("User Profile", doc.owner, "photo")
+                    doc.collaborations_in_progress = get_collaborations_in_progress(doc.doctype, doc.name)
                     if html:
                         if doctype == "Problem":
                             context = {"problem": doc}
@@ -1131,7 +1135,7 @@ def get_url_metadata(url):
         return response
 
 
-@frappe.whitelist(allow_guest=False)
+@frappe.whitelist(allow_guest=True)
 def get_beneficiaries_from_sectors(sectors):
     beneficiary_list = set()
     try:
@@ -1211,7 +1215,7 @@ def index_document(doc=None, event_name=None):
         print(str(e))
 
 
-@frappe.whitelist(allow_guest=False)
+@frappe.whitelist(allow_guest=True)
 def get_suggested_titles(text, scope=None):
     if type(scope) == type("hello"):
         scope = json.loads(scope)
@@ -1372,3 +1376,14 @@ def remove_user_from_org(org_id, email):
 def get_user_orgs():
     filtered = [o['parent'] for o in frappe.get_list('User Table', fields=['parent'], filters={'parenttype': 'Organisation', 'user': frappe.session.user})]
     return frappe.get_list('Organisation', fields=['name', 'title'], filters={'name': ['in', filtered]})
+
+
+@frappe.whitelist(allow_guest=True)
+def get_collaborations_in_progress(doctype, docname):
+    collaborations = frappe.get_list('Collaboration', filters={'parent_doctype': doctype, 'parent_name': docname, "status": "Accept"}, limit=1)
+    return len(collaborations) > 0
+
+@frappe.whitelist(allow_guest=True)
+def get_collaborations_in_progress(doctype, docname):
+    collaborations = frappe.get_list('Collaboration', filters={'parent_doctype': doctype, 'parent_name': docname, "status": "Accept"})
+    return len(collaborations)
