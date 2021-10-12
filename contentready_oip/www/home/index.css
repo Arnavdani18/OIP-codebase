@@ -1,3 +1,8 @@
+.poster {
+    background-image: url('/assets/contentready_oip/images/background.jpg');
+    background-size: cover;
+}
+
 .banner-text {
     height: 23.1rem;
     max-width: 50.6rem;

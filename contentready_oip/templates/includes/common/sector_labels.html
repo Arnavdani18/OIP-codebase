@@ -10,9 +10,6 @@
     class="tag actions text-capitalize"
     onclick="selectSector('{{sector.sector}}', '{{doctype}}')"
   >
-    {% if doc.image %}
-      <img class="sector-icon" src="{{doc.image}}" />
-    {% endif %}
     {{ doc.title }}
   </button>
   {% endfor %} {% if (sectors | length) > limit %}
@@ -40,10 +37,3 @@
     });
   };
 </script>
-
-
-<style>
-  .sector-icon {
-    height: 1.5rem !important;
-  }
-</style>

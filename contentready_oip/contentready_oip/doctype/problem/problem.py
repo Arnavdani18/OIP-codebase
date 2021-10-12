@@ -52,7 +52,6 @@ class Problem(WebsiteGenerator):
 		context.solutions = frappe.get_list('Solution', filters={'name': ['in', solution_ids], 'is_published': True})
 		context.enrichments = frappe.get_list('Enrichment', filters={'parent_doctype': self.doctype, 'parent_name': self.name, 'is_published': True})
 		context.collaborations = frappe.get_list('Collaboration', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
-		context.collaborations_in_progress = api.get_collaborations_in_progress(self.doctype, self.name)
 		context.validations = frappe.get_list('Validation', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
 		context.likes = frappe.get_list('Like', filters={'parent_doctype': self.doctype, 'parent_name': self.name})
 		context.watchers = frappe.get_list('Watch', filters={'parent_doctype': self.doctype, 'parent_name': self.name})

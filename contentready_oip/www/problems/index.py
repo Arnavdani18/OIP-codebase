@@ -22,10 +22,6 @@ def get_context(context):
     context.end = context.start + RESULTS_PER_PAGE
     context.total_count = len(matched)
     context.has_next_page = context.total_count > context.end
-    context.problems = []
-    for d in matched[context.start:context.end]:
-        p = frappe.get_doc('Problem', d['name'])
-        p.collaborations_in_progress = api.get_collaborations_in_progress(p.doctype, p.name)
-        context.problems.append(p)
+    context.problems = [frappe.get_doc('Problem', d['name']) for d in matched[context.start:context.end]]
     return context
     
