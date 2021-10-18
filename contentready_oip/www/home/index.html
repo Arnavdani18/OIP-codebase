@@ -8,6 +8,14 @@
       <p class="left-bar text-white" id="slideshow-description">
       </p>
       <video autoplay muted src="" onloadedmetadata="onVideoLoaded()" onended="onVideoEnded()" id="videoBackground"></video>
+      <a class="carousel-control-prev" role="button" onclick="previousSlide()">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="carousel-control-next" role="button" onclick="nextSlide()">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
     </div>
   </div>
 </div>
@@ -21,18 +29,43 @@
 
 <script>
   let delay = 1000 * Number(`{{slideshow_delay}}`);
+  let index = 0;
   let videoCompleted = false;
+  let slideTimer = null;
+  let videoTimer = null;
+  let slideshow = [];
+
   function onVideoLoaded() {
     const duration = $('#videoBackground')[0].duration;
-    console.log("duration", duration);
     videoCompleted = false;
   }
+  
   function onVideoEnded() {
     videoCompleted = true;
-    console.log("Video completed");
   }
-  frappe.ready(function () {
-    function isImage(url) {
+
+  function previousSlide() {
+    // We decrement twice index because it's incremented already in loopThroughSlideshow
+    if (index == 0) {
+      index = slideshow.length - 2;
+    } else if (index == 1) {
+      index = slideshow.length - 1;
+    } else {
+      index = index - 2;
+    }
+    clearTimeout(slideTimer);
+    clearInterval(videoTimer);
+    loopThroughSlideshow(slideshow);
+  }
+
+  function nextSlide() {
+    // We do not increment index because it's incremented already in loopThroughSlideshow
+    clearTimeout(slideTimer);
+    clearInterval(videoTimer);
+    loopThroughSlideshow(slideshow);
+  }
+
+  function isImage(url) {
       return (url.match(/\.(jpeg|jpg|gif|png)$/) != null);
     }
 
@@ -41,7 +74,6 @@
     }
 
     function loopThroughSlideshow(slideshow) {
-      let index = 0;
       function delayedOutput() {
         const row = slideshow[index];
         if (index < slideshow.length - 1) {
@@ -56,14 +88,14 @@
           $("#videoBackground").attr("src", null);
           $("#videoBackground").hide();
           $('.poster').css("background-image", `url(${url})`).css('background-size', 'cover');
-          setTimeout(delayedOutput, delay);
+          slideTimer = setTimeout(delayedOutput, delay);
         } else if (isVideo(url)) {
           $('.poster').css("background-image", "");
           $("#videoBackground").show();
           $("#videoBackground").attr("src", url);
-          const intervalTimer = setInterval(() => {
+          videoTimer = setInterval(() => {
             if (videoCompleted) {
-              clearInterval(intervalTimer);
+              clearInterval(videoTimer);
               delayedOutput();
             }
           }, 1000);
@@ -71,8 +103,9 @@
       }
       delayedOutput();
     }
-    console.log(`{{slideshow}}`);
-    const slideshow = JSON.parse(`{{slideshow}}`);
+
+  frappe.ready(function () {
+    slideshow = JSON.parse(`{{slideshow}}`);
     loopThroughSlideshow(slideshow);
   });
 </script>

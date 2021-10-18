@@ -31,6 +31,8 @@ const sectorsComp = new Vue({
                         selected_sectors = frappe.web_form.doc.sectors.map((s) => s.sector);
                     }
 
+                    console.log(r.message);
+
                     sectorsComp.selected_sectors = selected_sectors || [];
                     sectorsComp.available_sectors = [...r.message.sort(sortAlphabetically)];
                     if (['Problem', 'Enrichment'].includes(doctype)) {
@@ -107,7 +109,8 @@ const sectorsComp = new Vue({
             }"
             v-on:click="updateSectorToDoc(sector['value'])"
             >
-            [[sector.label]]
+                <img class="sector-icon" :src="sector.image" />
+                [[sector.label]]
             </button>
             </div>
             </div>

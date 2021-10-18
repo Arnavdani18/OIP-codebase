@@ -10,8 +10,13 @@
     {% for sector in available_sectors %}
     <tr>
         <th scope="row">{{ loop.index }}</th>
-        <td>{{ sector.title }}</td>
-        <td>{{ sector.description }}</td>
+        <td>
+            {% if sector.image %}
+              <img class="sector-icon" src="{{sector.image}}" />
+            {% endif %}
+            {{ sector.title }}
+        </td>
+        <td>{{ sector.description or "" }}</td>
     </tr>
     {% endfor %}
     </tbody>
