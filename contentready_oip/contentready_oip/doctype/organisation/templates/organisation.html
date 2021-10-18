@@ -68,6 +68,9 @@
 
           {% for sector in sectors %}
           <button class="tag actions text-capitalize over_tag">
+            {% if sector.image %}
+              <img class="sector-icon" src="{{sector.image}}" />
+            {% endif %}
             {{ sector.sector_title }}
           </button>
           {% endfor %} {% if sectors | length == 0 %}
