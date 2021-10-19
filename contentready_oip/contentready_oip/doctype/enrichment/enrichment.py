@@ -22,6 +22,22 @@ class Enrichment(Document):
 		old = self.get_doc_before_save()
 		if old and not old.is_published and self.is_published:
 			self.maybe_create_insert_notifications()
+		self.maybe_assign_image()
+
+	def maybe_assign_image(self):
+		if len(self.media) == 0:
+			if len(self.sectors) > 0:
+				sectors = self.sectors
+			else:
+				parent = frappe.get_doc(self.parent_doctype, self.parent_name)
+				sectors = parent.sectors
+			if len(sectors) > 0:
+				sector_image = frappe.db.get_value('Sector', sectors[0].sector, 'image')
+				if sector_image:
+					row = self.append('media', {})
+					row.attachment = sector_image
+					row.is_featured = True
+					row.type = 'image/jpeg'
 	
 	def maybe_create_insert_notifications(self):
 		try:

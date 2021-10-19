@@ -44,9 +44,20 @@ class Solution(WebsiteGenerator):
 		for sector in sectors:
 			r = self.append('sectors', {})
 			r.sector = sector
+		self.maybe_assign_image()
 		old = self.get_doc_before_save()
 		if old and not old.is_published and self.is_published:
 			self.maybe_create_insert_notifications()
+
+	def maybe_assign_image(self):
+		if len(self.media) == 0:
+			if len(self.sectors) > 0:
+				sector_image = frappe.db.get_value('Sector', self.sectors[0].sector, 'image')
+				if sector_image:
+					row = self.append('media', {})
+					row.attachment = sector_image
+					row.is_featured = True
+					row.type = 'image/jpeg'
 
 	def maybe_create_insert_notifications(self):
 		try:
