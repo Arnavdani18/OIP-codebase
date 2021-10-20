@@ -48,7 +48,8 @@ class Problem(WebsiteGenerator):
 		self.maybe_assign_image()
 
 	def maybe_assign_image(self):
-		if len(self.media) == 0:
+		images = [i for i in self.media if i.type == 'image/jpeg']
+		if len(images) == 0:
 			if len(self.sectors) > 0:
 				for s in self.sectors:
 					sector_image = frappe.db.get_value('Sector', s.sector, 'image')
