@@ -25,7 +25,8 @@ class Enrichment(Document):
 		self.maybe_assign_image()
 
 	def maybe_assign_image(self):
-		if len(self.media) == 0:
+		images = [i for i in self.media if i.type == 'image/jpeg']
+		if len(images) == 0:
 			if len(self.sectors) > 0:
 				sectors = self.sectors
 			else:
