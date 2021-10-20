@@ -52,7 +52,10 @@ class Solution(WebsiteGenerator):
 	def maybe_assign_image(self):
 		if len(self.media) == 0:
 			if len(self.sectors) > 0:
-				sector_image = frappe.db.get_value('Sector', self.sectors[0].sector, 'image')
+				for s in self.sectors:
+					sector_image = frappe.db.get_value('Sector', s.sector, 'image')
+					if sector_image:
+						break
 				if sector_image:
 					row = self.append('media', {})
 					row.attachment = sector_image
