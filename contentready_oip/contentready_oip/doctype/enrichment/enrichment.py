@@ -32,7 +32,10 @@ class Enrichment(Document):
 				parent = frappe.get_doc(self.parent_doctype, self.parent_name)
 				sectors = parent.sectors
 			if len(sectors) > 0:
-				sector_image = frappe.db.get_value('Sector', sectors[0].sector, 'image')
+				for s in sectors:
+					sector_image = frappe.db.get_value('Sector', s.sector, 'image')
+					if sector_image:
+						break
 				if sector_image:
 					row = self.append('media', {})
 					row.attachment = sector_image
