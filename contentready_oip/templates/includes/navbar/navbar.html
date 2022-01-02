@@ -23,17 +23,47 @@
                     </a>
                 </li>
                 {% endif %}
-                <li class="nav-item">
-                    <a class="nav-item nav-link " href="/problems">Problems</a>
+                <li class="nav-item dropdown profile-btn-li">
+                        <a class="nav-link dropdown-toggle" title="Discover" href="#" id="discoverDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                         Discover
+                        </a>
+                        <div class="dropdown-menu mt-2 dropdown-menu-right dropdown-section">
+                            <a class="dropdown-item nullActive" href="/contributors">
+                               Contributors
+                            </a>
+			    <hr />
+                            <a class="dropdown-item nullActive" href="/organisation">
+                                Organisations
+                            </a>
+                        </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-item nav-link " href="/solutions">Solutions</a>
+                <li class="nav-item dropdown profile-btn-li">
+                        <a class="nav-link dropdown-toggle" title="Collaborate" href="#" id="collaborateDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          Collaborate
+                        </a>
+                        <div class="dropdown-menu mt-2 dropdown-menu-right dropdown-section">
+                            <a class="dropdown-item nullActive" href="/problems">
+                                Problems
+                            </a>
+			    <hr />
+                            <a class="dropdown-item nullActive" href="/solutions">
+                                Solutions
+                            </a>
+                        </div>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-item nav-link " href="/contributors">Contributors</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-item nav-link " href="/organisations">Organisations</a>
+                <li class="nav-item dropdown profile-btn-li">
+                        <a class="nav-link dropdown-toggle" title="More" href="#" id="moreDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                         More
+                        </a>
+                        <div class="dropdown-menu mt-2 dropdown-menu-right dropdown-section">
+                            <a class="dropdown-item nullActive" href="/resources">
+                               Resources
+                            </a>
+			    <hr />
+                        </div>
                 </li>
             </ul>
 
