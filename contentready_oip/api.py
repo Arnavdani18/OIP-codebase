@@ -22,6 +22,12 @@ from functools import cmp_to_key
 
 python_version_2 = platform.python_version().startswith("2")
 
+search_modules = {
+    "Problem": problem_search,
+    "Solution": solution_search,
+    "User Profile": user_search,
+    "Organisation": organisation_search,
+}
 
 def nudge_guests():
     if not frappe.session.user or frappe.session.user == "Guest":
@@ -227,9 +233,19 @@ def get_homepage_stats():
         unique_users = {r['parent'] for r in users_with_sectors}
         collaborator_count = len(unique_users)
 
+    if len(filtered_problems):
+        published_problems_count = frappe.db.count("Problem",filters={"is_published": True, 'name': ['in', filtered_problems]})
+    else:
+        published_problems_count = 0
+
+    if len(filtered_solutions):
+        published_solutions_count= frappe.db.count("Solution", filters={"is_published": True, 'name': ['in', filtered_solutions]})
+    else:
+        published_solutions_count = 0
+
     return {
-        "problems": frappe.db.count("Problem", filters={"is_published": True, 'name': ['in', filtered_problems]}),
-        "solutions": frappe.db.count("Solution", filters={"is_published": True, 'name': ['in', filtered_solutions]}),
+        "problems": published_problems_count, 
+        "solutions": published_solutions_count,
         "collaborators": collaborator_count,
     }
 
@@ -1197,12 +1213,6 @@ def upload_file():
 
 
 def index_document(doc=None, event_name=None):
-    search_modules = {
-        "Problem": problem_search,
-        "Solution": solution_search,
-        "User Profile": user_search,
-        "Organisation": organisation_search,
-    }
     try:
         if event_name == 'on_trash':
             search_modules[doc.doctype].remove_document_from_index(doc.name)
@@ -1213,6 +1223,11 @@ def index_document(doc=None, event_name=None):
                 search_modules[doc.doctype].remove_document_from_index(doc.name)
     except Exception as e:
         print(str(e))
+
+
+def index_all_documents():
+    for module in search_modules.values():
+        module.build_index_for_all_ids()
 
 
 @frappe.whitelist(allow_guest=True)
