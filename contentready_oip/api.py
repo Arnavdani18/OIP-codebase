@@ -1395,10 +1395,5 @@ def get_user_orgs():
 
 @frappe.whitelist(allow_guest=True)
 def get_collaborations_in_progress(doctype, docname):
-    collaborations = frappe.get_list('Collaboration', filters={'parent_doctype': doctype, 'parent_name': docname, "status": "Accept"}, limit=1)
-    return len(collaborations) > 0
-
-@frappe.whitelist(allow_guest=True)
-def get_collaborations_in_progress(doctype, docname):
     collaborations = frappe.get_list('Collaboration', filters={'parent_doctype': doctype, 'parent_name': docname, "status": "Accept"})
     return len(collaborations)
