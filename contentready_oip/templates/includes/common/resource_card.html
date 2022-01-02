@@ -1,0 +1,40 @@
+<div class="problem-container mt-3" data-name="{{resource.name}}"
+				    style="background-color: white;" id="resource-card-{{resource.name}}">
+	<div class="left-side">
+		{% include "templates/includes/common/resource_label.html" %}
+
+		<div class="heading-container mt-3 text-capitalize ">
+			<h2 class="heading">
+				<a href="{resource.attachment}">
+					{{resource.title}}
+				</a>
+			</h2>
+		</div>
+		<div>
+			<p>
+			{{resource.description}}
+			</p>
+		</div>
+
+	</div>
+	{% if resource.image %}
+	<div class="right-side">
+		<div class="image-and-count-container d-none d-lg-block">
+			<img src="{{resource.image}}" alt="image" class="image" />
+		</div>
+		<div class="image-and-count-container d-lg-none">
+			<img src="{{resource.image}}" alt="image" class="image-ipad" />
+		</div>
+	</div>
+	{% endif %}
+</div>
+
+
+<style>
+@media only screen and (max-width: 600px){
+	.align-icon {
+		right: .2rem;
+		bottom: 1.2rem;
+	}
+}
+</style>
