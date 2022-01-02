@@ -1,0 +1,22 @@
+<!-- jinja -->
+<!-- no-breadcrumbs -->
+<!-- static -->
+<div class="">
+	{% if resources %}
+	<div class="row" id="resources-container">
+		{% for resource in resources %}
+		<div class="col-md-6 mt-4">
+			{% include "templates/includes/common/resource_card.html" %}
+		</div>
+		{% endfor %}
+	</div>
+	{% endif %}
+</div>
+
+<style>
+@media only screen and (max-width: 600px){
+	.problem-listed-container{
+		height: 6.5rem;
+	}
+}
+</style>
