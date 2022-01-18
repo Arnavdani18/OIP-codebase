@@ -28,5 +28,14 @@ def get_context(context):
     oip_configuration = frappe.get_doc('OIP Configuration', '')
     context.slideshow = frappe.as_json(oip_configuration.slideshow)
     context.slideshow_delay = oip_configuration.slideshow_delay
+    if len(oip_configuration.slideshow) > 0:
+        context.title = oip_configuration.slideshow[0].heading
+        context.metatags = {
+            "title": oip_configuration.slideshow[0].heading,
+            "og:title": oip_configuration.slideshow[0].heading,
+            "description": oip_configuration.slideshow[0].description,
+            "og:description": oip_configuration.slideshow[0].description,
+            "og:image": oip_configuration.slideshow[0].image,
+        }
     return context
-    
+
