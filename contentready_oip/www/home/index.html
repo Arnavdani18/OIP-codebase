@@ -86,7 +86,7 @@
           index = 0;
         }
         $("#slideshow-heading").text(row.heading);
-        $("#slideshow-description").text(row.description);
+        $("#slideshow-description").html(row.description);
         const url = row.image;
         if (isImage(url)) {
           $("#videoBackground").attr("src", null);
