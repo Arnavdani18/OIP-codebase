@@ -1,4 +1,5 @@
 import frappe
+from frappe.utils.html_utils import clean_html
 from contentready_oip import api, problem_search, solution_search
 import json
 
@@ -29,12 +30,14 @@ def get_context(context):
     context.slideshow = frappe.as_json(oip_configuration.slideshow)
     context.slideshow_delay = oip_configuration.slideshow_delay
     if len(oip_configuration.slideshow) > 0:
-        context.title = oip_configuration.slideshow[0].heading
+        title = oip_configuration.slideshow[0].heading
+        description = clean_html(oip_configuration.slideshow[0].description)
+        context.title = title
         context.metatags = {
-            "title": oip_configuration.slideshow[0].heading,
-            "og:title": oip_configuration.slideshow[0].heading,
-            "description": oip_configuration.slideshow[0].description,
-            "og:description": oip_configuration.slideshow[0].description,
+            "title": title,
+            "og:title": title,
+            "description": description,
+            "og:description": description,
             "og:image": oip_configuration.slideshow[0].image,
         }
     return context
