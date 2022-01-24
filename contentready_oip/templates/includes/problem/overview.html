@@ -16,7 +16,7 @@
         'Organization': org_title,
         'Impact': impact,
         'Population Affected': population_affected,
-        'Location(s)': city + ', ' + country,
+        'Location(s)': (city or '') + ', ' + (country or ''),
         } %}
 
         {% for field in fields %}
