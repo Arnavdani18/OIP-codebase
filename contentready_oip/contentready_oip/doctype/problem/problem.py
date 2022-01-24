@@ -95,5 +95,5 @@ class Problem(WebsiteGenerator):
                 "og:description": self.short_description,
                 }
         if len(self.media) > 0:
-            context.metatags["og:image"] = self.media[0]['attachment']
+            context.metatags["og:image"] = self.media[0].attachment
         return context
