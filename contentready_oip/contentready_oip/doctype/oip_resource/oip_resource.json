@@ -7,10 +7,11 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
-  "image",
-  "description",
   "attachment",
-  "is_published"
+  "is_published",
+  "column_break_4",
+  "image",
+  "description"
  ],
  "fields": [
   {
@@ -44,12 +45,16 @@
    "fieldname": "is_published",
    "fieldtype": "Check",
    "label": "Is Published"
+  },
+  {
+   "fieldname": "column_break_4",
+   "fieldtype": "Column Break"
   }
  ],
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-01-02 14:09:26.986862",
+ "modified": "2022-01-25 09:52:06.050611",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP Resource",
@@ -66,6 +71,24 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "All",
+   "share": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Guest",
+   "share": 1
   }
  ],
  "search_fields": "title, description",
