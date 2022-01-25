@@ -1397,3 +1397,15 @@ def get_user_orgs():
 def get_collaborations_in_progress(doctype, docname):
     collaborations = frappe.get_list('Collaboration', filters={'parent_doctype': doctype, 'parent_name': docname, "status": "Accept"})
     return len(collaborations)
+
+
+def update_payment_status(doc, event_name=None):
+    if doc.integration_request_service == 'Razorpay' and doc.status == 'Completed':
+        data = json.loads(doc.data)
+        org_id = data.get('order_id')
+        if org_id and frappe.db.exists('Organisation', org_id):
+            frappe.db.set_value('Organisation', org_id, 'paid', True)
+            frappe.db.set_value('Organisation', org_id, 'payment_reference', doc.name)
+            frappe.db.commit()
+
+
