@@ -7,6 +7,7 @@ from __future__ import unicode_literals
 from frappe.model.document import Document
 from bs4 import BeautifulSoup
 import requests
+from urllib.parse import urljoin
 
 # This is a *very* simplistic way to filter but we don't have a better solution right now because URLs can be quite tricky to figure out
 blacklist = ['.jpg', '.png', '.mp4', '.mp3', '.avi', '.mpg', '.mov', '.webp']
@@ -20,13 +21,22 @@ class OIPResource(Document):
                 html = response.text
                 if html:
                     soup = BeautifulSoup(html, "lxml")
-                    paragraph = soup.find("p")
-                    if paragraph and paragraph.text:
-                        try:
-                            paragraph.text.encode("utf-8")
+                    title = soup.find("meta", property="og:title")
+                    description = soup.find("meta", property="og:description").get('content', None)
+                    if description:
+                        self.description = description
+                    else:
+                        paragraph = soup.find("p")
+                        if paragraph and paragraph.text:
                             self.description = paragraph.text[:500]
-                        except:
-                            pass
+                    image = soup.find("meta", property="og:image").get('content', None)
+                    print(image)
+                    if image and len(image) and not self.image:
+                        if image.startswith('http'):
+                            self.image = image
+                        elif image.startswith('/'):
+                            self.image = urljoin(self.attachment, image)
+
 
     def before_insert(self):
         self.get_description()
