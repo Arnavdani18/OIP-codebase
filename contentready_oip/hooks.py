@@ -114,6 +114,9 @@ doc_events = {
 	},
 	"OIP Route Log":{
 		"on_update": "contentready_oip.api.enqueue_aggregate_analytics"
+	},
+	"Integration Request":{
+		"on_update": "contentready_oip.api.update_payment_status"
 	}
 }
 
