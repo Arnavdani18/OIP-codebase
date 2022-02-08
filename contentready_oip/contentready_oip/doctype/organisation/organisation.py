@@ -5,6 +5,7 @@
 from __future__ import unicode_literals
 import frappe
 from frappe.website.website_generator import WebsiteGenerator
+from frappe.integrations.utils import get_payment_gateway_controller
 from contentready_oip import api
 
 class Organisation(WebsiteGenerator):
@@ -49,3 +50,15 @@ class Organisation(WebsiteGenerator):
 			user_profile.append('personas',{'persona': 'service_provider'})
 			user_profile.save()
 		return ok
+	
+	def get_razorpay_order(self):
+		controller = get_payment_gateway_controller("Razorpay")
+
+		payment_details = {
+			"amount": 1000,
+			"reference_doctype": self.doctype,
+			"reference_docname": self.name,
+			"receipt": self.name
+		}
+
+		return controller.create_order(**payment_details)
