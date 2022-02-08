@@ -1,0 +1,215 @@
+<h1>Sign up as a Service Provider</h1>
+<form class="needs-validation" novalidate>
+    <input type="text" class="form-control" id="name" value="{{organisation.name}}" hidden>
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            <label for="title">Organisation Name</label>
+            <input type="text" class="form-control" id="title" placeholder="Organisation Name"
+                value="{{organisation.title}}" required>
+        </div>
+        <div class="form-group col-md-4">
+            <label for="service_category">Service Category</label>
+            <select id="service_category" class="form-control" value="{{organisation.category}}" required>
+                <option disabled>Choose Service Category</option>
+                {% for category in available_categories %}
+                <option value="{{category.value}}">{{ category.label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group col-md-4">
+            <label for="website">Website</label>
+            <input type="text" class="form-control" id="website" placeholder="Website" value="{{organisation.website}}"
+                required>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" placeholder="Email" value="{{organisation.email}}"
+                required>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="phone">Phone</label>
+            <input type="text" class="form-control" id="phone" placeholder="Phone" value="{{organisation.phone}}"
+                required>
+        </div>
+    </div>
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            <label for="city">City</label>
+            <input type="text" class="form-control" id="city" value="{{organisation.city}}" required>
+        </div>
+        <div class="form-group col-md-4">
+            <label for="state">State</label>
+            <input type="text" class="form-control" id="state" value="{{organisation.state}}" required>
+        </div>
+        <div class="form-group col-md-4">
+            <label for="country">Country</label>
+            <input type="text" class="form-control" id="country" value="{{organisation.country}}" required>
+        </div>
+    </div>
+    <button type="button" onclick="submitForm()" class="btn btn-outline-primary outline-primary-btn">Submit</button>
+</form>
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+
+<script>
+    function submitForm() {
+        const org = {
+            // name: $("#name").val(),
+            title: $("#title").val(),
+            service_category: $("#service_category").val(),
+            website: $("#website").val(),
+            email: $("#email").val(),
+            phone: $("#phone").val(),
+            city: $("#city").val(),
+            state: $("#state").val(),
+            country: $("#country").val(),
+            type: "Service Provider"
+        };
+
+        const incomplete = Object.keys(org).filter(x => org[x] == null || org[x] == '');
+        if (incomplete.length > 0) {
+            frappe.throw(`Please fill the following fields: ${incomplete}`);
+        } else {
+            // Call API to store organisation
+            frappe.call({
+                method: 'contentready_oip.api.add_primary_content',
+                args: {
+                    doctype: 'Organisation',
+                    doc: org,
+                },
+                callback: function (r) {
+                    // Show payment modal here
+                    if (r.message && r.message.route) {
+                        window.location.href = r.message.route;
+                    } else {
+                        window.location.href = '/thank-you';
+                    }
+                },
+            });
+        }
+    }
+</script>
+
+<style>
+    .page-breadcrumbs {
+        display: none;
+    }
+
+    .form-layout {
+        background-color: white;
+        padding: 2rem;
+    }
+
+    .ql-container {
+        background-color: white;
+    }
+
+    .form-group label {
+        font-size: 1.2rem;
+        font-weight: bolder;
+    }
+
+    .form-control {
+        font-size: 1.2rem;
+    }
+
+    .control-label {
+        font-weight: bolder;
+    }
+
+    .web-form-footer {
+        display: none;
+    }
+
+    .label-styles {
+        font-size: 1.4rem !important;
+        font-weight: 500 !important;
+    }
+
+    .field-styles {
+        padding: 1.8rem 1rem;
+        font-size: 1.4rem;
+        font-weight: normal;
+        margin-bottom: 2rem;
+    }
+
+    input[type=text] {
+        background-color: transparent !important;
+        padding: 1.8rem 1rem;
+    }
+
+    input[type=email] {
+        background-color: transparent !important;
+        padding: 1.8rem 1rem;
+    }
+
+    select {
+        background-color: transparent !important;
+        padding: 1.8rem 1rem;
+    }
+</style>
+<!-- 
+<script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAxSPvgric8Zn54pYneG9NondiINqdvb-w&callback=initMap&v=weekly"></script>
+
+
+<script>
+    let autocomplete;
+
+    const init_google_maps_autocomplete = () => {
+        // Create the autocomplete object, restricting the search predictions to
+        // geographical location types.
+        autocomplete = new google.maps.places.Autocomplete(
+            document.getElementById('city'), {
+            types: ['(cities)'],
+            componentRestrictions: {
+                country: 'in'
+            }
+        });
+        // Avoid paying for data that you don't need by restricting the set of
+        // place fields that are returned to just the address components.
+        // See https://developers.google.com/maps/documentation/javascript/places-autocomplete#add_autocomplete
+        autocomplete.setFields(['address_component', 'geometry']);
+        // When the user selects an address from the drop-down, populate the
+        // address fields in the form.
+        autocomplete.addListener('place_changed', fill_address_from_google_maps);
+    };
+
+    const fill_address_from_google_maps = () => {
+        // Get the place details from the autocomplete object.
+        const place = autocomplete.getPlace();
+        console.log(place);
+        const addressMapping = {
+            locality: {
+                long_name: 'city',
+            },
+            administrative_area_level_1: {
+                short_name: 'state_code',
+                long_name: 'state',
+            },
+            country: {
+                short_name: 'country_code',
+                long_name: 'country',
+            },
+        };
+
+        // Get each component of the address from the place details,
+        // and then fill-in the corresponding field on the form.
+        for (let i = 0; i < place.address_components.length; i++) {
+            const address_type = place.address_components[i].types[0];
+            if (addressMapping[address_type]) {
+                if (addressMapping[address_type]['long_name']) {
+                    $(`#${addressMapping[address_type]['long_name']}`).text(place.address_components[i]['long_name']);
+                }
+            }
+        }
+        console.log(place.geometry.location.lat(), place.geometry.location.lng());
+    };
+
+    init_google_maps_autocomplete();
+</script> -->

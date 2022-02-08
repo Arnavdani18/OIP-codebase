@@ -3,7 +3,7 @@
   {
    "hidden": 0,
    "label": "Content",
-   "links": "[\n    {\n        \"label\": \"Enrichments\",\n        \"name\": \"Enrichment\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Validations\",\n        \"name\": \"Validation\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Collaborations\",\n        \"name\": \"Collaboration\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Discussions\",\n        \"name\": \"Discussion\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"FAQs\",\n        \"name\": \"FAQ\",\n        \"type\": \"doctype\"\n    }\n]"
+   "links": "[\n    {\n        \"label\": \"Enrichments\",\n        \"name\": \"Enrichment\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Validations\",\n        \"name\": \"Validation\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Collaborations\",\n        \"name\": \"Collaboration\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"Discussions\",\n        \"name\": \"Discussion\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"FAQs\",\n        \"name\": \"FAQ\",\n        \"type\": \"doctype\"\n    },\n    {\n        \"label\": \"OIP Resources\",\n        \"name\": \"OIP Resource\",\n        \"type\": \"doctype\"\n    }\n]"
   },
   {
    "hidden": 0,
@@ -30,7 +30,7 @@
  "is_default": 0,
  "is_standard": 1,
  "label": "Open Innovation Platform",
- "modified": "2021-04-04 19:15:22.419095",
+ "modified": "2022-02-08 15:51:50.950013",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Open Innovation Platform",
