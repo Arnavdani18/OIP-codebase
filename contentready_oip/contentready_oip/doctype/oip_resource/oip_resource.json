@@ -54,7 +54,7 @@
  "image_field": "image",
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2022-01-25 09:52:06.050611",
+ "modified": "2022-02-15 14:14:07.298565",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP Resource",
@@ -89,6 +89,19 @@
    "report": 1,
    "role": "Guest",
    "share": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "if_owner": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Collaborator",
+   "share": 1,
+   "write": 1
   }
  ],
  "search_fields": "title, description",
