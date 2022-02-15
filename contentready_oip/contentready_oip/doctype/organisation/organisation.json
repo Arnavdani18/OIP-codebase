@@ -28,7 +28,8 @@
   "state_code",
   "column_break_18",
   "country",
-  "country_code"
+  "country_code",
+  "payment_reference"
  ],
  "fields": [
   {
@@ -161,13 +162,19 @@
    "fieldtype": "Check",
    "in_standard_filter": 1,
    "label": "Paid"
+  },
+  {
+   "fieldname": "payment_reference",
+   "fieldtype": "Link",
+   "label": "Payment Reference",
+   "options": "Integration Request"
   }
  ],
  "has_web_view": 1,
  "image_field": "photo",
  "is_published_field": "is_published",
  "links": [],
- "modified": "2022-01-03 22:20:28.677560",
+ "modified": "2022-01-25 11:55:43.771269",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "Organisation",

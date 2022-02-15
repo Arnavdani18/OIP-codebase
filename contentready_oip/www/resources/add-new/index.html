@@ -1,0 +1,104 @@
+<h1>Submit a New Resource</h1>
+<br />
+<form class="needs-validation" novalidate>
+    <div class="form-row">
+        <div class="form-group col-md-4">
+            <label for="title">Title</label>
+            <input type="text" class="form-control" id="title" placeholder="Title" required>
+        </div>
+        <div class="form-group col-md-8">
+            <label for="url">URL</label>
+            <input type="text" class="form-control" id="url" placeholder="URL" required>
+        </div>
+    </div>
+    <button type="button" onclick="submitForm()" class="btn btn-outline-primary outline-primary-btn">Submit</button>
+</form>
+
+<script>
+    function submitForm() {
+        const resource = {
+            title: $("#title").val(),
+            attachment: $("#url").val(),
+        };
+
+        const incomplete = Object.keys(resource).filter(x => resource[x] == null || resource[x] == '');
+        if (incomplete.length > 0) {
+            frappe.throw(`Please fill the following fields: ${incomplete}`);
+        } else {
+            // Call API to store organisation
+            frappe.call({
+                method: 'contentready_oip.api.add_primary_content',
+                args: {
+                    doctype: 'OIP Resource',
+                    doc: resource,
+                },
+                callback: function (r) {
+                    if (r.message && r.message.route) {
+                        window.location.href = r.message.route;
+                    } else {
+                        window.location.href = '/thank-you';
+                    }
+                },
+            });
+        }
+    }
+</script>
+
+<style>
+    .page-breadcrumbs {
+        display: none;
+    }
+
+    .form-layout {
+        background-color: white;
+        padding: 2rem;
+    }
+
+    .ql-container {
+        background-color: white;
+    }
+
+    .form-group label {
+        font-size: 1.2rem;
+        font-weight: bolder;
+    }
+
+    .form-control {
+        font-size: 1.2rem;
+    }
+
+    .control-label {
+        font-weight: bolder;
+    }
+
+    .web-form-footer {
+        display: none;
+    }
+
+    .label-styles {
+        font-size: 1.4rem !important;
+        font-weight: 500 !important;
+    }
+
+    .field-styles {
+        padding: 1.8rem 1rem;
+        font-size: 1.4rem;
+        font-weight: normal;
+        margin-bottom: 2rem;
+    }
+
+    input[type=text] {
+        background-color: transparent !important;
+        padding: 1.8rem 1rem;
+    }
+
+    input[type=email] {
+        background-color: transparent !important;
+        padding: 1.8rem 1rem;
+    }
+
+    select {
+        background-color: transparent !important;
+        padding: 1.8rem 1rem;
+    }
+</style>

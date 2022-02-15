@@ -3,7 +3,7 @@ frappe.provide('Vue');
 frappe.ready(async function () {
 
 	const doctype = 'Organisation';
-	const mandatory_fields = ['org_title', 'service_category', 'city', 'country', 'website', 'first_name', 'last_name'];
+	const mandatory_fields = ['title', 'service_category', 'email', 'phone', 'city', 'country', 'website', 'first_name', 'last_name'];
 
 	// Start Helpers
 	// Only write form specific helpers here. Use includes for common use cases.
