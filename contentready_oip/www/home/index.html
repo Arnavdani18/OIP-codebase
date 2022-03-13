@@ -1,6 +1,6 @@
 <!-- jinja -->
-<!-- no-breadcrumbs -->
 <!-- static -->
+{% if domain_settings.is_primary_domain %}
 <div class="poster jumbo">
   <div class="container">
     <div class="banner-text">
@@ -23,6 +23,23 @@
     </div>
   </div>
 </div>
+{% else %}
+<div class="poster jumbo">
+  <div class="container">
+    <div class="banner-text">
+      <h1 class="text-white">{{ domain_settings.homepage_slogan or "" | striptags }}</h1>
+      <p class="left-bar text-white">
+        {{ domain_settings.homepage_description or "" | striptags }}
+      </p>
+    </div>
+  </div>
+</div>
+<style>
+  .poster{
+    background-image: url("{{(domain_settings.homepage_background or '/assets/contentready_oip/images/background.jpg') | abs_url}}");
+  }
+</style>
+{% endif %}
 
 {% include "templates/includes/common/homepage_stats.html" %} {% include
 "templates/includes/common/homepage_showcase_content.html" %} {% include

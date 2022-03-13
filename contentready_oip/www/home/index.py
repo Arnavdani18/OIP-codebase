@@ -1,7 +1,8 @@
 import frappe
+import json
+from frappe.utils import get_url
 from frappe.utils.html_utils import clean_html
 from contentready_oip import api, problem_search, solution_search
-import json
 
 RESULTS_PER_PAGE = 5
 
@@ -40,5 +41,9 @@ def get_context(context):
             "og:description": description,
             "og:image": oip_configuration.slideshow[0].image,
         }
+    hostname = get_url()
+    context.hostname = hostname
+    context.domain_settings = frappe.get_doc('OIP White Label Domain', {'url': hostname})
+    print("domain_settings",hostname, context.domain_settings)
     return context
 
