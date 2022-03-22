@@ -22,20 +22,23 @@ class OIPResource(Document):
                 if html:
                     soup = BeautifulSoup(html, "lxml")
                     title = soup.find("meta", property="og:title")
-                    description = soup.find("meta", property="og:description").get('content', None)
+                    description = soup.find("meta", property="og:description")
                     if description:
+                        description = description.get('content', None)
                         self.description = description
                     else:
                         paragraph = soup.find("p")
                         if paragraph and paragraph.text:
                             self.description = paragraph.text[:500]
-                    image = soup.find("meta", property="og:image").get('content', None)
-                    print(image)
-                    if image and len(image) and not self.image:
-                        if image.startswith('http'):
-                            self.image = image
-                        elif image.startswith('/'):
-                            self.image = urljoin(self.attachment, image)
+                    image = soup.find("meta", property="og:image")
+                    # print(image)
+                    if image and not self.image:
+                        if len(image):
+                            image = image.get('content', None)
+                            if image.startswith('http'):
+                                self.image = image
+                            elif image.startswith('/'):
+                                self.image = urljoin(self.attachment, image)
 
 
     def before_insert(self):
