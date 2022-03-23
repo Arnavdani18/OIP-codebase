@@ -113,7 +113,7 @@ frappe.ready(async function () {
 
 	// Start Google Maps Autocomplete
 	const gScriptUrl =
-		'https://maps.googleapis.com/maps/api/js?key=AIzaSyAxSPvgric8Zn54pYneG9NondiINqdvb-w&libraries=places';
+		'https://maps.googleapis.com/maps/api/js?key=AIzaSyB6iz4qkY6H6EMvGY7sZjOBNm6S2VsjN5A&libraries=places';
 	$.getScript(gScriptUrl, init_google_maps_autocomplete);
 	// End Google Maps Autocomplete
 
