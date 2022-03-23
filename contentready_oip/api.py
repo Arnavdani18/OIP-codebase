@@ -971,7 +971,7 @@ def send_sms_to_recipients(recipients, message):
 
     # send_sms(recipients, message)
     for recipient in recipients:
-        aws_send_sms(recipient,message,sender_name="OPENIP")
+        aws_send_sms(recipient,message)
 
 
 @frappe.whitelist(allow_guest=True)
