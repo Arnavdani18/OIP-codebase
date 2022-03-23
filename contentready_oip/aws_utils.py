@@ -1,17 +1,20 @@
 import boto3
-sns = boto3.client("sns", 
-                region_name="ap-south-1", 
-                aws_access_key_id="AKIAXPHB5CHQTA2HSLM3", 
-                aws_secret_access_key="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")
+import frappe
 
-def send_sms(number, message, sender_name):
+def send_sms(number, message):
+    if not number.startswith("+") and not number.startswith("00"):
+        number = "+91" + number
+    sns = boto3.client("sns", 
+                region_name="ap-south-1", 
+                aws_access_key_id=frappe.get_value("OIP Configuration", "", "aws_key"), 
+                aws_secret_access_key=frappe.get_value("OIP Configuration", "", "aws_secret"))
     sns.publish(
         PhoneNumber=number, 
         Message=message,
         MessageAttributes={
             'AWS.SNS.SMS.SenderID': {
                 'DataType': 'String',
-                'StringValue': sender_name,
+                'StringValue': frappe.get_value("OIP Configuration", "", "sender_name"),
             }
         },
     )

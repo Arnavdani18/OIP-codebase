@@ -20,7 +20,13 @@
   "ip2location_database",
   "slideshow_section",
   "slideshow_delay",
-  "slideshow"
+  "slideshow",
+  "fold_17",
+  "section_break_18",
+  "sender_name",
+  "column_break_20",
+  "aws_key",
+  "aws_secret"
  ],
  "fields": [
   {
@@ -111,12 +117,42 @@
    "fieldname": "slideshow_delay",
    "fieldtype": "Int",
    "label": "Slideshow Delay (s)"
+  },
+  {
+   "fieldname": "fold_17",
+   "fieldtype": "Fold"
+  },
+  {
+   "fieldname": "section_break_18",
+   "fieldtype": "Section Break",
+   "label": "SMS Settings"
+  },
+  {
+   "fieldname": "aws_key",
+   "fieldtype": "Data",
+   "label": "AWS Key"
+  },
+  {
+   "fieldname": "aws_secret",
+   "fieldtype": "Data",
+   "label": "AWS Secret"
+  },
+  {
+   "fieldname": "column_break_20",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "OIP",
+   "description": "Max 11 characters, e.g. OIP",
+   "fieldname": "sender_name",
+   "fieldtype": "Data",
+   "label": "Sender Name"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2021-09-21 14:10:47.877694",
+ "modified": "2022-03-23 13:12:34.578901",
  "modified_by": "Administrator",
  "module": "ContentReady OIP",
  "name": "OIP Configuration",
