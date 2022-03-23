@@ -15,9 +15,8 @@ from contentready_oip import (
     ip_location_lookup
 )
 from user_agents import parse as ua_parse
-from frappe.utils import random_string
 from geopy import distance
-from functools import cmp_to_key
+from contentready_oip.aws_utils import send_sms as aws_send_sms
 
 
 python_version_2 = platform.python_version().startswith("2")
@@ -968,9 +967,11 @@ def unpack_linkedin_response(info, profile=None):
 
 @frappe.whitelist(allow_guest=True)
 def send_sms_to_recipients(recipients, message):
-    from frappe.core.doctype.sms_settings.sms_settings import send_sms
+    # from frappe.core.doctype.sms_settings.sms_settings import send_sms
 
-    send_sms(recipients, message)
+    # send_sms(recipients, message)
+    for recipient in recipients:
+        aws_send_sms(recipient,message,sender_name="OPENIP")
 
 
 @frappe.whitelist(allow_guest=True)
