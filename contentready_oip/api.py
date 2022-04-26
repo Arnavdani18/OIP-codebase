@@ -62,12 +62,13 @@ def set_sector_filter(filter_sectors=[]):
 
 
 @frappe.whitelist(allow_guest=True)
-def get_available_sectors():
-    hostname = get_url()
+def get_available_sectors(hostname=None):
+    if not hostname:
+        hostname = get_url()
     try:
         domain = frappe.get_doc("OIP White Label Domain", {"url": hostname})
         sectors = [
-            {"name": s.sector, "title": s.sector_title, "description": s.description}
+            {"name": s.sector, "title": s.sector_title, "description": s.description, "image": s.image}
             for s in domain.sectors
         ]
         assert (
@@ -202,8 +203,8 @@ def get_persona_list():
 
 
 @frappe.whitelist(allow_guest=True)
-def get_sector_list():
-    available_sectors = get_available_sectors()
+def get_sector_list(hostname=None):
+    available_sectors = get_available_sectors(hostname)
     return [
         {"label": o["title"], "value": o["name"], "description": o["description"], "image": o["image"]}
         for o in available_sectors
