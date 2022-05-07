@@ -815,7 +815,10 @@ def get_dashboard_content(limit_page_length=5, content_list=None):
         ]
     try:
         user = frappe.get_doc("User Profile", frappe.session.user)
-        sectors = [sector.sector for sector in user.sectors]
+        white_label_domain_sectors = [s["name"] for s in get_available_sectors()]
+        user_sectors = [sector.sector for sector in user.sectors]
+        sectors = list(set(white_label_domain_sectors).intersection(user_sectors))
+        
     except:
         sectors = []
         # frappe.throw('Please create your user profile to personalise this page')
