@@ -13,7 +13,12 @@ def get_context(context):
     parameters = frappe.form_dict
     context.page = int(parameters.get('page')) if parameters.get('page') else 1
     scope = {}
-    scope['sectors'] = json.loads(parameters['sectors']) if "sectors" in parameters else []
+    filter_sectors = json.loads(parameters['sectors']) if "sectors" in parameters else []
+    white_label_domain_sectors = [s["name"] for s in context.available_sectors]
+    if len(filter_sectors):
+        scope['sectors'] = list(set(white_label_domain_sectors).intersection(filter_sectors))
+    else:
+        scope['sectors'] = white_label_domain_sectors
     scope['center'] = json.loads(parameters['center']) if parameters.get("center") else [0, 0]
     # For the search we match everything and set limit very high as 
     # we handle pagination locally
