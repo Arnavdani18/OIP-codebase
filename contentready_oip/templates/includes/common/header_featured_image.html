@@ -41,7 +41,7 @@
                           document.getElementById(
                             `header-{{name}}`
                           ).src = thumbnail_url;
-                        } else {
+                        } else if (data) {
                           const { thumbnail_large } = data;
                           document.getElementById(
                             `header-{{name}}`

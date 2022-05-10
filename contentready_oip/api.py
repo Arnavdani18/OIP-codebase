@@ -1136,24 +1136,28 @@ def get_url_metadata(url):
     import requests
     import re
 
-    rejex = "((http(s)?:\/\/)?)(www\.)?((youtube\.com\/)|(youtu.be\/))[\S]+"
-    pattern = re.compile(rejex)
-
-    if pattern.match(url):
-        youtubeApi = "https://www.youtube.com/oembed?url={}&format=json".format(url)
-        r = requests.get(youtubeApi)
-        response = {}
-        response["provider"] = "youtube"
-        response["data"] = r.json()
-        return response
-    else:
-        vimeoId = url.split("https://vimeo.com/")[1]
-        vimeoApi = "https://vimeo.com/api/v2/video/{}.json".format(vimeoId)
-        r = requests.get(vimeoApi)
-        response = {}
-        response["provider"] = "vimeo"
-        response["data"] = r.json()[0]
-        return response
+    regex = "((http(s)?:\/\/)?)(www\.)?((youtube\.com\/)|(youtu.be\/))[\S]+"
+    pattern = re.compile(regex)
+    url = url.strip()
+    try:
+        if pattern.match(url):
+            youtubeApi = "https://www.youtube.com/oembed?url={}&format=json".format(url)
+            r = requests.get(youtubeApi)
+            response = {}
+            response["provider"] = "youtube"
+            response["data"] = r.json()
+            return response
+        else:
+            vimeoId = url.split("https://vimeo.com/")[1]
+            vimeoApi = "https://vimeo.com/api/v2/video/{}.json".format(vimeoId)
+            r = requests.get(vimeoApi)
+            response = {}
+            response["provider"] = "vimeo"
+            response["data"] = r.json()[0]
+            return response
+    except Exception as e:
+        print(f"Exception in get_url_metadata: {e}")
+        return {}
 
 
 @frappe.whitelist(allow_guest=True)
