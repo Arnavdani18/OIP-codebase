@@ -65,7 +65,7 @@
                             document.getElementById(
                               `{{id}}-{{loop.index}}`
                             ).src = thumbnail_url;
-                          } else {
+                          } else if (data) {
                             const { thumbnail_large } = data;
                             document.getElementById(
                               `{{id}}-{{loop.index}}`

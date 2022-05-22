@@ -99,7 +99,7 @@
       <div class="input-group input-section mb-4">
         <input type="search" class="form-control form-control-lg style1"
             aria-label="Search the Open Innovation Platform" autocomplete="off" list="suggestions"
-            placeholder="Search for problems, solutions and contributors" name='key' v-model="key" v-on:keyup="get_search_suggestions"
+            placeholder="Search for problems, solutions and contributors" name='key' v-model="key" v-on:keyup.enter="searchWithFilters" v-on:keyup="get_search_suggestions"
             id="search-input">
             <datalist id="suggestions">
               <option v-for="title of suggested_titles" v-bind:value="title"></option>
