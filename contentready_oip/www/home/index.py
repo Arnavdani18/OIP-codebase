@@ -44,6 +44,6 @@ def get_context(context):
     hostname = get_url()
     context.hostname = hostname
     context.domain_settings = frappe.get_doc('OIP White Label Domain', {'url': hostname})
-    print("domain_settings",hostname, context.domain_settings)
+    # print("domain_settings",hostname, context.domain_settings)
     return context
 
