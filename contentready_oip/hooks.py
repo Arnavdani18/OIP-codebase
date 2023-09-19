@@ -123,23 +123,23 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"contentready_oip.tasks.all"
-# 	],
-# 	"daily": [
-# 		"contentready_oip.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"contentready_oip.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"contentready_oip.tasks.weekly"
-# 	]
-# 	"monthly": [
-# 		"contentready_oip.tasks.monthly"
-# 	]
-# }
+scheduler_events = {
+	# "all": [
+	# 	"contentready_oip.tasks.all"
+	# ],
+	"daily": [
+		"contentready_oip.tasks.daily"
+	],
+	# "hourly": [
+	# 	"contentready_oip.tasks.hourly"
+	# ],
+	# "weekly": [
+	# 	"contentready_oip.tasks.weekly"
+	# ],
+	# "monthly": [
+	# 	"contentready_oip.tasks.monthly"
+	# ]
+}
 
 # Testing
 # -------
